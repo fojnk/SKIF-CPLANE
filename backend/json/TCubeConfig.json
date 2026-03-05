@@ -1,0 +1,1300 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/TCubeConfig",
+    "definitions": {
+        "CPlane.Cube.TCachingKvInserterOptions": {
+            "required": [
+                "StateName"
+            ],
+            "properties": {
+                "StateName": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Caching Kv Inserter Options"
+        },
+        "CPlane.Cube.TCachingLookuperOptions": {
+            "required": [
+                "StateName"
+            ],
+            "properties": {
+                "StateName": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Caching Lookuper Options"
+        },
+        "CPlane.Cube.TColumn": {
+            "properties": {
+                "type": {
+                    "enum": [
+                        "unknown",
+                        0,
+                        "boolean",
+                        1,
+                        "bool",
+                        2,
+                        "uint64",
+                        3,
+                        "int64",
+                        4,
+                        "uint32",
+                        5,
+                        "int32",
+                        6,
+                        "float",
+                        7,
+                        "double",
+                        8,
+                        "string",
+                        9,
+                        "utf8",
+                        10,
+                        "json",
+                        11,
+                        "yson",
+                        12,
+                        "any",
+                        13,
+                        "uuid",
+                        14,
+                        "datetime",
+                        15,
+                        "timestamp",
+                        16,
+                        "int16",
+                        17,
+                        "int8",
+                        18,
+                        "uint16",
+                        19,
+                        "uint8",
+                        20,
+                        "date",
+                        21,
+                        "date32",
+                        22,
+                        "datetime64",
+                        23,
+                        "timestamp64",
+                        24,
+                        "interval64",
+                        25,
+                        "interval",
+                        26,
+                        "tz_date",
+                        27,
+                        "tz_datetime",
+                        28,
+                        "tz_timestamp",
+                        29,
+                        "tz_date32",
+                        30,
+                        "tz_datetime64",
+                        31,
+                        "tz_timestamp64",
+                        32,
+                        "null",
+                        33,
+                        "void",
+                        34
+                    ],
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "title": "E Primitive Type",
+                    "description": "TypeV3: https://ytsaurus.tech/docs/ru/user-guide/storage/data-types#schema"
+                },
+                "list": {
+                    "$ref": "#/definitions/CPlane.Cube.TColumn",
+                    "additionalProperties": true
+                },
+                "struct": {
+                    "$ref": "#/definitions/CPlane.Cube.TColumn.TStruct",
+                    "additionalProperties": true
+                },
+                "tuple": {
+                    "$ref": "#/definitions/CPlane.Cube.TColumn.TTuple",
+                    "additionalProperties": true
+                },
+                "dict": {
+                    "$ref": "#/definitions/CPlane.Cube.TColumn.TDict",
+                    "additionalProperties": true
+                },
+                "optional": {
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Column"
+        },
+        "CPlane.Cube.TColumn.TDict": {
+            "properties": {
+                "key": {
+                    "$ref": "#/definitions/CPlane.Cube.TColumn",
+                    "additionalProperties": true
+                },
+                "value": {
+                    "$ref": "#/definitions/CPlane.Cube.TColumn",
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Dict"
+        },
+        "CPlane.Cube.TColumn.TStruct": {
+            "properties": {
+                "fields": {
+                    "items": {
+                        "$ref": "#/definitions/CPlane.Cube.TColumn"
+                    },
+                    "type": "array"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Struct"
+        },
+        "CPlane.Cube.TColumn.TTuple": {
+            "properties": {
+                "types": {
+                    "items": {
+                        "$ref": "#/definitions/CPlane.Cube.TColumn"
+                    },
+                    "type": "array"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Tuple"
+        },
+        "CPlane.Cube.TColumnSchema": {
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "stable_name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                },
+                "logical_type": {
+                    "type": "integer"
+                },
+                "type_v3": {
+                    "type": "string",
+                    "description": "YSON representation of type_v3",
+                    "format": "binary",
+                    "binaryEncoding": "base64"
+                },
+                "lock": {
+                    "type": "string"
+                },
+                "expression": {
+                    "type": "string"
+                },
+                "materialized": {
+                    "type": "boolean"
+                },
+                "aggregate": {
+                    "type": "string"
+                },
+                "sort_order": {
+                    "type": "integer"
+                },
+                "group": {
+                    "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
+                },
+                "max_inline_hunk_size": {
+                    "type": "integer"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Column Schema"
+        },
+        "CPlane.Cube.TConcatOptions": {
+            "properties": {
+                "OutputNames": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Concat Options"
+        },
+        "CPlane.Cube.TConcatWithDelayOptions": {
+            "properties": {
+                "OutputNames": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "DelayMilliseconds": {
+                    "type": "integer"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Concat With Delay Options"
+        },
+        "CPlane.Cube.TCubeConfig.TCubeInputConfig": {
+            "required": [
+                "Type"
+            ],
+            "properties": {
+                "Type": {
+                    "enum": [
+                        "CIT_CUBE",
+                        1,
+                        "CIT_RESHARDER",
+                        2,
+                        "CIT_RETRY",
+                        3
+                    ],
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "title": "E Cube Input Type"
+                },
+                "CubeName": {
+                    "type": "string"
+                },
+                "OutputName": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Cube Input Config"
+        },
+        "CPlane.Cube.TDatavaultGenerateKeyOptions": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Datavault Generate Key Options"
+        },
+        "CPlane.Cube.TDeletedColumn": {
+            "required": [
+                "stable_name"
+            ],
+            "properties": {
+                "stable_name": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Deleted Column"
+        },
+        "CPlane.Cube.TKVInsertOptions": {
+            "properties": {
+                "SourceName": {
+                    "type": "string"
+                },
+                "Columns": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "description": "empty val = all from source"
+                },
+                "SharedWrite": {
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "TKV Insert Options"
+        },
+        "CPlane.Cube.TLookuperOptions": {
+            "properties": {
+                "SourceName": {
+                    "type": "string"
+                },
+                "Columns": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "description": "empty val = all from source"
+                },
+                "SelectKeyColumns": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "description": "empty val = lookup with full key, else select with prefix"
+                },
+                "SelectIndexTable": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Lookuper Options"
+        },
+        "CPlane.Cube.TMapInputSpec": {
+            "properties": {
+                "Schemas": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "description": "yson",
+                    "format": "binary",
+                    "binaryEncoding": "base64"
+                },
+                "SchemaSourceNames": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "DataFormat": {
+                    "enum": [
+                        "YsonBinary",
+                        0,
+                        "Skiff",
+                        1
+                    ],
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "title": "E Data Format"
+                },
+                "NormalizedSchemas": {
+                    "items": {
+                        "$ref": "#/definitions/CPlane.Cube.TSchema"
+                    },
+                    "type": "array"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Map Input Spec"
+        },
+        "CPlane.Cube.TMapOutputSpec": {
+            "properties": {
+                "Schemas": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "description": "yson",
+                    "format": "binary",
+                    "binaryEncoding": "base64"
+                },
+                "DataFormat": {
+                    "enum": [
+                        "YsonBinary",
+                        0,
+                        "Skiff",
+                        1
+                    ],
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "title": "E Data Format"
+                },
+                "SchemaSourceNames": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "NormalizedSchemas": {
+                    "items": {
+                        "$ref": "#/definitions/CPlane.Cube.TSchema"
+                    },
+                    "type": "array"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Map Output Spec"
+        },
+        "CPlane.Cube.TMapSpec": {
+            "properties": {
+                "Input": {
+                    "$ref": "#/definitions/CPlane.Cube.TMapInputSpec",
+                    "additionalProperties": true
+                },
+                "Output": {
+                    "$ref": "#/definitions/CPlane.Cube.TMapOutputSpec",
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Map Spec"
+        },
+        "CPlane.Cube.TMultiKVInsertOptions": {
+            "properties": {
+                "SourceNames": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "YPathInsertValue": {
+                    "type": "string",
+                    "description": "путь к значению которое нужно вставить"
+                },
+                "YPathAlias": {
+                    "type": "string"
+                },
+                "DataAlias2SourceName": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "type": "object"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Multi KV Insert Options"
+        },
+        "CPlane.Cube.TMultiLookupOptions": {
+            "properties": {
+                "YPathLookupKey": {
+                    "type": "string",
+                    "description": "путь к ключу для лукапа"
+                },
+                "YPathDataAlias": {
+                    "type": "string",
+                    "description": "путь к алиасу Input-а"
+                },
+                "DataAlias2SourceName": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "type": "object",
+                    "description": "маппинг из данных в имя инпута"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Multi Lookup Options"
+        },
+        "CPlane.Cube.TPortoLayers": {
+            "properties": {
+                "BaseLayerPath": {
+                    "type": "string"
+                },
+                "UseRtseLayer": {
+                    "type": "boolean"
+                },
+                "UserBinaryLayerPaths": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Porto Layers"
+        },
+        "CPlane.Cube.TPythonMapInputSpec": {
+            "properties": {
+                "Schemas": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "description": "yson",
+                    "format": "binary",
+                    "binaryEncoding": "base64"
+                },
+                "SchemaSourceNames": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "DataFormat": {
+                    "enum": [
+                        "PythonYsonBinary",
+                        0,
+                        "PythonSkiff",
+                        1
+                    ],
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "title": "E Python Data Format"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Python Map Input Spec"
+        },
+        "CPlane.Cube.TPythonMapOutputSpec": {
+            "properties": {
+                "Schemas": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "description": "yson",
+                    "format": "binary",
+                    "binaryEncoding": "base64"
+                },
+                "DataFormat": {
+                    "enum": [
+                        "PythonYsonBinary",
+                        0,
+                        "PythonSkiff",
+                        1
+                    ],
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "title": "E Python Data Format"
+                },
+                "SchemaSourceNames": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Python Map Output Spec"
+        },
+        "CPlane.Cube.TPythonMapSpec": {
+            "properties": {
+                "Input": {
+                    "$ref": "#/definitions/CPlane.Cube.TPythonMapInputSpec",
+                    "additionalProperties": true
+                },
+                "Output": {
+                    "$ref": "#/definitions/CPlane.Cube.TPythonMapOutputSpec",
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Python Map Spec"
+        },
+        "CPlane.Cube.TPythonOptions": {
+            "properties": {
+                "MapSpec": {
+                    "$ref": "#/definitions/CPlane.Cube.TPythonMapSpec",
+                    "additionalProperties": true
+                },
+                "ReduceSpec": {
+                    "$ref": "#/definitions/CPlane.Cube.TPythonReduceSpec",
+                    "additionalProperties": true
+                },
+                "Script": {
+                    "type": "string",
+                    "description": "Python script content (like Query in YQL)"
+                },
+                "PythonBinaryPath_": {
+                    "type": "string"
+                },
+                "RunTimeoutMs": {
+                    "type": "integer"
+                },
+                "PortoEnabled": {
+                    "type": "boolean"
+                },
+                "UseRtseLayer": {
+                    "type": "boolean"
+                },
+                "ContainerNamePrefix": {
+                    "type": "string"
+                },
+                "ScriptArgs": {
+                    "type": "string",
+                    "description": "Additional script arguments (e.g., \"--input /path/to/file --debug\")"
+                },
+                "UserBinaryArchivePath": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Python Options"
+        },
+        "CPlane.Cube.TPythonReduceSpec": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Python Reduce Spec"
+        },
+        "CPlane.Cube.TQYTInsertOptions": {
+            "properties": {
+                "SourceName": {
+                    "type": "string"
+                },
+                "CompressionCodec": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "TQYT Insert Options"
+        },
+        "CPlane.Cube.TReduceSpec": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Reduce Spec"
+        },
+        "CPlane.Cube.TRetryOptions": {
+            "required": [
+                "MaxRetryCount"
+            ],
+            "properties": {
+                "ShardingKeys": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "ShardingHashKey": {
+                    "type": "string"
+                },
+                "ShardingRoundRobin": {
+                    "type": "boolean"
+                },
+                "RetryKeys": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array",
+                    "description": "Если не указаны RetryKeys, то в качестве них будут использованы ShardingKeys"
+                },
+                "AllRetriesFailedPolicy": {
+                    "enum": [
+                        "Drop",
+                        1,
+                        "SendDeadLetter",
+                        2
+                    ],
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "title": "E All Retries Failed Policy"
+                },
+                "MaxRetryCount": {
+                    "type": "integer"
+                },
+                "LinearIntervalOptions": {
+                    "$ref": "#/definitions/CPlane.Cube.TRetryOptions.TLinearInterval",
+                    "additionalProperties": true
+                },
+                "ExponentialIntervalOptions": {
+                    "$ref": "#/definitions/CPlane.Cube.TRetryOptions.TExponentialInterval",
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Retry Options"
+        },
+        "CPlane.Cube.TRetryOptions.TExponentialInterval": {
+            "required": [
+                "InitialInterval",
+                "GrowthRate"
+            ],
+            "properties": {
+                "InitialInterval": {
+                    "type": "string"
+                },
+                "MaxInterval": {
+                    "type": "string"
+                },
+                "GrowthRate": {
+                    "type": "number"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Exponential Interval"
+        },
+        "CPlane.Cube.TRetryOptions.TLinearInterval": {
+            "required": [
+                "Interval"
+            ],
+            "properties": {
+                "Interval": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Linear Interval"
+        },
+        "CPlane.Cube.TSchema": {
+            "properties": {
+                "columns": {
+                    "items": {
+                        "$ref": "#/definitions/CPlane.Cube.TColumn"
+                    },
+                    "type": "array"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Schema"
+        },
+        "CPlane.Cube.TSchemeValidatorOptions": {
+            "properties": {
+                "Schema": {
+                    "$ref": "#/definitions/CPlane.Cube.TTableSchema",
+                    "additionalProperties": true
+                },
+                "UnknownFieldPolicy": {
+                    "enum": [
+                        "EUFP_INVALIDATE",
+                        1,
+                        "EUFP_REMOVE",
+                        2,
+                        "EUFP_IGNORE",
+                        3
+                    ],
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "title": "E Unknown Field Policy"
+                },
+                "ValidationType": {
+                    "enum": [
+                        "EVT_THROW_ON_ERROR",
+                        1,
+                        "EVT_FILTER",
+                        2,
+                        "EVT_FILTER_AND_REDIRECT",
+                        3
+                    ],
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "title": "E Validation Type"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Scheme Validator Options"
+        },
+        "CPlane.Cube.TSideCarOptions": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Side Car Options"
+        },
+        "CPlane.Cube.TStatefulKeyValueJoinerOptions": {
+            "properties": {
+                "JoinType": {
+                    "enum": [
+                        "EJT_INNER",
+                        1,
+                        "EJT_LEFT",
+                        2
+                    ],
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "title": "E Join Type"
+                },
+                "AnyType": {
+                    "enum": [
+                        "EAT_NONE",
+                        1,
+                        "EAT_LEFT",
+                        2,
+                        "EAT_RIGHT",
+                        3,
+                        "EAT_ALL",
+                        4
+                    ],
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "title": "E Any Type"
+                },
+                "StatesToJoin": {
+                    "items": {
+                        "$ref": "#/definitions/CPlane.Cube.TStatefulKeyValueJoinerOptions.TJoinState"
+                    },
+                    "type": "array"
+                },
+                "SourceMessagePath": {
+                    "type": "string",
+                    "description": "путь в выходном сообщении, куда в yson пойдет исходное сообщение. можно использовать \".\", если нужно оставить исходное сообщение корневым"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Stateful Key Value Joiner Options"
+        },
+        "CPlane.Cube.TStatefulKeyValueJoinerOptions.TJoinState": {
+            "required": [
+                "StateAlias",
+                "OutputMessagePath"
+            ],
+            "properties": {
+                "StateAlias": {
+                    "type": "string"
+                },
+                "JoinKeys": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "OutputMessagePath": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Join State"
+        },
+        "CPlane.Cube.TStatefulSyncJoinerOptions": {
+            "properties": {
+                "StateAlias": {
+                    "type": "string"
+                },
+                "JoinType": {
+                    "enum": [
+                        "EJT_INNER",
+                        1,
+                        "EJT_LEFT",
+                        2
+                    ],
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "title": "E Join Type"
+                },
+                "JoinKeys": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "AnyType": {
+                    "enum": [
+                        "EAT_NONE",
+                        1,
+                        "EAT_LEFT",
+                        2,
+                        "EAT_RIGHT",
+                        3,
+                        "EAT_ALL",
+                        4
+                    ],
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "title": "E Any Type"
+                },
+                "DelayedQueueEnabled": {
+                    "type": "boolean"
+                },
+                "TimestampProviderCluster_": {
+                    "type": "string"
+                },
+                "AllowMissingKeys": {
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Stateful Sync Joiner Options"
+        },
+        "CPlane.Cube.TTableSchema": {
+            "properties": {
+                "columns": {
+                    "items": {
+                        "$ref": "#/definitions/CPlane.Cube.TColumnSchema"
+                    },
+                    "type": "array"
+                },
+                "strict": {
+                    "type": "boolean"
+                },
+                "unique_keys": {
+                    "type": "boolean"
+                },
+                "deleted_columns": {
+                    "items": {
+                        "$ref": "#/definitions/CPlane.Cube.TDeletedColumn"
+                    },
+                    "type": "array"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Table Schema"
+        },
+        "CPlane.Cube.TThrowOptions": {
+            "properties": {
+                "Text": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Throw Options"
+        },
+        "CPlane.Cube.TTransformOptions": {
+            "properties": {
+                "Rules": {
+                    "items": {
+                        "$ref": "#/definitions/CPlane.Cube.TTransformOptions.TTransformFieldRule"
+                    },
+                    "type": "array"
+                },
+                "NullOnMissingValues": {
+                    "type": "boolean"
+                },
+                "RootObjectPath": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Transform Options"
+        },
+        "CPlane.Cube.TTransformOptions.TTransformFieldRule": {
+            "properties": {
+                "SourcePath": {
+                    "type": "string"
+                },
+                "TargetColumnName": {
+                    "type": "string"
+                },
+                "DefaultValue": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Transform Field Rule"
+        },
+        "CPlane.Cube.TUserBinaryOptions": {
+            "properties": {
+                "Command": {
+                    "type": "string"
+                },
+                "Mode": {
+                    "enum": [
+                        "EUBIO_ONESHOT",
+                        1,
+                        "EUBIO_STREAM_HEADER",
+                        2
+                    ],
+                    "oneOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "integer"
+                        }
+                    ],
+                    "title": "E User Binary Mode"
+                },
+                "YtServerExecPath_": {
+                    "type": "string"
+                },
+                "TimeoutMs": {
+                    "type": "integer"
+                },
+                "LogDir_": {
+                    "type": "string"
+                },
+                "PortoEnabled": {
+                    "type": "boolean"
+                },
+                "UseRtseLayer": {
+                    "type": "boolean"
+                },
+                "ContainerNamePrefix": {
+                    "type": "string"
+                },
+                "UserBinaryArchivePath": {
+                    "type": "string"
+                },
+                "PortoLayersPath": {
+                    "type": "string"
+                },
+                "GrpcSettings": {
+                    "$ref": "#/definitions/CPlane.Cube.TUserBinaryOptions.TGrpcSettings",
+                    "additionalProperties": true
+                },
+                "PipesSettings": {
+                    "$ref": "#/definitions/CPlane.Cube.TUserBinaryOptions.TPipesSettings",
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T User Binary Options"
+        },
+        "CPlane.Cube.TUserBinaryOptions.TGrpcSettings": {
+            "properties": {
+                "Port": {
+                    "type": "integer"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Grpc Settings"
+        },
+        "CPlane.Cube.TUserBinaryOptions.TPipesSettings": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Pipes Settings"
+        },
+        "CPlane.Cube.TYQLOptions": {
+            "properties": {
+                "MapSpec": {
+                    "$ref": "#/definitions/CPlane.Cube.TMapSpec",
+                    "additionalProperties": true
+                },
+                "ReduceSpec": {
+                    "$ref": "#/definitions/CPlane.Cube.TReduceSpec",
+                    "additionalProperties": true
+                },
+                "Query": {
+                    "type": "string"
+                },
+                "UdfsDirPath": {
+                    "type": "string"
+                },
+                "RunTimeoutMs": {
+                    "type": "integer"
+                },
+                "YqlBinaryPath_": {
+                    "type": "string"
+                },
+                "PortoEnabled": {
+                    "type": "boolean"
+                },
+                "ContainerNamePrefix": {
+                    "type": "string"
+                },
+                "PortoLayers": {
+                    "$ref": "#/definitions/CPlane.Cube.TPortoLayers",
+                    "additionalProperties": true
+                },
+                "EnvironmentVariablesJson": {
+                    "type": "string",
+                    "description": "JSON format: {\"KEY1\": \"VALUE1\", \"KEY2\": \"VALUE2\"}"
+                },
+                "EnvironmentVariables": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "type": "object",
+                    "description": "Direct map support (preferred)"
+                },
+                "CleanupResources": {
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "TYQL Options"
+        },
+        "TCubeConfig": {
+            "required": [
+                "Name"
+            ],
+            "properties": {
+                "Name": {
+                    "type": "string"
+                },
+                "InputsMapping": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/CPlane.Cube.TCubeConfig.TCubeInputConfig",
+                        "additionalProperties": true
+                    },
+                    "type": "object",
+                    "description": "Key - cube input name"
+                },
+                "OutputNames": {
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "QYTInsertOptions": {
+                    "$ref": "#/definitions/CPlane.Cube.TQYTInsertOptions",
+                    "additionalProperties": true
+                },
+                "KVInsertOptions": {
+                    "$ref": "#/definitions/CPlane.Cube.TKVInsertOptions",
+                    "additionalProperties": true
+                },
+                "Lookuper": {
+                    "$ref": "#/definitions/CPlane.Cube.TLookuperOptions",
+                    "additionalProperties": true,
+                    "description": "1 input, 1 output with lookuped data in array"
+                },
+                "SideCar": {
+                    "$ref": "#/definitions/CPlane.Cube.TSideCarOptions",
+                    "additionalProperties": true,
+                    "description": "any count of inputs, any count outputs"
+                },
+                "StatefulSyncJoiner": {
+                    "$ref": "#/definitions/CPlane.Cube.TStatefulSyncJoinerOptions",
+                    "additionalProperties": true,
+                    "description": "input 2 streams, output 1 inner/left joined stream"
+                },
+                "Concat": {
+                    "$ref": "#/definitions/CPlane.Cube.TConcatOptions",
+                    "additionalProperties": true
+                },
+                "DatavaultGenerateKey": {
+                    "$ref": "#/definitions/CPlane.Cube.TDatavaultGenerateKeyOptions",
+                    "additionalProperties": true
+                },
+                "SchemeValidator": {
+                    "$ref": "#/definitions/CPlane.Cube.TSchemeValidatorOptions",
+                    "additionalProperties": true
+                },
+                "ConcatWithDelay": {
+                    "$ref": "#/definitions/CPlane.Cube.TConcatWithDelayOptions",
+                    "additionalProperties": true
+                },
+                "Throw": {
+                    "$ref": "#/definitions/CPlane.Cube.TThrowOptions",
+                    "additionalProperties": true
+                },
+                "YQLOptions": {
+                    "$ref": "#/definitions/CPlane.Cube.TYQLOptions",
+                    "additionalProperties": true
+                },
+                "Extract": {
+                    "$ref": "#/definitions/CPlane.Cube.TTransformOptions",
+                    "additionalProperties": true
+                },
+                "CachingLookuper": {
+                    "$ref": "#/definitions/CPlane.Cube.TCachingLookuperOptions",
+                    "additionalProperties": true
+                },
+                "CachingKvInserter": {
+                    "$ref": "#/definitions/CPlane.Cube.TCachingKvInserterOptions",
+                    "additionalProperties": true
+                },
+                "MultiLookupOptions": {
+                    "$ref": "#/definitions/CPlane.Cube.TMultiLookupOptions",
+                    "additionalProperties": true
+                },
+                "MultiKVInsertOptions": {
+                    "$ref": "#/definitions/CPlane.Cube.TMultiKVInsertOptions",
+                    "additionalProperties": true
+                },
+                "PythonOptions": {
+                    "$ref": "#/definitions/CPlane.Cube.TPythonOptions",
+                    "additionalProperties": true
+                },
+                "Transform": {
+                    "$ref": "#/definitions/CPlane.Cube.TTransformOptions",
+                    "additionalProperties": true
+                },
+                "UserBinaryOptions": {
+                    "$ref": "#/definitions/CPlane.Cube.TUserBinaryOptions",
+                    "additionalProperties": true
+                },
+                "RetryCubeOptions": {
+                    "$ref": "#/definitions/CPlane.Cube.TRetryOptions",
+                    "additionalProperties": true
+                },
+                "KVJoinCubeOptions": {
+                    "$ref": "#/definitions/CPlane.Cube.TStatefulKeyValueJoinerOptions",
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Cube Config"
+        }
+    }
+}

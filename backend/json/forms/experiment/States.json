@@ -1,0 +1,28 @@
+[
+    {
+        "name": "StateName",
+        "type": {
+            "type": "string"
+        }
+    },
+    {
+        "name": "KVSourceName",
+        "type": {
+            "type": "string"
+        }
+    },
+    {
+        "name": "OwningKvState",
+        "type": {
+            "type": "struct",
+            "struct_params": [
+                {
+                    "name": "MaxCacheSize",
+                    "type": {
+                        "type": "integer"
+                    }
+                }
+            ]
+        }
+    }
+]

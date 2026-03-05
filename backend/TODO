@@ -1,0 +1,5 @@
+1. sending metrics
+3. authentication
+3. authorization (checking user access in CRUD handlers) [depends on 2]
+4. API calls to RTMR client
+

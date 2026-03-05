@@ -1,0 +1,121 @@
+[
+    {
+        "name": "YT",
+        "type": {
+            "type": "struct",
+            "struct_params": [
+                {
+                    "name": "WorkDir",
+                    "required": true,
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "Token",
+                    "required": true,
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "MainCluster",
+                    "type": {
+                        "type": "struct",
+                        "struct_params": [
+                            {
+                                "name": "ClusterUrl",
+                                "required": true,
+                                "type": {
+                                    "type": "string",
+                                    "type_constraint": {
+                                        "enum": [
+                                            "jupiter.yt.vk.team",
+                                            "moon.yt.vk.team",
+                                            "miranda.yt.vk.team",
+                                            "mercury-dc.yt.vk.team",
+                                            "mercury-kc.yt.vk.team",
+                                            "mercury-pc.yt.vk.team",
+                                            "mercury-uc.yt.vk.team",
+                                            "mercury-hc.yt.vk.team",
+                                            "mercury-rc.yt.vk.team",
+                                            "saturn.yt.vk.team"
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "name": "ProxyRole",
+                                "required": true,
+                                "type": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "PrimaryMedium",
+                                "type": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "TabletCellBundle",
+                                "type": {
+                                    "type": "string"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "ReplicaClusters",
+                    "type": {
+                        "type": "array",
+                        "nested_type": "struct",
+                        "struct_params": [
+                            {
+                                "name": "ClusterUrl",
+                                "required": true,
+                                "type": {
+                                    "type": "string",
+                                    "type_constraint": {
+                                        "enum": [
+                                            "jupiter.yt.vk.team",
+                                            "moon.yt.vk.team",
+                                            "miranda.yt.vk.team",
+                                            "mercury-dc.yt.vk.team",
+                                            "mercury-kc.yt.vk.team",
+                                            "mercury-pc.yt.vk.team",
+                                            "mercury-uc.yt.vk.team",
+                                            "mercury-hc.yt.vk.team",
+                                            "mercury-rc.yt.vk.team",
+                                            "saturn.yt.vk.team"
+                                        ]
+                                    }
+                                }
+                            },
+                            {
+                                "name": "ProxyRole",
+                                "required": true,
+                                "type": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "PrimaryMedium",
+                                "type": {
+                                    "type": "string"
+                                }
+                            },
+                            {
+                                "name": "TabletCellBundle",
+                                "type": {
+                                    "type": "string"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+]

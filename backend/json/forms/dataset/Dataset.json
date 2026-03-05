@@ -1,0 +1,44 @@
+[
+    {
+        "name": "YT",
+        "type": {
+            "type": "struct",
+            "struct_params": [
+                {
+                    "name": "Cluster",
+                    "required": true,
+                    "type": {
+                        "type": "string",
+                        "type_constraint": {
+                            "enum": [
+                                "jupiter.yt.vk.team",
+                                "moon.yt.vk.team",
+                                "miranda.yt.vk.team",
+                                "mercury-dc.yt.vk.team",
+                                "mercury-kc.yt.vk.team",
+                                "mercury-pc.yt.vk.team",
+                                "mercury-uc.yt.vk.team",
+                                "mercury-hc.yt.vk.team",
+                                "mercury-rc.yt.vk.team",
+                                "saturn.yt.vk.team"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Path",
+                    "required": true,
+                    "type": {
+                        "type": "string"
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "name": "Attributes",
+        "type": {
+            "type": "custom"
+        }
+    }
+]

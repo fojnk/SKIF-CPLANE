@@ -1,0 +1,189 @@
+openapi: 3.0.0
+info:
+  title: Rules API
+  version: 2.0.0
+  description: API for managing alert rules.
+servers:
+  - url: registry.mon.one-infra.ru
+paths:
+  /api/v2/files:
+    post:
+      summary: Create rules
+      description: Creates alert rules based on the provided YAML data.
+      parameters:
+        - in: header
+          name: X-File-Name
+          schema:
+            type: string
+          example: alerts-example.yaml
+          description: The name of the file containing the rules.
+          required: true
+        - in: header
+          name: X-Access-Token
+          schema:
+            type: string
+          example: 123
+          description: Access token for authentication.
+          required: true
+      requestBody:
+        description: YAML-formatted rules data.
+        required: true
+        content:
+          application/yaml:
+            schema:
+              type: string
+            example: |
+              groups:
+                - name: example_group
+                  namespace: infra
+                  rules:
+                    - alert: HighMemoryUsage
+                      expr: node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes * 100 < 20
+                      for: 5m
+                      labels:
+                        severity: critical
+                        team: operations
+                        product_id: 1111
+                      annotations:
+                        summary: "High Memory Usage on {{ $labels.instance }}"
+                        description: "Memory usage is above 80% for more than 5 minutes on instance {{ $labels.instance }}."
+      responses:
+        "200":
+          description: Rules successfully created.
+        "400":
+          description: Bad request due to invalid input.
+        "401":
+          description: Unauthorized access due to invalid token.
+        "409":
+          description: Specified entities already exist.
+
+    put:
+      summary: Update rules
+      description: |
+        Updates existing alert rules that match the X-File-Name header.
+      parameters:
+        - in: header
+          name: X-File-Name
+          schema:
+            type: string
+          example: alerts-example.yaml
+          description: Target file name to update rules from
+          required: true
+        - in: header
+          name: X-Access-Token
+          schema:
+            type: string
+          example: 123
+          description: Access token for authentication
+          required: true
+      requestBody:
+        description: YAML-formatted rules data for update
+        required: true
+        content:
+          application/yaml:
+            schema:
+              type: string
+            example: |
+              groups:
+                - name: updated_group
+                  namespace: sandbox
+                  rules:
+                    - alert: HighCPUUsage
+                      expr: 100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100 > 90
+                      for: 10m
+                      labels:
+                        severity: warning
+      responses:
+        "200":
+          description: Rules matching X-File-Name were successfully updated
+        "400":
+          description: Bad request due to invalid input
+        "401":
+          description: Unauthorized access due to invalid token
+        "404":
+          description: Requested file name was not found.
+
+    delete:
+      summary: Delete Rules
+      description: Deletes alert rules specified by the file name.
+      parameters:
+        - in: header
+          name: X-File-Name
+          schema:
+            type: string
+          example: alerts-example.yaml
+          description: The name of the file to be deleted.
+          required: true
+        - in: header
+          name: X-Access-Token
+          schema:
+            type: string
+          example: 123
+          description: Access token for authentication.
+          required: true
+      responses:
+        "200":
+          description: Rules successfully deleted.
+        "400":
+          description: Bad request due to invalid input.
+        "401":
+          description: Unauthorized access due to invalid token.
+        "404":
+          description: Requested file name was not found.
+
+    get:
+      summary: Get Rules Body
+      description: Get content of vmalert file body by the file name
+      parameters:
+        - in: header
+          name: X-File-Name
+          schema:
+            type: string
+          example: alerts-example.yaml
+          required: true
+        - in: header
+          name: X-Access-Token
+          schema:
+            type: string
+          description: Access token for authentication.
+          required: true
+      responses:
+        "200":
+          description: File successfully found.
+        "400":
+          description: Bad request due to invalid input.
+        "401":
+          description: Unauthorized access due to invalid token.
+        "404":
+          description: Requested file name was not found.
+
+  /api/v2/integrations/{productID}:
+    get:
+      summary: Get integrations
+      description: Get integrations by product ID
+      parameters:
+        - in: path
+          name: productID
+          schema:
+            type: string
+          example: "1111"
+          description: Product ID to get integrations for
+          required: true
+        - in: header
+          name: X-Access-Token
+          schema:
+            type: string
+          example: 123
+          description: Access token for authentication.
+          required: true
+      responses:
+        "200":
+          description: Integrations successfully found.
+        "400":
+          description: Bad request due to invalid input.
+        "401":
+          description: Unauthorized access due to invalid token.
+        "404":
+          description: Requested product ID was not found.
+        default:
+          description: Unexpected error response.

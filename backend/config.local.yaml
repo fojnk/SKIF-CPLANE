@@ -1,0 +1,70 @@
+---
+auth_token: papaha123
+host: localhost:3000
+is_test_env: true
+
+app_port: 3000
+app_public_port: 3002
+metrics_port: 3001
+
+log:
+  level: debug
+  file_path: ./log.log
+  rotate_max_size_MB: 5
+  rotate_max_age_days: 2
+
+database:
+  host: postgres:5432
+  user: frontend_cplane
+  password: 1234
+  database: frontend_cplane
+
+clients:
+  auth:
+    url: https://auth.vk.team
+    timeout: 2s
+  orchestrator:
+    base_url: http://localhost:8081
+  idm:
+    url: http://localhost:4004
+    timeout: 2s
+    push_enabled: false
+  oauth:
+    oauth-proxy: ""
+    OAuthUrl: "http://localhost:9100/oauth"
+    client-id: "frontend-cplane"
+    grant-type: "authorization_code"
+    scope: "user_info"
+    redirect-url: "http://localhost:8080/login"
+    client-secret: "frontend-cplane-secret"
+  jwt:
+    jwt-secret: "jwt-secret"
+    access_expiration: 172800
+    refresh_expiration: 2592000
+  jobd:
+    base_url: ""
+    api_key: "test-api-key"
+    timeout: 30
+  one_alerts:
+    base_url: ""
+    token: "test-token"
+    timeout: 30
+
+session_cache:
+  expiration_time: 5m
+  cleanup_interval: 10m
+
+use_cors: true
+
+acl:
+  token: super_user_token
+
+local_auth:
+  enabled: true
+  users:
+    - username: root
+      email: root@local
+      password: root
+    - username: admin
+      email: admin@local
+      password: admin

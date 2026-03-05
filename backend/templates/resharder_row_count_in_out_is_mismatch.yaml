@@ -1,0 +1,27 @@
+      - alert: "[{{ .project_name }}] {{ .experiment_name }} resharder row count in/out is mismatch"
+        expr: |
+          max(abs(
+            sum by(stream) (
+              min by (cloud_dc, cloud_instance, stream) (
+                rate(rtse_messages_count_input{sf_experiment_id="{{ .experiment_id }}", instance=~".*rsdr.*"}[1m])
+              )
+            ) - 
+            sum by(stream) (
+              min by (cloud_dc, cloud_instance, stream) (
+                rate(rtse_messages_count_output{sf_experiment_id="{{ .experiment_id }}", instance=~".*rsdr.*"}[1m])
+              )
+            )
+          )) > 0.1
+        for: {{ .duration }}
+        keep_firing_for: {{ .resolve_duration }}
+        labels:
+          <<: *common_labels
+          severity: {{ .severity }}
+        annotations:
+          description: |
+            Несоответствие между входящими и исходящими сообщениями в resharderе.
+
+            Текущее значение: {{"{{"}} printf "%.4f" $value {{"}}"}} сообщений/сек.
+
+            ссылка на пайплайн: https://streamflow.vk.team/project?id={{ .project_id }}&selected=pipe-{{ .experiment_id }}&p-tab=config
+          summary: У проекта {{ .project_name }} в пайплайне {{ .experiment_name }} resharder теряет или дублирует сообщения.

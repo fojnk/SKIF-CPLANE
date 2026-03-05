@@ -1,0 +1,13 @@
+      - alert: "[{{ .project_name }}] {{ .experiment_name }} worker epoch ratio absent"
+        expr: |
+          absent_over_time(rtse_epochs_total{sf_experiment_id="{{ .experiment_id }}", instance=~".*wrkr.*"}[{{ .duration }}])
+        keep_firing_for: {{ .resolve_duration }}
+        labels:
+          <<: *common_labels
+          severity: {{ .severity }}
+        annotations:
+          description: |
+            Метрики эпох воркера отсутствуют в течение {{ .duration }} секунд.
+
+            ссылка на пайплайн: https://streamflow.vk.team/project?id={{ .project_id }}&selected=pipe-{{ .experiment_id }}&p-tab=config
+          summary: У проекта {{ .project_name }} в пайплайне {{ .experiment_name }} метрики эпох воркера отсутствуют {{ .duration }}.
