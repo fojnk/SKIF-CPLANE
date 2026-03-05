@@ -1,0 +1,67 @@
+---
+#auth_token: papaha123
+host: localhost:3000
+
+app_port: 3000
+metrics_port: 3001
+
+log:
+  level: debug
+  file_path: ./log.log
+  rotate_max_size_MB: 5
+  rotate_max_age_days: 2
+
+database:
+  host: localhost:5432
+  user: streamflow
+  password: 1234
+  database: streamflow
+
+clients:
+  auth:
+    url: https://auth.vk.team
+    timeout: 2s
+  orchestrator:
+    base_url: http://localhost:8081
+  oauth:
+    oauth-proxy: ""
+    OAuthUrl: "http://localhost:9100/oauth"
+    client-id: "StreamFlow"
+    grant-type: "authorization_code"
+    scope: "user_info"
+    redirect-url: "http://localhost:3000/auth/oauth/token"
+    client-secret: "streamflow-secret"
+  jwt:
+    jwt-secret: "jwt-secret"
+    access_expiration: 172800
+    refresh_expiration: 2592000
+  jobd:
+    base_url: "http://localhost:4005"
+    api_key: "your-api-key"
+    timeout: 30
+  one_alerts:
+    base_url: "http://localhost:4006"
+    token: "test-token"
+    timeout: 30
+project_urls:
+  bundle:
+    url: https://yt.vk.team/CLUSTER_NAME/tablet_cell_bundles/tablet_cells?activeBundle=BUNDLE_NAME
+    name: YT bundle
+    enabled: true
+  work_dir:
+    url: https://yt.vk.team/CLUSTER_NAME/navigation?path=YT_WORK_DIR
+    name: YT work dir
+    enabled: true
+
+dataset_urls:
+  yt_work_dir:
+    url: https://yt.vk.team/CLUSTER_NAME/navigation?path=YT_WORK_DIR
+    name: YT work dir
+    enabled: true
+
+
+session_cache:
+  expiration_time: 5m
+  cleanup_interval: 10m
+
+use_cors: true

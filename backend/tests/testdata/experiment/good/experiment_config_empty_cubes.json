@@ -1,0 +1,50 @@
+{
+  "Placement": {
+    "OnecloudDatacenters": [
+      "pc",
+      "kc",
+      "hc"
+    ]
+  },
+  "Resources": {
+    "Resharder": {
+      "ReplicasInDc": 6,
+      "CpuCores": 4,
+      "RamMB": 16384,
+      "NetworkInMbit": 1024,
+      "NetworkOutMbit": 1024
+    },
+    "Worker": {
+      "ReplicasInDc": 10,
+      "CpuCores": 8,
+      "RamMB": 32768,
+      "NetworkInMbit": 1024,
+      "NetworkOutMbit": 1024
+    }
+  },
+  "InternalSources": {},
+  "Resharder": {
+    "InputSources": [
+      {
+        "SourceName": "events",
+        "ShardingRoundRobin": true,
+        "QYTReadOptions": {
+          "ReadFullRowAsYson": true,
+          "VitalConsumer": false
+        }
+      }
+    ],
+    "IntermediateQueueOptions": {
+      "ShardsCount": 300
+    }
+  },
+  "States": [],
+  "Worker": {
+    "GraphConfig": {
+      "Name": "adtech_events_processor",
+      "OutputNames": [],
+      "StateNames": [],
+      "Cubes": []
+    }
+  }
+}

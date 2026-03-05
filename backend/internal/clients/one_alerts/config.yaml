@@ -1,0 +1,7 @@
+package: one_alerts
+output: ./internal/clients/one_alerts/client.gen.go
+generate:
+  models: true
+  client: true
+output-options:
+  skip-prune: true

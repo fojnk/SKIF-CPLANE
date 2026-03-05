@@ -1,0 +1,1128 @@
+openapi: 3.0.2
+info:
+  title: Jobd - Job Management System
+  description: API для управления фоновыми задачами и этапами выполнения операций
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: vladimir.petrov@vkteam.ru
+
+servers:
+  - url: /
+    description: Job System API
+
+tags:
+  - name: Jobs
+    description: Управление джобами
+  - name: Steps
+    description: Управление шагами внутри джоб
+  - name: Logs
+    description: Логи выполнения
+  - name: Events
+    description: События джоб
+
+paths:
+  /api/v1/jobs:
+    post:
+      tags:
+        - Jobs
+      summary: Создать новую джобу
+      operationId: createJob
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateJobRequest'
+      responses:
+        '201':
+          description: Job успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobCreated'
+        '400':
+          description: Невалидный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
+    get:
+      tags:
+        - Jobs
+      summary: Получить список джоб
+      operationId: listJobs
+      parameters:
+        - name: entity_type
+          in: query
+          description: Тип сущности (experiment, dataset, project, namespace)
+          required: false
+          schema:
+            type: string
+            enum: [experiment, dataset, project, namespace]
+        - name: entity_id
+          in: query
+          description: ID сущности
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: type
+          in: query
+          description: Тип джобы (можно указать несколько значений)
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+        - name: status
+          in: query
+          description: Статус джобы (можно указать несколько значений)
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [pending, queued, running, paused, completed, failed, cancelled, timeout]
+          style: form
+          explode: true
+        - name: created_by
+          in: query
+          description: Кто создал джобу
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Количество записей на странице (по умолчанию 50)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 50
+            minimum: 1
+            maximum: 100
+        - name: offset
+          in: query
+          description: Смещение для пагинации (по умолчанию 0)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: Список джоб
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobsList'
+        '400':
+          description: Невалидные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
+  /api/v1/jobs/{id}:
+    get:
+      tags:
+        - Jobs
+      summary: Получить джобу по ID
+      operationId: getJob
+      parameters:
+        - name: id
+          in: path
+          description: ID джобы
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Информация о джобе
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '404':
+          description: Job не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
+  /api/v1/jobs/{id}/cancel:
+    post:
+      tags:
+        - Jobs
+      summary: Отменить джобу
+      operationId: cancelJob
+      parameters:
+        - name: id
+          in: path
+          description: ID джобы
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Job успешно отменен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelJobResponse'
+        '404':
+          description: Job не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Job не может быть отменен в текущем состоянии
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
+  /api/v1/jobs/{id}/retry:
+    post:
+      tags:
+        - Jobs
+      summary: Перезапустить джобу
+      operationId: retryJob
+      parameters:
+        - name: id
+          in: path
+          description: ID джобы
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Job успешно перезапущен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '404':
+          description: Job не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Job не может быть перезапущен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
+  /api/v1/jobs/{id}/steps:
+    get:
+      tags:
+        - Steps
+      summary: Получить список шагов джобы
+      operationId: listSteps
+      parameters:
+        - name: id
+          in: path
+          description: ID джобы
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Список шагов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Step'
+        '400':
+          description: Невалидный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
+  /api/v1/jobs/{id}/logs:
+    get:
+      tags:
+        - Logs
+      summary: Получить логи джобы
+      operationId: getLogs
+      parameters:
+        - name: id
+          in: path
+          description: ID джобы
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: step_id
+          in: query
+          description: Фильтр по ID шага
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: levels
+          in: query
+          description: Фильтр по уровням лога (можно указать несколько значений)
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [DEBUG, INFO, WARN, ERROR]
+          style: form
+          explode: true
+        - name: after
+          in: query
+          description: Фильтр логов после этого timestamp (ISO 8601)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: before
+          in: query
+          description: Фильтр логов до этого timestamp (ISO 8601)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          description: Количество записей на странице (по умолчанию 100)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 100
+            minimum: 1
+            maximum: 1000
+        - name: offset
+          in: query
+          description: Смещение для пагинации (по умолчанию 0)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: Список логов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogsList'
+        '400':
+          description: Невалидный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
+  /api/v1/jobs/{id}/steps/{step_id}/logs:
+    get:
+      tags:
+        - Logs
+      summary: Получить логи шага джобы
+      operationId: getStepLogs
+      parameters:
+        - name: id
+          in: path
+          description: ID джобы
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: step_id
+          in: path
+          description: ID шага
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: levels
+          in: query
+          description: Фильтр по уровням лога (можно указать несколько значений)
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [DEBUG, INFO, WARN, ERROR]
+          style: form
+          explode: true
+        - name: after
+          in: query
+          description: Фильтр логов после этого timestamp (ISO 8601)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: before
+          in: query
+          description: Фильтр логов до этого timestamp (ISO 8601)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          description: Количество записей на странице (по умолчанию 100)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 100
+            minimum: 1
+            maximum: 1000
+        - name: offset
+          in: query
+          description: Смещение для пагинации (по умолчанию 0)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: Список логов шага
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogsList'
+        '400':
+          description: Невалидный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
+  /api/v1/jobs/{id}/events:
+    get:
+      tags:
+        - Events
+      summary: Получить события джобы
+      operationId: getEvents
+      parameters:
+        - name: id
+          in: path
+          description: ID джобы
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: types
+          in: query
+          description: Фильтр по типам событий (можно указать несколько значений)
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [created, started, paused, resumed, completed, failed, cancelled, timeout]
+          style: form
+          explode: true
+        - name: after
+          in: query
+          description: Фильтр событий после этого timestamp (ISO 8601)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: before
+          in: query
+          description: Фильтр событий до этого timestamp (ISO 8601)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          description: Количество записей на странице (по умолчанию 100)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 100
+            minimum: 1
+            maximum: 1000
+        - name: offset
+          in: query
+          description: Смещение для пагинации (по умолчанию 0)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: Список событий
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventsList'
+        '404':
+          description: Job не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
+  /api/v1/events:
+    get:
+      tags:
+        - Events
+      summary: Получить события по всем джобам
+      operationId: listAllEvents
+      parameters:
+        - name: job_id
+          in: query
+          description: Фильтр по ID джобы (опционально)
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: entity_type
+          in: query
+          description: Фильтр по типу сущности
+          required: false
+          schema:
+            type: string
+            enum: [experiment, dataset, project, namespace]
+        - name: entity_id
+          in: query
+          description: Фильтр по ID сущности
+          required: false
+          schema:
+            type: integer
+            format: int64
+        - name: types
+          in: query
+          description: Фильтр по типам событий (можно указать несколько значений)
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [created, started, paused, resumed, completed, failed, cancelled, timeout]
+          style: form
+          explode: true
+        - name: after
+          in: query
+          description: Фильтр событий после этого timestamp (ISO 8601)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: before
+          in: query
+          description: Фильтр событий до этого timestamp (ISO 8601)
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: limit
+          in: query
+          description: Количество записей на странице (по умолчанию 100)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 100
+            minimum: 1
+            maximum: 1000
+        - name: offset
+          in: query
+          description: Смещение для пагинации (по умолчанию 0)
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+      responses:
+        '200':
+          description: Список событий по всем джобам
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventsList'
+        '400':
+          description: Невалидные параметры запроса
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
+  /api/v1/steps/{id}/advance:
+    post:
+      tags:
+        - Steps
+      summary: Продвинуть manual step
+      operationId: advanceStep
+      parameters:
+        - name: id
+          in: path
+          description: ID шага
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Step успешно продвинут
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdvanceStepResponse'
+        '400':
+          description: Невалидный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Step не найден
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - ApiKeyAuth: []
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API ключ для аутентификации
+
+  schemas:
+    CreateJobRequest:
+      type: object
+      required:
+        - name
+        - type
+      properties:
+        name:
+          type: string
+          description: Название джобы
+          example: "Deploy experiment v1.0"
+        description:
+          type: string
+          description: Описание джобы
+          example: "Deploying production experiment configuration"
+        type:
+          type: string
+          description: Тип джобы
+          example: "experiment_deploy"
+        execution_target:
+          type: string
+          description: Целевая система для выполнения
+        config:
+          type: object
+          description: Конфигурация джобы
+          additionalProperties: true
+        parameters:
+          type: object
+          description: Параметры джобы
+          additionalProperties: true
+        tags:
+          type: array
+          description: Теги для категоризации
+          items:
+            type: string
+        entity:
+          $ref: '#/components/schemas/LinkedEntity'
+        steps:
+          type: array
+          description: Список шагов для выполнения
+          items:
+            $ref: '#/components/schemas/CreateStep'
+
+    LinkedEntity:
+      type: object
+      required:
+        - type
+        - id
+      properties:
+        type:
+          type: string
+          description: Тип сущности
+          enum: [experiment, dataset, project, namespace]
+          example: "experiment"
+        id:
+          type: integer
+          format: int64
+          description: ID сущности
+          example: 123
+
+    Entity:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Тип сущности
+          enum: [experiment, dataset, project, namespace]
+        id:
+          type: integer
+          format: int64
+          description: ID сущности
+
+    CreateStep:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Название шага
+          example: "apply-config"
+        description:
+          type: string
+          description: Описание шага
+        order:
+          type: integer
+          format: int32
+          description: Порядок выполнения шага
+        config:
+          type: object
+          description: Конфигурация шага
+          additionalProperties: true
+
+    Stage:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Название стейджа
+        description:
+          type: string
+          description: Описание стейджа
+        order:
+          type: integer
+          format: int32
+          description: Порядок выполнения стейджа
+        required:
+          type: boolean
+          description: Обязательный ли стейдж
+        step_id:
+          type: integer
+          format: int64
+          description: ID соответствующего шага (если существует)
+        step_status:
+          type: string
+          description: Статус соответствующего шага (если существует)
+        logs:
+          type: string
+          description: Логи стейджа в виде текста
+        actions:
+          type: array
+          description: Доступные действия для стейджа
+          items:
+            type: string
+
+    JobCreated:
+      type: object
+      properties:
+        job:
+          $ref: '#/components/schemas/Job'
+        steps:
+          type: array
+          description: Список созданных шагов
+          items:
+            $ref: '#/components/schemas/Step'
+
+    JobsList:
+      type: object
+      properties:
+        jobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Job'
+        total:
+          type: integer
+          format: int32
+          description: Общее количество джоб (для пагинации)
+        pages:
+          type: integer
+          format: int32
+          description: Количество страниц
+
+    CancelJobResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Сообщение об отмене
+        job_id:
+          type: integer
+          format: int64
+          description: ID отмененной джобы
+
+    AdvanceStepResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Сообщение о продвижении шага
+        step_id:
+          type: integer
+          format: int64
+          description: ID продвинутого шага
+
+    Job:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID джобы
+        name:
+          type: string
+          description: Название джобы
+        description:
+          type: string
+          description: Описание джобы
+        type:
+          type: string
+          description: Тип джобы
+        status:
+          type: string
+          description: Текущий статус джобы
+          enum: [pending, queued, running, paused, completed, failed, cancelled, timeout]
+        status_description:
+          type: string
+          description: Описание статуса джобы
+        execution_target:
+          type: string
+          description: Целевая система для выполнения
+          enum: [orchestrator]
+        entity:
+          $ref: '#/components/schemas/Entity'
+        created_at:
+          type: string
+          format: date-time
+          description: Время создания
+        started_at:
+          type: string
+          format: date-time
+          description: Время начала выполнения
+        finished_at:
+          type: string
+          format: date-time
+          description: Время завершения
+        updated_at:
+          type: string
+          format: date-time
+          description: Время последнего обновления
+        tags:
+          type: array
+          items:
+            type: string
+          description: Теги джобы
+        result:
+          type: object
+          description: Результат выполнения
+          additionalProperties: true
+        error_message:
+          type: string
+          description: Сообщение об ошибке
+        created_by:
+          type: string
+          description: Кто создал джобу
+        parameters:
+          type: object
+          description: Параметры джобы
+          additionalProperties: true
+        config:
+          type: object
+          description: Конфигурация джобы
+          additionalProperties: true
+        stages:
+          type: array
+          description: Стейджи джобы
+          items:
+            $ref: '#/components/schemas/Stage'
+    Step:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID шага
+        job_id:
+          type: integer
+          format: int64
+          description: ID джобы
+        name:
+          type: string
+          description: Название шага
+        description:
+          type: string
+          description: Описание шага
+        order:
+          type: integer
+          format: int32
+          description: Порядок выполнения
+        status:
+          type: string
+          description: Статус шага
+          enum: [pending, queued, running, completed, failed, cancelled, waiting]
+        mode:
+          type: string
+          description: Режим выполнения шага
+          enum: [sequential, parallel]
+        created_at:
+          type: string
+          format: date-time
+          description: Время создания
+        config:
+          type: object
+          description: Конфигурация шага
+          additionalProperties: true
+
+    LogEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID лог-записи
+        job_id:
+          type: integer
+          format: int64
+          description: ID джобы
+        step_id:
+          type: integer
+          format: int64
+          description: ID шага (опционально)
+        timestamp:
+          type: string
+          format: date-time
+          description: Время записи лога
+        level:
+          type: string
+          description: Уровень лога
+          enum: [DEBUG, INFO, WARN, ERROR]
+        message:
+          type: string
+          description: Сообщение лога
+        metadata:
+          type: object
+          description: Дополнительные метаданные
+          additionalProperties: true
+
+    LogsList:
+      type: object
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: '#/components/schemas/LogEntry'
+        total:
+          type: integer
+          format: int32
+          description: Общее количество логов
+        limit:
+          type: integer
+          format: int32
+          description: Лимит записей на странице
+        offset:
+          type: integer
+          format: int32
+          description: Смещение
+
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID события
+        job_id:
+          type: integer
+          format: int64
+          description: ID джобы
+        type:
+          type: string
+          description: Тип события
+          enum: [created, started, paused, resumed, completed, failed, cancelled, timeout]
+        timestamp:
+          type: string
+          format: date-time
+          description: Время события
+        details:
+          type: object
+          description: Детали события
+          additionalProperties: true
+        user_id:
+          type: string
+          description: ID пользователя, инициировавшего событие
+
+    EventsList:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        total:
+          type: integer
+          format: int32
+          description: Общее количество событий
+        limit:
+          type: integer
+          format: int32
+          description: Лимит записей на странице
+        offset:
+          type: integer
+          format: int32
+          description: Смещение
+
+    EventWithJob:
+      type: object
+      description: Событие с полной информацией о джобе
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: ID события
+        job_id:
+          type: integer
+          format: int64
+          description: ID джобы
+        type:
+          type: string
+          description: Тип события
+          enum: [created, started, paused, resumed, completed, failed, cancelled, timeout]
+        timestamp:
+          type: string
+          format: date-time
+          description: Время события
+        details:
+          type: object
+          description: Детали события
+          additionalProperties: true
+        user_id:
+          type: string
+          description: ID пользователя, инициировавшего событие
+
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Описание ошибки
+        code:
+          type: string
+          description: Код ошибки
+        details:
+          type: object
+          description: Дополнительные детали ошибки
+          additionalProperties: true
+
