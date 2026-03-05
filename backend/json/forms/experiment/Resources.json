@@ -1,0 +1,215 @@
+[
+    {
+        "name": "Resharder",
+        "type": {
+            "type": "struct",
+            "struct_params": [
+                {
+                    "name": "ReplicasInDc",
+                    "type": {
+                        "type": "integer"
+                    },
+                    "default": 1
+                },
+                {
+                    "name": "CpuCores",
+                    "type": {
+                        "type": "integer"
+                    },
+                    "default": 4
+                },
+                {
+                    "name": "RamMB",
+                    "type": {
+                        "type": "integer"
+                    },
+                    "default": 16384
+                },
+                {
+                    "name": "NetworkInMbit",
+                    "type": {
+                        "type": "integer"
+                    },
+                    "default": 1024
+                },
+                {
+                    "name": "NetworkOutMbit",
+                    "type": {
+                        "type": "integer"
+                    },
+                    "default": 1024
+                },
+                {
+                    "name": "SystemStorages",
+                    "type": {
+                        "type": "struct",
+                        "struct_params": [
+                            {
+                                "name": "Yt",
+                                "type": {
+                                    "type": "struct",
+                                    "struct_params": [
+                                        {
+                                            "name": "Type",
+                                            "type": {
+                                                "type": "string",
+                                                "type_constraint": {
+                                                    "enum": [
+                                                        "ssd",
+                                                        "nvme",
+                                                        "hdd"
+                                                    ]
+                                                }
+                                            },
+                                            "default": "ssd"
+                                        },
+                                        {
+                                            "name": "SizeMB",
+                                            "type": {
+                                                "type": "integer"
+                                            },
+                                            "default": 10240
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "Rtse",
+                                "type": {
+                                    "type": "struct",
+                                    "struct_params": [
+                                        {
+                                            "name": "Type",
+                                            "type": {
+                                                "type": "string",
+                                                "type_constraint": {
+                                                    "enum": [
+                                                        "ssd",
+                                                        "nvme",
+                                                        "hdd"
+                                                    ]
+                                                }
+                                            },
+                                            "default": "ssd"
+                                        },
+                                        {
+                                            "name": "SizeMB",
+                                            "type": {
+                                                "type": "integer"
+                                            },
+                                            "default": 3072
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "name": "Worker",
+        "type": {
+            "type": "struct",
+            "struct_params": [
+                {
+                    "name": "ReplicasInDc",
+                    "type": {
+                        "type": "integer"
+                    }
+                },
+                {
+                    "name": "CpuCores",
+                    "type": {
+                        "type": "integer"
+                    }
+                },
+                {
+                    "name": "RamMB",
+                    "type": {
+                        "type": "integer"
+                    }
+                },
+                {
+                    "name": "NetworkInMbit",
+                    "type": {
+                        "type": "integer"
+                    }
+                },
+                {
+                    "name": "NetworkOutMbit",
+                    "type": {
+                        "type": "integer"
+                    }
+                },
+                {
+                    "name": "SystemStorages",
+                    "type": {
+                        "type": "struct",
+                        "struct_params": [
+                            {
+                                "name": "Yt",
+                                "type": {
+                                    "type": "struct",
+                                    "struct_params": [
+                                        {
+                                            "name": "Type",
+                                            "type": {
+                                                "type": "string",
+                                                "type_constraint": {
+                                                    "enum": [
+                                                        "ssd",
+                                                        "nvme",
+                                                        "hdd"
+                                                    ]
+                                                }
+                                            },
+                                            "default": "ssd"
+                                        },
+                                        {
+                                            "name": "SizeMB",
+                                            "type": {
+                                                "type": "integer"
+                                            },
+                                            "default": 10240
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "name": "Rtse",
+                                "type": {
+                                    "type": "struct",
+                                    "struct_params": [
+                                        {
+                                            "name": "Type",
+                                            "type": {
+                                                "type": "string",
+                                                "type_constraint": {
+                                                    "enum": [
+                                                        "ssd",
+                                                        "nvme",
+                                                        "hdd"
+                                                    ]
+                                                }
+                                            },
+                                            "default": "ssd"
+                                        },
+                                        {
+                                            "name": "SizeMB",
+                                            "type": {
+                                                "type": "integer"
+                                            },
+                                            "default": 3072
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+]

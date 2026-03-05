@@ -1,0 +1,218 @@
+[
+    {
+        "name": "InputSources",
+        "type": {
+            "type": "array",
+            "nested_type": "struct",
+            "struct_params": [
+                {
+                    "name": "SourceName",
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "OutputName",
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "Sharding",
+                    "one_of": [
+                        {
+                            "name": "ShardingKeys",
+                            "type": {
+                                "type": "array",
+                                "nested_type": "string"
+                            }
+                        },
+                        {
+                            "name": "ShardingHashKey",
+                            "type": {
+                                "type": "string"
+                            }
+                        },
+                        {
+                            "name": "ShardingRoundRobin",
+                            "type": {
+                                "type": "boolean"
+                            }
+                        },
+                        {
+                            "name": "ShardingRoundRobinBatch",
+                            "type": {
+                                "type": "boolean"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "ReadOptions",
+                    "one_of": [
+                        {
+                            "name": "StaticTableReadOptions",
+                            "type": {
+                                "type": "struct",
+                                "struct_params": [
+                                    {
+                                        "name": "SplitShardsCount",
+                                        "type": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "KVTableReadOptions",
+                            "type": {
+                                "type": "struct",
+                                "struct_params": [
+                                    {
+                                        "name": "ProcessPeriodSeconds",
+                                        "type": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    {
+                                        "name": "SplitShardsCount",
+                                        "type": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "QYTReadOptions",
+                            "type": {
+                                "type": "struct",
+                                "struct_params": [
+                                    {
+                                        "name": "DelayMs",
+                                        "type": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    {
+                                        "name": "ReadFullRowAsYson",
+                                        "type": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    {
+                                        "name": "VitalConsumer",
+                                        "type": {
+                                            "type": "boolean"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "name": "KafkaReadOptions",
+                            "type": {
+                                "type": "struct",
+                                "struct_params": [
+                                    {
+                                        "name": "GroupId",
+                                        "type": {
+                                            "type": "string"
+                                        },
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "SecurityProtocol",
+                                        "type": {
+                                            "type": "string",
+                                            "type_constraint": {
+                                                "enum": [
+                                                    "plaintext",
+                                                    "ssl",
+                                                    "sasl_plaintext",
+                                                    "sasl_ssl"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "SaslUsername",
+                                        "type": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "SaslPassword",
+                                        "type": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    {
+                                        "name": "SaslMechanism",
+                                        "type": {
+                                            "type": "string",
+                                            "type_constraint": {
+                                                "enum": [
+                                                    "PLAIN",
+                                                    "GSSAPI",
+                                                    "SCRAM-SHA-256",
+                                                    "SCRAM-SHA-512",
+                                                    "OAUTHBEARER"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "EnableSslCertificateVerification",
+                                        "type": {
+                                            "type": "string",
+                                            "type_constraint": {
+                                                "enum": [
+                                                    "true",
+                                                    "false"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "MaxOutChunkSize",
+                                        "type": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    {
+                                        "name": "DelayOnErrorMs",
+                                        "type": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "IntermediateQueueOptions",
+        "type": {
+            "type": "struct",
+            "struct_params": [
+                {
+                    "name": "ShardsCount",
+                    "type": {
+                        "type": "integer"
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "name": "LoopbackQueueShardsCount",
+        "type": {
+            "type": "integer"
+        }
+    }
+]

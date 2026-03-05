@@ -1,0 +1,563 @@
+openapi: 3.0.2
+info:
+  title: StreamFlow Orchestrator
+  description: Orchestrator manages StreamFlow experiments
+  version: 0.1.0
+paths:
+  /v1/experiments/apply:
+    post:
+      tags:
+        - Experiments
+      summary: Apply experiment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - experiment_config
+              properties:
+                dry_run:
+                  type: boolean
+                  description: >-
+                    Do apply to check for various errors without actually
+                    running it (default: false)
+                experiment_config:
+                  type: object
+                  additionalProperties: false
+            example:
+              dry_run: true
+              experiment_config:
+                Meta:
+                  ExperimentId: '2345'
+                  ExperimentName: My super experiment
+                  ProjectId: '123'
+                  ProjectName: My super project
+                  AbcProductId: '4323'
+                  Namespace: adtech
+                  YT:
+                    Cluster: miranda.yt.idzn.ru
+                    Token: '{{ expscr(''scr-AAAAAAAAAAAAAAAA'', ''yt_token'') }}'
+                    ProxyRole: default
+                    Bundle: bundle
+                    WorkDir: //home/ucp-test/rtse_workdir
+                Placement:
+                  OnecloudDatacenters:
+                    - kc
+                    - pc
+                Resources:
+                  Resharder:
+                    ReplicasInDc: 1
+                    CpuCores: 2
+                    RamMb: 2048
+                    NetworkInMb: 10
+                    NetworkOutMb: 10
+                  Worker:
+                    ReplicasInDc: 1
+                    CpuCores: 2
+                    RamMb: 2048
+                    NetworkInMb: 10
+                    NetworkOutMb: 10
+                PublicSources: {}
+                InternalSources: {}
+                Resharder: {}
+                Worker: {}
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  experiment_info:
+                    type: object
+                    additionalProperties: false
+                    x-vk-go-def: models.ExperimentInfo
+                    properties:
+                      experiment_id:
+                        type: string
+                      cloud_web_links:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            link:
+                              type: string
+              example:
+                experiment_info:
+                  experiment_id: '0'
+                  cloud_web_links:
+                    - name: worker
+                      link: >-
+                        https://cloud.vk.team/cloud/KC,PC/ns/infra/service/sf-dev-wrkr-pl-0.proj-0
+                    - name: resharder
+                      link: >-
+                        https://cloud.vk.team/cloud/KC,PC/ns/infra/service/sf-dev-rsdr-pl-0.proj-0
+        '400':
+          description: Bad request. Validation error or incorrect input data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        error_code:
+                          type: integer
+                        error_name:
+                          type: string
+                        description:
+                          type: string
+                example:
+                  errors:
+                    - error_code: 4001
+                      error_name: Corrupted dataset
+                      description: Датасорс `#123` не был найден в директории /a/b/c
+        '500':
+          description: Internal server error.
+  /v1/experiments/status:
+    get:
+      tags:
+        - Experiments
+      summary: Get experiment status
+      parameters:
+        - name: experiment_id
+          in: query
+          required: true
+          description: Unique and immutable identifier
+          schema:
+            x-vk-go-extra-tags: validate:"required"
+            type: string
+            example: '12739'
+      responses:
+        '200':
+          description: Status of whole experiment
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  last_updated:
+                    type: integer
+                  overall_status:
+                    type: string
+                    enum:
+                      - unknown
+                      - deploying
+                      - running
+                      - stopping
+                      - stopped
+                      - failed
+                      - pending
+                  components_status:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        status:
+                          type: string
+                          enum:
+                            - unknown
+                            - deploying
+                            - running
+                            - stopping
+                            - stopped
+                            - failed
+                            - pending
+                  messages:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message_type:
+                          type: string
+                          enum:
+                            - info
+                            - warning
+                            - error
+                        message_name:
+                          type: string
+                        message_body:
+                          type: string
+                example:
+                  last_updated: 1743506511
+                  overall_status: failed
+                  components_status:
+                    - name: MyConcat
+                      status: failed
+                  messages:
+                    - message_type: error
+                      message_name: Ошибка деплоя
+                      message_body: Превышена квота в очереди test.prod по CPU
+        '400':
+          description: Bad request. Validation error or incorrect input data.
+        '404':
+          description: A experiment with the specified ID was not found
+        '500':
+          description: Internal server error.
+  /v1/experiments/start:
+    post:
+      tags:
+        - Experiments
+      summary: Start experiment
+      parameters:
+        - name: experiment_id
+          in: query
+          required: true
+          description: Unique and immutable identifier
+          schema:
+            x-vk-go-extra-tags: validate:"required"
+            type: string
+            example: '12739'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties: {}
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties: {}
+        '400':
+          description: Bad request. Validation error or incorrect input data.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties: {}
+        '404':
+          description: A experiment with the specified ID was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties: {}
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties: {}
+  /v1/experiments/stop:
+    post:
+      tags:
+        - Experiments
+      summary: Stop experiment
+      parameters:
+        - name: experiment_id
+          in: query
+          required: true
+          description: Unique and immutable identifier
+          schema:
+            x-vk-go-extra-tags: validate:"required"
+            type: string
+            example: '12739'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties: {}
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties: {}
+        '400':
+          description: Bad request. Validation error or incorrect input data.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties: {}
+        '404':
+          description: A experiment with the specified ID was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties: {}
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties: {}
+  /v1/experiments/info:
+    get:
+      tags:
+        - Experiments
+      summary: Experiment info
+      parameters:
+        - name: experiment_id
+          in: query
+          required: true
+          description: Unique and immutable identifier
+          schema:
+            x-vk-go-extra-tags: validate:"required"
+            type: string
+            example: '12739'
+      responses:
+        '200':
+          description: OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                x-vk-go-def: models.ExperimentInfo
+                properties:
+                  experiment_id:
+                    type: string
+                  cloud_web_links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        link:
+                          type: string
+              example:
+                experiment_id: '0'
+                cloud_web_links:
+                  - name: worker
+                    link: >-
+                      https://cloud.vk.team/cloud/KC,PC/ns/infra/service/sf-dev-wrkr-pl-0.proj-0
+                  - name: resharder
+                    link: >-
+                      https://cloud.vk.team/cloud/KC,PC/ns/infra/service/sf-dev-rsdr-pl-0.proj-0
+        '400':
+          description: Bad request. Validation error or incorrect input data.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties: {}
+        '404':
+          description: A experiment with the specified ID was not found
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties: {}
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties: {}
+  /v1/experiments/validation/fast:
+    post:
+      tags:
+        - Validations
+      summary: Fast experiment configuration validation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - config
+                - should_write_logs
+              properties:
+                config:
+                  type: object
+                  additionalProperties: true
+                should_write_logs:
+                  type: boolean
+                  default: true
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - experiment_is_valid
+                  - errors
+                  - logs
+                properties:
+                  experiment_is_valid:
+                    type: boolean
+                  summary:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                  logs:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: false
+                      required:
+                        - entity_type
+                        - entity_name
+                        - records
+                      properties:
+                        entity_type:
+                          type: string
+                          enum:
+                            - CUBE
+                            - GRAPH
+                            - UNKNOWN
+                        entity_name:
+                          type: string
+                        records:
+                          type: array
+                          items:
+                            type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+  /v1/experiments/validation/run:
+    post:
+      tags:
+        - Validations
+      summary: Experiment configuration validation with data run
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - config
+                - should_write_logs
+              properties:
+                config:
+                  type: object
+                  additionalProperties: true
+                should_write_logs:
+                  type: boolean
+                  default: true
+                data_sets:
+                  type: array
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: false
+                      required:
+                        - source_name
+                        - data
+                      properties:
+                        source_name:
+                          type: string
+                        data:
+                          type: object
+                          additionalProperties:
+                            type: array
+                            items:
+                              type: string
+                should_read_yt_sample:
+                  type: boolean
+      responses:
+        '200':
+          description: Validation result with run
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - experiment_is_valid
+                  - errors
+                  - logs
+                  - run_result
+                properties:
+                  experiment_is_valid:
+                    type: boolean
+                  summary:
+                    type: string
+                  errors:
+                    type: array
+                    items:
+                      type: string
+                  run_result:
+                    type: object
+                    additionalProperties: false
+                    properties:
+                      batch_runs:
+                        type: array
+                        items:
+                          type: object
+                          additionalProperties: false
+                          properties:
+                            cube_runs:
+                              type: object
+                              additionalProperties:
+                                type: object
+                                additionalProperties: false
+                                required:
+                                  - inputs
+                                  - outputs
+                                  - logs
+                                properties:
+                                  inputs:
+                                    type: object
+                                    additionalProperties:
+                                      type: array
+                                      items:
+                                        type: string
+                                  outputs:
+                                    type: object
+                                    additionalProperties:
+                                      type: array
+                                      items:
+                                        type: string
+                                  logs:
+                                    type: array
+                                    items:
+                                      type: string
+                  logs:
+                    type: array
+                    items:
+                      type: string
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
