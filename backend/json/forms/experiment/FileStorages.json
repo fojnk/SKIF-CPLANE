@@ -1,0 +1,91 @@
+[
+    {
+        "name": "Name",
+        "type": {
+            "type": "string"
+        },
+        "required": true
+    },
+    {
+        "name": "MountPoint",
+        "type": {
+            "type": "string"
+        }
+    },
+    {
+        "name": "Disk",
+        "type": {
+            "type": "struct",
+            "struct_params": [
+                {
+                    "name": "Type",
+                    "type": {
+                        "type": "string",
+                        "type_constraint": {
+                            "enum": [
+                                "ssd",
+                                "nvme",
+                                "hdd"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "SizeMB",
+                    "type": {
+                        "type": "integer"
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "name": "Files",
+        "type": {
+            "type": "array",
+            "nested_type": "struct",
+            "struct_params": [
+                {
+                    "name": "SrcUrl",
+                    "type": {
+                        "type": "string"
+                    },
+                    "required": true
+                },
+                                {
+                    "name": "DstDir",
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                                {
+                    "name": "Mode",
+                    "type": {
+                        "type": "string",
+                        "type_constraint": {
+                            "length": 3
+                        }
+                    }
+                },
+                                {
+                    "name": "RenameTo",
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                                {
+                    "name": "Unpack",
+                    "type": {
+                        "type": "boolean"
+                    }
+                },
+                                {
+                    "name": "Force",
+                    "type": {
+                        "type": "boolean"
+                    }
+                }
+            ]
+        }
+    }
+]

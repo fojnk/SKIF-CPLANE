@@ -1,0 +1,13 @@
+[
+    {
+        "name": "OnecloudDatacenters",
+        "type": {
+            "type": "array",
+            "nested_type": "string",
+            "type_constraint": {
+                "enum": ["dc","kc","rc","hc","pc","uc"]
+            }
+        },
+        "required": true
+    }
+]

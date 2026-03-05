@@ -1,0 +1,146 @@
+version: "2"
+run:
+  concurrency: 4
+linters:
+  default: none
+  enable:
+    - bodyclose
+    - dogsled
+    - dupl
+    - errcheck
+    - funlen
+    - goconst
+    - gocritic
+    - gocyclo
+    - goprintffuncname
+    - gosec
+    - govet
+    - ineffassign
+    - lll
+    - misspell
+    - mnd
+    - nakedret
+    - noctx
+    - nolintlint
+    - staticcheck
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
+  settings:
+    dupl:
+      threshold: 100
+    funlen:
+      lines: 150
+      statements: 50
+    goconst:
+      min-len: 2
+      min-occurrences: 3
+    gocritic:
+      disabled-checks:
+        - dupImport
+        - ifElseChain
+        - octalLiteral
+        - whyNoLint
+      enabled-tags:
+        - diagnostic
+        - experimental
+        - opinionated
+        - style
+    gocyclo:
+      min-complexity: 15
+    govet:
+      settings:
+        printf:
+          funcs:
+            - (github.com/golangci/golangci-lint/pkg/logutils.Log).Infof
+            - (github.com/golangci/golangci-lint/pkg/logutils.Log).Warnf
+            - (github.com/golangci/golangci-lint/pkg/logutils.Log).Errorf
+            - (github.com/golangci/golangci-lint/pkg/logutils.Log).Fatalf
+    lll:
+      line-length: 140
+    misspell:
+      locale: US
+      ignore-rules:
+        - cancelled
+        - cancellation
+    mnd:
+      checks:
+        - argument
+        - case
+        - condition
+        - return
+      ignored-numbers:
+        - "0"
+        - "1"
+        - "2"
+        - "3"
+        - "4"
+        - "5"
+        - "6"
+        - "7"
+        - "8"
+        - "9"
+        - "999"
+      ignored-functions:
+        - strings.SplitN
+    nolintlint:
+      require-explanation: false
+      require-specific: false
+      allow-unused: false
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - dupl
+          - funlen
+          - goconst
+          - gocritic
+          - gosec
+          - lll
+          - mnd
+          - staticcheck
+        path: _test\.go
+      - path: pkg/golinters/errcheck.go
+        text: 'SA1019: errCfg.Exclude is deprecated: use ExcludeFunctions instead'
+      - path: pkg/commands/run.go
+        text: 'SA1019: lsc.Errcheck.Exclude is deprecated: use ExcludeFunctions instead'
+      - path: pkg/commands/run.go
+        text: 'SA1019: e.cfg.Run.Deadline is deprecated: Deadline exists for historical compatibility and should not be used.'
+      - path: pkg/golinters/gofumpt.go
+        text: 'SA1019: settings.LangVersion is deprecated: use the global `run.go` instead.'
+      - path: pkg/golinters/staticcheck_common.go
+        text: 'SA1019: settings.GoVersion is deprecated: use the global `run.go` instead.'
+      - path: pkg/lint/lintersdb/manager.go
+        text: 'SA1019: (.+).(GoVersion|LangVersion) is deprecated: use the global `run.go` instead.'
+    paths:
+      # TODO remove fix code by lints errors
+      - internal
+      - tests
+      #
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - gitlab.diftech.org
+  exclusions:
+    generated: lax
+    paths:
+      # TODO remove fix code by lints errors
+      - internal
+      - tests
+      #
+      - third_party$
+      - builtin$
+      - examples$

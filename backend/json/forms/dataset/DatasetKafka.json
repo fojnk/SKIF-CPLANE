@@ -1,0 +1,85 @@
+[
+    {
+        "name": "Kafka",
+        "type": {
+            "type": "struct",
+            "struct_params": [
+                {
+                    "name": "BootstrapServers",
+                    "type": {
+                        "type": "string"
+                    },
+                    "description": "Список брокеров через запятую",
+                    "required": true
+                },
+                {
+                    "name": "SrcTopic",
+                    "type": {
+                        "type": "string"
+                    },
+                    "required": true
+                }
+            ]
+        }
+    },
+    {
+        "name": "NormalizedKafkaSchema",
+        "type": {
+            "type": "boolean"
+        }
+    },
+    {
+        "name": "MessageFormat",
+        "type": {
+            "type": "string",
+            "type_constraint": {
+                "enum": [
+                    "MF_YSON",
+                    "MF_JSON",
+                    "MF_PROTO"
+                ]
+            }
+        }
+    },
+    {
+        "name": "ProtoInfo",
+        "type": {
+            "type": "struct",
+            "struct_params": [
+                {
+                    "name": "Name",
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "SkipBytes",
+                    "type": {
+                        "type": "integer"
+                    }
+                },
+                {
+                    "name": "EnumFormat",
+                    "type": {
+                        "type": "string",
+                        "type_constraint": {
+                            "enum": [
+                                "NUMBER",
+                                "NAME",
+                                "FULL_NAME"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Meta",
+                    "description": "Мета protobin в формате base64",
+                    "type": {
+                        "type": "string"
+                    }
+                }
+            ]
+        },
+        "description": "Структура для указания формата протобафа содержащегося в очереди"
+    }
+]

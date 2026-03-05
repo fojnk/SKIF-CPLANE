@@ -1,0 +1,94 @@
+{
+        "InternalSources": {
+                "resharder_queue": {
+                        "ShardsCount": 10,
+                        "SourceType": "Q"
+                }
+        },
+        "Meta": {
+                "Namespace": "test",
+                "ExperimentId": "123",
+                "ExperimentName": "test",
+                "Project": "test",
+                "ProjectId": "123",
+                "NamespaceId": "123",
+                "YT": {
+                        "Bundle": "test",
+                        "Cluster": "miranda",
+                        "ProxyRole": "test",
+                        "Token": "test",
+                        "WorkDir": "test"
+                }
+        },
+        "PublicSources": {
+                "shownFeeds72": {
+                        "Schema": {
+                                "field": "type"
+                        },
+                        "ShardsCount": 10,
+                        "YT": {
+                                "cluster": "miranda",
+                                "path": "//home/ok_log/shownFeeds72"
+                        },
+                        "SourceType": "ST_EXTERNAL_QUEUE"
+                }
+        },
+        "Resharder": {
+                "Inputs": [
+                        {
+                                "Keys": [
+                                        "app",
+                                        "client",
+                                        "feed_id"
+                                ],
+                                "Source": "@shownFeeds72"
+                        }
+                ]
+        },
+        "Worker": {
+                "Graph": {
+                        "Cubes": [
+                                {
+                                        "ExtractKey": {
+                                                "keys": [
+                                                        "app",
+                                                        "client",
+                                                        "feed_id"
+                                                ]
+                                        },
+                                        "Inputs": {
+                                                "clickFeeds": {
+                                                        "cube": "...",
+                                                        "name": "@clickFeeds"
+                                                },
+                                                "sentFeeds72": {
+                                                        "cube": "...",
+                                                        "name": "@sentFeeds72"
+                                                },
+                                                "shownFeeds72": {
+                                                        "cube": "...",
+                                                        "name": "@shownFeeds72"
+                                                }
+                                        },
+                                        "Name": "get_key_from_data",
+                                        "Outputs": [
+                                                "keys"
+                                        ]
+                                }
+                        ],
+                        "Input": "@resharder_queue",
+                        "Outputs": [
+                                "@enrich_log"
+                        ],
+                        "States": [
+                                "\u0026state"
+                        ]
+                }
+        },
+        "json_key": {
+                "key": "value"
+        },
+        "string_key": "test_value",
+        "yql_key": "select 1",
+        "int_key": 1
+}

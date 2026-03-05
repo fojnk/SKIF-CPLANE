@@ -1,0 +1,36 @@
+[
+    {
+        "name": "GraphConfig",
+        "type": {
+            "type": "struct",
+            "struct_params": [
+                {
+                    "name": "Name",
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "OutputNames",
+                    "type": {
+                        "type": "array",
+                        "nested_type": "string"
+                    }
+                },
+                {
+                    "name": "StateNames",
+                    "type": {
+                        "type": "array",
+                        "nested_type": "string"
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "name": "MaxEpochSize",
+        "type": {
+            "type": "integer"
+        }
+    }
+]
