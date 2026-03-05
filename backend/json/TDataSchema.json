@@ -1,0 +1,150 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/TDataSchema",
+    "definitions": {
+        "TDataSchema": {
+            "type": "object",
+            "properties": {
+                "columns": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/TColumn"
+                    }
+                }
+            }
+        },
+        "TColumn": {
+            "additionalProperties": true,
+            "type": "object",
+            "properties": {
+                "type": {
+                    "$ref": "#/definitions/EPrimitiveType"
+                },
+                "list": {
+                    "$ref": "#/definitions/TColumn"
+                },
+                "struct": {
+                    "type": "object",
+                    "properties": {
+                        "fields": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/TColumn"
+                            }
+                        }
+                    }
+                },
+                "dict": {
+                    "array": "object",
+                    "properties": {
+                        "key": {
+                            "$ref": "#/definitions/TColumn"
+                        },
+                        "value": {
+                            "$ref": "#/definitions/TColumn"
+                        }
+                    }
+                },
+                "tuple": {
+                    "type": "array",
+                    "properties": {
+                        "types": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/TColumn"
+                            }
+                        }
+                    }
+                },
+                "optional": {
+                    "type": "boolean"
+                },
+                "column_name": {
+                    "type": "string"
+                },
+                "sorted": {
+                    "type": "boolean"
+                },
+                "sort_order": {
+                    "$ref": "#/definitions/EColumnSortOrder"
+                },
+                "data_group": {
+                    "type": "string",
+                    "default": "default"
+                },
+                "lock_group": {
+                    "type": "string"
+                },
+                "expression": {
+                    "type": "string"
+                },
+                "aggregation": {
+                    "$ref": "#/definitions/EColumnAggregation"
+                },
+                "hunk_size": {
+                    "type": "integer"
+                }
+            }
+        },
+        "EPrimitiveType": {
+            "type": "string",
+            "enum": [
+                "unknown",
+                "boolean",
+                "bool",
+                "uint64",
+                "int64",
+                "uint32",
+                "int32",
+                "float",
+                "double",
+                "string",
+                "utf8",
+                "json",
+                "yson",
+                "any",
+                "uuid",
+                "datetime",
+                "timestamp",
+                "uint16",
+                "int16",
+                "uint8",
+                "int8",
+                "date",
+                "date32",
+                "datetime64",
+                "timestamp64",
+                "interval64",
+                "interval",
+                "tz_date",
+                "tz_datetime",
+                "tz_timestamp",
+                "tz_date32",
+                "tz_datetime64",
+                "tz_timestamp64",
+                "null",
+                "void"
+            ]
+        },
+        "EColumnSortOrder": {
+            "type": "string",
+            "enum": [
+                "none",
+                "ascending",
+                "descending"
+            ]
+        },
+        "EColumnAggregation": {
+            "type": "string",
+            "enum": [
+                "none",
+                "sum",
+                "min",
+                "max",
+                "first",
+                "xdelta",
+                "dict_sum"
+            ]
+        }
+    }
+}

@@ -1,0 +1,41 @@
+{
+  "Meta": {
+    "Namespace": "tst-ns-ocf",
+    "AbcProductId":"1234",
+    "NamespaceId": "{{.NamespaceID}}",
+    "ExperimentId": "{{.ExperimentID}}",
+    "ExperimentName": "test-experiment-orchestrator-config",
+    "Project": "test-project-orchestrator-config",
+    "ProjectId": "{{.ProjectID}}",
+    "namespace_key": "val",
+    "project_key": "val"
+  },
+  "PublicSources": {
+    "test-alias-orchestrator-config-experiment-datasets-1": {
+      "Schema": {
+        "properties": {
+          "param1": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "param1": "value1",
+      "SourceType": "ST_EXTERNAL_QUEUE"
+    },
+    "test-alias-orchestrator-config-experiment-datasets-2": {
+      "Schema": {
+        "properties": {
+          "param2": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "param2": "value2",
+      "SourceType": "ST_QUEUE"
+    }
+  },
+  "experiment_key": "val",
+  "experiment_variable": "test_value_orchestrator_config"
+}

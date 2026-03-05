@@ -1,0 +1,170 @@
+{
+  "Placement": {
+    "OnecloudDatacenters": [
+      "pc"
+    ]
+  },
+  "Resources": {
+    "Resharder": {
+      "ReplicasInDc": 1,
+      "CpuCores": 4,
+      "RamMB": 16384,
+      "NetworkInMbit": 1000,
+      "NetworkOutMbit": 1000
+    },
+    "Worker": {
+      "ReplicasInDc": 1,
+      "CpuCores": 8,
+      "RamMB": 32768,
+      "NetworkInMbit": 1000,
+      "NetworkOutMbit": 1000
+    }
+  },
+  "InternalSources": {},
+  "States": [
+    {
+      "StateName": "hid_mapper",
+      "KVSourceName": "hid_mapper",
+      "OwningKvState": {
+        "MaxCacheSize": 10000
+      }
+    }
+  ],
+  "Resharder": {
+    "InputSources": [
+      {
+        "SourceName": "pv_vk",
+        "ShardingRoundRobin": true,
+        "QYTReadOptions": {
+          "ReadFullRowAsYson": true,
+          "VitalConsumer": false
+        }
+      }
+    ],
+    "IntermediateQueueOptions": {
+      "ShardsCount": 10
+    }
+  },
+  "Worker": {
+    "GraphConfig": {
+      "Name": "pv_event_vk_processor",
+      "OutputNames": [],
+      "StateNames": [
+        "hid_mapper"
+      ],
+      "Cubes": [
+        {
+          "Name": "InputQueueMapper",
+          "InputsMapping": {
+            "Input0": {
+              "Type": "CIT_RESHARDER",
+              "OutputName": "pv_vk"
+            }
+          },
+          "OutputNames": [
+            "output"
+          ],
+          "YQLOptions": {
+            "PortoEnabled": false,
+            "RunTimeoutMs": 30000,
+            "Query": "${proto_events_mapper}",
+            "UdfsDirPath": "/rtse/yql/udfs",
+            "MapSpec": {
+              "Input": {
+                "SchemaSourceNames": [
+                  "pv_vk"
+                ]
+              },
+              "Output": {
+                "Schemas": [
+                  "[\"StructType\";[[\"id_value\";[\"OptionalType\";[\"DataType\";\"String\"]]];[\"id_type\";[\"OptionalType\";[\"DataType\";\"String\"]]];[\"shop_id\";[\"OptionalType\";[\"DataType\";\"Int64\"]]];[\"product_id\";[\"OptionalType\";[\"DataType\";\"String\"]]];[\"page_type\";[\"OptionalType\";[\"DataType\";\"String\"]]];[\"total_price\";[\"OptionalType\";[\"DataType\";\"Int64\"]]];[\"timestamp\";[\"OptionalType\";[\"DataType\";\"Int64\"]]];[\"shop_type\";[\"OptionalType\";[\"DataType\";\"String\"]]]]]"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "Name": "HidLookuper",
+          "CachingLookuper": {
+            "StateName": "hid_mapper"
+          },
+          "InputsMapping": {
+            "input": {
+              "Type": "CIT_CUBE",
+              "CubeName": "InputQueueMapper",
+              "OutputName": "output"
+            }
+          },
+          "OutputNames": [
+            "output"
+          ]
+        },
+        {
+          "Name": "EventSerializer",
+          "InputsMapping": {
+            "Input0": {
+              "Type": "CIT_CUBE",
+              "CubeName": "InputQueueMapper",
+              "OutputName": "output"
+            },
+            "Input1": {
+              "Type": "CIT_CUBE",
+              "CubeName": "HidLookuper",
+              "OutputName": "output"
+            }
+          },
+          "OutputNames": [
+            "output"
+          ],
+          "YQLOptions": {
+            "PortoEnabled": false,
+            "RunTimeoutMs": 30000,
+            "Query": "${proto_events_mapper}",
+            "UdfsDirPath": "/rtse/yql/udfs",
+            "MapSpec": {
+              "Input": {
+                "Schemas": [
+                  "[\"StructType\";[[\"id_value\";[\"OptionalType\";[\"DataType\";\"String\"]]];[\"id_type\";[\"OptionalType\";[\"DataType\";\"String\"]]];[\"shop_id\";[\"OptionalType\";[\"DataType\";\"Int64\"]]];[\"product_id\";[\"OptionalType\";[\"DataType\";\"String\"]]];[\"page_type\";[\"OptionalType\";[\"DataType\";\"String\"]]];[\"total_price\";[\"OptionalType\";[\"DataType\";\"Int64\"]]];[\"timestamp\";[\"OptionalType\";[\"DataType\";\"Int64\"]]];[\"shop_type\";[\"OptionalType\";[\"DataType\";\"String\"]]]]]",
+                  "[\"StructType\";[[\"hash\";[\"OptionalType\";[\"DataType\";\"Uint64\"]]];[\"id_value\";[\"DataType\";\"String\"]];[\"id_type\";[\"DataType\";\"String\"]];[\"hid\";[\"DataType\";\"Int64\"]];[\"user_id_count\";[\"DataType\";\"Int16\"]];[\"gender\";[\"OptionalType\";[\"DataType\";\"Int8\"]]];[\"birthday\";[\"OptionalType\";[\"DataType\";\"Uint32\"]]]]]"
+                ]
+              },
+              "Output": {
+                "SchemaSourceNames": [
+                  "output_queue_vk"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "Name": "ResultQYTInsertOptions",
+          "QYTInsertOptions": {
+            "SourceName": "output_queue_vk"
+          },
+          "InputsMapping": {
+            "input": {
+              "Type": "CIT_CUBE",
+              "CubeName": "EventSerializer",
+              "OutputName": "output"
+            }
+          },
+          "OutputNames": []
+        },
+        {
+          "Name": "CommonQYTInsert",
+          "QYTInsertOptions": {
+            "SourceName": "output_queue_common"
+          },
+          "InputsMapping": {
+            "input": {
+              "Type": "CIT_CUBE",
+              "CubeName": "EventSerializer",
+              "OutputName": "output"
+            }
+          },
+          "OutputNames": []
+        }
+      ]
+    }
+  }
+}

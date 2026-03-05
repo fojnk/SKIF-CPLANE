@@ -1,0 +1,45 @@
+services:
+  testenv:
+    image: testenv:current_test
+    ports:
+      - "4000:4000"
+      - "4001:4001"
+      - "4004:4004"
+      - "4005:4005"
+      - "4006:4006"
+      - "9100:9100"
+  cplane:
+    environment:
+      DisableAuth: true
+      DisableSSL: true
+    image: cplane:current_test
+    ports:
+      - "3000:3000"
+      - "3002:3002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      testenv:
+        condition: service_started
+    volumes:
+      - "../migrations/up:/migrations/up"
+  postgres:
+    image: "postgres:13.3"
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: streamflow
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: streamflow
+      PGDATA: /var/lib/psql_data/pgdata
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U streamflow -d streamflow" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - "./pgdata:/var/lib/psql_data/pgdata"
+#      - "../migrations/up:/docker-entrypoint-initdb.d/"
+volumes:
+  pgdata:
+    driver: local

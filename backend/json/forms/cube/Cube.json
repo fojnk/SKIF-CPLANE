@@ -1,0 +1,74 @@
+[
+    {
+        "name": "Name",
+        "required": true,
+        "type": {
+            "type": "string"
+        }
+    },
+    {
+        "name": "ParamsName",
+        "required": true,
+        "type": {
+            "type": "string"
+        }
+    },
+    {
+        "name": "Inputs",
+        "required": true,
+        "type": {
+            "type": "struct",
+            "struct_params": [
+                {
+                    "name": "type",
+                    "required": true,
+                    "type": {
+                        "type": "string",
+                        "constraint": {
+                            "enum": [
+                                "static",
+                                "dynamic"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "ListNames",
+                    "type": {
+                        "type": "array",
+                        "nested_type": "string"
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "name": "Outputs",
+        "required": true,
+        "type": {
+            "type": "struct",
+            "struct_params": [
+                {
+                    "name": "type",
+                    "required": true,
+                    "type": {
+                        "type": "string",
+                        "constraint": {
+                            "enum": [
+                                "static",
+                                "dynamic"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "ListNames",
+                    "type": {
+                        "type": "array",
+                        "nested_type": "string"
+                    }
+                }
+            ]
+        }
+    }
+]

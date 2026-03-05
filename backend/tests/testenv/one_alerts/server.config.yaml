@@ -1,0 +1,9 @@
+package: one_alerts
+output: ./tests/testenv/one_alerts/server.gen.go
+generate:
+  chi-server: true
+  models: true
+output-options:
+  skip-prune: true
+
+

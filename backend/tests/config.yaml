@@ -1,0 +1,95 @@
+---
+auth_token: papaha123
+host: localhost:3000
+# указание что окружение тестовое
+is_test_env: true
+
+app_port: 3000
+app_public_port: 3002
+metrics_port: 3001
+
+log:
+  level: debug
+  file_path: ./log.log
+  rotate_max_size_MB: 5
+  rotate_max_age_days: 2
+
+database:
+  host: postgres:5432
+  user: streamflow
+  password: 1234
+  database: streamflow
+
+clients:
+  auth:
+    url: https://auth.vk.team
+    timeout: 2s
+  orchestrator:
+    base_url: http://testenv:4000
+  idm:
+    url: http://testenv:4004
+    timeout: 2s
+    push_enabled: false
+  oauth:
+    oauth-proxy: ""
+    OAuthUrl: "https://auth.vk.team/oauth2"
+    client-id: "StreamFlow"
+    grant-type: "authorization_code"
+    scope: "user_info"
+    redirect-url: "http://localhost:3000/auth/token"
+    client-secret: "secret"
+  jwt:
+    jwt-secret: "jwt-secret"
+    access_expiration: 172800
+    refresh_expiration: 2592000
+  jobd:
+    base_url: "http://testenv:4005"
+    api_key: "test-api-key"
+    timeout: 30
+  one_alerts:
+    base_url: "http://testenv:4006"
+    token: "test-token"
+    timeout: 30
+
+session_cache:
+  expiration_time: 5m
+  cleanup_interval: 10m
+
+use_cors: true
+
+experiment_urls:
+  file_loader:
+    url: https://github.com/jamirhan/EXPERIMENT_ID
+    name: FileLoader
+    enabled: true
+  grafana:
+    url: https://goc.vk.team/d/feln8ykbjqs5ce/experiment-for-ui?var-sf_experiment_id=EXPERIMENT_ID&var-workdir=YT_WORK_DIR/EXPERIMENT_ID
+    name: experiment dashboard
+    enabled: true
+  resharder_bigrt:
+    url: https://goc.vk.team/d/cel5goiq5mbcwd/bigrt-metrics?orgId=1&refresh=1m&var-cloud_service=sf-rsdr-pl-EXPERIMENT_ID.proj-PROJECT_ID
+    name: resharder (bigrt)
+    enabled: true
+  worker_bigrt:
+    url: https://goc.vk.team/d/cel5goiq5mbcwd/bigrt-metrics?orgId=1&refresh=1m&var-cloud_service=sf-wrkr-pl-EXPERIMENT_ID.proj-PROJECT_ID
+    name: worker (bigrt)
+    enabled: true
+
+project_urls:
+  bundle:
+    url: https://yt.vk.team/CLUSTER_NAME/tablet_cell_bundles/tablet_cells?activeBundle=BUNDLE_NAME
+    name: YT bundle
+    enabled: true
+  work_dir:
+    url: https://yt.vk.team/CLUSTER_NAME/navigation?path=YT_WORK_DIR
+    name: YT work dir
+    enabled: true
+
+dataset_urls:
+  yt_work_dir:
+    url: https://yt.vk.team/CLUSTER_NAME/navigation?path=YT_WORK_DIR
+    name: YT work dir
+    enabled: true
+
+acl:
+  token: super_user_token
