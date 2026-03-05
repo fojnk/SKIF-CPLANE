@@ -1,0 +1,50 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/TProjectConfig",
+    "definitions": {
+        "CPlane.Project.TYTConfig": {
+            "properties": {
+                "WorkDir": {
+                    "type": "string"
+                },
+                "Cluster": {
+                    "type": "string",
+                    "enum": [
+                        "jupiter.yt.vk.team",
+                        "moon.yt.vk.team",
+                        "miranda.yt.vk.team",
+                        "mercury-kc.yt.vk.team",
+                        "mercury-pc.yt.vk.team",
+                        "mercury-uc.yt.vk.team",
+                        "mercury-hc.yt.vk.team",
+                        "mercury-rc.yt.vk.team",
+                        "saturn.yt.vk.team"
+                    ]
+                },
+                "ProxyRole": {
+                    "type": "string"
+                },
+                "PrimaryMedium": {
+                    "type": "string"
+                },
+                "TabletCellBundle": {
+                    "type": "string"
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "TYT Config"
+        },
+        "TProjectConfig": {
+            "properties": {
+                "YT": {
+                    "$ref": "#/definitions/CPlane.Project.TYTConfig",
+                    "additionalProperties": true
+                }
+            },
+            "additionalProperties": true,
+            "type": "object",
+            "title": "T Project Config"
+        }
+    }
+}

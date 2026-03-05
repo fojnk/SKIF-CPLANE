@@ -1,0 +1,21 @@
+{
+        "Meta": {
+                "Namespace": "tst-n-nocg",
+                "AbcProductId":"1234",
+                "ExperimentId": "{{.ExperimentID}}",
+                "ExperimentName": "test-experiment-orchestrator-config-null-configs",
+                "Project": "test-project-orchestrator-config-null-configs",
+                "ProjectId": "{{.ProjectID}}",
+                "NamespaceId": "{{.NamespaceID}}"
+        },
+        "PublicSources": {
+                "test-alias-orchestrator-config-experiment-datasets-null-configs-1": {
+                        "Schema": {},
+                        "SourceType": "ST_EXTERNAL_QUEUE"
+                },
+                "test-alias-orchestrator-config-experiment-datasets-null-configs-2": {
+                        "Schema": {},
+                        "SourceType": "ST_EXTERNAL_KEY_VALUE"
+                }
+        }
+}

@@ -1,0 +1,111 @@
+[
+    {
+        "name": "YT",
+        "type": {
+            "type": "struct",
+            "struct_params": [
+                {
+                    "name": "Cluster",
+                    "required": true,
+                    "type": {
+                        "type": "string",
+                        "type_constraint": {
+                            "enum": [
+                                "jupiter.yt.vk.team",
+                                "moon.yt.vk.team",
+                                "miranda.yt.vk.team",
+                                "mercury-dc.yt.vk.team",
+                                "mercury-kc.yt.vk.team",
+                                "mercury-pc.yt.vk.team",
+                                "mercury-uc.yt.vk.team",
+                                "mercury-hc.yt.vk.team",
+                                "mercury-rc.yt.vk.team",
+                                "saturn.yt.vk.team"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Path",
+                    "required": true,
+                    "type": {
+                        "type": "string"
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "name": "Attributes",
+        "type": {
+            "type": "custom"
+        }
+    },
+    {
+        "name": "ShardsCount",
+        "required": true,
+        "type": {
+            "type": "integer"
+        }
+    },
+    {
+        "name": "NormalizedQYTSchema",
+        "type": {
+            "type": "boolean"
+        }
+    },
+    {
+        "name": "MessageFormat",
+        "type": {
+            "type": "string",
+            "type_constraint":{
+                "enum": [
+                    "MF_YSON",
+                    "MF_JSON",
+                    "MF_PROTO"
+                ]
+            }
+        }
+    },
+    {
+        "name": "ProtoInfo",
+        "type": {
+            "type": "struct",
+            "struct_params": [
+                {
+                    "name": "Name",
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "SkipBytes",
+                    "type": {
+                        "type": "integer"
+                    }
+                },
+                {
+                    "name": "EnumFormat",
+                    "type": {
+                        "type": "string",
+                        "type_constraint": {
+                            "enum": [
+                                "NUMBER",
+                                "NAME",
+                                "FULL_NAME"
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Meta",
+                    "description": "Мета protobin в формате base64",
+                    "type": {
+                        "type": "string"
+                    }
+                }
+            ]
+        },
+        "description": "Структура для указания формата протобафа содержащегося в очереди"
+    }
+]

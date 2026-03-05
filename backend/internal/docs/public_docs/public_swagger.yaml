@@ -1,0 +1,4002 @@
+basePath: /
+definitions:
+  acl.Right:
+    enum:
+    - edit_config
+    - edit_name
+    - edit_schema
+    - create_project
+    - create_dataset
+    - create_experiment
+    - create_namespace
+    - delete_experiment
+    - delete_dataset
+    - delete_project
+    - delete_namespace
+    - start_experiment
+    - stop_experiment
+    - apply_experiment
+    - create_variable
+    - edit_variable
+    - delete_variable
+    type: string
+    x-enum-varnames:
+    - RightEditConfig
+    - RightEditName
+    - RightEditSchema
+    - RightCreateProject
+    - RightCreateDataset
+    - RightCreateExperiment
+    - RightCreateNamespace
+    - RightDeleteExperiment
+    - RightDeleteDataset
+    - RightDeleteProject
+    - RightDeleteNamespace
+    - RightStartExperiment
+    - RightStopExperiment
+    - RightApplyExperiment
+    - RightCreateVariable
+    - RightEditVariable
+    - RightDeleteVariable
+  dto.BatchRunResult:
+    properties:
+      cube_runs:
+        additionalProperties:
+          $ref: '#/definitions/dto.CubeRunResult'
+        type: object
+    type: object
+  dto.Cluster:
+    enum:
+    - miranda
+    - mercury-kc
+    - mercury-rc
+    - mercury-pc
+    - mercury-hc
+    - mercury-uc
+    - jupiter
+    - moon
+    - saturn
+    type: string
+    x-enum-varnames:
+    - Miranda
+    - MercuryKC
+    - MercuryRC
+    - MercuryPC
+    - MercuryHC
+    - MercuryUC
+    - Jupiter
+    - Moon
+    - Saturn
+  dto.CompleteExperimentList:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      status:
+        type: string
+    type: object
+  dto.Cube:
+    properties:
+      author:
+        type: string
+      base_cube:
+        $ref: '#/definitions/dto.Cube'
+      cube_params:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      params_name:
+        type: string
+      type:
+        $ref: '#/definitions/dto.CubeType'
+    type: object
+  dto.CubeRunResult:
+    properties:
+      inputs:
+        additionalProperties:
+          type: string
+        example:
+          input_data: '[{"id"=1};{"id"=2}]'
+        type: object
+      logs:
+        items:
+          type: string
+        type: array
+      outputs:
+        additionalProperties:
+          type: string
+        example:
+          data: '[{"id"=1};{"id"=2}]'
+        type: object
+    type: object
+  dto.CubeType:
+    enum:
+    - CIT_RESHARDER
+    - CIT_CUBE
+    - CIT_RETRY
+    type: string
+    x-enum-varnames:
+    - Resharder
+    - CubeT
+    - Retry
+  dto.Dataset:
+    properties:
+      id:
+        type: integer
+      managed:
+        type: boolean
+      name:
+        type: string
+      params:
+        type: string
+      public:
+        type: boolean
+      schema:
+        type: string
+      type:
+        type: string
+      version_id:
+        type: integer
+    type: object
+  dto.DatasetFilters:
+    properties:
+      cluster:
+        type: string
+      managed:
+        type: boolean
+        x-nullable: true
+      namespace_id:
+        type: integer
+      path:
+        type: string
+      project_id:
+        type: integer
+      public:
+        type: boolean
+        x-nullable: true
+      search:
+        type: string
+    type: object
+  dto.DatasetInfo:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      linked_experiments_count:
+        type: integer
+      managed:
+        type: boolean
+      name:
+        type: string
+      namespace_info:
+        $ref: '#/definitions/dto.Namespace'
+      project_info:
+        $ref: '#/definitions/dto.ProjectCatalogInfo'
+      public:
+        type: boolean
+      rights:
+        items:
+          $ref: '#/definitions/acl.Right'
+        type: array
+      type:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  dto.DatasetExperimentLink:
+    properties:
+      alias:
+        type: string
+      alias_id:
+        type: integer
+      experiment_id:
+        type: integer
+      experiment_name:
+        type: string
+      project_id:
+        type: integer
+      project_name:
+        type: string
+    type: object
+  dto.DatasetShort:
+    properties:
+      id:
+        type: integer
+      managed:
+        type: boolean
+      name:
+        type: string
+      namespace_info:
+        $ref: '#/definitions/dto.Namespace'
+      project_info:
+        $ref: '#/definitions/dto.ProjectCatalogInfo'
+      public:
+        type: boolean
+      type:
+        type: string
+    type: object
+  dto.DatasetUpdateLog:
+    properties:
+      act:
+        type: string
+      comment:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      job_id:
+        type: integer
+      name:
+        type: string
+      user:
+        type: string
+    type: object
+  dto.LogRecord:
+    properties:
+      entity_name:
+        type: string
+      entity_type:
+        type: string
+      records:
+        items:
+          type: string
+        type: array
+    type: object
+  dto.Namespace:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      rights:
+        items:
+          $ref: '#/definitions/acl.Right'
+        type: array
+    type: object
+  dto.ExperimentDataset:
+    properties:
+      alias:
+        type: string
+      dataset_id:
+        type: integer
+      link_id:
+        type: integer
+      name:
+        type: string
+      project_id:
+        type: integer
+      project_name:
+        type: string
+    type: object
+  dto.ExperimentTemplate:
+    properties:
+      comment:
+        type: string
+      config:
+        type: string
+      created_at:
+        type: string
+      creator:
+        type: string
+      id:
+        type: integer
+      parent_version_id:
+        type: integer
+      version_id:
+        type: integer
+    type: object
+  dto.ExperimentUpdateLog:
+    properties:
+      act:
+        type: string
+      comment:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      job_id:
+        type: integer
+      name:
+        type: string
+      user:
+        type: string
+    type: object
+  dto.ExperimentVariable:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      type:
+        enum:
+        - string
+        - int
+        - json
+        - yql
+        - python
+        type: string
+      value:
+        type: string
+      version_id:
+        type: integer
+      version_id_name:
+        type: integer
+    required:
+    - id
+    - name
+    - type
+    - value
+    type: object
+  dto.ExperimentVariableForCreate:
+    properties:
+      name:
+        type: string
+      type:
+        enum:
+        - string
+        - int
+        - json
+        - yql
+        - python
+        type: string
+      value:
+        type: string
+    required:
+    - name
+    - type
+    - value
+    type: object
+  dto.ExperimentVariableForUpdate:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      type:
+        enum:
+        - string
+        - int
+        - json
+        - yql
+        - python
+        type: string
+      value:
+        type: string
+    required:
+    - id
+    - name
+    - type
+    - value
+    type: object
+  dto.ExperimentVariableShort:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      type:
+        enum:
+        - string
+        - int
+        - json
+        - yql
+        - python
+        type: string
+      updated_at:
+        type: string
+      version_id:
+        type: integer
+      version_id_name:
+        type: integer
+    required:
+    - id
+    - name
+    - type
+    type: object
+  dto.ExperimentVersion:
+    properties:
+      comment:
+        type: string
+      created_at:
+        type: string
+      creator:
+        type: string
+      id:
+        type: integer
+      version_id:
+        type: integer
+    type: object
+  dto.Project:
+    properties:
+      abc_product_id:
+        type: string
+      config:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      is_pinned:
+        type: boolean
+      name:
+        type: string
+      namespace_id:
+        type: integer
+      namespace_name:
+        type: string
+    type: object
+  dto.ProjectCatalogInfo:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      namespace_id:
+        type: integer
+      namespace_name:
+        type: string
+    type: object
+  dto.ProjectConfig:
+    properties:
+      config:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+    type: object
+  dto.ProjectInfo:
+    properties:
+      abc_product_id:
+        type: string
+      created_at:
+        type: string
+      dataset_count:
+        type: integer
+      description:
+        type: string
+      id:
+        type: integer
+      is_pinned:
+        type: boolean
+      name:
+        type: string
+      namespace_id:
+        type: integer
+      namespace_name:
+        type: string
+      experiment_count:
+        type: integer
+      rights:
+        items:
+          $ref: '#/definitions/acl.Right'
+        type: array
+      updated_at:
+        type: string
+    type: object
+  dto.ProjectUpdateLog:
+    properties:
+      act:
+        type: string
+      comment:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      user:
+        type: string
+    type: object
+  dto.RunResults:
+    properties:
+      batch_runs:
+        items:
+          $ref: '#/definitions/dto.BatchRunResult'
+        type: array
+    type: object
+  dto.ValidationError:
+    properties:
+      config_pos:
+        type: integer
+      entity_name:
+        type: string
+      entity_type:
+        type: string
+      error_message:
+        type: string
+    type: object
+  dto.ValidationErrorResponse:
+    properties:
+      errors:
+        example:
+        - error1
+        items:
+          type: string
+        type: array
+      experiment_is_valid:
+        example: false
+        type: boolean
+    type: object
+  dto.ValidationResponse:
+    properties:
+      errors:
+        items:
+          $ref: '#/definitions/dto.ValidationError'
+        type: array
+      logs:
+        items:
+          $ref: '#/definitions/dto.LogRecord'
+        type: array
+      experiment_is_valid:
+        type: boolean
+      summary:
+        type: string
+    type: object
+  dto.ValidationResponseWithRun:
+    properties:
+      errors:
+        example:
+        - error1
+        items:
+          type: string
+        type: array
+      logs:
+        items:
+          type: string
+        type: array
+      experiment_is_valid:
+        example: true
+        type: boolean
+      run_result:
+        $ref: '#/definitions/dto.RunResults'
+      summary:
+        example: debug-run completed
+        type: string
+    type: object
+  orch.ExperimentVariableType:
+    enum:
+    - string
+    - int
+    - json
+    - yql
+    - python
+    type: string
+    x-enum-varnames:
+    - ExperimentVariableTypeString
+    - ExperimentVariableTypeInt
+    - ExperimentVariableTypeJSON
+    - ExperimentVariableTypeYQL
+    - ExperimentVariableTypePython
+  requests.AddDatasetToExperimentRequest:
+    properties:
+      alias:
+        type: string
+      comment:
+        type: string
+      dataset_id:
+        type: integer
+      experiment_id:
+        type: integer
+    required:
+    - alias
+    - dataset_id
+    - experiment_id
+    type: object
+  requests.ApplyExperimentConfigRequest:
+    properties:
+      comment:
+        type: string
+      experiment_id:
+        type: integer
+      single_stage:
+        type: boolean
+    required:
+    - experiment_id
+    type: object
+  requests.CompleteExperimentValidateRequest:
+    properties:
+      experimentConfig:
+        type: string
+      experimentID:
+        format: int32
+        type: integer
+    required:
+    - experimentConfig
+    type: object
+  requests.CreateCompleteExperimentRequest:
+    properties:
+      comment:
+        type: string
+      description:
+        maxLength: 256
+        minLength: 0
+        type: string
+      name:
+        maxLength: 128
+        minLength: 1
+        type: string
+      project_id:
+        type: integer
+    required:
+    - name
+    - project_id
+    type: object
+  requests.CreateCubeRequest:
+    properties:
+      cube_params:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      params_name:
+        type: string
+      type:
+        type: string
+    required:
+    - name
+    type: object
+  requests.CreateDatasetRequestV2:
+    properties:
+      comment:
+        type: string
+      managed:
+        type: boolean
+      name:
+        maxLength: 128
+        type: string
+      params:
+        type: string
+      project_id:
+        type: integer
+      public:
+        type: boolean
+      schema:
+        type: string
+      type:
+        enum:
+        - Queue
+        - KeyValue
+        - StaticTableDir
+        - Kafka
+        maxLength: 64
+        type: string
+    required:
+    - name
+    - project_id
+    type: object
+  requests.CreateExperimentVariableRequest:
+    properties:
+      comment:
+        type: string
+      experiment_id:
+        type: integer
+      variable:
+        $ref: '#/definitions/dto.ExperimentVariableForCreate'
+    required:
+    - experiment_id
+    - variable
+    type: object
+  requests.CreateProjectRequest:
+    properties:
+      abc_product_id:
+        type: string
+      comment:
+        type: string
+      description:
+        type: string
+      name:
+        maxLength: 128
+        type: string
+      namespace_id:
+        type: integer
+    required:
+    - abc_product_id
+    - name
+    - namespace_id
+    type: object
+  requests.DatasetValidateRequest:
+    properties:
+      datasetConfig:
+        type: string
+    required:
+    - datasetConfig
+    type: object
+  requests.DeleteCompleteExperimentRequest:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  requests.DeleteDatasetRequest:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  requests.DeleteExperimentVariableRequest:
+    properties:
+      variable_id:
+        type: integer
+    required:
+    - variable_id
+    type: object
+  requests.DeleteExperimentVariableV2Request:
+    properties:
+      name:
+        type: string
+      experiment_id:
+        type: integer
+    required:
+    - name
+    - experiment_id
+    type: object
+  requests.DeleteProjectRequest:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  requests.GetExperimentAvailableDatasetsToLinkRequest:
+    properties:
+      filters:
+        $ref: '#/definitions/dto.DatasetFilters'
+      limit:
+        maximum: 100
+        minimum: 1
+        type: integer
+      offset:
+        type: integer
+      experiment_id:
+        type: integer
+    required:
+    - limit
+    - offset
+    - experiment_id
+    type: object
+  requests.ListProjectsRequestV2:
+    properties:
+      limit:
+        maximum: 100
+        minimum: 1
+        type: integer
+      namespace_id:
+        type: integer
+      offset:
+        type: integer
+      order_by:
+        type: string
+      search:
+        type: string
+    required:
+    - limit
+    - offset
+    type: object
+  requests.ExperimentStartRequest:
+    properties:
+      comment:
+        type: string
+      experiment_id:
+        type: integer
+    required:
+    - experiment_id
+    type: object
+  requests.ExperimentStopRequest:
+    properties:
+      comment:
+        type: string
+      experiment_id:
+        type: integer
+    required:
+    - experiment_id
+    type: object
+  requests.ExperimentValidateDataItem:
+    properties:
+      data:
+        example: '[{"id"=1};{"id"=2}]'
+        type: string
+      output_name:
+        example: output_queue
+        type: string
+      source_name:
+        example: input_queue
+        type: string
+    type: object
+  requests.ExperimentValidateFastRequest:
+    properties:
+      config:
+        type: string
+      experiment_id:
+        type: integer
+    required:
+    - config
+    type: object
+  requests.ExperimentValidateRunRequest:
+    properties:
+      config:
+        example: '{"Meta":{"ExperimentId":"1","ProjectId":"1","Namespace":"test","AbcProductId":"1","YT":{"Token":"test","WorkDir":"//test","Cluster":"test","ProxyRole":"test"}},"Placement":{"OnecloudDatacenters":["kc"]},"Resources":{"Worker":{"ReplicasInDc":1,"CpuCores":1,"RamMB":512,"NetworkInMbit":256,"NetworkOutMbit":20},"Resharder":{"ReplicasInDc":1,"CpuCores":1,"RamMB":512,"NetworkInMbit":256,"NetworkOutMbit":20}},"Worker":{"GraphConfig":{"Name":"Test","Cubes":[]}},"Resharder":{"InputSources":[],"IntermediateQueueOptions":{"ShardsCount":1}},"PublicSources":{},"InternalSources":{}}'
+        type: string
+      data_sets:
+        items:
+          items:
+            $ref: '#/definitions/requests.ExperimentValidateDataItem'
+          type: array
+        type: array
+      experiment_id:
+        example: 1
+        type: integer
+      should_read_yt_sample:
+        example: false
+        type: boolean
+    required:
+    - config
+    type: object
+  requests.RemoveDatasetFromExperimentRequest:
+    properties:
+      link_id:
+        type: integer
+      experiment_id:
+        type: integer
+    required:
+    - link_id
+    - experiment_id
+    type: object
+  requests.RemoveDatasetFromExperimentV2Request:
+    properties:
+      alias:
+        type: string
+      experiment_id:
+        type: integer
+    required:
+    - alias
+    - experiment_id
+    type: object
+  requests.SearchDatasetsRequest:
+    properties:
+      cluster:
+        type: string
+      exact_match:
+        description: Опция полнотекстового поиска
+        type: boolean
+        x-nullable: true
+      limit:
+        maximum: 100
+        minimum: 1
+        type: integer
+      managed:
+        type: boolean
+        x-nullable: true
+      namespace_id:
+        type: integer
+      offset:
+        type: integer
+      order_by:
+        type: string
+      path:
+        type: string
+      project_id:
+        type: integer
+      public:
+        type: boolean
+        x-nullable: true
+      search:
+        type: string
+      type:
+        maxLength: 64
+        type: string
+    required:
+    - limit
+    - offset
+    type: object
+  requests.UpdateCompleteExperimentRequest:
+    properties:
+      additional_information:
+        type: string
+      comment:
+        type: string
+      config:
+        type: string
+      description:
+        maxLength: 256
+        minLength: 0
+        type: string
+      disable_validation:
+        type: boolean
+      name:
+        maxLength: 128
+        type: string
+      experiment_id:
+        type: integer
+    required:
+    - experiment_id
+    type: object
+  requests.UpdateCubeRequest:
+    properties:
+      cube_params:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      params_name:
+        type: string
+      type:
+        type: string
+    required:
+    - id
+    - name
+    type: object
+  requests.UpdateDatasetRequestV2:
+    properties:
+      comment:
+        type: string
+      disable_validation:
+        type: boolean
+      id:
+        type: integer
+      managed:
+        type: boolean
+        x-nullable: true
+      name:
+        maxLength: 128
+        type: string
+      params:
+        type: string
+      public:
+        type: boolean
+        x-nullable: true
+      schema:
+        type: string
+      type:
+        maxLength: 64
+        type: string
+    required:
+    - id
+    type: object
+  requests.UpdateExperimentConfigVersionRequest:
+    properties:
+      comment:
+        type: string
+      experiment_id:
+        type: integer
+      version_id:
+        type: integer
+    required:
+    - experiment_id
+    - version_id
+    type: object
+  requests.UpdateExperimentDatasetRequest:
+    properties:
+      alias:
+        type: string
+      comment:
+        type: string
+      link_id:
+        type: integer
+      experiment_id:
+        type: integer
+    required:
+    - alias
+    - link_id
+    - experiment_id
+    type: object
+  requests.UpdateExperimentDatasetV2Request:
+    properties:
+      alias:
+        type: string
+      comment:
+        type: string
+      dataset_id:
+        type: integer
+      experiment_id:
+        type: integer
+    required:
+    - alias
+    - dataset_id
+    - experiment_id
+    type: object
+  requests.UpdateExperimentVariableRequest:
+    properties:
+      comment:
+        type: string
+      variable:
+        $ref: '#/definitions/dto.ExperimentVariableForUpdate'
+    required:
+    - variable
+    type: object
+  requests.UpdateExperimentVariableV2Request:
+    properties:
+      comment:
+        type: string
+      name:
+        type: string
+      experiment_id:
+        type: integer
+      type:
+        enum:
+        - string
+        - int
+        - json
+        - yql
+        - python
+        type: string
+      value:
+        type: string
+    required:
+    - name
+    - experiment_id
+    - type
+    - value
+    type: object
+  requests.UpdateProjectRequest:
+    properties:
+      abc_product_id:
+        type: string
+      comment:
+        type: string
+      config:
+        type: string
+      description:
+        type: string
+      disable_validation:
+        type: boolean
+      id:
+        type: integer
+      name:
+        maxLength: 128
+        type: string
+    required:
+    - id
+    type: object
+  responses.AddDatasetToExperimentResponse:
+    properties:
+      alias:
+        type: string
+      dataset_id:
+        type: integer
+      link_id:
+        type: integer
+      name:
+        type: string
+      project_id:
+        type: integer
+      project_name:
+        type: string
+    type: object
+  responses.CheckExperimentUpdateResponse:
+    properties:
+      applied_config:
+        type: string
+      has_not_applied_changes:
+        type: boolean
+      saved_config:
+        type: string
+    type: object
+  responses.CreateCompleteExperimentResponse:
+    properties:
+      additional_information:
+        type: string
+      config:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      project_id:
+        type: integer
+      project_name:
+        type: string
+      status:
+        type: string
+    type: object
+  responses.CreateCubeResponse:
+    properties:
+      author:
+        type: string
+      base_cube:
+        $ref: '#/definitions/dto.Cube'
+      cube_params:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      params_name:
+        type: string
+      type:
+        $ref: '#/definitions/dto.CubeType'
+    type: object
+  responses.CreateDatasetResponse:
+    properties:
+      id:
+        type: integer
+      managed:
+        type: boolean
+      name:
+        type: string
+      params:
+        type: string
+      public:
+        type: boolean
+      schema:
+        type: string
+      type:
+        type: string
+    type: object
+  responses.CreateExperimentVariableResponse:
+    properties:
+      variable:
+        $ref: '#/definitions/dto.ExperimentVariable'
+    type: object
+  responses.CreateProjectResponse:
+    properties:
+      abc_product_id:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  responses.CurrentExperimentVersionResponse:
+    properties:
+      version_id:
+        type: integer
+    type: object
+  responses.DatasetExperimentLinksResponse:
+    properties:
+      links:
+        items:
+          $ref: '#/definitions/dto.DatasetExperimentLink'
+        type: array
+      pages:
+        type: integer
+      total:
+        type: integer
+    type: object
+  responses.EmptyResponse:
+    type: object
+  responses.ErrorResponse:
+    properties:
+      external_message:
+        type: string
+      http_status_code:
+        type: integer
+      internal_error: {}
+    type: object
+  responses.GetAvailableDatasetClustersResponse:
+    properties:
+      clusters:
+        items:
+          $ref: '#/definitions/dto.Cluster'
+        type: array
+    type: object
+  responses.GetAvailableExperimentVariableTypesResponse:
+    properties:
+      types:
+        items:
+          $ref: '#/definitions/orch.ExperimentVariableType'
+        type: array
+    type: object
+  responses.GetCompleteExperimentsResponse:
+    properties:
+      additional_information:
+        type: string
+      config:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      project_id:
+        type: integer
+      project_name:
+        type: string
+      rights:
+        items:
+          $ref: '#/definitions/acl.Right'
+        type: array
+      status:
+        type: string
+    type: object
+  responses.GetCubeResponse:
+    properties:
+      author:
+        type: string
+      base_cube:
+        $ref: '#/definitions/dto.Cube'
+      cube_params:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      params_name:
+        type: string
+      type:
+        $ref: '#/definitions/dto.CubeType'
+    type: object
+  responses.GetDatasetLogResponse:
+    properties:
+      act:
+        type: string
+      comment:
+        type: string
+      created_at:
+        type: string
+      details:
+        $ref: '#/definitions/update_log.DatasetUpdateLog'
+      id:
+        type: integer
+      job_id:
+        type: integer
+      name:
+        type: string
+      user:
+        type: string
+    type: object
+  responses.GetDatasetV2Response:
+    properties:
+      id:
+        type: integer
+      managed:
+        type: boolean
+      name:
+        type: string
+      params:
+        type: string
+      project_id:
+        type: integer
+      project_name:
+        type: string
+      public:
+        type: boolean
+      rights:
+        items:
+          $ref: '#/definitions/acl.Right'
+        type: array
+      schema:
+        type: string
+      type:
+        type: string
+    type: object
+  responses.GetExperimentAvailableDatasetsToLinkResponse:
+    properties:
+      datasets:
+        items:
+          $ref: '#/definitions/dto.DatasetShort'
+        type: array
+      pages:
+        type: integer
+      total:
+        type: integer
+    type: object
+  responses.GetExperimentDatasetsResponse:
+    properties:
+      datasets:
+        items:
+          $ref: '#/definitions/dto.ExperimentDataset'
+        type: array
+    type: object
+  responses.GetExperimentLogResponse:
+    properties:
+      act:
+        type: string
+      comment:
+        type: string
+      created_at:
+        type: string
+      details:
+        $ref: '#/definitions/update_log.ExperimentUpdateLog'
+      id:
+        type: integer
+      job_id:
+        type: integer
+      name:
+        type: string
+      user:
+        type: string
+    type: object
+  responses.GetExperimentVariableResponse:
+    properties:
+      variable:
+        $ref: '#/definitions/dto.ExperimentVariable'
+    type: object
+  responses.GetExperimentVariableV2Response:
+    properties:
+      name:
+        type: string
+      type:
+        enum:
+        - string
+        - int
+        - json
+        - yql
+        - python
+        type: string
+      value:
+        type: string
+    required:
+    - name
+    - type
+    - value
+    type: object
+  responses.GetExperimentVariablesResponse:
+    properties:
+      variables:
+        items:
+          $ref: '#/definitions/dto.ExperimentVariableShort'
+        type: array
+    type: object
+  responses.GetProjectConfigResponse:
+    properties:
+      config:
+        $ref: '#/definitions/dto.ProjectConfig'
+    type: object
+  responses.GetProjectLogResponse:
+    properties:
+      act:
+        type: string
+      comment:
+        type: string
+      created_at:
+        type: string
+      details:
+        $ref: '#/definitions/update_log.ProjectUpdateLog'
+      id:
+        type: integer
+      name:
+        type: string
+      user:
+        type: string
+    type: object
+  responses.GetProjectResponse:
+    properties:
+      Project:
+        $ref: '#/definitions/dto.Project'
+      rights:
+        items:
+          $ref: '#/definitions/acl.Right'
+        type: array
+    type: object
+  responses.GetSchemaResponse:
+    properties:
+      config_schema:
+        type: string
+    type: object
+  responses.ListCompleteExperimentsResponse:
+    properties:
+      experiments:
+        items:
+          $ref: '#/definitions/dto.CompleteExperimentList'
+        type: array
+    type: object
+  responses.ListCubesResponse:
+    properties:
+      cubes:
+        items:
+          $ref: '#/definitions/dto.Cube'
+        type: array
+    type: object
+  responses.ListDatasetUpdateLogsResponse:
+    properties:
+      logs:
+        items:
+          $ref: '#/definitions/dto.DatasetUpdateLog'
+        type: array
+      pages:
+        type: integer
+      total:
+        type: integer
+    type: object
+  responses.ListDatasetsResponse:
+    properties:
+      datasets:
+        items:
+          $ref: '#/definitions/dto.Dataset'
+        type: array
+    type: object
+  responses.ListExperimentUpdateLogsResponse:
+    properties:
+      logs:
+        items:
+          $ref: '#/definitions/dto.ExperimentUpdateLog'
+        type: array
+      pages:
+        type: integer
+      total:
+        type: integer
+    type: object
+  responses.ListExperimentVersionsResponse:
+    properties:
+      pages:
+        type: integer
+      total:
+        type: integer
+      versions:
+        items:
+          $ref: '#/definitions/dto.ExperimentVersion'
+        type: array
+    type: object
+  responses.ListProjectUpdateLogsResponse:
+    properties:
+      logs:
+        items:
+          $ref: '#/definitions/dto.ProjectUpdateLog'
+        type: array
+      pages:
+        type: integer
+      total:
+        type: integer
+    type: object
+  responses.ListProjectsResponse:
+    properties:
+      projects:
+        items:
+          $ref: '#/definitions/dto.Project'
+        type: array
+    type: object
+  responses.ListProjectsResponseV2:
+    properties:
+      pages:
+        type: integer
+      projects:
+        items:
+          $ref: '#/definitions/dto.ProjectInfo'
+        type: array
+      total:
+        type: integer
+    type: object
+  responses.ExperimentStatusResponse:
+    properties:
+      debug:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+      summary:
+        type: string
+    type: object
+  responses.SearchDatasetsResponse:
+    properties:
+      datasets:
+        items:
+          $ref: '#/definitions/dto.DatasetInfo'
+        type: array
+      pages:
+        type: integer
+      total:
+        type: integer
+    type: object
+  responses.UpdateCompleteExperimentResponse:
+    properties:
+      additional_information:
+        type: string
+      config:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      project_id:
+        type: integer
+      project_name:
+        type: string
+      status:
+        type: string
+    type: object
+  responses.UpdateCubeResponse:
+    properties:
+      author:
+        type: string
+      base_cube:
+        $ref: '#/definitions/dto.Cube'
+      cube_params:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      params_name:
+        type: string
+      type:
+        $ref: '#/definitions/dto.CubeType'
+    type: object
+  responses.UpdateDatasetResponse:
+    properties:
+      dataset:
+        $ref: '#/definitions/dto.Dataset'
+    type: object
+  responses.UpdateExperimentDatasetResponse:
+    properties:
+      alias:
+        type: string
+      link_id:
+        type: integer
+    type: object
+  responses.UpdateExperimentDatasetV2Response:
+    properties:
+      alias:
+        type: string
+      dataset_id:
+        type: integer
+    type: object
+  responses.UpdateExperimentVariableResponse:
+    properties:
+      variable:
+        $ref: '#/definitions/dto.ExperimentVariable'
+    type: object
+  responses.UpdateExperimentVariableV2Response:
+    properties:
+      name:
+        type: string
+      type:
+        enum:
+        - string
+        - int
+        - json
+        - yql
+        - python
+        type: string
+      value:
+        type: string
+    required:
+    - name
+    - type
+    - value
+    type: object
+  responses.UpdateProjectResponse:
+    properties:
+      project:
+        $ref: '#/definitions/dto.Project'
+    type: object
+  responses.ValidationResponse:
+    properties:
+      errors:
+        type: string
+      success:
+        type: boolean
+    type: object
+  update_log.Dataset:
+    properties:
+      job_id:
+        type: integer
+      managed:
+        type: boolean
+      name:
+        type: string
+      params:
+        type: string
+      public:
+        type: boolean
+      schema:
+        type: string
+      type:
+        type: string
+    type: object
+  update_log.DatasetUpdateLog:
+    properties:
+      new:
+        $ref: '#/definitions/update_log.Dataset'
+      old:
+        $ref: '#/definitions/update_log.Dataset'
+    type: object
+  update_log.Experiment:
+    properties:
+      config:
+        type: string
+      dataset_alias:
+        type: string
+      dataset_id:
+        type: integer
+      description:
+        type: string
+      job_id:
+        type: integer
+      name:
+        type: string
+      variable_name:
+        type: string
+      variable_type:
+        type: string
+      variable_value:
+        type: string
+    type: object
+  update_log.ExperimentUpdateLog:
+    properties:
+      new:
+        $ref: '#/definitions/update_log.Experiment'
+      old:
+        $ref: '#/definitions/update_log.Experiment'
+    type: object
+  update_log.Project:
+    properties:
+      config:
+        type: string
+      config_version_id:
+        type: integer
+      description:
+        type: string
+      name:
+        type: string
+      variable_name:
+        type: string
+      variable_type:
+        type: string
+      variable_value:
+        type: string
+    type: object
+  update_log.ProjectUpdateLog:
+    properties:
+      new:
+        $ref: '#/definitions/update_log.Project'
+      old:
+        $ref: '#/definitions/update_log.Project'
+    type: object
+info:
+  contact:
+    email: vladimir.petrov@vkteam.ru
+    name: API Support
+  title: 'Control Plane: Public API'
+  version: "1.0"
+paths:
+  /api/v1/cube:
+    get:
+      parameters:
+      - description: cube id
+        in: query
+        name: cube_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetCubeResponse'
+      security:
+      - BearerAuth: []
+      summary: get cube
+      tags:
+      - cube
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UpdateCubeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.UpdateCubeResponse'
+      security:
+      - BearerAuth: []
+      summary: update cube
+      tags:
+      - cube
+  /api/v1/cube/name:
+    get:
+      parameters:
+      - description: cube name
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetCubeResponse'
+      security:
+      - BearerAuth: []
+      summary: get cube by name
+      tags:
+      - cube
+  /api/v1/cube/system:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.CreateCubeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.CreateCubeResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "409":
+          description: Conflict - resource already exists
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: create system cube
+      tags:
+      - cube
+  /api/v1/cubes:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ListCubesResponse'
+      security:
+      - BearerAuth: []
+      summary: get list of cubes
+      tags:
+      - cube
+  /api/v1/dataset:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.DeleteDatasetRequest'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: delete dataset
+      tags:
+      - dataset
+  /api/v1/dataset/log:
+    get:
+      parameters:
+      - description: log id
+        in: query
+        name: log_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetDatasetLogResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get dataset update log
+      tags:
+      - dataset
+  /api/v1/experiment:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.DeleteCompleteExperimentRequest'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: delete experiment
+      tags:
+      - experiment
+    get:
+      parameters:
+      - description: experiment_id
+        in: query
+        name: experiment_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetCompleteExperimentsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get experiment info
+      tags:
+      - experiment
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.CreateCompleteExperimentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.CreateCompleteExperimentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "409":
+          description: Conflict - resource already exists
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: create experiment
+      tags:
+      - experiment
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UpdateCompleteExperimentRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.UpdateCompleteExperimentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: update experiment
+      tags:
+      - experiment
+  /api/v1/experiment/config/apply:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.ApplyExperimentConfigRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.EmptyResponse'
+      summary: apply experiment config
+      tags:
+      - experiment
+  /api/v1/experiment/dataset:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.RemoveDatasetFromExperimentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.EmptyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: remove dataset from experiment
+      tags:
+      - experiment
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.AddDatasetToExperimentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.AddDatasetToExperimentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: add dataset to experiment
+      tags:
+      - experiment
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UpdateExperimentDatasetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.UpdateExperimentDatasetResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: update experiment dataset link
+      tags:
+      - experiment
+  /api/v1/experiment/datasets:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: experiment id
+        in: query
+        name: experiment_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetExperimentDatasetsResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get experiment datasets
+      tags:
+      - experiment
+  /api/v1/experiment/log:
+    get:
+      parameters:
+      - description: log id
+        in: query
+        name: log_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetExperimentLogResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get experiment update log
+      tags:
+      - experiment
+  /api/v1/experiment/logs:
+    get:
+      parameters:
+      - description: experiment id
+        in: query
+        name: experiment_id
+        type: integer
+      - description: project id
+        in: query
+        name: project_id
+        type: integer
+      - description: from
+        in: query
+        name: from
+        required: true
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ListExperimentUpdateLogsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: list experiment update logs
+      tags:
+      - experiment
+  /api/v1/experiment/start:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.ExperimentStartRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.EmptyResponse'
+      security:
+      - BearerAuth: []
+      summary: start experiment
+      tags:
+      - experiment
+  /api/v1/experiment/status:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: experiment id
+        in: query
+        name: experiment_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ExperimentStatusResponse'
+      security:
+      - BearerAuth: []
+      summary: get experiment status
+      tags:
+      - experiment
+  /api/v1/experiment/stop:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.ExperimentStopRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.EmptyResponse'
+      security:
+      - BearerAuth: []
+      summary: stop experiment
+      tags:
+      - experiment
+  /api/v1/experiment/updates:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: experiment id
+        in: query
+        name: experiment_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.CheckExperimentUpdateResponse'
+      summary: start experiment
+      tags:
+      - experiment
+  /api/v1/experiment/validations/fast:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.ExperimentValidateFastRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ValidationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: validate experiment config fast
+      tags:
+      - experiment
+  /api/v1/experiment/validations/run:
+    post:
+      consumes:
+      - application/json
+      description: Validates experiment configuration and runs it with provided datasets.
+        Returns validation results with run outputs.
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.ExperimentValidateRunRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ValidationResponseWithRun'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ValidationErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ValidationErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/dto.ValidationErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dto.ValidationErrorResponse'
+      summary: validate experiment config with run
+      tags:
+      - experiment
+  /api/v1/experiment/variable:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.DeleteExperimentVariableRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.EmptyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: delete experiment variable
+      tags:
+      - experiment
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: variable id
+        in: query
+        name: variable_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetExperimentVariableResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get experiment variable
+      tags:
+      - experiment
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.CreateExperimentVariableRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.CreateExperimentVariableResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: create experiment variable
+      tags:
+      - experiment
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UpdateExperimentVariableRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.UpdateExperimentVariableResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: update experiment variable
+      tags:
+      - experiment
+  /api/v1/experiment/variables:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: experiment id
+        in: query
+        name: experiment_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetExperimentVariablesResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get experiment variables
+      tags:
+      - experiment
+  /api/v1/experiment/variables/types:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetAvailableExperimentVariableTypesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get available experiment variable types
+      tags:
+      - experiment
+  /api/v1/experiment/version:
+    get:
+      parameters:
+      - description: experiment id
+        in: query
+        name: experiment_id
+        required: true
+        type: integer
+      - description: config version id
+        in: query
+        name: version_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ExperimentTemplate'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get experiment config by version
+      tags:
+      - experiment
+  /api/v1/experiment/version/current:
+    get:
+      parameters:
+      - description: experiment id
+        in: query
+        name: experiment_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.CurrentExperimentVersionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get experiment current config version
+      tags:
+      - experiment
+    put:
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UpdateExperimentConfigVersionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.CurrentExperimentVersionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: update version of experiment, you can back to the previous versions
+      tags:
+      - experiment
+  /api/v1/experiment/versions:
+    get:
+      parameters:
+      - description: experiment id
+        in: query
+        name: experiment_id
+        required: true
+        type: integer
+      - description: from
+        in: query
+        name: from
+        required: true
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ListExperimentVersionsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: list experiment versions
+      tags:
+      - experiment
+  /api/v1/experiments:
+    get:
+      parameters:
+      - description: project id
+        in: query
+        name: project_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ListCompleteExperimentsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: list experiments in project
+      tags:
+      - experiment
+  /api/v1/project:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.DeleteProjectRequest'
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: delete project
+      tags:
+      - project
+    get:
+      parameters:
+      - description: project id
+        in: query
+        name: project_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetProjectResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get project by id
+      tags:
+      - project
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.CreateProjectRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.CreateProjectResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: create project
+      tags:
+      - project
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UpdateProjectRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.UpdateProjectResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: update project
+      tags:
+      - project
+  /api/v1/project/config:
+    get:
+      parameters:
+      - description: config id
+        in: query
+        name: config_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetProjectConfigResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get project config by id
+      tags:
+      - project
+  /api/v1/project/log:
+    get:
+      parameters:
+      - description: log id
+        in: query
+        name: log_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetProjectLogResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get project update log
+      tags:
+      - project
+  /api/v1/project/logs:
+    get:
+      parameters:
+      - description: project id
+        in: query
+        name: project_id
+        type: integer
+      - description: namespace id
+        in: query
+        name: namespace_id
+        type: integer
+      - description: from
+        in: query
+        name: from
+        required: true
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ListProjectUpdateLogsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: list project update logs
+      tags:
+      - project
+  /api/v1/projects:
+    get:
+      parameters:
+      - description: namespace id
+        in: query
+        name: namespace_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ListProjectsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: list projects in namespace
+      tags:
+      - project
+  /api/v2/dataset:
+    get:
+      parameters:
+      - description: dataset id
+        in: query
+        name: dataset_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetDatasetV2Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get dataset by id
+      tags:
+      - dataset
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.CreateDatasetRequestV2'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.CreateDatasetResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "409":
+          description: Conflict - resource already exists
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: create dataset
+      tags:
+      - dataset
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UpdateDatasetRequestV2'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.UpdateDatasetResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error"ы
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: update dataset
+      tags:
+      - dataset
+  /api/v2/dataset/config/validate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.DatasetValidateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ValidationResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: validate dataset config
+      tags:
+      - dataset
+  /api/v2/dataset/links:
+    get:
+      parameters:
+      - description: dataset id
+        in: query
+        name: dataset_id
+        required: true
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: offset
+        in: query
+        name: offset
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.DatasetExperimentLinksResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get dataset linked experiments
+      tags:
+      - dataset
+  /api/v2/dataset/logs:
+    get:
+      parameters:
+      - description: dataset id
+        in: query
+        name: dataset_id
+        type: integer
+      - description: project id
+        in: query
+        name: project_id
+        type: integer
+      - description: from
+        in: query
+        name: from
+        required: true
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ListDatasetUpdateLogsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: list dataset update logs
+      tags:
+      - dataset
+  /api/v2/datasets:
+    get:
+      parameters:
+      - description: project id
+        in: query
+        name: project_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ListDatasetsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: list datasets in project
+      tags:
+      - dataset
+  /api/v2/datasets/clusters:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetAvailableDatasetClustersResponse'
+      security:
+      - BearerAuth: []
+      summary: get dataset clusters
+      tags:
+      - dataset
+  /api/v2/datasets/search:
+    post:
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.SearchDatasetsRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.SearchDatasetsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: search datasets with filters
+      tags:
+      - dataset
+  /api/v2/experiment/config/validate:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.CompleteExperimentValidateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ValidationResponse'
+      summary: validate experiment config
+      tags:
+      - experiment
+  /api/v2/experiment/dataset:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.RemoveDatasetFromExperimentV2Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.EmptyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: remove dataset from experiment v2
+      tags:
+      - experiment
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: experiment id
+        in: query
+        name: experiment_id
+        required: true
+        type: integer
+      - description: alias
+        in: query
+        name: alias
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ExperimentDataset'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get experiment datasets
+      tags:
+      - experiment
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UpdateExperimentDatasetV2Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.UpdateExperimentDatasetV2Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: update experiment dataset link v2
+      tags:
+      - experiment
+  /api/v2/experiment/search/datasets:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.GetExperimentAvailableDatasetsToLinkRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetExperimentAvailableDatasetsToLinkResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get experiment datasets available to link
+      tags:
+      - experiment
+  /api/v2/experiment/variable:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.DeleteExperimentVariableV2Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.EmptyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: delete experiment variable v2
+      tags:
+      - experiment
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: experiment id
+        in: query
+        name: experiment_id
+        required: true
+        type: integer
+      - description: name
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetExperimentVariableV2Response'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get experiment variable v2
+      tags:
+      - experiment
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UpdateExperimentVariableV2Request'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.UpdateExperimentVariableV2Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: update experiment variable by name v2
+      tags:
+      - experiment
+  /api/v2/projects:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.ListProjectsRequestV2'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ListProjectsResponseV2'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: search projects with filters
+      tags:
+      - project
+  /api/v2/schema:
+    get:
+      parameters:
+      - description: config type
+        in: query
+        name: config_type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetSchemaResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: get config schema by config type
+      tags:
+      - schema
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
