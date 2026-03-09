@@ -1,8 +1,8 @@
 import { attach, combine, createEffect, Effect, sample } from 'effector';
 import { not, status } from 'patronum';
 
-import { servicesModel } from '@/modules/stream-flow/entities/services';
-import { pageViewMyTrackerFx } from '@/modules/stream-flow/features/app-tracker‎';
+import { servicesModel } from '@/modules/control-plane/entities/services';
+import { pageViewMyTrackerFx } from '@/modules/control-plane/features/app-tracker‎';
 import { htmlElement } from '@/shared/config/dom';
 import { createFlagsListModel } from '@/shared/lib/effector/flags-list-model';
 import { syncWithHtmlAttribute } from '@/shared/lib/effector/sync-with-html-attribute';
@@ -133,7 +133,7 @@ export const registerModule = <R extends Record<string, RouteInstance<any>>>({
     }
   });
 
-  if (id === 'stream-flow') {
+  if (id === 'control-plane') {
     sample({
       clock: $active,
       source: { active: $active },

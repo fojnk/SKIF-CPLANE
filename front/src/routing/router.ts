@@ -1,16 +1,16 @@
 import { sample } from 'effector';
 
-import { SFModule } from '@/modules/stream-flow/config';
+import { ControlPlaneModule } from '@/modules/control-plane/config';
 import {
   $capabilities,
   $user,
-} from '@/modules/stream-flow/entities/session/user/model/state';
-import { hasCapability } from '@/modules/stream-flow/shared/utils/authz';
+} from '@/modules/control-plane/entities/session/user/model/state';
+import { hasCapability } from '@/modules/control-plane/shared/utils/authz';
 import { createRouter } from '@/shared/lib/routing';
 
 export const router = createRouter({
   base: '/',
-  routes: Object.values(SFModule.routes),
+  routes: Object.values(ControlPlaneModule.routes),
   privacy: (route, customRouter) => {
     sample({
       clock: route.$isOpened,
@@ -18,7 +18,7 @@ export const router = createRouter({
       filter: (user, isOpened) => isOpened && !user,
       target: customRouter.push.prepend(() => ({
         method: 'replace' as const,
-        path: SFModule.routes.login.path,
+        path: ControlPlaneModule.routes.login.path,
         params: {},
         query: {},
       })),

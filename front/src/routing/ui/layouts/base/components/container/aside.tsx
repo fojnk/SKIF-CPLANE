@@ -14,8 +14,8 @@ import { ReactNode, useState, useEffect } from 'react';
 import {
   userLib,
   userModel,
-} from '@/modules/stream-flow/entities/session/user';
-import { ServicesMenu } from '@/modules/stream-flow/shared/ui';
+} from '@/modules/control-plane/entities/session/user';
+import { ServicesMenu } from '@/modules/control-plane/shared/ui';
 import { NavbarPanel } from '@/routing';
 import { themeModel, Theme } from '@/shared/lib/complex/theme';
 import { AppSettings } from '@/widgets/app-settings';

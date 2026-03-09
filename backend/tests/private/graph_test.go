@@ -8,7 +8,7 @@ import (
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
 
-func (s *StreamflowTestSuite) TestProjectGraph() {
+func (s *ControlPlaneTestSuite) TestProjectGraph() {
 	t := s.T()
 
 	nsResp, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{

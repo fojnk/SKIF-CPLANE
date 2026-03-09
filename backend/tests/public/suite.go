@@ -13,18 +13,18 @@ import (
 	publicClient "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/public/client"
 )
 
-type StreamflowTestSuite struct {
+type ControlPlaneTestSuite struct {
 	suite.Suite
 	ctx         context.Context
 	c           *publicClient.ControlPlanePublicAPI
-	privateC    *privateClient.StreamflowControlPlaneAPI
+	privateC    *privateClient.ControlPlaneAPI
 	userID      int64
 	RobotID     int64
 	userCreated bool
 	token       string
 }
 
-func (s *StreamflowTestSuite) SetupTest() {
+func (s *ControlPlaneTestSuite) SetupTest() {
 	s.ctx = context.Background()
 	transportPublic := httptransport.New("localhost:3002", "", nil)
 	s.c = publicClient.New(transportPublic, strfmt.Default)

@@ -58,11 +58,7 @@ type ClientOption func(*runtime.ClientOperation)
 type ClientService interface {
 	PostAPIV2IdmNamespaceRoles(params *PostAPIV2IdmNamespaceRolesParams, opts ...ClientOption) (*PostAPIV2IdmNamespaceRolesOK, error)
 
-	PostAPIV2IdmNamespaceRolesSync(params *PostAPIV2IdmNamespaceRolesSyncParams, opts ...ClientOption) (*PostAPIV2IdmNamespaceRolesSyncOK, error)
-
 	PostAPIV2IdmProjectRoles(params *PostAPIV2IdmProjectRolesParams, opts ...ClientOption) (*PostAPIV2IdmProjectRolesOK, error)
-
-	PostAPIV2IdmProjectRolesSync(params *PostAPIV2IdmProjectRolesSyncParams, opts ...ClientOption) (*PostAPIV2IdmProjectRolesSyncOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -111,49 +107,6 @@ func (a *Client) PostAPIV2IdmNamespaceRoles(params *PostAPIV2IdmNamespaceRolesPa
 }
 
 /*
-PostAPIV2IdmNamespaceRolesSync syncs namespace roles to idm if no ids will be synced all namespace overwise only in id list
-*/
-func (a *Client) PostAPIV2IdmNamespaceRolesSync(params *PostAPIV2IdmNamespaceRolesSyncParams, opts ...ClientOption) (*PostAPIV2IdmNamespaceRolesSyncOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewPostAPIV2IdmNamespaceRolesSyncParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "PostAPIV2IdmNamespaceRolesSync",
-		Method:             "POST",
-		PathPattern:        "/api/v2/idm/namespace/roles/sync",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &PostAPIV2IdmNamespaceRolesSyncReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*PostAPIV2IdmNamespaceRolesSyncOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-
-	// no default response is defined.
-	//
-	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PostAPIV2IdmNamespaceRolesSync: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
 PostAPIV2IdmProjectRoles creates and push project roles to idm
 */
 func (a *Client) PostAPIV2IdmProjectRoles(params *PostAPIV2IdmProjectRolesParams, opts ...ClientOption) (*PostAPIV2IdmProjectRolesOK, error) {
@@ -193,49 +146,6 @@ func (a *Client) PostAPIV2IdmProjectRoles(params *PostAPIV2IdmProjectRolesParams
 	//
 	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for PostAPIV2IdmProjectRoles: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-PostAPIV2IdmProjectRolesSync syncs project roles to idm if no ids will be synced all projects overwise only projects in id list
-*/
-func (a *Client) PostAPIV2IdmProjectRolesSync(params *PostAPIV2IdmProjectRolesSyncParams, opts ...ClientOption) (*PostAPIV2IdmProjectRolesSyncOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewPostAPIV2IdmProjectRolesSyncParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "PostAPIV2IdmProjectRolesSync",
-		Method:             "POST",
-		PathPattern:        "/api/v2/idm/project/roles/sync",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &PostAPIV2IdmProjectRolesSyncReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*PostAPIV2IdmProjectRolesSyncOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-
-	// no default response is defined.
-	//
-	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PostAPIV2IdmProjectRolesSync: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

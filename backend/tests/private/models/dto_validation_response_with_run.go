@@ -23,12 +23,12 @@ type DtoValidationResponseWithRun struct {
 	// Example: ["error1"]
 	Errors []string `json:"errors"`
 
-	// logs
-	Logs []string `json:"logs"`
-
 	// experiment is valid
 	// Example: true
 	ExperimentIsValid bool `json:"experiment_is_valid,omitempty"`
+
+	// logs
+	Logs []string `json:"logs"`
 
 	// run result
 	RunResult *DtoRunResults `json:"run_result,omitempty"`

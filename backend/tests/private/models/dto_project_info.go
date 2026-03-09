@@ -20,9 +20,6 @@ import (
 // swagger:model dto.ProjectInfo
 type DtoProjectInfo struct {
 
-	// abc product id
-	AbcProductID string `json:"abc_product_id,omitempty"`
-
 	// created at
 	CreatedAt string `json:"created_at,omitempty"`
 
@@ -31,6 +28,9 @@ type DtoProjectInfo struct {
 
 	// description
 	Description string `json:"description,omitempty"`
+
+	// experiment count
+	ExperimentCount int64 `json:"experiment_count,omitempty"`
 
 	// id
 	ID int64 `json:"id,omitempty"`
@@ -46,9 +46,6 @@ type DtoProjectInfo struct {
 
 	// namespace name
 	NamespaceName string `json:"namespace_name,omitempty"`
-
-	// experiment count
-	ExperimentCount int64 `json:"experiment_count,omitempty"`
 
 	// rights
 	Rights []ACLRight `json:"rights"`

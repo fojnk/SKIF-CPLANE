@@ -10,7 +10,7 @@ import (
 	publicModels "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/public/models"
 )
 
-func (s *StreamflowTestSuite) TestExperimentDatasetsBasic() {
+func (s *ControlPlaneTestSuite) TestExperimentDatasetsBasic() {
 	nsRes, err := s.privateC.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &privateModels.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns-pds"),

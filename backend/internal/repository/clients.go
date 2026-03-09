@@ -18,8 +18,7 @@ type Clients struct {
 	IDM          *clients.IDMClient
 	OAuth        *oauth.OAuthClient
 	JwtClient    *jwt_client.Client
-	Jobd         *clients.JobdClient
-	OneAlerts    *clients.OneAlertsClient
+	Jobd *clients.JobdClient
 }
 
 func NewClients(c *config.Config, l *logger.Logger) (*Clients, error) {
@@ -64,18 +63,6 @@ func NewClients(c *config.Config, l *logger.Logger) (*Clients, error) {
 		l.Info("jobd client is not configured (base_url is empty)")
 	}
 
-	var oneAlerts *clients.OneAlertsClient
-	if c.Clients.OneAlerts.BaseURL != "" {
-		var err error
-		oneAlerts, err = clients.NewOneAlertsClient(c.Clients.OneAlerts, l)
-		if err != nil {
-			l.Error("failed to init one alerts client", err)
-			oneAlerts = nil
-		}
-	} else {
-		l.Info("one alerts client is not configured (base_url is empty)")
-	}
-
 	return &Clients{
 		Auth:         auth,
 		Orchestrator: orchestrator,
@@ -83,6 +70,5 @@ func NewClients(c *config.Config, l *logger.Logger) (*Clients, error) {
 		OAuth:        oauthC,
 		JwtClient:    jwt,
 		Jobd:         jobd,
-		OneAlerts:    oneAlerts,
 	}, nil
 }

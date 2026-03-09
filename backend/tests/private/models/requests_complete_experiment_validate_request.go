@@ -24,7 +24,7 @@ type RequestsCompleteExperimentValidateRequest struct {
 	ExperimentConfig *string `json:"experimentConfig"`
 
 	// experiment ID
-	ExperimentID int32 `json:"experimentID,omitempty"`
+	ExperimentID int64 `json:"experimentID,omitempty"`
 }
 
 // Validate validates this requests complete experiment validate request

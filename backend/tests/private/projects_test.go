@@ -7,7 +7,7 @@ import (
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
 
-func (s *StreamflowTestSuite) TestProjectBasic() {
+func (s *ControlPlaneTestSuite) TestProjectBasic() {
 
 	whoRes, err := s.c.User.GetAPIV1WhoAmI(&user.GetAPIV1WhoAmIParams{
 		Context: s.ctx,
@@ -200,7 +200,7 @@ func (s *StreamflowTestSuite) TestProjectBasic() {
 
 }
 
-func (s *StreamflowTestSuite) TestProjectURLsWithMainClusterAndReplicas() {
+func (s *ControlPlaneTestSuite) TestProjectURLsWithMainClusterAndReplicas() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns"),
@@ -347,7 +347,7 @@ func (s *StreamflowTestSuite) TestProjectURLsWithMainClusterAndReplicas() {
 	s.Require().Equal(1, abcProductCount, "ABC product URL should appear only once")
 }
 
-func (s *StreamflowTestSuite) TestProjectURLsBackwardCompatibility() {
+func (s *ControlPlaneTestSuite) TestProjectURLsBackwardCompatibility() {
 	// Тест для проверки обратной совместимости со старым форматом конфига
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{

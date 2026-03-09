@@ -9,7 +9,7 @@ import (
 )
 
 // check 2
-func (s *StreamflowTestSuite) TestDeletes() {
+func (s *ControlPlaneTestSuite) TestDeletes() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace2.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("del-" +

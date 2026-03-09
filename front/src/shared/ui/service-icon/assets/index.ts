@@ -11,6 +11,6 @@ export { default as OneSecret } from './one-secret.svg?react';
 export { default as Pms } from './pms.svg?react';
 export { default as S3 } from './s3.svg?react';
 export { default as SsEtl } from './ss-etl.svg?react';
-export { default as ControlPlane } from './stream-flow.svg?react';
+export { default as ControlPlane } from './control-plane.svg?react';
 export { default as UcpModels } from './ucp-models.svg?react';
 export { default as Warp } from './warp.svg?react';

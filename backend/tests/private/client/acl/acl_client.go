@@ -66,6 +66,8 @@ type ClientService interface {
 
 	GetAPIV2ACLUsers(params *GetAPIV2ACLUsersParams, opts ...ClientOption) (*GetAPIV2ACLUsersOK, error)
 
+	GetAPIV2MeCapabilities(params *GetAPIV2MeCapabilitiesParams, opts ...ClientOption) (*GetAPIV2MeCapabilitiesOK, error)
+
 	PostAPIV1Disclaim(params *PostAPIV1DisclaimParams, opts ...ClientOption) (*PostAPIV1DisclaimOK, error)
 
 	PostAPIV1Grant(params *PostAPIV1GrantParams, opts ...ClientOption) (*PostAPIV1GrantOK, error)
@@ -289,6 +291,49 @@ func (a *Client) GetAPIV2ACLUsers(params *GetAPIV2ACLUsersParams, opts ...Client
 	//
 	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for GetAPIV2ACLUsers: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+GetAPIV2MeCapabilities gets current user capabilities
+*/
+func (a *Client) GetAPIV2MeCapabilities(params *GetAPIV2MeCapabilitiesParams, opts ...ClientOption) (*GetAPIV2MeCapabilitiesOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewGetAPIV2MeCapabilitiesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIV2MeCapabilities",
+		Method:             "GET",
+		PathPattern:        "/api/v2/me/capabilities",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &GetAPIV2MeCapabilitiesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*GetAPIV2MeCapabilitiesOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIV2MeCapabilities: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

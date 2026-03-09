@@ -57,8 +57,7 @@ const (
 	EntityACL              EntityType = "acl"
 	EntityOrchestrator     EntityType = "orchestrator"
 	EntityGeneric          EntityType = "generic"
-	EntityCube             EntityType = "cube"
-	EntityAlerts           EntityType = "alerts"
+	EntityCube EntityType = "cube"
 )
 
 // ExternalMessageError представляет локализованное сообщение об ошибке
@@ -472,12 +471,6 @@ var EntityMessages = map[EntityType]EntityErrorMessages{
 		BadRequest:  "Некорректные данные куба",
 		Internal:    "Внутренняя ошибка при работе с кубами",
 		Unavailable: "Сервис кубов временно недоступен",
-	},
-	EntityAlerts: {
-		Forbidden:   "У вас нет прав для работы с алертми",
-		BadRequest:  "Некорректные данные алертов",
-		Internal:    "Внутренняя ошибка при работе с алертми",
-		Unavailable: "Сервис алертов временно недоступен",
 	},
 }
 

@@ -586,43 +586,6 @@ var Definitions = []shared.Definition{
 		Handler: shared.CreateHandler(updateExperimentVariableVersionHandler, setters.EmptySetParam[requests.UpdateExperimentVariableVersionRequest], validation.DefaultValidate[requests.UpdateExperimentVariableVersionRequest]),
 		Method:  http.MethodPut,
 	},
-	// Alerts
-	{
-		Path:        "/api/v2/experiment/alerts/options",
-		Handler:     shared.CreateHandler(getAlertOptionsHandler, setters.EmptySetParam[requests.EmptyAlertRequest], validation.DefaultValidate[requests.EmptyAlertRequest]),
-		Method:      http.MethodGet,
-		DisableAuth: true,
-	},
-	{
-		Path:    "/api/v2/experiment/alerts/products",
-		Handler: shared.CreateHandler(getProductsHandler, setters.SetGetProductsParams, validation.ValidateGetProductsRequest, "experiment_id"),
-		Method:  http.MethodGet,
-	},
-	{
-		Path:    "/api/v2/experiment/alerts",
-		Handler: shared.CreateHandler(getAlertGroupHandler, setters.SetGetAlertsParams, validation.ValidateGetAlertsRequest, "experiment_id", "product_id"),
-		Method:  http.MethodGet,
-	},
-	{
-		Path:    "/api/v2/experiment/alerts",
-		Handler: shared.CreateHandler(createAlertsHandler, setters.SetCreateAlertGroupParams, validation.DefaultValidate[requests.CreateAlertGroupRequest], "experiment_id", "product_id"),
-		Method:  http.MethodPost,
-	},
-	{
-		Path:    "/api/v2/experiment/alerts",
-		Handler: shared.CreateHandler(deleteAlertGroupHandler, setters.SetDeleteAlertGroupParams, validation.DefaultValidate[requests.DeleteAlertsRequest], "experiment_id", "product_id"),
-		Method:  http.MethodDelete,
-	},
-	{
-		Path:    "/api/v2/experiment/alerts/template",
-		Handler: shared.CreateHandler(changeAlertSeveritiesHandler, setters.SetChangeAlertSeveritiesParams, validation.DefaultValidate[requests.ChangeAlertSeveritiesRequest], "experiment_id", "product_id"),
-		Method:  http.MethodPut,
-	},
-	{
-		Path:    "/api/v2/experiment/alerts/rule",
-		Handler: shared.CreateHandler(changeAlertHandler, setters.SetChangeAlertParams, validation.DefaultValidate[requests.ChangeAlertRequest], "experiment_id", "product_id", "rule_id"),
-		Method:  http.MethodPut,
-	},
 	// Dataset
 	{
 		Path:    "/api/v2/dataset/config/validate",

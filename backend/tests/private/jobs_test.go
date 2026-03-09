@@ -9,7 +9,7 @@ import (
 )
 
 // TestJobsList tests the POST /api/v1/jobs/search endpoint
-func (s *StreamflowTestSuite) TestJobsList() {
+func (s *ControlPlaneTestSuite) TestJobsList() {
 	// Create test namespace, project and experiment first
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
@@ -109,7 +109,7 @@ func (s *StreamflowTestSuite) TestJobsList() {
 }
 
 // TestJobsGetByID tests the GET /api/v1/job?job_id={id} endpoint
-func (s *StreamflowTestSuite) TestJobsGetByID() {
+func (s *ControlPlaneTestSuite) TestJobsGetByID() {
 	// Test 1: Get existing job
 	jobID := int64(1)
 
@@ -136,7 +136,7 @@ func (s *StreamflowTestSuite) TestJobsGetByID() {
 }
 
 // TestJobsGetEvents tests the GET /api/v1/job/events?job_id={id} endpoint
-func (s *StreamflowTestSuite) TestJobsGetEvents() {
+func (s *ControlPlaneTestSuite) TestJobsGetEvents() {
 	jobID := int64(1)
 
 	// Test 1: Get all events for a job
@@ -154,7 +154,7 @@ func (s *StreamflowTestSuite) TestJobsGetEvents() {
 }
 
 // TestJobsGetTasks tests the GET /api/v1/job/tasks?job_id={id} endpoint
-func (s *StreamflowTestSuite) TestJobsGetTasks() {
+func (s *ControlPlaneTestSuite) TestJobsGetTasks() {
 	jobID := int64(1)
 
 	// Test 1: Get all tasks for a job
@@ -172,7 +172,7 @@ func (s *StreamflowTestSuite) TestJobsGetTasks() {
 }
 
 // TestJobsListWithEntityFilter tests listing jobs filtered by entity
-func (s *StreamflowTestSuite) TestJobsListWithEntityFilter() {
+func (s *ControlPlaneTestSuite) TestJobsListWithEntityFilter() {
 	// Create test namespace, project and experiment
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
@@ -227,7 +227,7 @@ func (s *StreamflowTestSuite) TestJobsListWithEntityFilter() {
 }
 
 // TestJobsListOrdering tests ordering of job results
-func (s *StreamflowTestSuite) TestJobsListOrdering() {
+func (s *ControlPlaneTestSuite) TestJobsListOrdering() {
 	// Test 1: Order by created_at ascending
 	sort := "created_at"
 	order := "asc"

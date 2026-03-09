@@ -17,10 +17,10 @@ require('dotenv').config();
  */
 const moduleConfigs = [
   {
-    name: 'stream-flow',
-    apiUrl: process.env.SF_API_URL,
-    swaggerUrl: process.env.SF_SWAGGER_URL,
-    proxySocks5Tunnel: process.env.SF_SOCKS5_SSH_TUNNEL,
+    name: 'control-plane',
+    apiUrl: process.env.CP_API_URL,
+    swaggerUrl: process.env.CP_SWAGGER_URL,
+    proxySocks5Tunnel: process.env.CP_SOCKS5_SSH_TUNNEL,
   },
 ];
 

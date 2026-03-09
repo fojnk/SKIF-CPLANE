@@ -7,7 +7,7 @@ import (
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
 
-func (s *StreamflowTestSuite) TestDatasetKafka() {
+func (s *ControlPlaneTestSuite) TestDatasetKafka() {
 	// add namespace
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{

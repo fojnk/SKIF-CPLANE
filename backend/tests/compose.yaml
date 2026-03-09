@@ -28,12 +28,12 @@ services:
     ports:
       - "5433:5432"
     environment:
-      POSTGRES_USER: streamflow
+      POSTGRES_USER: control_plane
       POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: streamflow
+      POSTGRES_DB: control_plane
       PGDATA: /var/lib/psql_data/pgdata
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U streamflow -d streamflow" ]
+      test: [ "CMD-SHELL", "pg_isready -U control_plane -d control_plane" ]
       interval: 5s
       timeout: 10s
       retries: 5

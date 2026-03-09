@@ -14,7 +14,7 @@ import (
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
 
-func (s *StreamflowTestSuite) TestGetOrchestratorConfig() {
+func (s *ControlPlaneTestSuite) TestGetOrchestratorConfig() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace2.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns-ocf"),
@@ -330,7 +330,7 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig() {
 	s.Require().Equal("{\n  \"OnecloudDatacenters\": [\n    \"pc\"\n  ],\n  \"OnecloudQueue\": \"prod.streamflow.prod\"\n}", details3.Payload.Details.Old.VariableValue)
 }
 
-func (s *StreamflowTestSuite) TestGetOrchestratorConfigWithNullConfigs() {
+func (s *ControlPlaneTestSuite) TestGetOrchestratorConfigWithNullConfigs() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace2.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-n-nocg"),
@@ -442,7 +442,7 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfigWithNullConfigs() {
 	s.Require().JSONEq(jsonConfigExpected.String(), orchestratorConfigRes.Payload.Config)
 }
 
-func (s *StreamflowTestSuite) TestGetOrchestratorConfigWithNoDatasets() {
+func (s *ControlPlaneTestSuite) TestGetOrchestratorConfigWithNoDatasets() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace2.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("t-ocfg-nds"),
@@ -503,7 +503,7 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfigWithNoDatasets() {
 	s.Require().JSONEq(jsonConfigExpected.String(), orchestratorConfigRes.Payload.Config)
 }
 
-func (s *StreamflowTestSuite) TestGetOrchestratorConfig2() {
+func (s *ControlPlaneTestSuite) TestGetOrchestratorConfig2() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace2.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns-ocf"),
@@ -791,7 +791,7 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig2() {
 
 }
 
-func (s *StreamflowTestSuite) TestGetOrchestratorConfigDataSchemaV2() {
+func (s *ControlPlaneTestSuite) TestGetOrchestratorConfigDataSchemaV2() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace2.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns-ocf"),

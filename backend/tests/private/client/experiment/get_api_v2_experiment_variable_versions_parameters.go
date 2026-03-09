@@ -62,6 +62,12 @@ GetAPIV2ExperimentVariableVersionsParams contains all the parameters to send to 
 */
 type GetAPIV2ExperimentVariableVersionsParams struct {
 
+	/* ExperimentID.
+
+	   experiment id
+	*/
+	ExperimentID int64
+
 	/* From.
 
 	   from
@@ -73,12 +79,6 @@ type GetAPIV2ExperimentVariableVersionsParams struct {
 	   limit
 	*/
 	Limit int64
-
-	/* ExperimentID.
-
-	   experiment id
-	*/
-	ExperimentID int64
 
 	/* VariableID.
 
@@ -139,6 +139,17 @@ func (o *GetAPIV2ExperimentVariableVersionsParams) SetHTTPClient(client *http.Cl
 	o.HTTPClient = client
 }
 
+// WithExperimentID adds the experimentID to the get API v2 experiment variable versions params
+func (o *GetAPIV2ExperimentVariableVersionsParams) WithExperimentID(experimentID int64) *GetAPIV2ExperimentVariableVersionsParams {
+	o.SetExperimentID(experimentID)
+	return o
+}
+
+// SetExperimentID adds the experimentId to the get API v2 experiment variable versions params
+func (o *GetAPIV2ExperimentVariableVersionsParams) SetExperimentID(experimentID int64) {
+	o.ExperimentID = experimentID
+}
+
 // WithFrom adds the from to the get API v2 experiment variable versions params
 func (o *GetAPIV2ExperimentVariableVersionsParams) WithFrom(from int64) *GetAPIV2ExperimentVariableVersionsParams {
 	o.SetFrom(from)
@@ -161,17 +172,6 @@ func (o *GetAPIV2ExperimentVariableVersionsParams) SetLimit(limit int64) {
 	o.Limit = limit
 }
 
-// WithExperimentID adds the experimentID to the get API v2 experiment variable versions params
-func (o *GetAPIV2ExperimentVariableVersionsParams) WithExperimentID(experimentID int64) *GetAPIV2ExperimentVariableVersionsParams {
-	o.SetExperimentID(experimentID)
-	return o
-}
-
-// SetExperimentID adds the experimentId to the get API v2 experiment variable versions params
-func (o *GetAPIV2ExperimentVariableVersionsParams) SetExperimentID(experimentID int64) {
-	o.ExperimentID = experimentID
-}
-
 // WithVariableID adds the variableID to the get API v2 experiment variable versions params
 func (o *GetAPIV2ExperimentVariableVersionsParams) WithVariableID(variableID *int64) *GetAPIV2ExperimentVariableVersionsParams {
 	o.SetVariableID(variableID)
@@ -191,6 +191,16 @@ func (o *GetAPIV2ExperimentVariableVersionsParams) WriteToRequest(r runtime.Clie
 	}
 	var res []error
 
+	// query param experiment_id
+	qrExperimentID := o.ExperimentID
+	qExperimentID := swag.FormatInt64(qrExperimentID)
+	if qExperimentID != "" {
+
+		if err := r.SetQueryParam("experiment_id", qExperimentID); err != nil {
+			return err
+		}
+	}
+
 	// query param from
 	qrFrom := o.From
 	qFrom := swag.FormatInt64(qrFrom)
@@ -207,16 +217,6 @@ func (o *GetAPIV2ExperimentVariableVersionsParams) WriteToRequest(r runtime.Clie
 	if qLimit != "" {
 
 		if err := r.SetQueryParam("limit", qLimit); err != nil {
-			return err
-		}
-	}
-
-	// query param experiment_id
-	qrExperimentID := o.ExperimentID
-	qExperimentID := swag.FormatInt64(qrExperimentID)
-	if qExperimentID != "" {
-
-		if err := r.SetQueryParam("experiment_id", qExperimentID); err != nil {
 			return err
 		}
 	}

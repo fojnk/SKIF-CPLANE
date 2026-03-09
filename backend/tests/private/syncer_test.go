@@ -8,7 +8,7 @@ import (
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
 
-func (s *StreamflowTestSuite) TestIDMSyncer() {
+func (s *ControlPlaneTestSuite) TestIDMSyncer() {
 	roleRes, err := s.c.Role.PostAPIV1Role(&role.PostAPIV1RoleParams{
 		Context: s.ctx,
 		Request: &models2.RequestsCreateRoleRequest{
@@ -57,7 +57,7 @@ func (s *StreamflowTestSuite) TestIDMSyncer() {
 	s.Require().GreaterOrEqual(len(roles.Payload.Roles), 1, "Должна быть хотя бы одна роль")
 }
 
-//func (s *StreamflowTestSuite) TestABCSyncer() {
+//func (s *ControlPlaneTestSuite) TestABCSyncer() {
 //	// create user group
 //	userGroupRes, err := s.c.UserGroup.PostAPIV1Usergroup(&user_group.PostAPIV1UsergroupParams{
 //		Request: &models.RequestsCreateUserGroupRequest{

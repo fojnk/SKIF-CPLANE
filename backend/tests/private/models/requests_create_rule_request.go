@@ -35,7 +35,7 @@ type RequestsCreateRuleRequest struct {
 
 	// object type
 	// Required: true
-	// Enum: ["root","namespace","project","experiment","dataset","cube"]
+	// Enum: ["root","namespace","project","experiment","dataset","cube","workspace","model"]
 	ObjectType *string `json:"object_type"`
 }
 
@@ -136,7 +136,7 @@ var requestsCreateRuleRequestTypeObjectTypePropEnum []any
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["root","namespace","project","experiment","dataset","cube"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["root","namespace","project","experiment","dataset","cube","workspace","model"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -163,6 +163,12 @@ const (
 
 	// RequestsCreateRuleRequestObjectTypeCube captures enum value "cube"
 	RequestsCreateRuleRequestObjectTypeCube string = "cube"
+
+	// RequestsCreateRuleRequestObjectTypeWorkspace captures enum value "workspace"
+	RequestsCreateRuleRequestObjectTypeWorkspace string = "workspace"
+
+	// RequestsCreateRuleRequestObjectTypeModel captures enum value "model"
+	RequestsCreateRuleRequestObjectTypeModel string = "model"
 )
 
 // prop value enum

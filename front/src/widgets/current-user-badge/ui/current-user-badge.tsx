@@ -5,9 +5,9 @@ import { useUnit } from 'effector-react';
 import {
   UserBadge,
   userModel,
-} from '@/modules/stream-flow/entities/session/user';
-import { logoutModel } from '@/modules/stream-flow/features/logout';
-import { navigationModel } from '@/modules/stream-flow/features/navigation';
+} from '@/modules/control-plane/entities/session/user';
+import { logoutModel } from '@/modules/control-plane/features/logout';
+import { navigationModel } from '@/modules/control-plane/features/navigation';
 
 import css from './current-user-badge.module.scss';
 

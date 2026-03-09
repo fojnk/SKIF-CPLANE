@@ -22,7 +22,7 @@ func ptr[T any](val T) *T {
 	return &val
 }
 
-func (s *StreamflowTestSuite) grantNamespace(namespaceID int64) {
+func (s *ControlPlaneTestSuite) grantNamespace(namespaceID int64) {
 	var req models2.RequestsCreateRuleRequest
 
 	if namespaceID == 0 {
@@ -53,7 +53,7 @@ func (s *StreamflowTestSuite) grantNamespace(namespaceID int64) {
 	s.grantRule(ruleRes.Payload.ID)
 }
 
-func (s *StreamflowTestSuite) grantCubeSystem() {
+func (s *ControlPlaneTestSuite) grantCubeSystem() {
 	req := models2.RequestsCreateRuleRequest{
 		ObjectType:      ptr("cube"),
 		ObjectAttribute: ptr("cube"),
@@ -73,7 +73,7 @@ func (s *StreamflowTestSuite) grantCubeSystem() {
 	s.grantRule(ruleRes.Payload.ID)
 }
 
-func (s *StreamflowTestSuite) grantRule(ruleID int64) {
+func (s *ControlPlaneTestSuite) grantRule(ruleID int64) {
 	grantRes, err := s.c.ACL.PostAPIV1Grant(&cacl.PostAPIV1GrantParams{
 		Request: &models2.RequestsGrantRequest{
 			UserID: s.userID,

@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "cross-env NODE_ENV=development PROXY=true vite --host 0.0.0.0",
+    "dev:docker": "cross-env NODE_ENV=development PROXY=true CP_API_URL=http://localhost:8080/frontend-cplane vite --host 0.0.0.0",
     "dev:clean": "npm run clean && npm run dev",
     "clean": "rm -rf node_modules/.vite",
     "build": "cross-env NODE_ENV=production vite build",

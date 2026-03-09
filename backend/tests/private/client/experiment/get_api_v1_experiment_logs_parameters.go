@@ -62,6 +62,12 @@ GetAPIV1ExperimentLogsParams contains all the parameters to send to the API endp
 */
 type GetAPIV1ExperimentLogsParams struct {
 
+	/* ExperimentID.
+
+	   experiment id
+	*/
+	ExperimentID *int64
+
 	/* From.
 
 	   from
@@ -73,12 +79,6 @@ type GetAPIV1ExperimentLogsParams struct {
 	   limit
 	*/
 	Limit int64
-
-	/* ExperimentID.
-
-	   experiment id
-	*/
-	ExperimentID *int64
 
 	/* ProjectID.
 
@@ -139,6 +139,17 @@ func (o *GetAPIV1ExperimentLogsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithExperimentID adds the experimentID to the get API v1 experiment logs params
+func (o *GetAPIV1ExperimentLogsParams) WithExperimentID(experimentID *int64) *GetAPIV1ExperimentLogsParams {
+	o.SetExperimentID(experimentID)
+	return o
+}
+
+// SetExperimentID adds the experimentId to the get API v1 experiment logs params
+func (o *GetAPIV1ExperimentLogsParams) SetExperimentID(experimentID *int64) {
+	o.ExperimentID = experimentID
+}
+
 // WithFrom adds the from to the get API v1 experiment logs params
 func (o *GetAPIV1ExperimentLogsParams) WithFrom(from int64) *GetAPIV1ExperimentLogsParams {
 	o.SetFrom(from)
@@ -161,17 +172,6 @@ func (o *GetAPIV1ExperimentLogsParams) SetLimit(limit int64) {
 	o.Limit = limit
 }
 
-// WithExperimentID adds the experimentID to the get API v1 experiment logs params
-func (o *GetAPIV1ExperimentLogsParams) WithExperimentID(experimentID *int64) *GetAPIV1ExperimentLogsParams {
-	o.SetExperimentID(experimentID)
-	return o
-}
-
-// SetExperimentID adds the experimentId to the get API v1 experiment logs params
-func (o *GetAPIV1ExperimentLogsParams) SetExperimentID(experimentID *int64) {
-	o.ExperimentID = experimentID
-}
-
 // WithProjectID adds the projectID to the get API v1 experiment logs params
 func (o *GetAPIV1ExperimentLogsParams) WithProjectID(projectID *int64) *GetAPIV1ExperimentLogsParams {
 	o.SetProjectID(projectID)
@@ -191,6 +191,23 @@ func (o *GetAPIV1ExperimentLogsParams) WriteToRequest(r runtime.ClientRequest, r
 	}
 	var res []error
 
+	if o.ExperimentID != nil {
+
+		// query param experiment_id
+		var qrExperimentID int64
+
+		if o.ExperimentID != nil {
+			qrExperimentID = *o.ExperimentID
+		}
+		qExperimentID := swag.FormatInt64(qrExperimentID)
+		if qExperimentID != "" {
+
+			if err := r.SetQueryParam("experiment_id", qExperimentID); err != nil {
+				return err
+			}
+		}
+	}
+
 	// query param from
 	qrFrom := o.From
 	qFrom := swag.FormatInt64(qrFrom)
@@ -208,23 +225,6 @@ func (o *GetAPIV1ExperimentLogsParams) WriteToRequest(r runtime.ClientRequest, r
 
 		if err := r.SetQueryParam("limit", qLimit); err != nil {
 			return err
-		}
-	}
-
-	if o.ExperimentID != nil {
-
-		// query param experiment_id
-		var qrExperimentID int64
-
-		if o.ExperimentID != nil {
-			qrExperimentID = *o.ExperimentID
-		}
-		qExperimentID := swag.FormatInt64(qrExperimentID)
-		if qExperimentID != "" {
-
-			if err := r.SetQueryParam("experiment_id", qExperimentID); err != nil {
-				return err
-			}
 		}
 	}
 

@@ -62,6 +62,12 @@ GetAPIV1ExperimentVersionsParams contains all the parameters to send to the API 
 */
 type GetAPIV1ExperimentVersionsParams struct {
 
+	/* ExperimentID.
+
+	   experiment id
+	*/
+	ExperimentID int64
+
 	/* From.
 
 	   from
@@ -73,12 +79,6 @@ type GetAPIV1ExperimentVersionsParams struct {
 	   limit
 	*/
 	Limit int64
-
-	/* ExperimentID.
-
-	   experiment id
-	*/
-	ExperimentID int64
 
 	timeout    time.Duration
 	Context    context.Context
@@ -133,6 +133,17 @@ func (o *GetAPIV1ExperimentVersionsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithExperimentID adds the experimentID to the get API v1 experiment versions params
+func (o *GetAPIV1ExperimentVersionsParams) WithExperimentID(experimentID int64) *GetAPIV1ExperimentVersionsParams {
+	o.SetExperimentID(experimentID)
+	return o
+}
+
+// SetExperimentID adds the experimentId to the get API v1 experiment versions params
+func (o *GetAPIV1ExperimentVersionsParams) SetExperimentID(experimentID int64) {
+	o.ExperimentID = experimentID
+}
+
 // WithFrom adds the from to the get API v1 experiment versions params
 func (o *GetAPIV1ExperimentVersionsParams) WithFrom(from int64) *GetAPIV1ExperimentVersionsParams {
 	o.SetFrom(from)
@@ -155,17 +166,6 @@ func (o *GetAPIV1ExperimentVersionsParams) SetLimit(limit int64) {
 	o.Limit = limit
 }
 
-// WithExperimentID adds the experimentID to the get API v1 experiment versions params
-func (o *GetAPIV1ExperimentVersionsParams) WithExperimentID(experimentID int64) *GetAPIV1ExperimentVersionsParams {
-	o.SetExperimentID(experimentID)
-	return o
-}
-
-// SetExperimentID adds the experimentId to the get API v1 experiment versions params
-func (o *GetAPIV1ExperimentVersionsParams) SetExperimentID(experimentID int64) {
-	o.ExperimentID = experimentID
-}
-
 // WriteToRequest writes these params to a swagger request
 func (o *GetAPIV1ExperimentVersionsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -173,6 +173,16 @@ func (o *GetAPIV1ExperimentVersionsParams) WriteToRequest(r runtime.ClientReques
 		return err
 	}
 	var res []error
+
+	// query param experiment_id
+	qrExperimentID := o.ExperimentID
+	qExperimentID := swag.FormatInt64(qrExperimentID)
+	if qExperimentID != "" {
+
+		if err := r.SetQueryParam("experiment_id", qExperimentID); err != nil {
+			return err
+		}
+	}
 
 	// query param from
 	qrFrom := o.From
@@ -190,16 +200,6 @@ func (o *GetAPIV1ExperimentVersionsParams) WriteToRequest(r runtime.ClientReques
 	if qLimit != "" {
 
 		if err := r.SetQueryParam("limit", qLimit); err != nil {
-			return err
-		}
-	}
-
-	// query param experiment_id
-	qrExperimentID := o.ExperimentID
-	qExperimentID := swag.FormatInt64(qrExperimentID)
-	if qExperimentID != "" {
-
-		if err := r.SetQueryParam("experiment_id", qExperimentID); err != nil {
 			return err
 		}
 	}
