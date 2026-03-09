@@ -53,7 +53,7 @@ console.info(
 );
 
 const getApiUrls = () => {
-  const api: string | undefined = process.env.SF_API_URL;
+  const api: string | undefined = process.env.CP_API_URL;
 
   return { api };
 };

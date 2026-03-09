@@ -1,8 +1,0 @@
-groups:
-  - name: "{{ .project_name }}/{{ .experiment_name }} StreamFlow alert group No{{ .alert_group_id }} namespace:{{ .namespace }} product_id:{{ .product_id }}"
-    namespace: {{ .namespace }}
-    rules:
-      - record: {{ .project_id }}:{{ .experiment_id }}:{{ .alert_group_id }}:{{ .namespace }}:common_labels
-        expr: vector(1)
-        labels: &common_labels
-          product_id: {{ .product_id }}

@@ -10,7 +10,7 @@ import { useUnit } from 'effector-react';
 import { ReactNode, useEffect } from 'react';
 import { renderToString } from 'react-dom/server';
 
-import { userModel } from '@/modules/stream-flow/entities/session/user';
+import { userModel } from '@/modules/control-plane/entities/session/user';
 import { appStartModel } from '@/shared/lib/complex/app-starter';
 import { embeddedModel } from '@/shared/lib/complex/embedded';
 import { useStorageSyncState } from '@/shared/lib/react/hooks/use-storage-sync-state';

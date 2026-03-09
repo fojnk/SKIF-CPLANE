@@ -1,8 +1,8 @@
 import { sample } from 'effector';
 import { debounce, not } from 'patronum';
 
-import { userModel } from '@/modules/stream-flow/entities/session/user';
-import { initMyTrackerFx } from '@/modules/stream-flow/features/app-tracker‎';
+import { userModel } from '@/modules/control-plane/entities/session/user';
+import { initMyTrackerFx } from '@/modules/control-plane/features/app-tracker‎';
 import { routingModel } from '@/routing';
 import { appStartModel } from '@/shared/lib/complex/app-starter';
 import { embeddedModel } from '@/shared/lib/complex/embedded';

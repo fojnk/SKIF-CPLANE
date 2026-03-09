@@ -8,7 +8,7 @@ import (
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
 
-func (s *StreamflowTestSuite) TestCube() {
+func (s *ControlPlaneTestSuite) TestCube() {
 	// grant rule for working with system cubes
 	s.grantCubeSystem()
 

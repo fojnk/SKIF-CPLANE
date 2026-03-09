@@ -2,7 +2,7 @@ import { TabList, TabProvider, Text } from '@gravity-ui/uikit';
 import cx from 'clsx';
 import { ReactNode } from 'react';
 
-import { tabsConfig } from '@/modules/stream-flow/features/navigation/model/navigation';
+import { tabsConfig } from '@/modules/control-plane/features/navigation/model/navigation';
 import { TabWithTooltip } from '@/routing/ui/layouts/base/components';
 import { createValueModel } from '@/shared/lib/effector/value-model';
 

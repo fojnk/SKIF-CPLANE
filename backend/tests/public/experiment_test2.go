@@ -11,7 +11,7 @@ import (
 )
 
 // hello
-func (s *StreamflowTestSuite) TestExperimentDatasetsBasic2() {
+func (s *ControlPlaneTestSuite) TestExperimentDatasetsBasic2() {
 	nsRes, err := s.privateC.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &privateModels.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns-pds"),

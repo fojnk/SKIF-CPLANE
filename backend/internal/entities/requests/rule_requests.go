@@ -7,7 +7,7 @@ type CreateRoleRequest struct {
 }
 
 type CreateRuleRequest struct {
-	ObjectType      string `json:"object_type" validate:"required,oneof=root namespace project experiment dataset cube workspace experiment model dataset"`
+	ObjectType      string `json:"object_type" validate:"required,oneof=root namespace project experiment dataset cube workspace model"`
 	ObjectAttribute string `json:"object_attribute" validate:"required"`
 	ObjectID        *int32 `json:"object_id" validate:"required"`
 	Action          string `json:"action" validate:"required,oneof=00R 01E 02C 03D"`

@@ -13,7 +13,7 @@ import (
 // Примечание: некоторые тесты используют новое поле ColorDark,
 // которое появится после регенерации swagger клиентов. Ошибки линтера исчезнут после регенерации.
 
-func (s *StreamflowTestSuite) TestBannersBasic() {
+func (s *ControlPlaneTestSuite) TestBannersBasic() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns-pl"),
@@ -206,7 +206,7 @@ func (s *StreamflowTestSuite) TestBannersBasic() {
 }
 
 // TestBannersSingleActive проверяет, что единомоментно может быть только один активный баннер
-func (s *StreamflowTestSuite) TestBannersSingleActive() {
+func (s *ControlPlaneTestSuite) TestBannersSingleActive() {
 	// Создаем первый активный баннер
 	banner1, err := s.c.App.PostAPIV1AppBanner(&app2.PostAPIV1AppBannerParams{
 		Context: s.ctx,
@@ -366,7 +366,7 @@ func (s *StreamflowTestSuite) TestBannersSingleActive() {
 }
 
 // TestBannersColorDark проверяет работу поля color_dark
-func (s *StreamflowTestSuite) TestBannersColorDark() {
+func (s *ControlPlaneTestSuite) TestBannersColorDark() {
 	// Создаем баннер с color_dark
 	banner, err := s.c.App.PostAPIV1AppBanner(&app2.PostAPIV1AppBannerParams{
 		Context: s.ctx,
@@ -434,7 +434,7 @@ func (s *StreamflowTestSuite) TestBannersColorDark() {
 }
 
 // TestGetCurrentAppBanner проверяет получение текущего активного баннера
-func (s *StreamflowTestSuite) TestGetCurrentAppBanner() {
+func (s *ControlPlaneTestSuite) TestGetCurrentAppBanner() {
 	// Сначала проверяем, что когда нет активных баннеров, возвращается null
 	// Используем прямой HTTP вызов, так как клиент еще не регенерирован
 	resp, err := s.c.App.GetAPIV1AppBanners(&app2.GetAPIV1AppBannersParams{
@@ -500,7 +500,7 @@ func (s *StreamflowTestSuite) TestGetCurrentAppBanner() {
 // TestGetCurrentAppBannerWithTimeRange проверяет получение текущего баннера с учетом временных рамок
 // ПРИМЕЧАНИЕ: Этот тест требует регенерации swagger клиентов для поддержки полей Starts и Ends
 // После регенерации раскомментируйте код ниже и используйте GetAPIV1AppBannersCurrent
-func (s *StreamflowTestSuite) TestGetCurrentAppBannerWithTimeRange() {
+func (s *ControlPlaneTestSuite) TestGetCurrentAppBannerWithTimeRange() {
 	// TODO: После регенерации swagger клиентов раскомментировать и использовать:
 	// futureTime := strfmt.DateTime(time.Now().Add(24 * time.Hour))
 	// pastTime := strfmt.DateTime(time.Now().Add(-24 * time.Hour))
@@ -546,7 +546,7 @@ func (s *StreamflowTestSuite) TestGetCurrentAppBannerWithTimeRange() {
 }
 
 // TestGetCurrentAppBannerNoActive проверяет, что когда нет активных баннеров, возвращается null
-func (s *StreamflowTestSuite) TestGetCurrentAppBannerNoActive() {
+func (s *ControlPlaneTestSuite) TestGetCurrentAppBannerNoActive() {
 	// Деактивируем все существующие баннеры
 	allBanners, err := s.c.App.GetAPIV1AppBanners(&app2.GetAPIV1AppBannersParams{
 		Context: s.ctx,
@@ -587,7 +587,7 @@ func (s *StreamflowTestSuite) TestGetCurrentAppBannerNoActive() {
 }
 
 // TestBannerWithoutTitle проверяет, что поле title необязательное
-func (s *StreamflowTestSuite) TestBannerWithoutTitle() {
+func (s *ControlPlaneTestSuite) TestBannerWithoutTitle() {
 	// Создаем баннер без title (не передаем поле Title вообще)
 	banner, err := s.c.App.PostAPIV1AppBanner(&app2.PostAPIV1AppBannerParams{
 		Context: s.ctx,
@@ -649,7 +649,7 @@ func (s *StreamflowTestSuite) TestBannerWithoutTitle() {
 }
 
 // TestBannerUpdateType проверяет, что тип баннера можно изменить через PUT
-func (s *StreamflowTestSuite) TestBannerUpdateType() {
+func (s *ControlPlaneTestSuite) TestBannerUpdateType() {
 	// Создаем баннер с типом release_block
 	banner, err := s.c.App.PostAPIV1AppBanner(&app2.PostAPIV1AppBannerParams{
 		Context: s.ctx,
@@ -722,7 +722,7 @@ func (s *StreamflowTestSuite) TestBannerUpdateType() {
 }
 
 // TestBannerUpdateUpdatedAt проверяет, что updated_at меняется после обновления баннера
-func (s *StreamflowTestSuite) TestBannerUpdateUpdatedAt() {
+func (s *ControlPlaneTestSuite) TestBannerUpdateUpdatedAt() {
 	// Создаем баннер
 	banner, err := s.c.App.PostAPIV1AppBanner(&app2.PostAPIV1AppBannerParams{
 		Context: s.ctx,
@@ -780,7 +780,7 @@ func (s *StreamflowTestSuite) TestBannerUpdateUpdatedAt() {
 }
 
 // TestExpiredBannerNotReturnedAsCurrent проверяет, что протухший баннер не возвращается как текущий
-func (s *StreamflowTestSuite) TestExpiredBannerNotReturnedAsCurrent() {
+func (s *ControlPlaneTestSuite) TestExpiredBannerNotReturnedAsCurrent() {
 	// Деактивируем все существующие баннеры
 	allBanners, err := s.c.App.GetAPIV1AppBanners(&app2.GetAPIV1AppBannersParams{
 		Context: s.ctx,
@@ -829,7 +829,7 @@ func (s *StreamflowTestSuite) TestExpiredBannerNotReturnedAsCurrent() {
 }
 
 // TestFutureBannerNotReturnedAsCurrent проверяет, что баннер с starts в будущем не возвращается как текущий
-func (s *StreamflowTestSuite) TestFutureBannerNotReturnedAsCurrent() {
+func (s *ControlPlaneTestSuite) TestFutureBannerNotReturnedAsCurrent() {
 	// Деактивируем все существующие баннеры
 	allBanners, err := s.c.App.GetAPIV1AppBanners(&app2.GetAPIV1AppBannersParams{
 		Context: s.ctx,
@@ -878,7 +878,7 @@ func (s *StreamflowTestSuite) TestFutureBannerNotReturnedAsCurrent() {
 }
 
 // TestExpiredReleaseBlockDoesNotBlockDeploy проверяет, что протухший release_block баннер не блокирует деплой
-func (s *StreamflowTestSuite) TestExpiredReleaseBlockDoesNotBlockDeploy() {
+func (s *ControlPlaneTestSuite) TestExpiredReleaseBlockDoesNotBlockDeploy() {
 	// Создаем namespace, project и experiment для проверки деплоя
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
@@ -989,7 +989,7 @@ func (s *StreamflowTestSuite) TestExpiredReleaseBlockDoesNotBlockDeploy() {
 }
 
 // TestActiveBannerWithinTimeRangeReturnedAsCurrent проверяет, что баннер в пределах временного диапазона возвращается
-func (s *StreamflowTestSuite) TestActiveBannerWithinTimeRangeReturnedAsCurrent() {
+func (s *ControlPlaneTestSuite) TestActiveBannerWithinTimeRangeReturnedAsCurrent() {
 	// Деактивируем все существующие баннеры
 	allBanners, err := s.c.App.GetAPIV1AppBanners(&app2.GetAPIV1AppBannersParams{
 		Context: s.ctx,

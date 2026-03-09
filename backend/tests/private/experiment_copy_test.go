@@ -8,7 +8,7 @@ import (
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
 
-func (s *StreamflowTestSuite) TestExperimentCopyCrossNs() {
+func (s *ControlPlaneTestSuite) TestExperimentCopyCrossNs() {
 	// NAMESPACE 1
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
@@ -204,7 +204,7 @@ func (s *StreamflowTestSuite) TestExperimentCopyCrossNs() {
 	//s.Require().Equal("test-alias-experiment-datasets", getDsRes2.Payload.Datasets[0].Alias)
 }
 
-func (s *StreamflowTestSuite) TestExperimentCopySameNsSameProject() {
+func (s *ControlPlaneTestSuite) TestExperimentCopySameNsSameProject() {
 	// NAMESPACE 1
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{

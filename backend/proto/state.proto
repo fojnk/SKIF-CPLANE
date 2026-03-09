@@ -1,6 +1,0 @@
-package CPlane.State;
-
-message TOwningKvStateOptions {
-  optional uint64 MaxCacheSize = 1;
-}
-

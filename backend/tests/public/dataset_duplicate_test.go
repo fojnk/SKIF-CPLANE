@@ -9,7 +9,7 @@ import (
 	publicModels "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/public/models"
 )
 
-func (s *StreamflowTestSuite) TestPublicDatasetDuplicatePathForbidden() {
+func (s *ControlPlaneTestSuite) TestPublicDatasetDuplicatePathForbidden() {
 	nsRes, err := s.privateC.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &privateModels.RequestsCreateNamespaceRequest{
 			Name: ptr("test-ns"),

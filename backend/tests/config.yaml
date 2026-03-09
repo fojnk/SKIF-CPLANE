@@ -16,9 +16,9 @@ log:
 
 database:
   host: postgres:5432
-  user: streamflow
+  user: control_plane
   password: 1234
-  database: streamflow
+  database: control_plane
 
 clients:
   auth:
@@ -33,7 +33,7 @@ clients:
   oauth:
     oauth-proxy: ""
     OAuthUrl: "https://auth.vk.team/oauth2"
-    client-id: "StreamFlow"
+    client-id: "ControlPlane"
     grant-type: "authorization_code"
     scope: "user_info"
     redirect-url: "http://localhost:3000/auth/token"

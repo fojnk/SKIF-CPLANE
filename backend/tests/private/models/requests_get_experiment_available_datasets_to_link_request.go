@@ -20,6 +20,10 @@ import (
 // swagger:model requests.GetExperimentAvailableDatasetsToLinkRequest
 type RequestsGetExperimentAvailableDatasetsToLinkRequest struct {
 
+	// experiment id
+	// Required: true
+	ExperimentID *int64 `json:"experiment_id"`
+
 	// filters
 	Filters *DtoDatasetFilters `json:"filters,omitempty"`
 
@@ -32,15 +36,15 @@ type RequestsGetExperimentAvailableDatasetsToLinkRequest struct {
 	// offset
 	// Required: true
 	Offset *int64 `json:"offset"`
-
-	// experiment id
-	// Required: true
-	ExperimentID *int64 `json:"experiment_id"`
 }
 
 // Validate validates this requests get experiment available datasets to link request
 func (m *RequestsGetExperimentAvailableDatasetsToLinkRequest) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateExperimentID(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateFilters(formats); err != nil {
 		res = append(res, err)
@@ -54,13 +58,18 @@ func (m *RequestsGetExperimentAvailableDatasetsToLinkRequest) Validate(formats s
 		res = append(res, err)
 	}
 
-	if err := m.validateExperimentID(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *RequestsGetExperimentAvailableDatasetsToLinkRequest) validateExperimentID(formats strfmt.Registry) error {
+
+	if err := validate.Required("experiment_id", "body", m.ExperimentID); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -107,15 +116,6 @@ func (m *RequestsGetExperimentAvailableDatasetsToLinkRequest) validateLimit(form
 func (m *RequestsGetExperimentAvailableDatasetsToLinkRequest) validateOffset(formats strfmt.Registry) error {
 
 	if err := validate.Required("offset", "body", m.Offset); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *RequestsGetExperimentAvailableDatasetsToLinkRequest) validateExperimentID(formats strfmt.Registry) error {
-
-	if err := validate.Required("experiment_id", "body", m.ExperimentID); err != nil {
 		return err
 	}
 

@@ -19,10 +19,6 @@ import (
 // swagger:model requests.CreateProjectRequest
 type RequestsCreateProjectRequest struct {
 
-	// abc product id
-	// Required: true
-	AbcProductID *string `json:"abc_product_id"`
-
 	// comment
 	Comment string `json:"comment,omitempty"`
 
@@ -43,10 +39,6 @@ type RequestsCreateProjectRequest struct {
 func (m *RequestsCreateProjectRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateAbcProductID(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
@@ -58,15 +50,6 @@ func (m *RequestsCreateProjectRequest) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *RequestsCreateProjectRequest) validateAbcProductID(formats strfmt.Registry) error {
-
-	if err := validate.Required("abc_product_id", "body", m.AbcProductID); err != nil {
-		return err
-	}
-
 	return nil
 }
 

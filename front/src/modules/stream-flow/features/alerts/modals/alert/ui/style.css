@@ -1,6 +1,0 @@
-.custom-actions-table .g-table__cell_sticky_start,
-.custom-actions-table .g-table__cell_sticky_end {
-    position: sticky;
-    z-index: 2;
-    background: transparent !important;
-}
