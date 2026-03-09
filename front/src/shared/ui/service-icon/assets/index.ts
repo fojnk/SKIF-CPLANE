@@ -1,0 +1,16 @@
+export { default as Abc } from './abc.svg?react';
+export { default as Artifactory } from './artifactory.svg?react';
+export { default as DataTransfer } from './datatransfer.svg?react';
+export { default as Discovery } from './discovery.svg?react';
+export { default as Docs } from './docs.svg?react';
+export { default as Inference } from './inference.svg?react';
+export { default as Mdb } from './mbd.svg?react';
+export { default as Mops } from './mops.svg?react';
+export { default as OneFlow } from './one-flow.svg?react';
+export { default as OneSecret } from './one-secret.svg?react';
+export { default as Pms } from './pms.svg?react';
+export { default as S3 } from './s3.svg?react';
+export { default as SsEtl } from './ss-etl.svg?react';
+export { default as ControlPlane } from './stream-flow.svg?react';
+export { default as UcpModels } from './ucp-models.svg?react';
+export { default as Warp } from './warp.svg?react';
