@@ -1,0 +1,329 @@
+import { Flex, Switch } from '@gravity-ui/uikit';
+import { useUnit } from 'effector-react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Form } from 'react-final-form';
+
+import {
+  convertCubesToFormFormat,
+  buildFullCubeConfigJsonWithPositions,
+  type GraphNodePosition,
+  type PortInfo,
+  type EditFormCube,
+} from '@/modules/stream-flow/entities/cubes';
+import { experimentFormModel } from '@/modules/stream-flow/entities/forms/experiment';
+import { editorPageModel } from '@/modules/stream-flow/pages/editor';
+import { convertFormValuesToJson } from '@/modules/stream-flow/shared/components/forms';
+import { formatData } from '@/modules/stream-flow/shared/utils/formatData';
+
+import { EditorJson } from '../../components/editor-json';
+import { EditorLayout } from '../../components/editor-layout';
+
+import {
+  initExperimentEditorValues,
+  ExperimentEditForm,
+  type ExperimentFormValues,
+} from './experiment-edit';
+
+/**
+ * Observer для синхронизации формы → JSON конфиг
+ * Конвертирует значения формы в JSON и сохраняет в currentConfig
+ */
+const FormValuesObserver = ({
+  values,
+  formParams,
+  setForm,
+  originalConfig,
+}: {
+  values: ExperimentFormValues;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  formParams: any[];
+  setForm: (value: string) => void;
+  originalConfig: string;
+}) => {
+  const prevValuesRef = useRef<string>('');
+
+  useEffect(() => {
+    // Получаем кубы и resharder inputSources из формы
+    // Cubes теперь Record<string, EditExperimentCube>
+    const formCubes = values?.Worker?.GraphConfig?.Cubes || {};
+    const resharderInputSources: PortInfo[] = [];
+
+    // Извлекаем PortInfo из формы
+    // Приоритет имени: OutputName > SourceName
+    const inputSources = values?.Resharder?.InputSources;
+    if (Array.isArray(inputSources)) {
+      inputSources.forEach((source) => {
+        if (source?.portHash) {
+          // Используем OutputName если есть, иначе SourceName
+          const displayName =
+            source.OutputName && source.OutputName.trim() !== ''
+              ? source.OutputName
+              : source.SourceName || '';
+          if (displayName) {
+            resharderInputSources.push({
+              name: displayName,
+              hash: source.portHash,
+            });
+          }
+        }
+      });
+    }
+
+    // Конвертируем кубы в формат для JSON (без CubeID - он теперь в cubeConfig)
+    const jsonCubes = convertCubesToFormFormat(
+      formCubes,
+      resharderInputSources,
+    );
+
+    // Создаем полный объект values с кубами для сравнения
+    const valuesWithCubes = {
+      ...values,
+      Worker: {
+        ...values?.Worker,
+        GraphConfig: {
+          ...values?.Worker?.GraphConfig,
+          Cubes: jsonCubes,
+        },
+      },
+    };
+
+    const currentValuesStr = JSON.stringify(valuesWithCubes);
+    if (currentValuesStr === prevValuesRef.current) {
+      return;
+    }
+    prevValuesRef.current = currentValuesStr;
+
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const typedValues = convertFormValuesToJson(
+        values,
+        formParams,
+        originalConfig,
+      ) as any;
+
+      // Добавляем Cubes в JSON
+      if (jsonCubes.length > 0) {
+        if (!typedValues.Worker) {
+          typedValues.Worker = {};
+        }
+        if (!typedValues.Worker.GraphConfig) {
+          typedValues.Worker.GraphConfig = {};
+        }
+        typedValues.Worker.GraphConfig.Cubes = jsonCubes;
+      }
+
+      // Если Resharder отсутствует или пустой, добавляем как пустой объект
+      if (!typedValues.Resharder) {
+        typedValues.Resharder = {};
+      }
+
+      // Восстанавливаем порядок ключей первого уровня из оригинального конфига
+      let finalValues = typedValues;
+      if (originalConfig) {
+        try {
+          const originalObj =
+            typeof originalConfig === 'string'
+              ? JSON.parse(originalConfig)
+              : originalConfig;
+          if (originalObj && typeof originalObj === 'object') {
+            const orderedValues: Record<string, unknown> = {};
+            const originalKeys = Object.keys(originalObj);
+            const resultKeys = new Set(Object.keys(typedValues));
+
+            // Сначала добавляем ключи в порядке оригинального конфига
+            originalKeys.forEach((key: string) => {
+              if (resultKeys.has(key)) {
+                orderedValues[key] = typedValues[key];
+                resultKeys.delete(key);
+              }
+            });
+
+            // Затем добавляем новые ключи
+            resultKeys.forEach((key) => {
+              orderedValues[key] = typedValues[key];
+            });
+
+            finalValues = orderedValues;
+          }
+        } catch {
+          // Игнорируем ошибку парсинга
+        }
+      }
+
+      const jsonString = formatData(JSON.stringify(finalValues));
+      setForm(jsonString);
+    } catch (error) {
+      console.error('Failed to stringify form values:', error);
+    }
+  }, [values, formParams, setForm, originalConfig]);
+
+  return null;
+};
+
+/**
+ * Observer для синхронизации формы → cubeConfig (additional_information)
+ * Собирает CubeTypeID, InputNames и Graph (позиции узлов) из кубов формы
+ */
+const CubeConfigObserver = ({
+  values,
+  setCubeConfig,
+  graphNodePositions,
+}: {
+  values: ExperimentFormValues;
+  setCubeConfig: (value: string) => void;
+  graphNodePositions: GraphNodePosition[];
+}) => {
+  const prevCubeConfigRef = useRef<string>('');
+
+  useEffect(() => {
+    // Получаем кубы из формы
+    const formCubes = values?.Worker?.GraphConfig?.Cubes || {};
+    const cubesArray = Object.values(formCubes) as EditFormCube[];
+
+    // Строим полный cubeConfig JSON с данными графа
+    const cubeConfigJson = buildFullCubeConfigJsonWithPositions(
+      cubesArray,
+      graphNodePositions,
+    );
+
+    // Проверяем изменения
+    if (cubeConfigJson === prevCubeConfigRef.current) {
+      return;
+    }
+    prevCubeConfigRef.current = cubeConfigJson;
+
+    setCubeConfig(cubeConfigJson);
+  }, [values?.Worker?.GraphConfig?.Cubes, setCubeConfig, graphNodePositions]);
+
+  return null;
+};
+
+export const Experiment = () => {
+  const [
+    data,
+    currentConfig,
+    currentCubeConfig,
+    graphNodePositions,
+    setCurrentConfig,
+    setCurrentCubeConfig,
+    updateExperiment,
+    queryParams,
+  ] = useUnit([
+    editorPageModel.editor.$data,
+    editorPageModel.editor.$currentConfig,
+    editorPageModel.editor.$currentCubeConfig,
+    editorPageModel.editor.$graphNodePositions,
+    editorPageModel.editor.setCurrentConfig,
+    editorPageModel.editor.setCurrentCubeConfig,
+    editorPageModel.experiment.updateExperiment,
+    editorPageModel.query.$queryParams,
+  ]);
+  const [experimentFormData, experimentFormLoading, loadExperimentForm] =
+    useUnit([
+      experimentFormModel.$data,
+      experimentFormModel.$loading,
+      experimentFormModel.load,
+    ]);
+  const [cubesList] = useUnit([editorPageModel.cubes.$data]);
+  const variablesData = useUnit(editorPageModel.variables.$data);
+  const currentMode = queryParams.mode || 'code';
+
+  // Загружаем начальное состояние debug mode из localStorage
+  const [debugMode, setDebugMode] = useState(() => {
+    const saved = localStorage.getItem('experiment-editor-debug-mode');
+    return saved === 'true';
+  });
+
+  // Сохраняем состояние debug mode в localStorage при изменении
+  useEffect(() => {
+    localStorage.setItem('experiment-editor-debug-mode', String(debugMode));
+  }, [debugMode]);
+
+  // При hot reload данные формы могут сброситься в null — перезагружаем их
+  useEffect(() => {
+    if (experimentFormData === null && !experimentFormLoading) {
+      loadExperimentForm();
+    }
+  }, [experimentFormData, experimentFormLoading, loadExperimentForm]);
+
+  const handleSave = (disableValidation?: boolean) => {
+    if (data?.id) {
+      updateExperiment({
+        experiment_id: data.id,
+        config: currentConfig,
+        // Передаём cubeConfig (additional_information) при сохранении
+        additional_information: currentCubeConfig,
+        disable_validation: disableValidation,
+      });
+    }
+  };
+
+  // Инициализируем форму с кубами
+  // Используем data.config и data.additional_information для инициализации,
+  // а не currentConfig/currentCubeConfig (которые могут быть изменены)
+  const initialValues = useMemo(
+    () =>
+      initExperimentEditorValues(
+        data?.config ?? '',
+        data?.additional_information ?? '',
+        experimentFormData ?? undefined,
+        cubesList,
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [data?.config, data?.additional_information, experimentFormData, cubesList],
+  );
+  const hasFormParams = experimentFormData && experimentFormData.length > 0;
+
+  // Компонент для headerAfterButtons (показываем только в режиме form)
+  const debugControls =
+    currentMode === 'form' ? (
+      <Flex direction="row" alignItems="center" gap={2}>
+        <Switch
+          content="debug mode"
+          checked={debugMode}
+          onUpdate={setDebugMode}
+          size="m"
+        />
+      </Flex>
+    ) : null;
+
+  return (
+    <EditorLayout onSave={handleSave} headerAfterButtons={debugControls}>
+      {currentMode === 'form' && hasFormParams ? (
+        <Form
+          onSubmit={() => {}}
+          initialValues={initialValues}
+          subscription={{ values: true }}
+        >
+          {({ values }) => (
+            <>
+              <FormValuesObserver
+                values={values as ExperimentFormValues}
+                formParams={experimentFormData}
+                setForm={setCurrentConfig}
+                originalConfig={data?.config ?? ''}
+              />
+              <CubeConfigObserver
+                values={values as ExperimentFormValues}
+                setCubeConfig={setCurrentCubeConfig}
+                graphNodePositions={graphNodePositions}
+              />
+              {data && (
+                <ExperimentEditForm
+                  formData={experimentFormData}
+                  experiment_id={data.id!}
+                  experiment_name={data.name!}
+                  variables={variablesData}
+                  debugMode={currentMode === 'form' && debugMode}
+                  currentConfig={currentConfig}
+                />
+              )}
+            </>
+          )}
+        </Form>
+      ) : (
+        <EditorJson />
+      )}
+    </EditorLayout>
+  );
+};

@@ -1,0 +1,235 @@
+// Стили для графа проекта
+// Переменные цветов для нод проекта
+
+:root {
+  // Experiment - светлая тема (базовые)
+  --experiment-border-light: rgb(144 196 255);
+  --experiment-bg-light: rgb(233 243 255);
+
+  // Experiment - темная тема (базовые)
+  --experiment-border-dark: rgb(8 51 99);
+  --experiment-bg-dark: rgb(7 23 42);
+
+  // Experiment Status: UNKNOWN (серый)
+  --experiment-unknown-border-light: rgb(180 180 180);
+  --experiment-unknown-bg-light: rgb(245 245 245);
+  --experiment-unknown-border-dark: rgb(80 80 80);
+  --experiment-unknown-bg-dark: rgb(35 35 35);
+
+  // Experiment Status: OK (зеленый)
+  --experiment-ok-border-light: rgb(76 175 80);
+  --experiment-ok-bg-light: rgb(232 245 233);
+  --experiment-ok-border-dark: rgb(27 94 32);
+  --experiment-ok-bg-dark: rgb(15 45 20);
+
+  // Experiment Status: WARNING (желтый/оранжевый)
+  --experiment-warning-border-light: rgb(255 152 0);
+  --experiment-warning-bg-light: rgb(255 243 224);
+  --experiment-warning-border-dark: rgb(130 76 0);
+  --experiment-warning-bg-dark: rgb(50 35 10);
+
+  // Experiment Status: ERROR (красный)
+  --experiment-error-border-light: rgb(244 67 54);
+  --experiment-error-bg-light: rgb(255 235 238);
+  --experiment-error-border-dark: rgb(130 30 25);
+  --experiment-error-bg-dark: rgb(50 15 15);
+
+  // Experiment Status: PENDING (синий)
+  --experiment-pending-border-light: rgb(33 150 243);
+  --experiment-pending-bg-light: rgb(227 242 253);
+  --experiment-pending-border-dark: rgb(13 71 161);
+  --experiment-pending-bg-dark: rgb(10 30 60);
+
+  // Dataset - светлая тема (фиолетовый как у dataset)
+  --dataset-border-light: rgb(171 71 188);
+  --dataset-bg-light: rgb(243 229 245);
+
+  // Dataset - темная тема
+  --dataset-border-dark: rgb(74 20 140);
+  --dataset-bg-dark: rgb(30 10 50);
+
+  // Edge (соединения) - светлая тема
+  --project-edge-color-light: rgba(120, 120, 120, 0.6);
+  --project-edge-selected-color-light: rgba(0, 119, 255, 0.8);
+  --project-edge-hover-color-light: rgba(60, 60, 60, 1);
+
+  // Edge (соединения) - темная тема
+  --project-edge-color-dark: rgba(255, 255, 255, 0.5);
+  --project-edge-hover-color-dark: rgba(255, 255, 255, 0.8);
+  --project-edge-selected-color-dark: rgba(0, 119, 255, 0.8);
+
+  --project-header-height: 30px;
+}
+
+// Общие стили для групп
+%nodeBase {
+  height: 100%;
+  position: relative;
+  border-radius: 6px;
+  box-sizing: border-box;
+  cursor: pointer;
+  min-width: 200px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+// Experiment Node
+.experimentNode {
+  @extend %nodeBase;
+  border: 1px solid var(--experiment-border-light);
+  background-color: var(--experiment-bg-light);
+
+  &Icon {
+    //color: var(--g-color-text-secondary);
+    flex-shrink: 0;
+  }
+
+  &Label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &Status {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+}
+
+// Experiment Node Status variants
+.experimentNodeUnknown {
+  border-color: var(--experiment-unknown-border-light);
+  background-color: var(--experiment-unknown-bg-light);
+}
+
+.experimentNodeOk {
+  border-color: var(--experiment-ok-border-light);
+  background-color: var(--experiment-ok-bg-light);
+}
+
+.experimentNodeWarning {
+  border-color: var(--experiment-warning-border-light);
+  background-color: var(--experiment-warning-bg-light);
+}
+
+.experimentNodeError {
+  border-color: var(--experiment-error-border-light);
+  background-color: var(--experiment-error-bg-light);
+}
+
+.experimentNodePending {
+  border-color: var(--experiment-pending-border-light);
+  background-color: var(--experiment-pending-bg-light);
+}
+
+// Состояние выделения для experiment
+.experimentNodeSelected {
+  border: 2px solid var(--g-color-base-brand) !important;
+  box-shadow: 0 0 8px 2px rgba(59, 130, 246, 0.5);
+}
+
+// Dataset Node
+.datasetNode {
+  @extend %nodeBase;
+  border: 1px solid var(--dataset-border-light);
+  background-color: var(--dataset-bg-light);
+
+  &Icon {
+    color: var(--g-color-text-secondary);
+    flex-shrink: 0;
+  }
+
+  &Label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+// Состояние выделения для dataset
+.datasetNodeSelected {
+  border: 2px solid var(--g-color-base-brand) !important;
+  box-shadow: 0 0 8px 2px rgba(59, 130, 246, 0.5);
+}
+
+// Темная тема
+:global(.g-root_theme_dark) {
+  .experimentNode {
+    border-color: var(--experiment-border-dark);
+    background-color: var(--experiment-bg-dark);
+  }
+
+  .experimentNodeUnknown {
+    border-color: var(--experiment-unknown-border-dark);
+    background-color: var(--experiment-unknown-bg-dark);
+  }
+
+  .experimentNodeOk {
+    border-color: var(--experiment-ok-border-dark);
+    background-color: var(--experiment-ok-bg-dark);
+  }
+
+  .experimentNodeWarning {
+    border-color: var(--experiment-warning-border-dark);
+    background-color: var(--experiment-warning-bg-dark);
+  }
+
+  .experimentNodeError {
+    border-color: var(--experiment-error-border-dark);
+    background-color: var(--experiment-error-bg-dark);
+  }
+
+  .experimentNodePending {
+    border-color: var(--experiment-pending-border-dark);
+    background-color: var(--experiment-pending-bg-dark);
+  }
+
+  .datasetNode {
+    border-color: var(--dataset-border-dark);
+    background-color: var(--dataset-bg-dark);
+  }
+}
+
+// Глобальные стили для handles
+:global {
+  // Скрываем handles для project graph
+  .project-graph.react-flow .react-flow__handle,
+  .project-graph .react-flow__node .react-flow__handle,
+  .react-flow.project-graph .react-flow__handle {
+    display: none !important;
+  }
+
+  // Стили для edges
+  .project-graph .react-flow__edge-path {
+    stroke: var(--project-edge-color-light) !important;
+    stroke-width: 2px !important;
+  }
+
+  .project-graph .react-flow__edge:hover .react-flow__edge-path {
+    stroke: var(--project-edge-hover-color-light) !important;
+  }
+
+  .project-graph .react-flow__edge {
+    cursor: pointer !important;
+  }
+
+  // Темная тема для edges
+  .g-root_theme_dark .project-graph .react-flow__edge-path {
+    stroke: var(--project-edge-color-dark) !important;
+  }
+
+  .g-root_theme_dark
+    .project-graph
+    .react-flow__edge:hover
+    .react-flow__edge-path {
+    stroke: var(--project-edge-hover-color-dark) !important;
+  }
+}

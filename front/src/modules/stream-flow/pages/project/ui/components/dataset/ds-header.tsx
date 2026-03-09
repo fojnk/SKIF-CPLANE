@@ -1,0 +1,65 @@
+import { ArrowUpRightFromSquare, Database } from '@gravity-ui/icons';
+import { Button, Flex, Icon, Label, Text } from '@gravity-ui/uikit';
+import React from 'react';
+
+import { SfEntityHeader } from '@/modules/stream-flow/shared/layout';
+import { DatasetDC, ProjectInfoDC } from '@/modules/stream-flow/shared/types';
+import {
+  DatasetTypeLabel,
+  EntityLabels,
+} from '@/modules/stream-flow/shared/ui';
+
+import { DsActions } from './ds-actions';
+
+interface Props {
+  dataset: DatasetDC;
+  project: ProjectInfoDC;
+  link: string | null;
+}
+
+export const DsHeader = ({ dataset, project, link }: Props) => {
+  return (
+    <SfEntityHeader>
+      <Flex direction="column" gap={3}>
+        <Flex direction="column">
+          <Flex direction="row" gap={2} alignItems="center">
+            <Icon
+              data={Database}
+              size={18}
+              style={{
+                color: 'var(--g-color-text-secondary)',
+                marginTop: '3px',
+              }}
+            />
+            <Text variant="header-2" ellipsis>
+              {dataset.name}
+            </Text>
+          </Flex>
+        </Flex>
+        <Flex direction="row" gap={2} alignItems="center">
+          <DsActions dataset={dataset} project={project} />
+          <DatasetTypeLabel type={dataset.type} showValue={false} size="s" />
+          {dataset.managed && (
+            <Label size="s" theme="clear">
+              Managed
+            </Label>
+          )}
+          {dataset.public && (
+            <Label size="s" theme="clear">
+              Public
+            </Label>
+          )}
+          <EntityLabels id={dataset.id!} />
+          {link && (
+            <Button view="outlined" size="s" target="_blank" href={link}>
+              YT link
+              <Button.Icon>
+                <ArrowUpRightFromSquare />
+              </Button.Icon>
+            </Button>
+          )}
+        </Flex>
+      </Flex>
+    </SfEntityHeader>
+  );
+};
