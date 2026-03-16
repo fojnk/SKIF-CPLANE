@@ -62,6 +62,8 @@ type ClientService interface {
 
 	DeleteAPIV1ExperimentVariable(params *DeleteAPIV1ExperimentVariableParams, opts ...ClientOption) (*DeleteAPIV1ExperimentVariableOK, error)
 
+	GetAPIV1Graph(params *GetAPIV1GraphParams, opts ...ClientOption) (*GetAPIV1GraphOK, error)
+
 	GetAPIV1Experiment(params *GetAPIV1ExperimentParams, opts ...ClientOption) (*GetAPIV1ExperimentOK, error)
 
 	GetAPIV1ExperimentDatasets(params *GetAPIV1ExperimentDatasetsParams, opts ...ClientOption) (*GetAPIV1ExperimentDatasetsOK, error)
@@ -93,8 +95,6 @@ type ClientService interface {
 	GetAPIV1ExperimentVersions(params *GetAPIV1ExperimentVersionsParams, opts ...ClientOption) (*GetAPIV1ExperimentVersionsOK, error)
 
 	GetAPIV1Experiments(params *GetAPIV1ExperimentsParams, opts ...ClientOption) (*GetAPIV1ExperimentsOK, error)
-
-	GetAPIV1Graph(params *GetAPIV1GraphParams, opts ...ClientOption) (*GetAPIV1GraphOK, error)
 
 	GetAPIV2ExperimentVariableVersion(params *GetAPIV2ExperimentVariableVersionParams, opts ...ClientOption) (*GetAPIV2ExperimentVariableVersionOK, error)
 
@@ -275,6 +275,49 @@ func (a *Client) DeleteAPIV1ExperimentVariable(params *DeleteAPIV1ExperimentVari
 	//
 	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for DeleteAPIV1ExperimentVariable: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+GetAPIV1Graph gets project graph
+*/
+func (a *Client) GetAPIV1Graph(params *GetAPIV1GraphParams, opts ...ClientOption) (*GetAPIV1GraphOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewGetAPIV1GraphParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "GetAPIV1Graph",
+		Method:             "GET",
+		PathPattern:        "/api/v1/graph",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/json"},
+		Schemes:            []string{"http"},
+		Params:             params,
+		Reader:             &GetAPIV1GraphReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*GetAPIV1GraphOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for GetAPIV1Graph: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
@@ -963,49 +1006,6 @@ func (a *Client) GetAPIV1Experiments(params *GetAPIV1ExperimentsParams, opts ...
 	//
 	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for GetAPIV1Experiments: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-GetAPIV1Graph gets project graph
-*/
-func (a *Client) GetAPIV1Graph(params *GetAPIV1GraphParams, opts ...ClientOption) (*GetAPIV1GraphOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewGetAPIV1GraphParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "GetAPIV1Graph",
-		Method:             "GET",
-		PathPattern:        "/api/v1/graph",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &GetAPIV1GraphReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*GetAPIV1GraphOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-
-	// no default response is defined.
-	//
-	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for GetAPIV1Graph: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

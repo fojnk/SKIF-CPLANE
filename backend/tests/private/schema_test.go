@@ -4,7 +4,7 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/schema"
 )
 
-func (s *ControlPlaneTestSuite) TestSchema() {
+func (s *StreamflowTestSuite) TestSchema() {
 	schemaVal, err := s.c.Schema.GetAPIV2Schema(&schema.GetAPIV2SchemaParams{
 		ConfigType: "experiment",
 		Context:    s.ctx,

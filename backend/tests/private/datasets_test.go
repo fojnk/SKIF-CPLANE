@@ -7,7 +7,7 @@ import (
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
 
-func (s *ControlPlaneTestSuite) TestDatasetPublicAndManaged() {
+func (s *StreamflowTestSuite) TestDatasetPublicAndManaged() {
 
 	// add namespace 1
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
@@ -113,7 +113,7 @@ func (s *ControlPlaneTestSuite) TestDatasetPublicAndManaged() {
 	s.Require().Equal(true, updateRes.Payload.Dataset.Public)
 }
 
-func (s *ControlPlaneTestSuite) TestDatasetV2() {
+func (s *StreamflowTestSuite) TestDatasetV2() {
 
 	// add namespace 1
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
@@ -503,7 +503,7 @@ func (s *ControlPlaneTestSuite) TestDatasetV2() {
 	s.Require().Equal("updated-dataset", details3.Payload.Details.Old.Name)
 }
 
-func (s *ControlPlaneTestSuite) TestDatasetSearch2() {
+func (s *StreamflowTestSuite) TestDatasetSearch2() {
 
 	// add namespace 1
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{

@@ -11,16 +11,17 @@ import (
 	"github.com/go-openapi/strfmt"
 
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/acl"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/alerts"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/app"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/cube"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/dataset"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/experiment"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/form"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/idm"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/jobs"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/meta"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/oauth"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/experiment"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/project"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/robot"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/role"
@@ -75,16 +76,17 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *Streamflow
 	cli := new(StreamflowControlPlaneAPI)
 	cli.Transport = transport
 	cli.ACL = acl.New(transport, formats)
+	cli.Alerts = alerts.New(transport, formats)
 	cli.App = app.New(transport, formats)
 	cli.Cube = cube.New(transport, formats)
 	cli.Dataset = dataset.New(transport, formats)
-	cli.Experiment = experiment.New(transport, formats)
 	cli.Form = form.New(transport, formats)
 	cli.Idm = idm.New(transport, formats)
 	cli.Jobs = jobs.New(transport, formats)
 	cli.Meta = meta.New(transport, formats)
 	cli.Namespace = namespace.New(transport, formats)
 	cli.Oauth = oauth.New(transport, formats)
+	cli.Experiment = experiment.New(transport, formats)
 	cli.Project = project.New(transport, formats)
 	cli.Robot = robot.New(transport, formats)
 	cli.Role = role.New(transport, formats)
@@ -140,13 +142,13 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 type StreamflowControlPlaneAPI struct {
 	ACL acl.ClientService
 
+	Alerts alerts.ClientService
+
 	App app.ClientService
 
 	Cube cube.ClientService
 
 	Dataset dataset.ClientService
-
-	Experiment experiment.ClientService
 
 	Form form.ClientService
 
@@ -159,6 +161,8 @@ type StreamflowControlPlaneAPI struct {
 	Namespace namespace.ClientService
 
 	Oauth oauth.ClientService
+
+	Experiment experiment.ClientService
 
 	Project project.ClientService
 
@@ -185,16 +189,17 @@ type StreamflowControlPlaneAPI struct {
 func (c *StreamflowControlPlaneAPI) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
 	c.ACL.SetTransport(transport)
+	c.Alerts.SetTransport(transport)
 	c.App.SetTransport(transport)
 	c.Cube.SetTransport(transport)
 	c.Dataset.SetTransport(transport)
-	c.Experiment.SetTransport(transport)
 	c.Form.SetTransport(transport)
 	c.Idm.SetTransport(transport)
 	c.Jobs.SetTransport(transport)
 	c.Meta.SetTransport(transport)
 	c.Namespace.SetTransport(transport)
 	c.Oauth.SetTransport(transport)
+	c.Experiment.SetTransport(transport)
 	c.Project.SetTransport(transport)
 	c.Robot.SetTransport(transport)
 	c.Role.SetTransport(transport)

@@ -7,7 +7,7 @@ import (
 
 // TestAppUpcomingBasic проверяет базовую работу upcoming блока
 // Примечание: после регенерации swagger клиентов раскомментировать и использовать клиенты
-func (s *ControlPlaneTestSuite) TestAppUpcomingBasic() {
+func (s *StreamflowTestSuite) TestAppUpcomingBasic() {
 	getRes, err := s.c.App.GetAPIV1AppUpcoming(&app2.GetAPIV1AppUpcomingParams{Context: s.ctx})
 	s.Require().NoError(err)
 	s.Require().NotNil(getRes)
@@ -30,7 +30,7 @@ func (s *ControlPlaneTestSuite) TestAppUpcomingBasic() {
 }
 
 // TestAppUpcomingEmptyContent проверяет, что content может быть пустым
-func (s *ControlPlaneTestSuite) TestAppUpcomingEmptyContent() {
+func (s *StreamflowTestSuite) TestAppUpcomingEmptyContent() {
 	updateRes, err := s.c.App.PutAPIV1AppUpcoming(&app2.PutAPIV1AppUpcomingParams{
 		Context: s.ctx,
 		Request: &models2.RequestsUpdateAppUpcomingRequest{

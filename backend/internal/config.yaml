@@ -13,9 +13,9 @@ log:
 
 database:
   host: localhost:5432
-  user: control_plane
+  user: streamflow
   password: 1234
-  database: control_plane
+  database: streamflow
 
 clients:
   auth:
@@ -26,11 +26,11 @@ clients:
   oauth:
     oauth-proxy: ""
     OAuthUrl: "http://localhost:9100/oauth"
-    client-id: "ControlPlane"
+    client-id: "StreamFlow"
     grant-type: "authorization_code"
     scope: "user_info"
     redirect-url: "http://localhost:3000/auth/oauth/token"
-    client-secret: "control-plane-secret"
+    client-secret: "streamflow-secret"
   jwt:
     jwt-secret: "jwt-secret"
     access_expiration: 172800

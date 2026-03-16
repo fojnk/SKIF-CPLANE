@@ -7,5 +7,5 @@ import (
 )
 
 func TestAll(t *testing.T) {
-	suite.Run(t, new(ControlPlaneTestSuite))
+	suite.Run(t, new(StreamflowTestSuite))
 }

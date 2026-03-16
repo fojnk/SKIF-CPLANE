@@ -11,7 +11,7 @@ import (
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
 
-func (s *ControlPlaneTestSuite) TestExperimentValidation() {
+func (s *StreamflowTestSuite) TestExperimentValidation() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns-pl"),
@@ -215,7 +215,7 @@ func (s *ControlPlaneTestSuite) TestExperimentValidation() {
 	}
 }
 
-func (s *ControlPlaneTestSuite) TestExperimentQuota() {
+func (s *StreamflowTestSuite) TestExperimentQuota() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns-pl"),
@@ -412,7 +412,7 @@ func (s *ControlPlaneTestSuite) TestExperimentQuota() {
 	s.Require().NotNil(applyRes1.Payload)
 }
 
-func (s *ControlPlaneTestSuite) TestExperimentValidationRun() {
+func (s *StreamflowTestSuite) TestExperimentValidationRun() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			// Namespace name must be <= 10 chars (see Max Length tag and namespaceRegExp)

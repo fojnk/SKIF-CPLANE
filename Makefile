@@ -1,4 +1,4 @@
-.PHONY: help pull build rebuild up down restart logs ps clean frontend-rebuild dev-front
+.PHONY: help pull build rebuild up down restart logs ps clean frontend-rebuild
 
 COMPOSE ?= docker compose
 SERVICES ?=
@@ -19,7 +19,6 @@ help:
 	@echo "  ps       - Show container status"
 	@echo "  clean    - Down + remove volumes and local images"
 	@echo "  frontend-rebuild - Rebuild frontend bundle"
-	@echo "  dev-front      - Run frontend locally with HMR, proxying to backend in Docker"
 
 pull:
 	$(COMPOSE) pull $(SERVICES)
@@ -52,9 +51,3 @@ clean:
 frontend-rebuild:
 	rm -rf $(FRONTEND_DIR)/dist
 	cd $(FRONTEND_DIR) && NODE_OPTIONS="$(FRONTEND_NODE_OPTIONS)" npm run build
-
-# Run frontend dev server locally with HMR, proxying API to backend in Docker.
-# Starts postgres+backend+nginx if needed, then Vite on http://localhost:8081
-dev-front:
-	$(COMPOSE) up -d postgres backend nginx
-	cd front && npm run dev:docker

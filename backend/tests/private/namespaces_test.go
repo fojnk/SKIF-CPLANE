@@ -5,7 +5,7 @@ import (
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
 
-func (s *ControlPlaneTestSuite) TestNamespaceBasic() {
+func (s *StreamflowTestSuite) TestNamespaceBasic() {
 	res, err := s.c.Namespace.PostAPIV1Namespace(&namespace2.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("dplatform"),
@@ -173,7 +173,7 @@ func (s *ControlPlaneTestSuite) TestNamespaceBasic() {
 	s.Require().Equal("new comment", details3.Payload.Comment)
 }
 
-func (s *ControlPlaneTestSuite) TestNamespaceDelete() {
+func (s *StreamflowTestSuite) TestNamespaceDelete() {
 	namespacesCount, err := s.c.Namespace.GetAPIV1Namespaces(&namespace2.GetAPIV1NamespacesParams{
 		Context: s.ctx,
 	})

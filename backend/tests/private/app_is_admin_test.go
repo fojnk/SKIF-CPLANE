@@ -10,7 +10,7 @@ import (
 
 // TestAppIsAdmin проверяет работу ручки is-admin
 // Примечание: после регенерации swagger клиентов раскомментировать и использовать клиенты
-func (s *ControlPlaneTestSuite) TestAppIsAdmin() {
+func (s *StreamflowTestSuite) TestAppIsAdmin() {
 	getRes, err := s.c.App.GetAPIV1AppIsAdmin(&app2.GetAPIV1AppIsAdminParams{Context: s.ctx})
 	s.Require().NoError(err)
 	s.Require().NotNil(getRes)
@@ -18,7 +18,7 @@ func (s *ControlPlaneTestSuite) TestAppIsAdmin() {
 }
 
 // TestAppIsAdminNonAdmin проверяет, что пользователь без прав админа получает is_admin=false
-func (s *ControlPlaneTestSuite) TestAppIsAdminNonAdmin() {
+func (s *StreamflowTestSuite) TestAppIsAdminNonAdmin() {
 	// Получаем все правила для текущего пользователя
 	matchesRes, err := s.c.UserMatch.GetAPIV1UserMatches(&user_match.GetAPIV1UserMatchesParams{
 		UserID:          s.userID,

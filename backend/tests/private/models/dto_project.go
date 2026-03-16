@@ -17,6 +17,9 @@ import (
 // swagger:model dto.Project
 type DtoProject struct {
 
+	// abc product id
+	AbcProductID string `json:"abc_product_id,omitempty"`
+
 	// config
 	Config string `json:"config,omitempty"`
 

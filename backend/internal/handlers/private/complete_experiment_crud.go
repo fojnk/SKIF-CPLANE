@@ -159,6 +159,12 @@ func deleteCompleteExperimentHandler(ctx context.Context, svc *service.Service, 
 		return nil, shared.ConvertServiceError(err, shared.EntityExperiment)
 	}
 
+	err = svc.IAlertsService.DeleteExperimentAlertGroups(ctx, r.ID)
+	if err != nil {
+		l.Error("failed to delete alerts for deleted experiment", err)
+		return nil, shared.ConvertServiceError(err, shared.EntityAlerts)
+	}
+
 	svc.LogExperimentChange(ctx, projectID, r.ID, u.Username, "", update_log.ActionDelete, update_log.ExperimentUpdateLog{
 		Old: update_log.Experiment{
 			Name:        experiment.Name,

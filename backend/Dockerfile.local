@@ -24,6 +24,7 @@ WORKDIR /app
 
 COPY --from=build /bin/cplane /app/cplane
 COPY migrations /migrations
+COPY templates /templates
 COPY json /json
 COPY config.local.yaml /app/config.local.yaml
 

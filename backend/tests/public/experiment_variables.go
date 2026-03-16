@@ -16,7 +16,7 @@ import (
 	"text/template"
 )
 
-func (s *ControlPlaneTestSuite) TestGetOrchestratorConfig() {
+func (s *StreamflowTestSuite) TestGetOrchestratorConfig() {
 	nsRes, err := s.privateC.Namespace.PostAPIV1Namespace(&namespace2.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns-ocf"),

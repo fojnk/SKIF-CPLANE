@@ -19,6 +19,9 @@ import (
 // swagger:model requests.UpdateProjectRequest
 type RequestsUpdateProjectRequest struct {
 
+	// abc product id
+	AbcProductID string `json:"abc_product_id,omitempty"`
+
 	// comment
 	Comment string `json:"comment,omitempty"`
 

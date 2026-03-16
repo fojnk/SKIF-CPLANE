@@ -17,6 +17,9 @@ import (
 // swagger:model responses.CreateProjectResponse
 type ResponsesCreateProjectResponse struct {
 
+	// abc product id
+	AbcProductID string `json:"abc_product_id,omitempty"`
+
 	// description
 	Description string `json:"description,omitempty"`
 

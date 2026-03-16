@@ -19,24 +19,24 @@ import (
 // swagger:model requests.RemoveDatasetFromExperimentRequest
 type RequestsRemoveDatasetFromExperimentRequest struct {
 
-	// experiment id
-	// Required: true
-	ExperimentID *int64 `json:"experiment_id"`
-
 	// link id
 	// Required: true
 	LinkID *int64 `json:"link_id"`
+
+	// experiment id
+	// Required: true
+	ExperimentID *int64 `json:"experiment_id"`
 }
 
 // Validate validates this requests remove dataset from experiment request
 func (m *RequestsRemoveDatasetFromExperimentRequest) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateExperimentID(formats); err != nil {
+	if err := m.validateLinkID(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateLinkID(formats); err != nil {
+	if err := m.validateExperimentID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -46,18 +46,18 @@ func (m *RequestsRemoveDatasetFromExperimentRequest) Validate(formats strfmt.Reg
 	return nil
 }
 
-func (m *RequestsRemoveDatasetFromExperimentRequest) validateExperimentID(formats strfmt.Registry) error {
+func (m *RequestsRemoveDatasetFromExperimentRequest) validateLinkID(formats strfmt.Registry) error {
 
-	if err := validate.Required("experiment_id", "body", m.ExperimentID); err != nil {
+	if err := validate.Required("link_id", "body", m.LinkID); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *RequestsRemoveDatasetFromExperimentRequest) validateLinkID(formats strfmt.Registry) error {
+func (m *RequestsRemoveDatasetFromExperimentRequest) validateExperimentID(formats strfmt.Registry) error {
 
-	if err := validate.Required("link_id", "body", m.LinkID); err != nil {
+	if err := validate.Required("experiment_id", "body", m.ExperimentID); err != nil {
 		return err
 	}
 
