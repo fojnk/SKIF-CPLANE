@@ -8,7 +8,7 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
 
-func (s *ControlPlaneTestSuite) TestGetFormDataset() {
+func (s *StreamflowTestSuite) TestGetFormDataset() {
 	formDataQueue, err := s.c.Form.GetAPIV2FormsDataset(&form2.GetAPIV2FormsDatasetParams{
 		Type:    "Queue",
 		Context: s.ctx,
@@ -42,7 +42,7 @@ func (s *ControlPlaneTestSuite) TestGetFormDataset() {
 	s.Require().False(reflect.DeepEqual(formData.Payload.Params, formDataKafka.Payload.Params))
 }
 
-func (s *ControlPlaneTestSuite) TestGetFormProject() {
+func (s *StreamflowTestSuite) TestGetFormProject() {
 	formData, err := s.c.Form.GetAPIV2FormsProject(&form2.GetAPIV2FormsProjectParams{})
 
 	s.Require().NoError(err)
@@ -50,7 +50,7 @@ func (s *ControlPlaneTestSuite) TestGetFormProject() {
 	s.Require().NotEmpty(formData.Payload.Params)
 }
 
-func (s *ControlPlaneTestSuite) TestGetFormExperiment() {
+func (s *StreamflowTestSuite) TestGetFormExperiment() {
 	formData, err := s.c.Form.GetAPIV2FormsExperiment(&form2.GetAPIV2FormsExperimentParams{})
 
 	s.Require().NoError(err)

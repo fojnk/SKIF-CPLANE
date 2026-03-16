@@ -23,11 +23,11 @@ type DtoValidationResponse struct {
 	// errors
 	Errors []*DtoValidationError `json:"errors"`
 
-	// experiment is valid
-	ExperimentIsValid bool `json:"experiment_is_valid,omitempty"`
-
 	// logs
 	Logs []*DtoLogRecord `json:"logs"`
+
+	// experiment is valid
+	ExperimentIsValid bool `json:"experiment_is_valid,omitempty"`
 
 	// summary
 	Summary string `json:"summary,omitempty"`

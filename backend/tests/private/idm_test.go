@@ -7,7 +7,7 @@ import (
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
 
-func (s *ControlPlaneTestSuite) TestNamespaceRoles() {
+func (s *StreamflowTestSuite) TestNamespaceRoles() {
 	res, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("dplatform"),
@@ -32,7 +32,7 @@ func (s *ControlPlaneTestSuite) TestNamespaceRoles() {
 	s.Require().Equal(roles.Payload.RolesCreated, int64(0))
 }
 
-func (s *ControlPlaneTestSuite) TestProjectRoles() {
+func (s *StreamflowTestSuite) TestProjectRoles() {
 
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{

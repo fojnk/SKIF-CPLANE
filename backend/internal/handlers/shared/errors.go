@@ -11,6 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/responses"
 	svcerrors "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/errors"
+	alertserrors "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/errors/alerts"
 )
 
 var (
@@ -54,7 +55,8 @@ const (
 	EntityAppUpdate            EntityType = "app_update"
 	EntityAppUpcoming          EntityType = "app_upcoming"
 	EntityAppAbout             EntityType = "app_about"
-	EntityCube EntityType = "cube"
+	EntityCube                 EntityType = "cube"
+	EntityAlerts               EntityType = "alerts"
 )
 
 // ExternalMessageError - алиас для errors.ExternalMessageError для обратной совместимости
@@ -208,7 +210,15 @@ var ErrorDetails = map[EntityType]map[ErrorType]ExternalMessageError{
 		PermissionDenied: {Ru: "У вас нет прав к этому кубу", En: "Permission denied to cube"},
 		InternalError:    {Ru: "Ошибка при работе с кубом", En: "Internal error with cube"},
 	},
+	EntityAlerts: map[ErrorType]ExternalMessageError{
+		PermissionDenied: {Ru: "У вас нет прав к этим алертмам", En: "Permission denied to alerts"},
+		InternalError:    {Ru: "Ошибка при работе с алертмами", En: "Internal error with alerts"},
+	},
 }
+
+// AlertErrorMessages содержит локализованные сообщения для кодов ошибок алёртов
+// Использует маппинг из пакета alerts (уже использует ExternalMessageError)
+var AlertErrorMessages = alertserrors.ErrorMessages
 
 type ErrorChecker func(err error, entityType EntityType) *responses.ErrorResponse
 
@@ -250,6 +260,26 @@ func convertServiceError(err *svcerrors.ServiceError, entityType EntityType) *re
 		return nil
 	}
 
+	// Если Message является кодом ошибки (начинается с "ALERTS_"), получаем локализованное сообщение
+	if len(err.Message) >= 7 && err.Message[:7] == "ALERTS_" {
+		if entityType == EntityAlerts {
+			// TODO: получать язык из контекста запроса
+			lang := "ru" // По умолчанию русский
+			localizedMsg := getAlertErrorMessage(err.Message, lang)
+			if localizedMsg != "" {
+				// Добавляем текст исходной ошибки из БД/API, если он есть
+				if err.Err != nil {
+					sourceErrMsg := err.Err.Error()
+					// Объединяем локализованное сообщение с текстом исходной ошибки
+					resp.ExternalMessage = sourceErrMsg + ". " + localizedMsg
+				} else {
+					resp.ExternalMessage = localizedMsg
+				}
+			}
+		}
+		return resp
+	}
+
 	// Если есть кастомное сообщение в ServiceError, используем его
 	if err.Message != "" {
 		return resp
@@ -266,6 +296,11 @@ func convertServiceError(err *svcerrors.ServiceError, entityType EntityType) *re
 	}
 
 	return resp
+}
+
+// getAlertErrorMessage получает локализованное сообщение по коду ошибки алёртов
+func getAlertErrorMessage(code string, lang string) string {
+	return alertserrors.GetMessage(code, lang)
 }
 
 func firstNonNilError(primary error, fallback error) error {

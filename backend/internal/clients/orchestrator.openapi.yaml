@@ -1,7 +1,7 @@
 openapi: 3.0.2
 info:
-  title: Control Plane Orchestrator
-  description: Orchestrator manages Control Plane experiments
+  title: StreamFlow Orchestrator
+  description: Orchestrator manages StreamFlow experiments
   version: 0.1.0
 paths:
   /v1/experiments/apply:

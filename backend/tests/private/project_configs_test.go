@@ -8,7 +8,7 @@ import (
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
 
-func (s *ControlPlaneTestSuite) TestProjectConfigs() {
+func (s *StreamflowTestSuite) TestProjectConfigs() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace2.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns-pkg"),
@@ -92,7 +92,7 @@ func (s *ControlPlaneTestSuite) TestProjectConfigs() {
 	s.Require().Equal(configData["key3"], configMap["key3"])
 }
 
-func (s *ControlPlaneTestSuite) TestProjectConfigVersions() {
+func (s *StreamflowTestSuite) TestProjectConfigVersions() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace2.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns-pcg"),
@@ -294,7 +294,7 @@ func (s *ControlPlaneTestSuite) TestProjectConfigVersions() {
 	s.Require().Equal("new comment", details4.Payload.Comment)
 }
 
-func (s *ControlPlaneTestSuite) TestNamespaceConfigVersions() {
+func (s *StreamflowTestSuite) TestNamespaceConfigVersions() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace2.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns-ncg"),
@@ -414,7 +414,7 @@ func (s *ControlPlaneTestSuite) TestNamespaceConfigVersions() {
 	s.Require().Equal(updatedConfig["version"], configMap["version"])
 }
 
-func (s *ControlPlaneTestSuite) TestValidationProjectConfig() {
+func (s *StreamflowTestSuite) TestValidationProjectConfig() {
 	res, err := s.c.Project.PostAPIV2ProjectConfigValidate(&project2.PostAPIV2ProjectConfigValidateParams{
 		Request: &models2.RequestsProjectValidateRequest{
 			ProjectConfig: ptr(`

@@ -12,7 +12,7 @@ import (
 // Примечание: некоторые тесты используют новые поля (Content, Limit, Offset, Total, Pages)
 // которые появятся после регенерации swagger клиентов. Ошибки линтера исчезнут после регенерации.
 
-func (s *ControlPlaneTestSuite) TestAppUpdatesBasic() {
+func (s *StreamflowTestSuite) TestAppUpdatesBasic() {
 	// Создаем опубликованное обновление (прошлое)
 	pastDate := time.Now().AddDate(0, 0, -10) // 10 дней назад
 	pastDateStr := strfmt.DateTime(pastDate).String()
@@ -198,7 +198,7 @@ func (s *ControlPlaneTestSuite) TestAppUpdatesBasic() {
 	s.Require().Error(err)
 }
 
-func (s *ControlPlaneTestSuite) TestAppUpdatesWithOptionalFields() {
+func (s *StreamflowTestSuite) TestAppUpdatesWithOptionalFields() {
 	// Создаем обновление без опциональных полей (video_url, image_url)
 	pastDate := time.Now().AddDate(0, 0, -5)
 	pastDateStr := strfmt.DateTime(pastDate).String()
@@ -253,7 +253,7 @@ func (s *ControlPlaneTestSuite) TestAppUpdatesWithOptionalFields() {
 	s.Require().Empty(updated2.Payload.AppUpdate.VideoURL)
 }
 
-func (s *ControlPlaneTestSuite) TestAppUpdatesDateOrdering() {
+func (s *StreamflowTestSuite) TestAppUpdatesDateOrdering() {
 	// Создаем несколько обновлений с разными датами
 	dates := []time.Time{
 		time.Now().AddDate(0, 0, -30), // 30 дней назад
@@ -304,7 +304,7 @@ func (s *ControlPlaneTestSuite) TestAppUpdatesDateOrdering() {
 	s.Require().GreaterOrEqual(len(foundIDs), 4, "Все созданные обновления должны быть в списке")
 }
 
-func (s *ControlPlaneTestSuite) TestAppUpdatesNotFound() {
+func (s *StreamflowTestSuite) TestAppUpdatesNotFound() {
 	// Пытаемся получить несуществующее обновление
 	nonExistentID := int64(99999)
 	_, err := s.c.App.GetAPIV1AppUpdate(&app2.GetAPIV1AppUpdateParams{
@@ -343,7 +343,7 @@ func (s *ControlPlaneTestSuite) TestAppUpdatesNotFound() {
 }
 
 // TestAppUpdatesWithContent проверяет работу поля content
-func (s *ControlPlaneTestSuite) TestAppUpdatesWithContent() {
+func (s *StreamflowTestSuite) TestAppUpdatesWithContent() {
 	pastDate := time.Now().AddDate(0, 0, -5)
 	pastDateStr := strfmt.DateTime(pastDate).String()
 
@@ -382,7 +382,7 @@ func (s *ControlPlaneTestSuite) TestAppUpdatesWithContent() {
 }
 
 // TestAppUpdatesPagination проверяет постраничку
-func (s *ControlPlaneTestSuite) TestAppUpdatesPagination() {
+func (s *StreamflowTestSuite) TestAppUpdatesPagination() {
 	pastDate := time.Now().AddDate(0, 0, -10)
 	pastDateStr := strfmt.DateTime(pastDate).String()
 
@@ -432,7 +432,7 @@ func (s *ControlPlaneTestSuite) TestAppUpdatesPagination() {
 }
 
 // TestAppUpdatesAdminVsUser проверяет разную логику для админов и пользователей
-func (s *ControlPlaneTestSuite) TestAppUpdatesAdminVsUser() {
+func (s *StreamflowTestSuite) TestAppUpdatesAdminVsUser() {
 	pastDate := time.Now().AddDate(0, 0, -5)
 	pastDateStr := strfmt.DateTime(pastDate).String()
 	futureDate := time.Now().AddDate(0, 0, 5)

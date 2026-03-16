@@ -13,7 +13,7 @@ import (
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
 
-func (s *ControlPlaneTestSuite) TestExperimentBasic() {
+func (s *StreamflowTestSuite) TestExperimentBasic() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns-pl"),
@@ -282,7 +282,7 @@ func (s *ControlPlaneTestSuite) TestExperimentBasic() {
 	s.Require().Equal("new comment", details4.Payload.Comment)
 }
 
-func (s *ControlPlaneTestSuite) TestExperimentApply() {
+func (s *StreamflowTestSuite) TestExperimentApply() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns-pl"),
@@ -451,7 +451,7 @@ func (s *ControlPlaneTestSuite) TestExperimentApply() {
 	s.Require().Equal(updates.Payload.SavedConfig, orchestratorConfigRes2.Payload.Config)
 }
 
-func (s *ControlPlaneTestSuite) TestEmptyUpdates() {
+func (s *StreamflowTestSuite) TestEmptyUpdates() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns-pl"),
@@ -894,7 +894,7 @@ func correctExperimentAddInfo(j string) (string, error) {
 	return string(res), err
 }
 
-func (s *ControlPlaneTestSuite) TestExperimentUpdatesWithAddInfo() {
+func (s *StreamflowTestSuite) TestExperimentUpdatesWithAddInfo() {
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
 		Request: &models2.RequestsCreateNamespaceRequest{
 			Name: ptr("tst-ns-pl"),

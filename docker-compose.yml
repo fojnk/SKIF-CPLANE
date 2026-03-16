@@ -16,7 +16,7 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: ./cplane/backend
       dockerfile: Dockerfile.local
     environment:
       CPLANE_CONFIG_PATH: /app/config.local.yaml

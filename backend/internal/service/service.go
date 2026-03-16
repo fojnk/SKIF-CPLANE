@@ -9,6 +9,7 @@ import (
 	jwt_client "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/clients/jwt"
 	dbcore "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/db/core"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/dto"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/dto/alerts"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/models/params"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/models/user"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/requests"
@@ -18,6 +19,7 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/update_log"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/repository"
 	aclService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/acl"
+	alertsService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/alerts"
 	appService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/app"
 	authService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/auth"
 	cubeService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/cube"
@@ -317,6 +319,17 @@ type ICubeService interface {
 	GetCubeByID(ctx context.Context, ID int32) (*dto.Cube, error)
 }
 
+type IAlertsService interface {
+	GetOptions() (alerts.AlertOptions, error)
+	GetProducts(ctx context.Context, experimentID int32) ([]int32, error)
+	GetAlertGroup(ctx context.Context, r *requests.GetAlertsRequest) (responses.GetAlertGroupResponse, error)
+	CreateNewAlerts(ctx context.Context, r *requests.CreateAlertGroupRequest) (responses.GetAlertGroupResponse, error)
+	DeleteAlerts(ctx context.Context, r *requests.DeleteAlertsRequest) (responses.GetAlertGroupResponse, error)
+	DeleteExperimentAlertGroups(ctx context.Context, experimentID int32) error
+	ChangeAlertSeverities(ctx context.Context, r *requests.ChangeAlertSeveritiesRequest) (responses.GetAlertGroupResponse, error)
+	ChangeAlert(ctx context.Context, r *requests.ChangeAlertRequest) error
+}
+
 type Service struct {
 	Repo *repository.Repository
 	IAuthService
@@ -336,6 +349,7 @@ type Service struct {
 	IRobotService
 	IIDMService
 	ICubeService
+	IAlertsService
 }
 
 func NewService(repo *repository.Repository) *Service {
@@ -360,7 +374,8 @@ func NewService(repo *repository.Repository) *Service {
 		IValidationService: validationService.NewValidationService(repo),
 		IRobotService:      robotService.NewRobotService(repo),
 		IIDMService:        idmService.NewIDMService(repo),
-		ICubeService: cubeService.NewCubeService(repo),
+		ICubeService:       cubeService.NewCubeService(repo),
+		IAlertsService:     alertsService.NewAlertsService(repo),
 	}
 }
 

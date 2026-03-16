@@ -13,15 +13,15 @@ import (
 
 const testUserName string = "noauth-user"
 
-type ControlPlaneTestSuite struct {
+type StreamflowTestSuite struct {
 	suite.Suite
 	ctx         context.Context
-	c           *client.ControlPlaneAPI
+	c           *client.StreamflowControlPlaneAPI
 	userID      int64
 	userCreated bool
 }
 
-func (s *ControlPlaneTestSuite) SetupTest() {
+func (s *StreamflowTestSuite) SetupTest() {
 	s.ctx = context.Background()
 	transport := httptransport.New("localhost:3000", "", nil)
 	s.c = client.New(transport, strfmt.Default)

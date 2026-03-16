@@ -28,5 +28,7 @@ FROM ubuntu:22.04 AS bin
 COPY --from=build /go/src/streamflow-cplane/bin/streamflow-cplane /streamflow-cplane
 COPY ./tests/config.yaml ./config.yaml
 COPY ./migrations ./migrations
+COPY ./templates ./templates
+RUN mkdir /test_alerts
 COPY ./json ./json
 ENTRYPOINT ["/streamflow-cplane", "${VERSION}"]

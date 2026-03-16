@@ -23,7 +23,7 @@ func ptr[T any](val T) *T {
 	return &val
 }
 
-func (s *ControlPlaneTestSuite) grantNamespace(namespaceID int64, userID int64) {
+func (s *StreamflowTestSuite) grantNamespace(namespaceID int64, userID int64) {
 	var req models2.RequestsCreateRuleRequest
 
 	if namespaceID == 0 {

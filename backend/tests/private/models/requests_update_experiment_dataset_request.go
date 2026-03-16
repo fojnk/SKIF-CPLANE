@@ -26,13 +26,13 @@ type RequestsUpdateExperimentDatasetRequest struct {
 	// comment
 	Comment string `json:"comment,omitempty"`
 
-	// experiment id
-	// Required: true
-	ExperimentID *int64 `json:"experiment_id"`
-
 	// link id
 	// Required: true
 	LinkID *int64 `json:"link_id"`
+
+	// experiment id
+	// Required: true
+	ExperimentID *int64 `json:"experiment_id"`
 }
 
 // Validate validates this requests update experiment dataset request
@@ -43,11 +43,11 @@ func (m *RequestsUpdateExperimentDatasetRequest) Validate(formats strfmt.Registr
 		res = append(res, err)
 	}
 
-	if err := m.validateExperimentID(formats); err != nil {
+	if err := m.validateLinkID(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateLinkID(formats); err != nil {
+	if err := m.validateExperimentID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -66,18 +66,18 @@ func (m *RequestsUpdateExperimentDatasetRequest) validateAlias(formats strfmt.Re
 	return nil
 }
 
-func (m *RequestsUpdateExperimentDatasetRequest) validateExperimentID(formats strfmt.Registry) error {
+func (m *RequestsUpdateExperimentDatasetRequest) validateLinkID(formats strfmt.Registry) error {
 
-	if err := validate.Required("experiment_id", "body", m.ExperimentID); err != nil {
+	if err := validate.Required("link_id", "body", m.LinkID); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *RequestsUpdateExperimentDatasetRequest) validateLinkID(formats strfmt.Registry) error {
+func (m *RequestsUpdateExperimentDatasetRequest) validateExperimentID(formats strfmt.Registry) error {
 
-	if err := validate.Required("link_id", "body", m.LinkID); err != nil {
+	if err := validate.Required("experiment_id", "body", m.ExperimentID); err != nil {
 		return err
 	}
 
