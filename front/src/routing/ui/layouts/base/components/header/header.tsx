@@ -61,7 +61,7 @@ export const Header = ({
         <TabProvider value={activeTab?.path}>
           <div className="page-header__bottom">
             <Text variant="header-2" className="page-header__title">
-              Control Plane
+              Контур управления
             </Text>
             <TabList className="no-border-tablist page-header__list" size="l">
               {filteredTabs.map((tabsItem) => {

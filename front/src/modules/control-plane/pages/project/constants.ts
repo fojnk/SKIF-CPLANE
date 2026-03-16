@@ -15,38 +15,38 @@ export const NO_SCROLL_TABS_DS: DatasetTabType[] = ['config', 'schema'];
 export const ProjectTabsOptions = [
   {
     id: 'content',
-    title: 'Content',
+    title: 'Схема',
   },
   {
     id: 'config',
-    title: 'Config',
+    title: 'Конфигурация',
   },
   {
     id: 'links',
-    title: 'Links',
+    title: 'Ссылки',
   },
   {
     id: 'acl',
-    title: 'ACL',
+    title: 'Доступ',
   },
   {
     id: 'history',
-    title: 'History',
+    title: 'История',
   },
 ] as const;
 
 export const ExperimentTabsOptions = [
   {
     id: 'config',
-    title: 'Config',
+    title: 'Конфигурация',
   },
   {
     id: 'ds',
-    title: 'Datasets',
+    title: 'Наборы данных',
   },
   {
     id: 'var',
-    title: 'Variables',
+    title: 'Переменные',
   },
   {
     id: 'grafana',
@@ -54,54 +54,46 @@ export const ExperimentTabsOptions = [
   },
   {
     id: 'links',
-    title: 'Links',
+    title: 'Ссылки',
   },
   {
     id: 'acl',
-    title: 'ACL',
+    title: 'Доступ',
   },
   {
     id: 'versions',
-    title: 'Versions',
+    title: 'Версии',
   },
   {
     id: 'history',
-    title: 'History',
-  },
-  {
-    id: 'jobs',
-    title: 'Jobs',
+    title: 'История',
   },
 ] as const;
 
 export const DatasetTabsOptions = [
   {
     id: 'config',
-    title: 'Config',
+    title: 'Конфигурация',
   },
   {
     id: 'schema',
-    title: 'Schema',
+    title: 'Схема',
   },
   {
     id: 'acl',
-    title: 'ACL',
+    title: 'Доступ',
   },
   {
     id: 'links',
-    title: 'Experiment links',
+    title: 'Ссылки на эксперименты',
   },
   {
     id: 'versions',
-    title: 'Versions',
+    title: 'Версии',
   },
   {
     id: 'history',
-    title: 'History',
-  },
-  {
-    id: 'jobs',
-    title: 'Jobs',
+    title: 'История',
   },
 ] as const;
 

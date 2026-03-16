@@ -6,7 +6,7 @@ import { navigationModel } from '@/modules/control-plane/features/navigation';
 export const tabsConfig = [
   {
     id: 'projects',
-    title: 'Projects',
+    title: 'Проекты',
     path: ControlPlaneModule.routes.root.path,
     onItemClick: () => navigationModel.projects.navigate(),
     isOpened: ControlPlaneModule.routes.root.$isOpened,
@@ -15,7 +15,7 @@ export const tabsConfig = [
   },
   {
     id: 'datasets',
-    title: 'Datasets',
+    title: 'Наборы данных',
     path: ControlPlaneModule.routes.dataSources.path,
     onItemClick: () => navigationModel.dataSources.navigate(),
     isOpened: ControlPlaneModule.routes.dataSources.$isOpened,
@@ -24,7 +24,7 @@ export const tabsConfig = [
   },
   {
     id: 'namespaces',
-    title: 'Workspaces',
+    title: 'Рабочие пространства',
     path: ControlPlaneModule.routes.namespaces.path,
     onItemClick: () => navigationModel.namespaces.navigate(),
     isOpened: ControlPlaneModule.routes.namespaces.$isOpened,
@@ -33,7 +33,7 @@ export const tabsConfig = [
   },
   {
     id: 'catalog',
-    title: 'Catalog',
+    title: 'Каталог',
     path: ControlPlaneModule.routes.catalog.path,
     onItemClick: () => navigationModel.projects.navigate(),
     isOpened: combine(
@@ -46,49 +46,49 @@ export const tabsConfig = [
   },
   {
     id: 'activity',
-    title: 'Activity',
+    title: 'Активность',
     path: ControlPlaneModule.routes.activity.path,
     onItemClick: () => navigationModel.activity.navigate(),
     disabled: true,
   },
   {
     id: 'world-map',
-    title: 'World map',
+    title: 'Карта мира',
     path: ControlPlaneModule.routes.worldMap.path,
     onItemClick: () => navigationModel.worldMap.navigate(),
     disabled: true,
   },
   {
     id: 'monitoring',
-    title: 'Monitoring',
+    title: 'Мониторинг',
     path: ControlPlaneModule.routes.monitoring.path,
     onItemClick: () => navigationModel.monitoring.navigate(),
     disabled: true,
   },
   {
     id: 'updates',
-    title: 'Updates',
+    title: 'Обновления',
     path: ControlPlaneModule.routes.updates.path,
     onItemClick: () => navigationModel.updates.navigate(),
     disabled: true,
   },
   {
     id: 'study',
-    title: 'Study',
+    title: 'Обучение',
     path: ControlPlaneModule.routes.study.path,
     onItemClick: () => navigationModel.study.navigate(),
     disabled: true,
   },
   {
     id: 'access',
-    title: 'Access',
+    title: 'Доступ',
     path: ControlPlaneModule.routes.access.path,
     onItemClick: () => navigationModel.access.navigate(),
     disabled: true,
   },
   {
     id: 'about-platform',
-    title: 'About platform',
+    title: 'О платформе',
     path: ControlPlaneModule.routes.aboutPlatform.path,
     onItemClick: () => navigationModel.aboutPlatform.navigate(),
     disabled: true,

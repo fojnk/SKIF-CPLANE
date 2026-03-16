@@ -5,14 +5,14 @@ export const NO_SCROLL_TABS: NamespaceTabType[] = ['config'];
 export const NamespaceTabsOptions = [
   {
     id: 'config',
-    title: 'Config',
+    title: 'Конфигурация',
   },
   {
     id: 'acl',
-    title: 'ACL',
+    title: 'Доступ',
   },
   {
     id: 'history',
-    title: 'History',
+    title: 'История',
   },
 ] as const;
