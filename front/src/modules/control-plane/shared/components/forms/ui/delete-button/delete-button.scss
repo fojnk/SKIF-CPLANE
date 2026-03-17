@@ -1,0 +1,9 @@
+.delete-button-hover-danger {
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+    color: var(--g-color-text-danger);
+  }
+}
+

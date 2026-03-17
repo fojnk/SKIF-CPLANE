@@ -1,0 +1,14 @@
+:root {
+  --editor-bg: #FFFFFF;
+  --editor-bg-dark: #1e1e1e;
+}
+
+.editor-page {
+  background-color: var(--editor-bg);
+}
+
+:global(.g-root_theme_dark) {
+  .editor-page {
+    background-color: var(--editor-bg-dark);
+  }
+}

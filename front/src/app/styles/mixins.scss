@@ -1,0 +1,12 @@
+@mixin ios() {
+  @supports (-webkit-touch-callout: none) {
+    @content;
+  }
+}
+
+
+@mixin modulestyles($moduleName) {
+  html[data-active-module="#{$moduleName}"] {
+    @content;
+  }
+}

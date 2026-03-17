@@ -1,0 +1,1 @@
+import{j as o,q as n}from"./bundle.BgNwub1V.js";const r=n("skeleton");function l({className:t,style:s,qa:e,animation:a="gradient"}){return o.jsx("div",{className:r({animation:a},t),style:s,"data-qa":e})}export{l as S};
