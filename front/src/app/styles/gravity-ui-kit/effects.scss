@@ -1,0 +1,9 @@
+@import "./mixins.scss";
+
+/* shadows, blackouts, etc. */
+
+@include kit-color(sfx-veil, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.60));
+@include kit-color(sfx-shadow, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.20));
+@include kit-color(sfx-shadow-light, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.20));
+@include kit-color(sfx-shadow-heavy, rgba(0, 0, 0, 0.50), rgba(0, 0, 0, 0.50));
+@include kit-color(sfx-fade, rgba(255, 255, 255, 0.30), rgba(255, 255, 255, 0.25));

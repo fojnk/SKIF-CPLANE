@@ -1,0 +1,28 @@
+<%
+const { utils, route, config, modelTypes } = it;
+const { _, pascalCase, require } = utils;
+const apiClassName = _.camelCase(route.moduleName) + 'Api';
+const routes = route.routes;
+const dataContracts = _.map(modelTypes, "name");
+
+const apiTag = _.find(config.swaggerSchema.tags, tag => _.upperCase(tag.name) === _.upperCase(route.moduleName))
+%>
+
+import { HttpClient, RequestParams, ContentType, HttpResponse } from "@/shared/api/common/<%~ config.fileNames.httpClient %>";
+import { http, apiUrl } from '@/shared/api/http';
+<% if (dataContracts.length) { %>
+import { <%~ dataContracts.join(", ") %> } from "./<%~ config.fileNames.dataContracts %>"
+<% } %>
+<% if (apiTag) { %>
+
+/**
+ * @name <%= apiTag.name + "\n" %>
+ * @description <%= (apiTag.description || 'no description') + '\n' %>
+ * @externalDocs <%= (apiTag.externalDocs?.url || 'no external docs') + '\n' %>
+ */
+<% } %>
+export const <%= apiClassName %> = new class <%= pascalCase(apiClassName) %> {
+    <% routes.forEach((route) => { %>
+        <%~ includeFile('./procedure-call.ejs', { ...it, route }) %>
+    <% }) %>
+}
