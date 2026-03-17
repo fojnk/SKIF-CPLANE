@@ -1,0 +1,28 @@
+
+.button {
+  &.utility {
+    &.g-button_view_action:not(.g-button_disabled) {
+      --g-button-background-color: var(--g-color-base-utility-heavy);
+      --g-button-background-color-hover: var(--g-color-base-utility-heavy-hover);
+    }
+  }
+
+  &.danger {
+    &.g-button_view_action:not(.g-button_disabled) {
+      --g-button-background-color: var(--g-color-base-danger-heavy);
+      --g-button-background-color-hover: var(--g-color-base-danger-heavy-hover);
+    }
+  }
+
+  &.link {
+    &.g-button_view_action:not(.g-button_disabled) {
+      --g-button-background-color: transparent;
+      --g-button-background-color-hover: transparent;
+      color: var(--g-color-text-link) !important;
+
+      &:hover {
+        color: var(--g-color-text-link-hover) !important;
+      }
+    }
+  }
+}

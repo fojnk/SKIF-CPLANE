@@ -1,0 +1,19 @@
+@import "./mixins.scss";
+
+/* Scroll */
+/* Scroll colors. */
+
+@include kit-color(sfx-scroll-track, #FFF, #221D22);
+@include kit-color(sfx-scroll-handle, rgba(0, 0, 0, 0.10), rgba(255, 255, 255, 0.15));
+@include kit-color(sfx-scroll-handle-hover, rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.25));
+@include kit-color(sfx-scroll-scroll-corner, rgba(0, 0, 0, 0.10), rgba(255, 255, 255, 0.15));
+
+/* Axes (Infographics) */
+/* Axes and guides for charts, graphs and diagrams. */
+
+@include kit-color(infographics-axis, #D9D9D9, #433F43);
+
+/* Tooltips (Infographics) */
+/* Tooltip with tiny transparency */
+
+@include kit-color(infographics-tooltip-bg, rgba(255, 255, 255, 0.95), rgba(76, 75, 81, 0.95));

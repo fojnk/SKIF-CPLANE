@@ -1,0 +1,1 @@
+import{p as a,N as t,n as c,M as n,e as p}from"./bundle.BgNwub1V.js";const s=t({async handler(e){return(await c.v1NamespaceUpdate(e)).data}}),u=s.$pending,d=s.finished.success,r=a(),f=s.finished.failure;n({clock:r,target:s.start});p(s,{success:()=>({type:"success",title:"Workspace updated"})});export{u as $,f,d as s,r as u};
