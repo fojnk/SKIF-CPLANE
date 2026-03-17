@@ -1,0 +1,15 @@
+.wrapper {
+  position: absolute;
+  background-color: var(--g-color-base-simple-hover);
+  border-radius: 6px;
+  top: 12px;
+  z-index: 100;
+
+  &Left {
+    left: 12px;
+  }
+
+  &Right {
+    right: 12px;
+  }
+}
