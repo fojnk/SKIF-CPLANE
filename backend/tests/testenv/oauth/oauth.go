@@ -34,7 +34,7 @@ type User struct {
 var authorizationCodes = make(map[string]string)
 
 func Start() error {
-	http.HandleFunc("/oauth/authorize/", func(w http.ResponseWriter, r *http.Request) {
+	authorizeHandler := func(w http.ResponseWriter, r *http.Request) {
 		q := r.URL.Query()
 		clientID := q.Get("client_id")
 		redirectURI := q.Get("redirect_uri")
@@ -54,9 +54,9 @@ func Start() error {
 		// Перенаправляем пользователя с кодом авторизации
 		redirectURL := redirectURI + "?code=" + authorizationCode
 		http.Redirect(w, r, redirectURL, http.StatusFound)
-	})
+	}
 
-	http.HandleFunc("/oauth/token/", func(w http.ResponseWriter, r *http.Request) {
+	tokenHandler := func(w http.ResponseWriter, r *http.Request) {
 		// Проверяем метод запроса
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -97,9 +97,9 @@ func Start() error {
 
 		w.Header().Set("Content-Type", "application/json")
 		_, err = w.Write(jsonResponse)
-	})
+	}
 
-	http.HandleFunc("/oauth/info/", func(w http.ResponseWriter, r *http.Request) {
+	infoHandler := func(w http.ResponseWriter, r *http.Request) {
 		// Проверяем наличие токена доступа
 		accessToken := r.Header.Get("Authorization")
 		if accessToken == "" {
@@ -128,7 +128,15 @@ func Start() error {
 		w.Header().Set("Content-Type", "application/json")
 		_, err = w.Write(jsonResponse)
 
-	})
+	}
+
+	// Register both forms to avoid 301/307 redirect method quirks in clients.
+	http.HandleFunc("/oauth/authorize/", authorizeHandler)
+	http.HandleFunc("/oauth/authorize", authorizeHandler)
+	http.HandleFunc("/oauth/token/", tokenHandler)
+	http.HandleFunc("/oauth/token", tokenHandler)
+	http.HandleFunc("/oauth/info/", infoHandler)
+	http.HandleFunc("/oauth/info", infoHandler)
 
 	// Запускаем сервер в горутине, чтобы не блокировать выполнение
 	go func() {

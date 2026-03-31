@@ -1,1 +1,0 @@
-System.register(["./types-legacy.CLAyce3H.js"],(function(e,t){"use strict";var n,a;return{setters:[e=>{n=e.D,a=e.L}],execute:function(){a.Update,a.NewVariable,a.UpdateVariable,e("D",[{value:n.QUEUE,content:n.QUEUE},{value:n.KAFKA,content:n.KAFKA},{value:n.KEY_VALUE,content:n.KEY_VALUE},{value:n.STATIC_TABLE_DIR,content:n.STATIC_TABLE_DIR}])}}}));
