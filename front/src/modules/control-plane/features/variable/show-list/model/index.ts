@@ -1,1 +1,0 @@
-export { VariableShowListModel } from './model';

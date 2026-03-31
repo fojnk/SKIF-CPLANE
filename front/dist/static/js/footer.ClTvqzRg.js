@@ -1,1 +1,0 @@
-import{j as o,a as l,b as a}from"./bundle.BgNwub1V.js";import{FooterActions as m}from"./footer-actions.hKwG_7Vz.js";const n=a(null),x=({children:t,bottomAligned:r,className:s,actions:e})=>o.jsxs("div",{id:"base-layout-footer",ref:n.set,className:l("page-footer",{"bottom-aligned":r},s),children:[t,!!(e&&e.length)&&o.jsx(m,{actions:e})]});export{x as Footer,n as footerElement};
