@@ -1,0 +1,2 @@
+# Disable LFS for icon files - store as regular git objects
+static/icons/* !filter !diff !merge
