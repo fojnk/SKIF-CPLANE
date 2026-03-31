@@ -38,212 +38,48 @@ definitions:
     - RightCreateVariable
     - RightEditVariable
     - RightDeleteVariable
-  alerts.Alert:
-    properties:
-      alert_description:
-        type: string
-      alert_template_id:
-        type: integer
-      delay_firing:
-        type: string
-      delay_resolving:
-        type: string
-      graphic_name:
-        type: string
-      has_limit:
-        type: boolean
-      limit:
-        type: string
-      rule_id:
-        type: integer
-      severity:
-        type: string
-      severity_is_active:
-        type: boolean
-      type_limit:
-        type: string
-    required:
-    - alert_description
-    - alert_template_id
-    - graphic_name
-    - has_limit
-    - limit
-    - rule_id
-    - severity
-    - severity_is_active
-    - type_limit
+  clients.Event:
     type: object
-  alerts.AlertRuleInput:
-    properties:
-      alert_template_id:
-        type: integer
-      delay_firing:
-        type: string
-      delay_resolving:
-        type: string
-      limit:
-        type: string
-      severity:
-        type: string
-      severity_is_active:
-        type: boolean
-    required:
-    - alert_template_id
-    - limit
-    - severity
-    - severity_is_active
-    type: object
-  alerts.Alerts:
-    properties:
-      alert_description:
-        type: string
-      alert_name:
-        type: string
-      alerts:
-        items:
-          $ref: '#/definitions/alerts.Alert'
-        type: array
-    required:
-    - alert_description
-    - alert_name
-    - alerts
-    type: object
-  alerts.TypeLimits:
-    properties:
-      description:
-        type: string
-      types:
-        items:
-          type: string
-        type: array
-    required:
-    - description
-    - types
+  clients.EventWithJob:
     type: object
   clients.GetJobResponse:
     properties:
       job:
-        $ref: '#/definitions/jobd.Job'
+        $ref: '#/definitions/clients.Job'
     type: object
   clients.Job:
     properties:
-      config:
-        additionalProperties: true
-        description: Config Конфигурация джобы
-        type: object
-      created_at:
-        description: CreatedAt Время создания
-        type: string
-      created_by:
-        description: CreatedBy Кто создал джобу
-        type: string
-      description:
-        description: Description Описание джобы
-        type: string
-      entity_id:
-        description: EntityId ID связанной сущности
-        type: integer
-      entity_type:
-        allOf:
-        - $ref: '#/definitions/jobd.JobEntityType'
-        description: EntityType Тип связанной сущности
-      error_message:
-        description: ErrorMessage Сообщение об ошибке
-        type: string
-      finished_at:
-        description: FinishedAt Время завершения
-        type: string
       id:
-        description: Id ID джобы
         type: integer
-      max_retries:
-        description: MaxRetries Максимальное количество повторов
-        type: integer
-      name:
-        description: Name Название джобы
-        type: string
-      parameters:
-        additionalProperties: true
-        description: Parameters Параметры джобы
-        type: object
-      priority:
-        description: Priority Приоритет выполнения
-        type: integer
-      progress:
-        description: Progress Прогресс выполнения (0-100)
-        type: integer
-      result:
-        additionalProperties: true
-        description: Result Результат выполнения
-        type: object
-      retry_count:
-        description: RetryCount Текущее количество повторов
-        type: integer
-      stages:
-        description: Stages Стейджи джобы
-        items:
-          $ref: '#/definitions/jobd.Stage'
-        type: array
-      started_at:
-        description: StartedAt Время начала выполнения
-        type: string
       status:
-        allOf:
-        - $ref: '#/definitions/jobd.JobStatus'
-        description: Status Текущий статус джобы
-      status_description:
-        description: StatusDescription Описание статуса джобы
-        type: string
-      tags:
-        description: Tags Теги джобы
-        items:
-          type: string
-        type: array
-      type:
-        description: Type Тип джобы
-        type: string
-      updated_at:
-        description: UpdatedAt Время последнего обновления
         type: string
     type: object
   clients.ListAllEventsResponse:
     properties:
       events:
         items:
-          $ref: '#/definitions/jobd.EventWithJob'
+          $ref: '#/definitions/clients.EventWithJob'
         type: array
-      limit:
-        description: Limit Лимит записей на странице
-        type: integer
-      offset:
-        description: Offset Смещение
-        type: integer
       total:
-        description: Total Общее количество событий
         type: integer
     type: object
   clients.ListEventsResponse:
     properties:
       events:
         items:
-          $ref: '#/definitions/jobd.Event'
+          $ref: '#/definitions/clients.Event'
         type: array
-      limit:
-        description: Limit Лимит записей на странице
-        type: integer
-      offset:
-        description: Offset Смещение
-        type: integer
       total:
-        description: Total Общее количество событий
         type: integer
     type: object
   clients.ListTasksResponse:
     properties:
       tasks:
         items:
-          $ref: '#/definitions/jobd.Task'
+          $ref: '#/definitions/clients.Task'
         type: array
+    type: object
+  clients.Task:
     type: object
   dto.AppAbout:
     properties:
@@ -424,6 +260,21 @@ definitions:
       version_id:
         type: integer
     type: object
+  dto.DatasetExperimentLink:
+    properties:
+      alias:
+        type: string
+      alias_id:
+        type: integer
+      experiment_id:
+        type: integer
+      experiment_name:
+        type: string
+      project_id:
+        type: integer
+      project_name:
+        type: string
+    type: object
   dto.DatasetFilters:
     properties:
       cluster:
@@ -468,21 +319,6 @@ definitions:
       type:
         type: string
       updated_at:
-        type: string
-    type: object
-  dto.DatasetExperimentLink:
-    properties:
-      alias:
-        type: string
-      alias_id:
-        type: integer
-      experiment_id:
-        type: integer
-      experiment_name:
-        type: string
-      project_id:
-        type: integer
-      project_name:
         type: string
     type: object
   dto.DatasetShort:
@@ -554,118 +390,6 @@ definitions:
         type: string
       version_id:
         type: integer
-    type: object
-  dto.LogRecord:
-    properties:
-      entity_name:
-        type: string
-      entity_type:
-        type: string
-      records:
-        items:
-          type: string
-        type: array
-    type: object
-  dto.MatchedRule:
-    properties:
-      action:
-        type: string
-      object_attribute:
-        type: string
-      object_id:
-        type: integer
-      object_type:
-        type: string
-      role_id:
-        type: integer
-      role_name:
-        type: string
-      rule_id:
-        type: integer
-    type: object
-  dto.Namespace:
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-      rights:
-        items:
-          $ref: '#/definitions/acl.Right'
-        type: array
-    type: object
-  dto.NamespaceConfig:
-    properties:
-      config:
-        type: string
-      created_at:
-        type: string
-      id:
-        type: integer
-    type: object
-  dto.NamespaceConfigVersion:
-    properties:
-      created_at:
-        type: string
-      id:
-        type: integer
-    type: object
-  dto.NamespaceShort:
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-    type: object
-  dto.NamespaceUpdateLog:
-    properties:
-      act:
-        type: string
-      comment:
-        type: string
-      created_at:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      user:
-        type: string
-    type: object
-  dto.OAuthAccessToken:
-    properties:
-      access_token:
-        type: string
-      expires_in:
-        type: integer
-      refresh_token:
-        type: string
-      scope:
-        type: string
-      token_type:
-        type: string
-    required:
-    - access_token
-    type: object
-  dto.Permission:
-    properties:
-      action:
-        type: string
-      object_attribute:
-        type: string
-      object_id:
-        type: integer
-      object_type:
-        type: string
-    type: object
-  dto.PinnedProject:
-    properties:
-      id:
-        type: integer
-      project_id:
-        type: integer
-      project_name:
-        type: string
     type: object
   dto.ExperimentDataset:
     properties:
@@ -866,10 +590,120 @@ definitions:
       version_id:
         type: integer
     type: object
+  dto.LogRecord:
+    properties:
+      entity_name:
+        type: string
+      entity_type:
+        type: string
+      records:
+        items:
+          type: string
+        type: array
+    type: object
+  dto.MatchedRule:
+    properties:
+      action:
+        type: string
+      object_attribute:
+        type: string
+      object_id:
+        type: integer
+      object_type:
+        type: string
+      role_id:
+        type: integer
+      role_name:
+        type: string
+      rule_id:
+        type: integer
+    type: object
+  dto.Namespace:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      rights:
+        items:
+          $ref: '#/definitions/acl.Right'
+        type: array
+    type: object
+  dto.NamespaceConfig:
+    properties:
+      config:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+    type: object
+  dto.NamespaceConfigVersion:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+    type: object
+  dto.NamespaceShort:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  dto.NamespaceUpdateLog:
+    properties:
+      act:
+        type: string
+      comment:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      user:
+        type: string
+    type: object
+  dto.OAuthAccessToken:
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        type: integer
+      refresh_token:
+        type: string
+      scope:
+        type: string
+      token_type:
+        type: string
+    required:
+    - access_token
+    type: object
+  dto.Permission:
+    properties:
+      action:
+        type: string
+      object_attribute:
+        type: string
+      object_id:
+        type: integer
+      object_type:
+        type: string
+    type: object
+  dto.PinnedProject:
+    properties:
+      id:
+        type: integer
+      project_id:
+        type: integer
+      project_name:
+        type: string
+    type: object
   dto.Project:
     properties:
-      abc_product_id:
-        type: string
       config:
         type: string
       description:
@@ -916,14 +750,14 @@ definitions:
     type: object
   dto.ProjectInfo:
     properties:
-      abc_product_id:
-        type: string
       created_at:
         type: string
       dataset_count:
         type: integer
       description:
         type: string
+      experiment_count:
+        type: integer
       id:
         type: integer
       is_pinned:
@@ -934,8 +768,6 @@ definitions:
         type: integer
       namespace_name:
         type: string
-      experiment_count:
-        type: integer
       rights:
         items:
           $ref: '#/definitions/acl.Right'
@@ -1078,12 +910,12 @@ definitions:
         items:
           $ref: '#/definitions/dto.ValidationError'
         type: array
+      experiment_is_valid:
+        type: boolean
       logs:
         items:
           $ref: '#/definitions/dto.LogRecord'
         type: array
-      experiment_is_valid:
-        type: boolean
       summary:
         type: string
     type: object
@@ -1095,313 +927,17 @@ definitions:
         items:
           type: string
         type: array
+      experiment_is_valid:
+        example: true
+        type: boolean
       logs:
         items:
           type: string
         type: array
-      experiment_is_valid:
-        example: true
-        type: boolean
       run_result:
         $ref: '#/definitions/dto.RunResults'
       summary:
         example: debug-run completed
-        type: string
-    type: object
-  jobd.Event:
-    properties:
-      details:
-        additionalProperties: true
-        description: Details Детали события
-        type: object
-      event_type:
-        allOf:
-        - $ref: '#/definitions/jobd.EventEventType'
-        description: EventType Тип события
-      id:
-        description: Id ID события
-        type: integer
-      job_id:
-        description: JobId ID джобы
-        type: integer
-      timestamp:
-        description: Timestamp Время события
-        type: string
-      user_id:
-        description: UserId ID пользователя, инициировавшего событие
-        type: string
-    type: object
-  jobd.EventEventType:
-    enum:
-    - cancelled
-    - completed
-    - created
-    - failed
-    - paused
-    - resumed
-    - started
-    - timeout
-    type: string
-    x-enum-varnames:
-    - EventEventTypeCancelled
-    - EventEventTypeCompleted
-    - EventEventTypeCreated
-    - EventEventTypeFailed
-    - EventEventTypePaused
-    - EventEventTypeResumed
-    - EventEventTypeStarted
-    - EventEventTypeTimeout
-  jobd.EventWithJob:
-    properties:
-      details:
-        additionalProperties: true
-        description: Details Детали события
-        type: object
-      event_type:
-        allOf:
-        - $ref: '#/definitions/jobd.EventWithJobEventType'
-        description: EventType Тип события
-      id:
-        description: Id ID события
-        type: integer
-      job:
-        $ref: '#/definitions/jobd.Job'
-      job_id:
-        description: JobId ID джобы
-        type: integer
-      timestamp:
-        description: Timestamp Время события
-        type: string
-      user_id:
-        description: UserId ID пользователя, инициировавшего событие
-        type: string
-    type: object
-  jobd.EventWithJobEventType:
-    enum:
-    - cancelled
-    - completed
-    - created
-    - failed
-    - paused
-    - resumed
-    - started
-    - timeout
-    type: string
-    x-enum-varnames:
-    - EventWithJobEventTypeCancelled
-    - EventWithJobEventTypeCompleted
-    - EventWithJobEventTypeCreated
-    - EventWithJobEventTypeFailed
-    - EventWithJobEventTypePaused
-    - EventWithJobEventTypeResumed
-    - EventWithJobEventTypeStarted
-    - EventWithJobEventTypeTimeout
-  jobd.Job:
-    properties:
-      config:
-        additionalProperties: true
-        description: Config Конфигурация джобы
-        type: object
-      created_at:
-        description: CreatedAt Время создания
-        type: string
-      created_by:
-        description: CreatedBy Кто создал джобу
-        type: string
-      description:
-        description: Description Описание джобы
-        type: string
-      entity_id:
-        description: EntityId ID связанной сущности
-        type: integer
-      entity_type:
-        allOf:
-        - $ref: '#/definitions/jobd.JobEntityType'
-        description: EntityType Тип связанной сущности
-      error_message:
-        description: ErrorMessage Сообщение об ошибке
-        type: string
-      finished_at:
-        description: FinishedAt Время завершения
-        type: string
-      id:
-        description: Id ID джобы
-        type: integer
-      max_retries:
-        description: MaxRetries Максимальное количество повторов
-        type: integer
-      name:
-        description: Name Название джобы
-        type: string
-      parameters:
-        additionalProperties: true
-        description: Parameters Параметры джобы
-        type: object
-      priority:
-        description: Priority Приоритет выполнения
-        type: integer
-      progress:
-        description: Progress Прогресс выполнения (0-100)
-        type: integer
-      result:
-        additionalProperties: true
-        description: Result Результат выполнения
-        type: object
-      retry_count:
-        description: RetryCount Текущее количество повторов
-        type: integer
-      stages:
-        description: Stages Стейджи джобы
-        items:
-          $ref: '#/definitions/jobd.Stage'
-        type: array
-      started_at:
-        description: StartedAt Время начала выполнения
-        type: string
-      status:
-        allOf:
-        - $ref: '#/definitions/jobd.JobStatus'
-        description: Status Текущий статус джобы
-      status_description:
-        description: StatusDescription Описание статуса джобы
-        type: string
-      tags:
-        description: Tags Теги джобы
-        items:
-          type: string
-        type: array
-      type:
-        description: Type Тип джобы
-        type: string
-      updated_at:
-        description: UpdatedAt Время последнего обновления
-        type: string
-    type: object
-  jobd.JobEntityType:
-    enum:
-    - dataset
-    - namespace
-    - experiment
-    - project
-    type: string
-    x-enum-varnames:
-    - JobEntityTypeDataset
-    - JobEntityTypeNamespace
-    - JobEntityTypeExperiment
-    - JobEntityTypeProject
-  jobd.JobStatus:
-    enum:
-    - cancelled
-    - completed
-    - failed
-    - paused
-    - pending
-    - queued
-    - running
-    - timeout
-    type: string
-    x-enum-varnames:
-    - JobStatusCancelled
-    - JobStatusCompleted
-    - JobStatusFailed
-    - JobStatusPaused
-    - JobStatusPending
-    - JobStatusQueued
-    - JobStatusRunning
-    - JobStatusTimeout
-  jobd.Stage:
-    properties:
-      actions:
-        description: Actions Доступные действия для стейджа
-        items:
-          type: string
-        type: array
-      description:
-        description: Description Описание стейджа
-        type: string
-      logs:
-        description: Logs Логи стейджа в виде текста
-        type: string
-      name:
-        description: Name Название стейджа
-        type: string
-      order:
-        description: Order Порядок выполнения стейджа
-        type: integer
-      required:
-        description: Required Обязательный ли стейдж
-        type: boolean
-      step_id:
-        description: StepId ID соответствующего шага (если существует)
-        type: integer
-      step_status:
-        description: StepStatus Статус соответствующего шага (если существует)
-        type: string
-    type: object
-  jobd.Task:
-    properties:
-      config:
-        additionalProperties: true
-        description: Config Конфигурация таски
-        type: object
-      created_at:
-        description: CreatedAt Время создания
-        type: string
-      description:
-        description: Description Описание таски
-        type: string
-      error_message:
-        description: ErrorMessage Сообщение об ошибке
-        type: string
-      finished_at:
-        description: FinishedAt Время завершения
-        type: string
-      id:
-        description: Id ID таски
-        type: integer
-      job_id:
-        description: JobId ID джобы
-        type: integer
-      name:
-        description: Name Название таски
-        type: string
-      orch_task_id:
-        description: OrchTaskId ID таски в оркестраторе
-        type: string
-      order:
-        description: Order Порядок выполнения
-        type: integer
-      result:
-        additionalProperties: true
-        description: Result Результат выполнения
-        type: object
-      started_at:
-        description: StartedAt Время начала выполнения
-        type: string
-      status:
-        allOf:
-        - $ref: '#/definitions/jobd.TaskStatus'
-        description: Status Статус таски
-    type: object
-  jobd.TaskStatus:
-    enum:
-    - cancelled
-    - completed
-    - failed
-    - pending
-    - running
-    type: string
-    x-enum-varnames:
-    - TaskStatusCancelled
-    - TaskStatusCompleted
-    - TaskStatusFailed
-    - TaskStatusPending
-    - TaskStatusRunning
-  jwt_client.TokenInfo:
-    properties:
-      expires_in:
-        type: string
-      token:
         type: string
     type: object
   orch.ExperimentVariableType:
@@ -1605,38 +1141,6 @@ definitions:
     required:
     - experiment_id
     type: object
-  requests.ChangeAlertBody:
-    properties:
-      alert_template_id:
-        type: integer
-      delay_firing:
-        type: string
-      delay_resolving:
-        type: string
-      limit:
-        type: string
-      rule_id:
-        type: integer
-      severity:
-        type: string
-      severity_is_active:
-        type: boolean
-    required:
-    - alert_template_id
-    - limit
-    - rule_id
-    - severity
-    - severity_is_active
-    type: object
-  requests.ChangeAlertSeveritiesBody:
-    properties:
-      alert_rules:
-        items:
-          $ref: '#/definitions/alerts.AlertRuleInput'
-        type: array
-    required:
-    - alert_rules
-    type: object
   requests.CompleteExperimentValidateRequest:
     properties:
       experimentConfig:
@@ -1678,15 +1182,6 @@ definitions:
     required:
     - name
     - src_dataset_id
-    type: object
-  requests.CreateAlertGroupBody:
-    properties:
-      alert_rules:
-        items:
-          $ref: '#/definitions/alerts.AlertRuleInput'
-        type: array
-    required:
-    - alert_rules
     type: object
   requests.CreateAppBannerRequest:
     properties:
@@ -1797,19 +1292,6 @@ definitions:
     - name
     - project_id
     type: object
-  requests.CreateNamespaceRequest:
-    properties:
-      comment:
-        type: string
-      name:
-        maxLength: 10
-        minLength: 1
-        type: string
-    required:
-    - name
-    type: object
-  requests.CreateNamespaceRolesRequest:
-    type: object
   requests.CreateExperimentVariableRequest:
     properties:
       comment:
@@ -1822,10 +1304,19 @@ definitions:
     - experiment_id
     - variable
     type: object
+  requests.CreateNamespaceRequest:
+    properties:
+      comment:
+        type: string
+      name:
+        maxLength: 10
+        minLength: 1
+        type: string
+    required:
+    - name
+    type: object
   requests.CreateProjectRequest:
     properties:
-      abc_product_id:
-        type: string
       comment:
         type: string
       description:
@@ -1836,32 +1327,22 @@ definitions:
       namespace_id:
         type: integer
     required:
-    - abc_product_id
     - name
     - namespace_id
-    type: object
-  requests.CreateProjectRolesRequest:
-    type: object
-  requests.CreateRobotRequest:
-    properties:
-      name:
-        maxLength: 128
-        type: string
-    required:
-    - name
     type: object
   requests.CreateRoleRequest:
     properties:
       description:
         type: string
       idm_id:
+        description: IdmID is an optional stable external key stored in t_role.idm_id;
+          when empty, a value is generated.
         type: string
       name:
         maxLength: 128
         minLength: 1
         type: string
     required:
-    - idm_id
     - name
     type: object
   requests.CreateRuleRequest:
@@ -1885,6 +1366,8 @@ definitions:
         - experiment
         - dataset
         - cube
+        - workspace
+        - model
         type: string
     required:
     - action
@@ -1917,26 +1400,6 @@ definitions:
     required:
     - datasetConfig
     type: object
-  requests.DeleteAlertsBody:
-    properties:
-      alert_group_id:
-        type: integer
-      deleting_rules:
-        items:
-          type: integer
-        type: array
-    required:
-    - alert_group_id
-    - deleting_rules
-    type: object
-  requests.DeleteAllTokenForRobotRequest:
-    properties:
-      name:
-        maxLength: 128
-        type: string
-    required:
-    - name
-    type: object
   requests.DeleteAppBannerRequest:
     properties:
       id:
@@ -1961,6 +1424,13 @@ definitions:
     required:
     - id
     type: object
+  requests.DeleteExperimentVariableRequest:
+    properties:
+      variable_id:
+        type: integer
+    required:
+    - variable_id
+    type: object
   requests.DeleteNamespaceRequest:
     properties:
       id:
@@ -1974,13 +1444,6 @@ definitions:
         type: integer
     required:
     - project_id
-    type: object
-  requests.DeleteExperimentVariableRequest:
-    properties:
-      variable_id:
-        type: integer
-    required:
-    - variable_id
     type: object
   requests.DeleteProjectRequest:
     properties:
@@ -1999,83 +1462,6 @@ definitions:
         type: integer
       user_id:
         type: integer
-    type: object
-  requests.GenerateTokenForRobotRequest:
-    properties:
-      name:
-        maxLength: 128
-        type: string
-    required:
-    - name
-    type: object
-  requests.GetExperimentAvailableDatasetsToLinkRequest:
-    properties:
-      filters:
-        $ref: '#/definitions/dto.DatasetFilters'
-      limit:
-        maximum: 100
-        minimum: 1
-        type: integer
-      offset:
-        type: integer
-      experiment_id:
-        type: integer
-    required:
-    - limit
-    - offset
-    - experiment_id
-    type: object
-  requests.GrantRequest:
-    properties:
-      role_id:
-        type: integer
-      rule_id:
-        type: integer
-      user_group_id:
-        type: integer
-      user_id:
-        type: integer
-    type: object
-  requests.ListJobsRequest:
-    properties:
-      created_by:
-        type: string
-      entity_id:
-        type: integer
-      entity_type:
-        type: string
-      limit:
-        maximum: 100
-        minimum: 1
-        type: integer
-      offset:
-        type: integer
-      order:
-        type: string
-      sort:
-        type: string
-      status:
-        type: string
-      type:
-        type: string
-    type: object
-  requests.ListProjectsRequestV2:
-    properties:
-      limit:
-        maximum: 100
-        minimum: 1
-        type: integer
-      namespace_id:
-        type: integer
-      offset:
-        type: integer
-      order_by:
-        type: string
-      search:
-        type: string
-    required:
-    - limit
-    - offset
     type: object
   requests.ExperimentStartRequest:
     properties:
@@ -2136,6 +1522,75 @@ definitions:
     required:
     - config
     type: object
+  requests.GetExperimentAvailableDatasetsToLinkRequest:
+    properties:
+      experiment_id:
+        type: integer
+      filters:
+        $ref: '#/definitions/dto.DatasetFilters'
+      limit:
+        maximum: 100
+        minimum: 1
+        type: integer
+      offset:
+        type: integer
+    required:
+    - experiment_id
+    - limit
+    - offset
+    type: object
+  requests.GrantRequest:
+    properties:
+      role_id:
+        type: integer
+      rule_id:
+        type: integer
+      user_group_id:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  requests.ListJobsRequest:
+    properties:
+      created_by:
+        type: string
+      entity_id:
+        type: integer
+      entity_type:
+        type: string
+      limit:
+        maximum: 100
+        minimum: 1
+        type: integer
+      offset:
+        type: integer
+      order:
+        type: string
+      sort:
+        type: string
+      status:
+        type: string
+      type:
+        type: string
+    type: object
+  requests.ListProjectsRequestV2:
+    properties:
+      limit:
+        maximum: 100
+        minimum: 1
+        type: integer
+      namespace_id:
+        type: integer
+      offset:
+        type: integer
+      order_by:
+        type: string
+      search:
+        type: string
+    required:
+    - limit
+    - offset
+    type: object
   requests.ProjectValidateRequest:
     properties:
       projectConfig:
@@ -2145,13 +1600,13 @@ definitions:
     type: object
   requests.RemoveDatasetFromExperimentRequest:
     properties:
-      link_id:
-        type: integer
       experiment_id:
         type: integer
+      link_id:
+        type: integer
     required:
-    - link_id
     - experiment_id
+    - link_id
     type: object
   requests.RemoveRuleFromRoleRequest:
     properties:
@@ -2218,10 +1673,6 @@ definitions:
     required:
     - limit
     - offset
-    type: object
-  requests.SyncNamespaceRolesRequest:
-    type: object
-  requests.SyncProjectRolesRequest:
     type: object
   requests.UpdateAppAboutRequest:
     properties:
@@ -2305,11 +1756,11 @@ definitions:
         type: string
       disable_validation:
         type: boolean
+      experiment_id:
+        type: integer
       name:
         maxLength: 128
         type: string
-      experiment_id:
-        type: integer
     required:
     - experiment_id
     type: object
@@ -2389,30 +1840,6 @@ definitions:
     - dataset_id
     - version_id
     type: object
-  requests.UpdateNamespaceLogCommentRequest:
-    properties:
-      log_id:
-        type: integer
-      new_comment:
-        type: string
-    required:
-    - log_id
-    - new_comment
-    type: object
-  requests.UpdateNamespaceRequest:
-    properties:
-      comment:
-        type: string
-      config:
-        type: string
-      id:
-        type: integer
-      name:
-        maxLength: 10
-        type: string
-    required:
-    - id
-    type: object
   requests.UpdateExperimentConfigVersionRequest:
     properties:
       comment:
@@ -2431,14 +1858,14 @@ definitions:
         type: string
       comment:
         type: string
-      link_id:
-        type: integer
       experiment_id:
+        type: integer
+      link_id:
         type: integer
     required:
     - alias
-    - link_id
     - experiment_id
+    - link_id
     type: object
   requests.UpdateExperimentLogCommentRequest:
     properties:
@@ -2489,6 +1916,30 @@ definitions:
     required:
     - id
     type: object
+  requests.UpdateNamespaceLogCommentRequest:
+    properties:
+      log_id:
+        type: integer
+      new_comment:
+        type: string
+    required:
+    - log_id
+    - new_comment
+    type: object
+  requests.UpdateNamespaceRequest:
+    properties:
+      comment:
+        type: string
+      config:
+        type: string
+      id:
+        type: integer
+      name:
+        maxLength: 10
+        type: string
+    required:
+    - id
+    type: object
   requests.UpdateProjectLogCommentRequest:
     properties:
       log_id:
@@ -2501,8 +1952,6 @@ definitions:
     type: object
   requests.UpdateProjectRequest:
     properties:
-      abc_product_id:
-        type: string
       comment:
         type: string
       config:
@@ -2525,15 +1974,12 @@ definitions:
         type: string
       id:
         type: integer
-      idm_id:
-        type: string
       name:
         maxLength: 128
         minLength: 1
         type: string
     required:
     - id
-    - idm_id
     - name
     type: object
   requests.UpdateUserGroupRequest:
@@ -2572,40 +2018,11 @@ definitions:
       project_name:
         type: string
     type: object
-  responses.AlertTemplateResponse:
-    properties:
-      alert_description:
-        type: string
-      alert_name:
-        type: string
-      alert_template_id:
-        type: integer
-      graphic_name:
-        type: string
-      has_limit:
-        type: boolean
-      type_limit:
-        type: string
-    required:
-    - alert_description
-    - alert_name
-    - alert_template_id
-    - graphic_name
-    - has_limit
-    - type_limit
-    type: object
   responses.CheckACLResponse:
     properties:
       rights:
         items:
           $ref: '#/definitions/acl.Right'
-        type: array
-    type: object
-  responses.CheckPermissionsResponse:
-    properties:
-      permissions:
-        items:
-          $ref: '#/definitions/dto.Permission'
         type: array
     type: object
   responses.CheckExperimentUpdateResponse:
@@ -2616,6 +2033,13 @@ definitions:
         type: boolean
       saved_config:
         type: string
+    type: object
+  responses.CheckPermissionsResponse:
+    properties:
+      permissions:
+        items:
+          $ref: '#/definitions/dto.Permission'
+        type: array
     type: object
   responses.CopyCompleteExperimentResponse:
     properties:
@@ -2701,41 +2125,20 @@ definitions:
       type:
         type: string
     type: object
-  responses.CreateNamespaceResponse:
-    properties:
-      id:
-        type: integer
-    type: object
-  responses.CreateNamespaceRolesResponse:
-    properties:
-      roles_created:
-        type: integer
-    type: object
   responses.CreateExperimentVariableResponse:
     properties:
       variable:
         $ref: '#/definitions/dto.ExperimentVariable'
     type: object
-  responses.CreateProjectResponse:
+  responses.CreateNamespaceResponse:
     properties:
-      abc_product_id:
-        type: string
-      description:
-        type: string
       id:
         type: integer
-      name:
+    type: object
+  responses.CreateProjectResponse:
+    properties:
+      description:
         type: string
-    type: object
-  responses.CreateProjectRolesResponse:
-    properties:
-      roles_created:
-        type: integer
-    type: object
-  responses.CreateRobotResponse:
-    properties:
-      access_token:
-        $ref: '#/definitions/jwt_client.TokenInfo'
       id:
         type: integer
       name:
@@ -2792,43 +2195,16 @@ definitions:
         type: integer
       internal_error: {}
     type: object
-  responses.GetAlertGroupResponse:
+  responses.ExperimentStatusResponse:
     properties:
-      alert_group_id:
-        type: integer
-      alerts:
-        items:
-          $ref: '#/definitions/alerts.Alerts'
-        type: array
-      notification_product_id:
-        type: integer
-      experiment_id:
-        type: integer
-    required:
-    - alert_group_id
-    - alerts
-    - notification_product_id
-    - experiment_id
-    type: object
-  responses.GetAlertOptionsResponse:
-    properties:
-      alert_templates:
-        items:
-          $ref: '#/definitions/responses.AlertTemplateResponse'
-        type: array
-      delay_firing:
-        $ref: '#/definitions/alerts.TypeLimits'
-      delay_resolving:
-        $ref: '#/definitions/alerts.TypeLimits'
-      type_limits:
-        additionalProperties:
-          $ref: '#/definitions/alerts.TypeLimits'
-        type: object
-    required:
-    - alert_templates
-    - delay_firing
-    - delay_resolving
-    - type_limits
+      debug:
+        type: string
+      message:
+        type: string
+      status:
+        type: string
+      summary:
+        type: string
     type: object
   responses.GetAppAboutResponse:
     properties:
@@ -2967,53 +2343,6 @@ definitions:
       type:
         type: string
     type: object
-  responses.GetFormResponse:
-    properties:
-      params:
-        items:
-          $ref: '#/definitions/params.Param'
-        type: array
-    type: object
-  responses.GetNamespaceConfigResponse:
-    properties:
-      config:
-        $ref: '#/definitions/dto.NamespaceConfig'
-    type: object
-  responses.GetNamespaceLogResponse:
-    properties:
-      act:
-        type: string
-      comment:
-        type: string
-      created_at:
-        type: string
-      details:
-        $ref: '#/definitions/update_log.NamespaceUpdateLog'
-      id:
-        type: integer
-      name:
-        type: string
-      user:
-        type: string
-    type: object
-  responses.GetNamespaceResponse:
-    properties:
-      config:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      rights:
-        items:
-          $ref: '#/definitions/acl.Right'
-        type: array
-    type: object
-  responses.GetOrchestratorConfigResponse:
-    properties:
-      config:
-        type: string
-    type: object
   responses.GetExperimentAvailableDatasetsToLinkResponse:
     properties:
       datasets:
@@ -3070,6 +2399,53 @@ definitions:
           $ref: '#/definitions/dto.ExperimentVariableShort'
         type: array
     type: object
+  responses.GetFormResponse:
+    properties:
+      params:
+        items:
+          $ref: '#/definitions/params.Param'
+        type: array
+    type: object
+  responses.GetNamespaceConfigResponse:
+    properties:
+      config:
+        $ref: '#/definitions/dto.NamespaceConfig'
+    type: object
+  responses.GetNamespaceLogResponse:
+    properties:
+      act:
+        type: string
+      comment:
+        type: string
+      created_at:
+        type: string
+      details:
+        $ref: '#/definitions/update_log.NamespaceUpdateLog'
+      id:
+        type: integer
+      name:
+        type: string
+      user:
+        type: string
+    type: object
+  responses.GetNamespaceResponse:
+    properties:
+      config:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      rights:
+        items:
+          $ref: '#/definitions/acl.Right'
+        type: array
+    type: object
+  responses.GetOrchestratorConfigResponse:
+    properties:
+      config:
+        type: string
+    type: object
   responses.GetProjectConfigResponse:
     properties:
       config:
@@ -3094,8 +2470,6 @@ definitions:
     type: object
   responses.GetProjectV2Response:
     properties:
-      abc_product_id:
-        type: string
       config:
         type: string
       description:
@@ -3188,6 +2562,39 @@ definitions:
           $ref: '#/definitions/dto.Dataset'
         type: array
     type: object
+  responses.ListExperimentUpdateLogsResponse:
+    properties:
+      logs:
+        items:
+          $ref: '#/definitions/dto.ExperimentUpdateLog'
+        type: array
+      pages:
+        type: integer
+      total:
+        type: integer
+    type: object
+  responses.ListExperimentVariableVersionsResponse:
+    properties:
+      pages:
+        type: integer
+      total:
+        type: integer
+      versions:
+        items:
+          $ref: '#/definitions/dto.ExperimentVariableVersion'
+        type: array
+    type: object
+  responses.ListExperimentVersionsResponse:
+    properties:
+      pages:
+        type: integer
+      total:
+        type: integer
+      versions:
+        items:
+          $ref: '#/definitions/dto.ExperimentVersion'
+        type: array
+    type: object
   responses.ListJobsResponse:
     properties:
       jobs:
@@ -3238,39 +2645,6 @@ definitions:
       pinned_projects:
         items:
           $ref: '#/definitions/dto.PinnedProject'
-        type: array
-    type: object
-  responses.ListExperimentUpdateLogsResponse:
-    properties:
-      logs:
-        items:
-          $ref: '#/definitions/dto.ExperimentUpdateLog'
-        type: array
-      pages:
-        type: integer
-      total:
-        type: integer
-    type: object
-  responses.ListExperimentVariableVersionsResponse:
-    properties:
-      pages:
-        type: integer
-      total:
-        type: integer
-      versions:
-        items:
-          $ref: '#/definitions/dto.ExperimentVariableVersion'
-        type: array
-    type: object
-  responses.ListExperimentVersionsResponse:
-    properties:
-      pages:
-        type: integer
-      total:
-        type: integer
-      versions:
-        items:
-          $ref: '#/definitions/dto.ExperimentVersion'
         type: array
     type: object
   responses.ListProjectConfigsResponse:
@@ -3351,17 +2725,6 @@ definitions:
           $ref: '#/definitions/dto.User'
         type: array
     type: object
-  responses.ExperimentStatusResponse:
-    properties:
-      debug:
-        type: string
-      message:
-        type: string
-      status:
-        type: string
-      summary:
-        type: string
-    type: object
   responses.SaveAppliedConfigResponse:
     properties:
       saved:
@@ -3377,24 +2740,6 @@ definitions:
         type: integer
       total:
         type: integer
-    type: object
-  responses.SyncNamespaceRolesResponse:
-    properties:
-      roles_errors:
-        type: integer
-      roles_synced:
-        type: integer
-      summary:
-        type: string
-    type: object
-  responses.SyncProjectRolesResponse:
-    properties:
-      roles_errors:
-        type: integer
-      roles_synced:
-        type: integer
-      summary:
-        type: string
     type: object
   responses.UpdateAppAboutResponse:
     properties:
@@ -3459,15 +2804,6 @@ definitions:
       dataset:
         $ref: '#/definitions/dto.Dataset'
     type: object
-  responses.UpdateNamespaceResponse:
-    properties:
-      config:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-    type: object
   responses.UpdateExperimentDatasetResponse:
     properties:
       alias:
@@ -3480,6 +2816,15 @@ definitions:
       variable:
         $ref: '#/definitions/dto.ExperimentVariable'
     type: object
+  responses.UpdateNamespaceResponse:
+    properties:
+      config:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   responses.UpdateProjectResponse:
     properties:
       project:
@@ -3491,6 +2836,20 @@ definitions:
         type: integer
       name:
         type: string
+    type: object
+  responses.UserCapabilities:
+    properties:
+      can_create_namespace:
+        type: boolean
+      can_manage_acl:
+        type: boolean
+      is_root:
+        type: boolean
+    type: object
+  responses.UserCapabilitiesResponse:
+    properties:
+      capabilities:
+        $ref: '#/definitions/responses.UserCapabilities'
     type: object
   responses.UsersACLResponse:
     properties:
@@ -3534,28 +2893,6 @@ definitions:
       old:
         $ref: '#/definitions/update_log.Dataset'
     type: object
-  update_log.Namespace:
-    properties:
-      config:
-        type: string
-      config_version_id:
-        type: integer
-      name:
-        type: string
-      variable_name:
-        type: string
-      variable_type:
-        type: string
-      variable_value:
-        type: string
-    type: object
-  update_log.NamespaceUpdateLog:
-    properties:
-      new:
-        $ref: '#/definitions/update_log.Namespace'
-      old:
-        $ref: '#/definitions/update_log.Namespace'
-    type: object
   update_log.Experiment:
     properties:
       config:
@@ -3583,6 +2920,28 @@ definitions:
         $ref: '#/definitions/update_log.Experiment'
       old:
         $ref: '#/definitions/update_log.Experiment'
+    type: object
+  update_log.Namespace:
+    properties:
+      config:
+        type: string
+      config_version_id:
+        type: integer
+      name:
+        type: string
+      variable_name:
+        type: string
+      variable_type:
+        type: string
+      variable_value:
+        type: string
+    type: object
+  update_log.NamespaceUpdateLog:
+    properties:
+      new:
+        $ref: '#/definitions/update_log.Namespace'
+      old:
+        $ref: '#/definitions/update_log.Namespace'
     type: object
   update_log.Project:
     properties:
@@ -4437,7 +3796,7 @@ paths:
           description: Service Unavailable
           schema:
             $ref: '#/definitions/responses.ErrorResponse'
-      summary: apply dataset (uses jobd)
+      summary: apply dataset (job queue disabled)
       tags:
       - dataset
   /api/v1/dataset/log:
@@ -4658,734 +4017,9 @@ paths:
           description: Service Unavailable
           schema:
             $ref: '#/definitions/responses.ErrorResponse'
-      summary: get events for all jobs with filters
+      summary: get events for all jobs with filters (job queue disabled — empty)
       tags:
       - jobs
-  /api/v1/grant:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.GrantRequest'
-      - description: superuser token
-        in: header
-        name: x-superuser-token
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.EmptyResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: grant permission
-      tags:
-      - acl
-  /api/v1/graph:
-    get:
-      parameters:
-      - description: project id
-        in: query
-        name: project_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/private.getProjectGraphResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: get project graph
-      tags:
-      - experiment
-  /api/v1/job:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: Job ID
-        in: query
-        name: job_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/clients.GetJobResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: get job by ID
-      tags:
-      - jobs
-  /api/v1/job/events:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: Job ID
-        in: query
-        name: job_id
-        required: true
-        type: integer
-      - description: Event type filter
-        in: query
-        name: event_type
-        type: string
-      - description: Limit
-        in: query
-        name: limit
-        type: integer
-      - description: Offset
-        in: query
-        name: offset
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/clients.ListEventsResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: get events for a specific job
-      tags:
-      - jobs
-  /api/v1/job/tasks:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: Job ID
-        in: query
-        name: job_id
-        required: true
-        type: integer
-      - description: Task status filter
-        in: query
-        name: status
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/clients.ListTasksResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: get tasks for a specific job
-      tags:
-      - jobs
-  /api/v1/jobs/search:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: search filters (entity_type, entity_id, type, status, created_by,
-          limit, offset, sort, order)
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.ListJobsRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.ListJobsResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "503":
-          description: Service Unavailable
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: search and list jobs with filters
-      tags:
-      - jobs
-  /api/v1/namespace:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.DeleteNamespaceRequest'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.EmptyResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: delete namespace
-      tags:
-      - namespace
-    get:
-      parameters:
-      - description: namespace id
-        in: query
-        name: namespace_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.GetNamespaceResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: get namespace
-      tags:
-      - namespace
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.CreateNamespaceRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.CreateNamespaceResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "409":
-          description: Conflict - resource already exists
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: create namespace
-      tags:
-      - namespace
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.UpdateNamespaceRequest'
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.UpdateNamespaceResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: update namespace
-      tags:
-      - namespace
-  /api/v1/namespace/config:
-    get:
-      parameters:
-      - description: config id
-        in: query
-        name: config_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.GetNamespaceConfigResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: get namespace config by id
-      tags:
-      - namespace
-  /api/v1/namespace/configs:
-    get:
-      parameters:
-      - description: namespace id
-        in: query
-        name: namespace_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.ListNamespaceConfigsResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: list namespace configs
-      tags:
-      - namespace
-  /api/v1/namespace/log:
-    get:
-      parameters:
-      - description: log id
-        in: query
-        name: log_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.GetNamespaceLogResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: get namespace update log
-      tags:
-      - namespace
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.UpdateNamespaceLogCommentRequest'
-      - description: superuser token
-        in: header
-        name: x-superuser-token
-        type: string
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: update namespace log comment
-      tags:
-      - namespace
-  /api/v1/namespace/logs:
-    get:
-      parameters:
-      - description: namespace id
-        in: query
-        name: namespace_id
-        type: integer
-      - description: from
-        in: query
-        name: from
-        required: true
-        type: integer
-      - description: limit
-        in: query
-        name: limit
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.ListNamespaceUpdateLogsResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: list namespace update logs
-      tags:
-      - namespace
-  /api/v1/namespaces:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.ListNamespacesResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: list namespaces
-      tags:
-      - namespace
-  /api/v1/permissions:
-    get:
-      parameters:
-      - description: user id
-        in: query
-        name: user_id
-        required: true
-        type: integer
-      - description: scope
-        in: query
-        name: scope
-        required: true
-        type: string
-      - description: superuser token
-        in: header
-        name: x-superuser-token
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.CheckPermissionsResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: list user's permitted actions on the given resource
-      tags:
-      - acl
-  /api/v1/ping:
-    get:
-      description: 'As if to say even louder to the world: here is the best ping handler
-        in the world'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/private.pingResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.CreateAppBannerResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: ping me
-      tags:
-      - meta
   /api/v1/experiment:
     delete:
       consumes:
@@ -6756,6 +5390,731 @@ paths:
       summary: list experiments in project
       tags:
       - experiment
+  /api/v1/grant:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.GrantRequest'
+      - description: superuser token
+        in: header
+        name: x-superuser-token
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.EmptyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: grant permission
+      tags:
+      - acl
+  /api/v1/graph:
+    get:
+      parameters:
+      - description: project id
+        in: query
+        name: project_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/private.getProjectGraphResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: get project graph
+      tags:
+      - experiment
+  /api/v1/job:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Job ID
+        in: query
+        name: job_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/clients.GetJobResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: get job by ID (job queue disabled)
+      tags:
+      - jobs
+  /api/v1/job/events:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Job ID
+        in: query
+        name: job_id
+        required: true
+        type: integer
+      - description: Event type filter
+        in: query
+        name: event_type
+        type: string
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/clients.ListEventsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: get events for a specific job (job queue disabled — empty)
+      tags:
+      - jobs
+  /api/v1/job/tasks:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Job ID
+        in: query
+        name: job_id
+        required: true
+        type: integer
+      - description: Task status filter
+        in: query
+        name: status
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/clients.ListTasksResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: get tasks for a specific job (job queue disabled — empty)
+      tags:
+      - jobs
+  /api/v1/jobs/search:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: search filters (entity_type, entity_id, type, status, created_by,
+          limit, offset, sort, order)
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.ListJobsRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ListJobsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: search and list jobs with filters (job queue disabled — always empty)
+      tags:
+      - jobs
+  /api/v1/namespace:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.DeleteNamespaceRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.EmptyResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: delete namespace
+      tags:
+      - namespace
+    get:
+      parameters:
+      - description: namespace id
+        in: query
+        name: namespace_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetNamespaceResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: get namespace
+      tags:
+      - namespace
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.CreateNamespaceRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.CreateNamespaceResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "409":
+          description: Conflict - resource already exists
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: create namespace
+      tags:
+      - namespace
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UpdateNamespaceRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.UpdateNamespaceResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: update namespace
+      tags:
+      - namespace
+  /api/v1/namespace/config:
+    get:
+      parameters:
+      - description: config id
+        in: query
+        name: config_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetNamespaceConfigResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: get namespace config by id
+      tags:
+      - namespace
+  /api/v1/namespace/configs:
+    get:
+      parameters:
+      - description: namespace id
+        in: query
+        name: namespace_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ListNamespaceConfigsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: list namespace configs
+      tags:
+      - namespace
+  /api/v1/namespace/log:
+    get:
+      parameters:
+      - description: log id
+        in: query
+        name: log_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetNamespaceLogResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: get namespace update log
+      tags:
+      - namespace
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UpdateNamespaceLogCommentRequest'
+      - description: superuser token
+        in: header
+        name: x-superuser-token
+        type: string
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: update namespace log comment
+      tags:
+      - namespace
+  /api/v1/namespace/logs:
+    get:
+      parameters:
+      - description: namespace id
+        in: query
+        name: namespace_id
+        type: integer
+      - description: from
+        in: query
+        name: from
+        required: true
+        type: integer
+      - description: limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ListNamespaceUpdateLogsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: list namespace update logs
+      tags:
+      - namespace
+  /api/v1/namespaces:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ListNamespacesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: list namespaces
+      tags:
+      - namespace
+  /api/v1/permissions:
+    get:
+      parameters:
+      - description: user id
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      - description: scope
+        in: query
+        name: scope
+        required: true
+        type: string
+      - description: superuser token
+        in: header
+        name: x-superuser-token
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.CheckPermissionsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: list user's permitted actions on the given resource
+      tags:
+      - acl
+  /api/v1/ping:
+    get:
+      description: 'As if to say even louder to the world: here is the best ping handler
+        in the world'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/private.pingResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.CreateAppBannerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: ping me
+      tags:
+      - meta
   /api/v1/project:
     delete:
       consumes:
@@ -7098,141 +6457,6 @@ paths:
       summary: list projects in namespace
       tags:
       - project
-  /api/v1/robot:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.CreateRobotRequest'
-      - description: superuser token
-        in: header
-        name: x-superuser-token
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.CreateRobotResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: create robot
-      tags:
-      - robot
-  /api/v1/robot/token:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.GenerateTokenForRobotRequest'
-      - description: superuser token
-        in: header
-        name: x-superuser-token
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.CreateRobotResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: generate robot token
-      tags:
-      - robot
-  /api/v1/robot/tokens:
-    delete:
-      consumes:
-      - application/json
-      parameters:
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.DeleteAllTokenForRobotRequest'
-      - description: superuser token
-        in: header
-        name: x-superuser-token
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.EmptyResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: delete all robot tokens
-      tags:
-      - robot
   /api/v1/role:
     post:
       consumes:
@@ -8706,625 +7930,6 @@ paths:
       summary: search datasets with filters
       tags:
       - dataset
-  /api/v2/forms/dataset:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: dataset type
-        in: query
-        name: type
-        required: true
-        type: string
-      - description: dataset managed param
-        in: query
-        name: managed
-        required: true
-        type: boolean
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.GetFormResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: get dataset config edit form
-      tags:
-      - form
-  /api/v2/forms/experiment:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.GetFormResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: get project config edit form
-      tags:
-      - form
-  /api/v2/forms/project:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.GetFormResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: get project config edit form
-      tags:
-      - form
-  /api/v2/idm/namespace/roles:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: superuser token
-        in: header
-        name: x-superuser-token
-        type: string
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.CreateNamespaceRolesRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.CreateNamespaceRolesResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: create and push namespace roles to idm
-      tags:
-      - idm
-  /api/v2/idm/namespace/roles/sync:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: superuser token
-        in: header
-        name: x-superuser-token
-        type: string
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.SyncNamespaceRolesRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.SyncNamespaceRolesResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: sync namespace roles to idm (if no ids - will be synced all namespace,
-        overwise only in id list)
-      tags:
-      - idm
-  /api/v2/idm/project/roles:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: superuser token
-        in: header
-        name: x-superuser-token
-        type: string
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.CreateProjectRolesRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.CreateProjectRolesResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: create and push project roles to idm
-      tags:
-      - idm
-  /api/v2/idm/project/roles/sync:
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: superuser token
-        in: header
-        name: x-superuser-token
-        type: string
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.SyncProjectRolesRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.SyncProjectRolesResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: sync project roles to idm (if no ids - will be synced all projects,
-        overwise only projects in id list)
-      tags:
-      - idm
-  /api/v2/namespaces:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.ListNamespacesV2Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: list namespaces v2
-      tags:
-      - namespace
-  /api/v2/experiment/alerts:
-    delete:
-      parameters:
-      - description: experiment id
-        in: query
-        name: experiment_id
-        required: true
-        type: integer
-      - description: notification product id
-        in: query
-        name: product_id
-        required: true
-        type: integer
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.DeleteAlertsBody'
-      - description: superuser token
-        in: header
-        name: x-superuser-token
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.GetAlertGroupResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: delete alert group
-      tags:
-      - alerts
-    get:
-      parameters:
-      - description: experiment id
-        in: query
-        name: experiment_id
-        required: true
-        type: integer
-      - description: notification product id
-        in: query
-        name: product_id
-        required: true
-        type: integer
-      - description: superuser token
-        in: header
-        name: x-superuser-token
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.GetAlertGroupResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: get alert group
-      tags:
-      - alerts
-    post:
-      parameters:
-      - description: experiment id
-        in: query
-        name: experiment_id
-        required: true
-        type: integer
-      - description: notification product id
-        in: query
-        name: product_id
-        required: true
-        type: integer
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.CreateAlertGroupBody'
-      - description: superuser token
-        in: header
-        name: x-superuser-token
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.GetAlertGroupResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: create alert group
-      tags:
-      - alerts
-  /api/v2/experiment/alerts/options:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.GetAlertOptionsResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: get alert templates
-      tags:
-      - alerts
-  /api/v2/experiment/alerts/products:
-    get:
-      parameters:
-      - description: experiment id
-        in: query
-        name: experiment_id
-        required: true
-        type: integer
-      - description: superuser token
-        in: header
-        name: x-superuser-token
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              format: int32
-              type: integer
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: get products for alerts
-      tags:
-      - alerts
-  /api/v2/experiment/alerts/rule:
-    put:
-      parameters:
-      - description: experiment id
-        in: query
-        name: experiment_id
-        required: true
-        type: integer
-      - description: notification product id
-        in: query
-        name: product_id
-        required: true
-        type: integer
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.ChangeAlertBody'
-      - description: superuser token
-        in: header
-        name: x-superuser-token
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: change alert
-      tags:
-      - alerts
-  /api/v2/experiment/alerts/template:
-    put:
-      parameters:
-      - description: experiment id
-        in: query
-        name: experiment_id
-        required: true
-        type: integer
-      - description: notification product id
-        in: query
-        name: product_id
-        required: true
-        type: integer
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.ChangeAlertSeveritiesBody'
-      - description: superuser token
-        in: header
-        name: x-superuser-token
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.GetAlertGroupResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: change alert severities
-      tags:
-      - alerts
   /api/v2/experiment/config/apply:
     put:
       consumes:
@@ -9363,7 +7968,7 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/responses.ErrorResponse'
-      summary: apply experiment config (v2 - uses jobd)
+      summary: apply experiment config (v2 — напрямую через оркестратор)
       tags:
       - experiment
   /api/v2/experiment/config/validate:
@@ -9671,6 +8276,167 @@ paths:
       summary: update experiment version comment
       tags:
       - experiment
+  /api/v2/forms/dataset:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: dataset type
+        in: query
+        name: type
+        required: true
+        type: string
+      - description: dataset managed param
+        in: query
+        name: managed
+        required: true
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetFormResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: get dataset config edit form
+      tags:
+      - form
+  /api/v2/forms/experiment:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetFormResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: get project config edit form
+      tags:
+      - form
+  /api/v2/forms/project:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetFormResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: get project config edit form
+      tags:
+      - form
+  /api/v2/me/capabilities:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.UserCapabilitiesResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: get current user capabilities
+      tags:
+      - acl
+  /api/v2/namespaces:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ListNamespacesV2Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: list namespaces v2
+      tags:
+      - namespace
   /api/v2/project:
     get:
       parameters:
@@ -10025,8 +8791,7 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: request body. Set single_stage=true for single stage job, omit
-          or set false for phased apply
+      - description: request body. single_stage устарел
         in: body
         name: request
         required: true
@@ -10059,8 +8824,8 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/responses.ErrorResponse'
-      summary: apply experiment config (v3 - supports both single stage and phased apply
-        via jobd)
+      summary: apply experiment config (v3 — напрямую через оркестратор; single_stage
+        игнорируется)
       tags:
       - experiment
   /auth/authorize:

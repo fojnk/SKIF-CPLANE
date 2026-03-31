@@ -37,7 +37,7 @@ func (q *Queries) DeleteAppUpdate(ctx context.Context, id int32) error {
 
 const insertAppUpdate = `-- name: InsertAppUpdate :one
 INSERT INTO t_app_updates (title, description, content, video_url, image_url, release_date, is_published)
-VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, title, description, video_url, image_url, release_date, is_published, created_at, updated_at, content
+VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, title, description, content, video_url, image_url, release_date, is_published, created_at, updated_at
 `
 
 type InsertAppUpdateParams struct {
@@ -65,19 +65,19 @@ func (q *Queries) InsertAppUpdate(ctx context.Context, arg InsertAppUpdateParams
 		&i.ID,
 		&i.Title,
 		&i.Description,
+		&i.Content,
 		&i.VideoUrl,
 		&i.ImageUrl,
 		&i.ReleaseDate,
 		&i.IsPublished,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.Content,
 	)
 	return i, err
 }
 
 const selectAppUpdate = `-- name: SelectAppUpdate :one
-SELECT id, title, description, video_url, image_url, release_date, is_published, created_at, updated_at, content FROM t_app_updates WHERE id = $1
+SELECT id, title, description, content, video_url, image_url, release_date, is_published, created_at, updated_at FROM t_app_updates WHERE id = $1
 `
 
 func (q *Queries) SelectAppUpdate(ctx context.Context, id int32) (TAppUpdate, error) {
@@ -87,19 +87,19 @@ func (q *Queries) SelectAppUpdate(ctx context.Context, id int32) (TAppUpdate, er
 		&i.ID,
 		&i.Title,
 		&i.Description,
+		&i.Content,
 		&i.VideoUrl,
 		&i.ImageUrl,
 		&i.ReleaseDate,
 		&i.IsPublished,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.Content,
 	)
 	return i, err
 }
 
 const selectAppUpdates = `-- name: SelectAppUpdates :many
-SELECT id, title, description, video_url, image_url, release_date, is_published, created_at, updated_at, content FROM t_app_updates ORDER BY release_date DESC
+SELECT id, title, description, content, video_url, image_url, release_date, is_published, created_at, updated_at FROM t_app_updates ORDER BY release_date DESC
 `
 
 func (q *Queries) SelectAppUpdates(ctx context.Context) ([]TAppUpdate, error) {
@@ -115,13 +115,13 @@ func (q *Queries) SelectAppUpdates(ctx context.Context) ([]TAppUpdate, error) {
 			&i.ID,
 			&i.Title,
 			&i.Description,
+			&i.Content,
 			&i.VideoUrl,
 			&i.ImageUrl,
 			&i.ReleaseDate,
 			&i.IsPublished,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.Content,
 		); err != nil {
 			return nil, err
 		}
@@ -134,7 +134,7 @@ func (q *Queries) SelectAppUpdates(ctx context.Context) ([]TAppUpdate, error) {
 }
 
 const selectAppUpdatesByDateRange = `-- name: SelectAppUpdatesByDateRange :many
-SELECT id, title, description, video_url, image_url, release_date, is_published, created_at, updated_at, content FROM t_app_updates 
+SELECT id, title, description, content, video_url, image_url, release_date, is_published, created_at, updated_at FROM t_app_updates 
 WHERE release_date >= $1 AND release_date <= $2 
 ORDER BY release_date DESC
 `
@@ -157,13 +157,13 @@ func (q *Queries) SelectAppUpdatesByDateRange(ctx context.Context, arg SelectApp
 			&i.ID,
 			&i.Title,
 			&i.Description,
+			&i.Content,
 			&i.VideoUrl,
 			&i.ImageUrl,
 			&i.ReleaseDate,
 			&i.IsPublished,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.Content,
 		); err != nil {
 			return nil, err
 		}
@@ -176,7 +176,7 @@ func (q *Queries) SelectAppUpdatesByDateRange(ctx context.Context, arg SelectApp
 }
 
 const selectAppUpdatesPaginated = `-- name: SelectAppUpdatesPaginated :many
-SELECT id, title, description, video_url, image_url, release_date, is_published, created_at, updated_at, content FROM t_app_updates 
+SELECT id, title, description, content, video_url, image_url, release_date, is_published, created_at, updated_at FROM t_app_updates 
 WHERE CASE 
     WHEN $1::bool = true THEN true  -- админ видит все
     ELSE is_published = true         -- пользователь видит только опубликованные
@@ -210,13 +210,13 @@ func (q *Queries) SelectAppUpdatesPaginated(ctx context.Context, arg SelectAppUp
 			&i.ID,
 			&i.Title,
 			&i.Description,
+			&i.Content,
 			&i.VideoUrl,
 			&i.ImageUrl,
 			&i.ReleaseDate,
 			&i.IsPublished,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.Content,
 		); err != nil {
 			return nil, err
 		}
@@ -229,7 +229,7 @@ func (q *Queries) SelectAppUpdatesPaginated(ctx context.Context, arg SelectAppUp
 }
 
 const selectAppUpdatesPublished = `-- name: SelectAppUpdatesPublished :many
-SELECT id, title, description, video_url, image_url, release_date, is_published, created_at, updated_at, content FROM t_app_updates WHERE is_published = true ORDER BY release_date DESC
+SELECT id, title, description, content, video_url, image_url, release_date, is_published, created_at, updated_at FROM t_app_updates WHERE is_published = true ORDER BY release_date DESC
 `
 
 func (q *Queries) SelectAppUpdatesPublished(ctx context.Context) ([]TAppUpdate, error) {
@@ -245,13 +245,13 @@ func (q *Queries) SelectAppUpdatesPublished(ctx context.Context) ([]TAppUpdate, 
 			&i.ID,
 			&i.Title,
 			&i.Description,
+			&i.Content,
 			&i.VideoUrl,
 			&i.ImageUrl,
 			&i.ReleaseDate,
 			&i.IsPublished,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.Content,
 		); err != nil {
 			return nil, err
 		}
@@ -264,7 +264,7 @@ func (q *Queries) SelectAppUpdatesPublished(ctx context.Context) ([]TAppUpdate, 
 }
 
 const selectAppUpdatesUpcoming = `-- name: SelectAppUpdatesUpcoming :many
-SELECT id, title, description, video_url, image_url, release_date, is_published, created_at, updated_at, content FROM t_app_updates WHERE is_published = false ORDER BY release_date ASC
+SELECT id, title, description, content, video_url, image_url, release_date, is_published, created_at, updated_at FROM t_app_updates WHERE is_published = false ORDER BY release_date ASC
 `
 
 func (q *Queries) SelectAppUpdatesUpcoming(ctx context.Context) ([]TAppUpdate, error) {
@@ -280,13 +280,13 @@ func (q *Queries) SelectAppUpdatesUpcoming(ctx context.Context) ([]TAppUpdate, e
 			&i.ID,
 			&i.Title,
 			&i.Description,
+			&i.Content,
 			&i.VideoUrl,
 			&i.ImageUrl,
 			&i.ReleaseDate,
 			&i.IsPublished,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.Content,
 		); err != nil {
 			return nil, err
 		}
@@ -309,7 +309,7 @@ SET
     release_date = CASE WHEN $7::timestamp IS NOT NULL THEN $7 ELSE release_date END,
     is_published = CASE WHEN $8::bool IS NOT NULL THEN $8 ELSE is_published END,
     updated_at = CURRENT_TIMESTAMP
-WHERE id = $1 RETURNING id, title, description, video_url, image_url, release_date, is_published, created_at, updated_at, content
+WHERE id = $1 RETURNING id, title, description, content, video_url, image_url, release_date, is_published, created_at, updated_at
 `
 
 type UpdateAppUpdateParams struct {
@@ -346,13 +346,13 @@ func (q *Queries) UpdateAppUpdate(ctx context.Context, arg UpdateAppUpdateParams
 		&i.ID,
 		&i.Title,
 		&i.Description,
+		&i.Content,
 		&i.VideoUrl,
 		&i.ImageUrl,
 		&i.ReleaseDate,
 		&i.IsPublished,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.Content,
 	)
 	return i, err
 }

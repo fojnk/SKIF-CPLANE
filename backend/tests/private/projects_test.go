@@ -30,9 +30,8 @@ func (s *StreamflowTestSuite) TestProjectBasic() {
 
 	res, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -40,7 +39,6 @@ func (s *StreamflowTestSuite) TestProjectBasic() {
 	s.Require().NotNil(res)
 	s.Require().NotNil(res.Payload)
 	s.Require().Equal("test-project", res.Payload.Name)
-	s.Require().Equal(res.Payload.AbcProductID, "1234")
 
 	urls, err := s.c.Project.GetAPIV2ProjectUrls(&project2.GetAPIV2ProjectUrlsParams{
 		Context:   s.ctx,
@@ -61,9 +59,8 @@ func (s *StreamflowTestSuite) TestProjectBasic() {
 	s.Require().Contains(
 		derefSlice(s.T(), listRes.Payload.Projects),
 		models2.DtoProject{
-			ID:           res.Payload.ID,
-			Name:         "test-project",
-			AbcProductID: "1234",
+			ID:   res.Payload.ID,
+			Name: "test-project",
 		},
 	)
 
@@ -215,9 +212,8 @@ func (s *StreamflowTestSuite) TestProjectURLsWithMainClusterAndReplicas() {
 
 	res, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-urls"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("4761"),
+			Name:        ptr("test-project-urls"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -363,9 +359,8 @@ func (s *StreamflowTestSuite) TestProjectURLsBackwardCompatibility() {
 
 	res, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-old-format"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("4761"),
+			Name:        ptr("test-project-old-format"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -405,7 +400,7 @@ func (s *StreamflowTestSuite) TestProjectURLsBackwardCompatibility() {
 	s.Require().NotNil(urls)
 	s.Require().NotNil(urls.Payload)
 
-	// Ожидаем 3 URLs: 1 ABC product + 1 YT bundle + 1 YT work dir (старый формат, один кластер)
+	// Старый формат YT.Cluster (один кластер): ABC product + YT bundle + YT work dir.
 	s.Require().Len(urls.Payload.Urls, 3)
 
 	// Проверяем, что URLs сгенерированы правильно

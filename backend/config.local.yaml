@@ -25,10 +25,6 @@ clients:
     timeout: 2s
   orchestrator:
     base_url: http://localhost:8081
-  idm:
-    url: http://localhost:4004
-    timeout: 2s
-    push_enabled: false
   oauth:
     oauth-proxy: ""
     OAuthUrl: "http://localhost:9100/oauth"
@@ -41,14 +37,6 @@ clients:
     jwt-secret: "jwt-secret"
     access_expiration: 172800
     refresh_expiration: 2592000
-  jobd:
-    base_url: ""
-    api_key: "test-api-key"
-    timeout: 30
-  one_alerts:
-    base_url: ""
-    token: "test-token"
-    timeout: 30
 
 session_cache:
   expiration_time: 5m

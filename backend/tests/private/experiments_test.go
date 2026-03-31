@@ -7,8 +7,8 @@ import (
 	"slices"
 
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/cube"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	experiment2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/experiment"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	project2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/project"
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
@@ -28,9 +28,8 @@ func (s *StreamflowTestSuite) TestExperimentBasic() {
 
 	projRes, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-experiment"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-experiment"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -88,7 +87,7 @@ func (s *StreamflowTestSuite) TestExperimentBasic() {
 
 	getRes, err := s.c.Experiment.GetAPIV1Experiment(&experiment2.GetAPIV1ExperimentParams{
 		ExperimentID: res.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(getRes)
@@ -106,7 +105,7 @@ func (s *StreamflowTestSuite) TestExperimentBasic() {
 
 	updateRes, err := s.c.Experiment.PutAPIV1Experiment(&experiment2.PutAPIV1ExperimentParams{
 		Request: &models2.RequestsUpdateCompleteExperimentRequest{
-			ExperimentID:        ptr(res.Payload.ID),
+			ExperimentID:      ptr(res.Payload.ID),
 			Name:              "updated-experiment",
 			Description:       ptr("updated-experiment-description"),
 			Config:            "{\"hello\": \"world\"}",
@@ -122,7 +121,7 @@ func (s *StreamflowTestSuite) TestExperimentBasic() {
 
 	getRes, err = s.c.Experiment.GetAPIV1Experiment(&experiment2.GetAPIV1ExperimentParams{
 		ExperimentID: res.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(getRes)
@@ -131,7 +130,7 @@ func (s *StreamflowTestSuite) TestExperimentBasic() {
 
 	orchestratorConfigRes1, err := s.c.Experiment.GetAPIV1ExperimentOrchestrator(&experiment2.GetAPIV1ExperimentOrchestratorParams{
 		ExperimentID: getRes.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(orchestratorConfigRes1)
@@ -157,7 +156,7 @@ func (s *StreamflowTestSuite) TestExperimentBasic() {
 
 	urlsRes, err := s.c.Experiment.GetAPIV1ExperimentUrls(&experiment2.GetAPIV1ExperimentUrlsParams{
 		ExperimentID: res.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(urlsRes)
@@ -170,7 +169,7 @@ func (s *StreamflowTestSuite) TestExperimentBasic() {
 
 	url, err := s.c.Experiment.GetAPIV1ExperimentGrafanaURL(&experiment2.GetAPIV1ExperimentGrafanaURLParams{
 		ExperimentID: res.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(url)
@@ -179,7 +178,7 @@ func (s *StreamflowTestSuite) TestExperimentBasic() {
 	s.Require().Equal(url.Payload.URL, fmt.Sprintf("https://goc.vk.team/d/feln8ykbjqs5ce/experiment-for-ui?var-sf_experiment_id=%d&var-workdir=/%d", res.Payload.ID, res.Payload.ID))
 
 	updates, err := s.c.Experiment.GetAPIV1ExperimentUpdates(&experiment2.GetAPIV1ExperimentUpdatesParams{
-		Context:    s.ctx,
+		Context:      s.ctx,
 		ExperimentID: res.Payload.ID,
 	})
 
@@ -297,9 +296,8 @@ func (s *StreamflowTestSuite) TestExperimentApply() {
 
 	projRes, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-experiment"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-experiment"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -336,7 +334,7 @@ func (s *StreamflowTestSuite) TestExperimentApply() {
 
 	getRes, err := s.c.Experiment.GetAPIV1Experiment(&experiment2.GetAPIV1ExperimentParams{
 		ExperimentID: res.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(getRes)
@@ -354,7 +352,7 @@ func (s *StreamflowTestSuite) TestExperimentApply() {
 
 	updateRes, err := s.c.Experiment.PutAPIV1Experiment(&experiment2.PutAPIV1ExperimentParams{
 		Request: &models2.RequestsUpdateCompleteExperimentRequest{
-			ExperimentID:        ptr(res.Payload.ID),
+			ExperimentID:      ptr(res.Payload.ID),
 			Name:              "updated-experiment",
 			Config:            "{\"hello\": \"world\"}",
 			DisableValidation: true,
@@ -367,7 +365,7 @@ func (s *StreamflowTestSuite) TestExperimentApply() {
 
 	getRes, err = s.c.Experiment.GetAPIV1Experiment(&experiment2.GetAPIV1ExperimentParams{
 		ExperimentID: res.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(getRes)
@@ -376,7 +374,7 @@ func (s *StreamflowTestSuite) TestExperimentApply() {
 
 	orchestratorConfigRes1, err := s.c.Experiment.GetAPIV1ExperimentOrchestrator(&experiment2.GetAPIV1ExperimentOrchestratorParams{
 		ExperimentID: getRes.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(orchestratorConfigRes1)
@@ -406,7 +404,7 @@ func (s *StreamflowTestSuite) TestExperimentApply() {
 
 	updateRes2, err := s.c.Experiment.PutAPIV1Experiment(&experiment2.PutAPIV1ExperimentParams{
 		Request: &models2.RequestsUpdateCompleteExperimentRequest{
-			ExperimentID:        ptr(res.Payload.ID),
+			ExperimentID:      ptr(res.Payload.ID),
 			Name:              "updated-experiment2",
 			Config:            "{\"hello\": \"world2\"}",
 			DisableValidation: true,
@@ -419,7 +417,7 @@ func (s *StreamflowTestSuite) TestExperimentApply() {
 
 	orchestratorConfigRes2, err := s.c.Experiment.GetAPIV1ExperimentOrchestrator(&experiment2.GetAPIV1ExperimentOrchestratorParams{
 		ExperimentID: getRes.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(orchestratorConfigRes2)
@@ -427,10 +425,10 @@ func (s *StreamflowTestSuite) TestExperimentApply() {
 
 	updateLogs, err := s.c.Experiment.GetAPIV1ExperimentLogs(&experiment2.GetAPIV1ExperimentLogsParams{
 		ExperimentID: &res.Payload.ID,
-		Context:    s.ctx,
-		Limit:      10,
-		From:       0,
-		ProjectID:  &projRes.Payload.ID,
+		Context:      s.ctx,
+		Limit:        10,
+		From:         0,
+		ProjectID:    &projRes.Payload.ID,
 	})
 
 	s.Require().NoError(err)
@@ -438,7 +436,7 @@ func (s *StreamflowTestSuite) TestExperimentApply() {
 	s.Require().NotNil(updateLogs.Payload)
 
 	updates, err := s.c.Experiment.GetAPIV1ExperimentUpdates(&experiment2.GetAPIV1ExperimentUpdatesParams{
-		Context:    s.ctx,
+		Context:      s.ctx,
 		ExperimentID: res.Payload.ID,
 	})
 
@@ -466,9 +464,8 @@ func (s *StreamflowTestSuite) TestEmptyUpdates() {
 
 	projRes, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-experiment"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-experiment"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -505,7 +502,7 @@ func (s *StreamflowTestSuite) TestEmptyUpdates() {
 
 	getRes, err := s.c.Experiment.GetAPIV1Experiment(&experiment2.GetAPIV1ExperimentParams{
 		ExperimentID: res.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(getRes)
@@ -524,7 +521,7 @@ func (s *StreamflowTestSuite) TestEmptyUpdates() {
 	updateRes2, err := s.c.Experiment.PutAPIV1Experiment(&experiment2.PutAPIV1ExperimentParams{
 		Request: &models2.RequestsUpdateCompleteExperimentRequest{
 			ExperimentID: ptr(res.Payload.ID),
-			Name:       "updated-experiment2",
+			Name:         "updated-experiment2",
 			Config: `
 {
 	"Placement": {
@@ -622,10 +619,10 @@ func (s *StreamflowTestSuite) TestEmptyUpdates() {
 
 	updateLogs, err := s.c.Experiment.GetAPIV1ExperimentLogs(&experiment2.GetAPIV1ExperimentLogsParams{
 		ExperimentID: &res.Payload.ID,
-		Context:    s.ctx,
-		Limit:      10,
-		From:       0,
-		ProjectID:  &projRes.Payload.ID,
+		Context:      s.ctx,
+		Limit:        10,
+		From:         0,
+		ProjectID:    &projRes.Payload.ID,
 	})
 
 	s.Require().NoError(err)
@@ -634,14 +631,14 @@ func (s *StreamflowTestSuite) TestEmptyUpdates() {
 
 	orchestratorConfigRes1, err := s.c.Experiment.GetAPIV1ExperimentOrchestrator(&experiment2.GetAPIV1ExperimentOrchestratorParams{
 		ExperimentID: updateRes3.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(orchestratorConfigRes1)
 	s.Require().NotNil(orchestratorConfigRes1.Payload)
 
 	updates, err := s.c.Experiment.GetAPIV1ExperimentUpdates(&experiment2.GetAPIV1ExperimentUpdatesParams{
-		Context:    s.ctx,
+		Context:      s.ctx,
 		ExperimentID: res.Payload.ID,
 	})
 
@@ -655,9 +652,9 @@ func (s *StreamflowTestSuite) TestEmptyUpdates() {
 
 	versions, err := s.c.Experiment.GetAPIV1ExperimentVersions(&experiment2.GetAPIV1ExperimentVersionsParams{
 		ExperimentID: updateRes3.Payload.ID,
-		Limit:      10,
-		From:       0,
-		Context:    s.ctx,
+		Limit:        10,
+		From:         0,
+		Context:      s.ctx,
 	})
 
 	s.Require().NoError(err)
@@ -667,8 +664,8 @@ func (s *StreamflowTestSuite) TestEmptyUpdates() {
 
 	versionDetails, err := s.c.Experiment.GetAPIV1ExperimentVersion(&experiment2.GetAPIV1ExperimentVersionParams{
 		ExperimentID: res.Payload.ID,
-		VersionID:  versions.Payload.Versions[0].ID,
-		Context:    s.ctx,
+		VersionID:    versions.Payload.Versions[0].ID,
+		Context:      s.ctx,
 	})
 
 	s.Require().NoError(err)
@@ -691,8 +688,8 @@ func (s *StreamflowTestSuite) TestEmptyUpdates() {
 
 	versionDetails2, err := s.c.Experiment.GetAPIV1ExperimentVersion(&experiment2.GetAPIV1ExperimentVersionParams{
 		ExperimentID: res.Payload.ID,
-		VersionID:  versions.Payload.Versions[1].ID,
-		Context:    s.ctx,
+		VersionID:    versions.Payload.Versions[1].ID,
+		Context:      s.ctx,
 	})
 
 	s.Require().NoError(err)
@@ -702,8 +699,8 @@ func (s *StreamflowTestSuite) TestEmptyUpdates() {
 
 	versionDetails3, err := s.c.Experiment.GetAPIV1ExperimentVersion(&experiment2.GetAPIV1ExperimentVersionParams{
 		ExperimentID: res.Payload.ID,
-		VersionID:  versions.Payload.Versions[2].ID,
-		Context:    s.ctx,
+		VersionID:    versions.Payload.Versions[2].ID,
+		Context:      s.ctx,
 	})
 
 	s.Require().NoError(err)
@@ -723,7 +720,7 @@ func (s *StreamflowTestSuite) TestEmptyUpdates() {
 		Context: s.ctx,
 		Request: &models2.RequestsUpdateExperimentConfigVersionRequest{
 			ExperimentID: ptr(res.Payload.ID),
-			VersionID:  ptr(versions.Payload.Versions[0].ID),
+			VersionID:    ptr(versions.Payload.Versions[0].ID),
 		},
 	})
 
@@ -733,7 +730,7 @@ func (s *StreamflowTestSuite) TestEmptyUpdates() {
 		Context: s.ctx,
 		Request: &models2.RequestsUpdateExperimentConfigVersionRequest{
 			ExperimentID: ptr(res.Payload.ID),
-			VersionID:  ptr(versions.Payload.Versions[1].ID),
+			VersionID:    ptr(versions.Payload.Versions[1].ID),
 		},
 	})
 
@@ -741,7 +738,7 @@ func (s *StreamflowTestSuite) TestEmptyUpdates() {
 
 	getRes2, err := s.c.Experiment.GetAPIV1Experiment(&experiment2.GetAPIV1ExperimentParams{
 		ExperimentID: res.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(getRes2)
@@ -802,7 +799,7 @@ func (s *StreamflowTestSuite) TestEmptyUpdates() {
 		Context: s.ctx,
 		Request: &models2.RequestsUpdateExperimentConfigVersionRequest{
 			ExperimentID: ptr(res.Payload.ID),
-			VersionID:  ptr(versions.Payload.Versions[0].ID),
+			VersionID:    ptr(versions.Payload.Versions[0].ID),
 		},
 	})
 
@@ -810,7 +807,7 @@ func (s *StreamflowTestSuite) TestEmptyUpdates() {
 
 	getRes3, err := s.c.Experiment.GetAPIV1Experiment(&experiment2.GetAPIV1ExperimentParams{
 		ExperimentID: res.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(getRes3)
@@ -910,9 +907,8 @@ func (s *StreamflowTestSuite) TestExperimentUpdatesWithAddInfo() {
 
 	projRes, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-experiment"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-experiment"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -936,7 +932,7 @@ func (s *StreamflowTestSuite) TestExperimentUpdatesWithAddInfo() {
 	updateRes2, err := s.c.Experiment.PutAPIV1Experiment(&experiment2.PutAPIV1ExperimentParams{
 		Request: &models2.RequestsUpdateCompleteExperimentRequest{
 			ExperimentID: ptr(createPPRes.Payload.ID),
-			Name:       "updated-experiment1",
+			Name:         "updated-experiment1",
 			Config: `
 {
 	"Worker": {
@@ -1046,8 +1042,8 @@ func (s *StreamflowTestSuite) TestExperimentUpdatesWithAddInfo() {
 	updateRes3, err := s.c.Experiment.PutAPIV1Experiment(&experiment2.PutAPIV1ExperimentParams{
 		Request: &models2.RequestsUpdateCompleteExperimentRequest{
 			ExperimentID: ptr(createPPRes.Payload.ID),
-			Name:       "updated-experiment1",
-			Config:     ppConfig,
+			Name:         "updated-experiment1",
+			Config:       ppConfig,
 		},
 		Context: s.ctx,
 	})
@@ -1074,7 +1070,7 @@ func (s *StreamflowTestSuite) TestExperimentUpdatesWithAddInfo() {
 
 	getPPRes, err := s.c.Experiment.GetAPIV1Experiment(&experiment2.GetAPIV1ExperimentParams{
 		ExperimentID: createPPRes.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().Equal(getPPRes.Payload.Name, updateRes3.Payload.Name)

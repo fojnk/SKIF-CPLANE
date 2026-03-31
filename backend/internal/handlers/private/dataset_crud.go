@@ -2,13 +2,11 @@ package private
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/pkg/errors"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/clients"
 	dbcore "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/db/core"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/dto"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/models/user"
@@ -535,7 +533,7 @@ func deleteDatasetHandler(ctx context.Context, svc *service.Service, l *logger.L
 
 // applyDatasetHandler godoc
 //
-//	@Summary	apply dataset (uses jobd)
+//	@Summary	apply dataset (job queue disabled)
 //	@Tags		dataset
 //	@Accept		json
 //	@Produce	json
@@ -553,89 +551,17 @@ func applyDatasetHandler(ctx context.Context, svc *service.Service, l *logger.Lo
 		return nil, err
 	}
 
-	dataset, err := svc.GetDataset(ctx, r.DatasetID)
+	_, err := svc.GetDataset(ctx, r.DatasetID)
 	if err != nil {
 		l.Error("failed to get dataset", err)
 		return nil, shared.ConvertServiceError(err, shared.EntityDataset)
 	}
 
-	if svc.Repo.Clients.Jobd == nil {
-		err := errors.New("jobd client is not configured")
-		l.Error("jobd client is not configured", err)
-		return nil, &responses.ErrorResponse{
-			InternalError:   err,
-			ExternalMessage: "Job system is not available",
-			HTTPStatusCode:  http.StatusServiceUnavailable,
-		}
+	err = errors.New("dataset apply via job queue is disabled")
+	l.Info("apply dataset: job queue removed")
+	return nil, &responses.ErrorResponse{
+		InternalError:   err,
+		ExternalMessage: "Асинхронное применение датасета недоступно (очередь задач отключена)",
+		HTTPStatusCode:  http.StatusServiceUnavailable,
 	}
-
-	jobName := fmt.Sprintf("apply-dataset-%d", r.DatasetID)
-	jobConfig := map[string]interface{}{
-		"dataset_id": r.DatasetID,
-	}
-
-	entity := &clients.LinkedEntity{
-		Type: "dataset",
-		Id:   int64(r.DatasetID),
-	}
-
-	desc := fmt.Sprintf("Apply dataset %d", r.DatasetID)
-	execTarget := "orchestrator"
-	tags := []string{"dataset", "apply"}
-
-	stepDesc := "Apply dataset configuration"
-	stepOrder := int32(0)
-	stepConfig := map[string]interface{}{
-		"type":          "apply_dataset",
-		"dataset_id": fmt.Sprintf("%d", r.DatasetID),
-	}
-	steps := []clients.CreateStep{
-		{
-			Name:        "apply_dataset",
-			Description: &stepDesc,
-			Order:       &stepOrder,
-			Config:      &stepConfig,
-		},
-	}
-
-	createJobReq := clients.CreateJobRequest{
-		Name:            jobName,
-		Description:     &desc,
-		Type:            "dataset_apply",
-		ExecutionTarget: &execTarget,
-		Config:          &jobConfig,
-		Entity:          entity,
-		Tags:            &tags,
-		Steps:           &steps,
-	}
-
-	ctxWithUserID := clients.WithUserID(ctx, u.Username)
-	jobResp, err := svc.Repo.Clients.Jobd.CreateJob(ctxWithUserID, createJobReq)
-	if err != nil {
-		l.Error("failed to create dataset apply job in jobd", err)
-		return nil, &responses.ErrorResponse{
-			InternalError:   errors.Wrap(err, "failed to create dataset apply job in jobd"),
-			ExternalMessage: fmt.Sprintf("Ошибка создания джобы: %s", err.Error()),
-			HTTPStatusCode:  http.StatusInternalServerError,
-		}
-	}
-
-	var jobID *int64
-	if jobResp.Job != nil && jobResp.Job.Id != nil {
-		jobID = jobResp.Job.Id
-	}
-	if jobID != nil {
-		l.Info(fmt.Sprintf("Job created in jobd: job_id=%d, dataset_id=%d", *jobID, r.DatasetID))
-	} else {
-		l.Info(fmt.Sprintf("Job created in jobd: job_id=<nil>, dataset_id=%d", r.DatasetID))
-	}
-
-	svc.LogDatasetChange(ctx, 0, dataset.ProjectID, r.DatasetID, u.Username, r.Comment, update_log.ActionApplyExperiment, update_log.DatasetUpdateLog{
-		New: update_log.Dataset{
-			Name:  dataset.Name,
-			JobID: jobID,
-		},
-	})
-
-	return responses.EmptyResponse{}, nil
 }

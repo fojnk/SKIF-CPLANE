@@ -6,10 +6,8 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
-	jwt_client "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/clients/jwt"
 	dbcore "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/db/core"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/dto"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/dto/alerts"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/models/params"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/models/user"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/requests"
@@ -19,7 +17,6 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/update_log"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/repository"
 	aclService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/acl"
-	alertsService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/alerts"
 	appService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/app"
 	authService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/auth"
 	cubeService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/cube"
@@ -29,10 +26,8 @@ import (
 	graphService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/graph"
 	updateLogService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/history/update_log"
 	versionService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/history/versions"
-	idmService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/idm"
 	namespaceService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/namespace"
 	projectService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/project"
-	robotService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/robot"
 	schemaService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/schema"
 	userService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/user"
 	validationService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/validation"
@@ -43,7 +38,6 @@ type IAuthService interface {
 	Login(username, password string) (*dto.OAuthAccessToken, error)
 	GetUserInfo(token string) (*dto.UserInfo, error)
 	GetUserInfoFromRequest(r *http.Request) (*user.UserInfo, error)
-	GetRobotInfoFromRequest(r *http.Request) (*user.UserInfo, error)
 	ExchangeCodeForToken(code, redirectUri string) (*dto.OAuthAccessToken, error)
 	RefreshAccessToken(refreshToken string) (*dto.OAuthAccessToken, error)
 	CreateAuthCookies(accessToken *dto.OAuthAccessToken) ([]*http.Cookie, error)
@@ -244,18 +238,6 @@ type IValidationService interface {
 	ValidateExperimentRun(ctx context.Context, config map[string]interface{}, shouldWriteLogs bool, dataSets *[][]dto.ValidationRequestDataItem, shouldReadYtSample *bool) (*dto.ValidationResponseWithRun, error)
 }
 
-type IRobotService interface {
-	CreateRobot(ctx context.Context, name string) (int32, error)
-	CreateRobotToken(ctx context.Context, robotID int32, token string, expiresAt pgtype.Timestamp) (int32, error)
-	DeleteAllRobotTokens(ctx context.Context, robotID int32) error
-	GenerateRobotTokenViaJWT(name string) (*jwt_client.TokenInfo, error)
-}
-
-type IIDMService interface {
-	CreateProjectOwnerRole(ctx context.Context, projectID int32, u *user.UserInfo) error
-	CreateNamespaceOwnerRole(ctx context.Context, namespaceID int32, u *user.UserInfo) error
-}
-
 type IVersionService interface {
 	// Experiment Versions
 	ListExperimentVersions(ctx context.Context, experimentID int32, limit, offset int32) ([]dto.ExperimentVersion, int64, error)
@@ -319,17 +301,6 @@ type ICubeService interface {
 	GetCubeByID(ctx context.Context, ID int32) (*dto.Cube, error)
 }
 
-type IAlertsService interface {
-	GetOptions() (alerts.AlertOptions, error)
-	GetProducts(ctx context.Context, experimentID int32) ([]int32, error)
-	GetAlertGroup(ctx context.Context, r *requests.GetAlertsRequest) (responses.GetAlertGroupResponse, error)
-	CreateNewAlerts(ctx context.Context, r *requests.CreateAlertGroupRequest) (responses.GetAlertGroupResponse, error)
-	DeleteAlerts(ctx context.Context, r *requests.DeleteAlertsRequest) (responses.GetAlertGroupResponse, error)
-	DeleteExperimentAlertGroups(ctx context.Context, experimentID int32) error
-	ChangeAlertSeverities(ctx context.Context, r *requests.ChangeAlertSeveritiesRequest) (responses.GetAlertGroupResponse, error)
-	ChangeAlert(ctx context.Context, r *requests.ChangeAlertRequest) error
-}
-
 type Service struct {
 	Repo *repository.Repository
 	IAuthService
@@ -346,10 +317,7 @@ type Service struct {
 	IGraphService
 	IFormService
 	IValidationService
-	IRobotService
-	IIDMService
 	ICubeService
-	IAlertsService
 }
 
 func NewService(repo *repository.Repository) *Service {
@@ -372,10 +340,7 @@ func NewService(repo *repository.Repository) *Service {
 		IGraphService:      graphSvc,
 		IFormService:       formService.NewFormService(repo),
 		IValidationService: validationService.NewValidationService(repo),
-		IRobotService:      robotService.NewRobotService(repo),
-		IIDMService:        idmService.NewIDMService(repo),
 		ICubeService:       cubeService.NewCubeService(repo),
-		IAlertsService:     alertsService.NewAlertsService(repo),
 	}
 }
 

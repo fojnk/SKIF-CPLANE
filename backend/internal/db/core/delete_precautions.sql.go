@@ -33,6 +33,20 @@ func (q *Queries) GetDatasetsCountInProject(ctx context.Context, projectID pgtyp
 	return count, err
 }
 
+const getExperimentsCount = `-- name: GetExperimentsCount :one
+SELECT COUNT(*) FROM t_experiment
+JOIN t_experiment_template_v ON t_experiment.template_v_id = t_experiment_template_v.id
+JOIN v_real_experiment_template ON t_experiment_template_v.parent_id = v_real_experiment_template.id
+WHERE t_experiment.project_id = $1
+`
+
+func (q *Queries) GetExperimentsCount(ctx context.Context, projectID int32) (int64, error) {
+	row := q.db.QueryRow(ctx, getExperimentsCount, projectID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getLinksCountByDatasetID = `-- name: GetLinksCountByDatasetID :one
 SELECT COUNT(*)
 FROM t_experiment_dataset
@@ -56,20 +70,6 @@ WHERE experiment_id = $1 AND t_dataset.deleted = FALSE
 
 func (q *Queries) GetLinksCountByExperimentID(ctx context.Context, experimentID int32) (int64, error) {
 	row := q.db.QueryRow(ctx, getLinksCountByExperimentID, experimentID)
-	var count int64
-	err := row.Scan(&count)
-	return count, err
-}
-
-const getExperimentsCount = `-- name: GetExperimentsCount :one
-SELECT COUNT(*) FROM t_experiment
-JOIN t_experiment_template_v ON t_experiment.template_v_id = t_experiment_template_v.id
-JOIN v_real_experiment_template ON t_experiment_template_v.parent_id = v_real_experiment_template.id
-WHERE t_experiment.project_id = $1
-`
-
-func (q *Queries) GetExperimentsCount(ctx context.Context, projectID int32) (int64, error) {
-	row := q.db.QueryRow(ctx, getExperimentsCount, projectID)
 	var count int64
 	err := row.Scan(&count)
 	return count, err

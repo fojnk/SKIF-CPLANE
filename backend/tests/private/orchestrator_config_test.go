@@ -8,8 +8,8 @@ import (
 	"text/template"
 
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/dataset"
-	namespace2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	experiment2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/experiment"
+	namespace2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	project2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/project"
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
@@ -46,9 +46,8 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig() {
 
 	projRes, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-orchestrator-config"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-orchestrator-config"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -120,7 +119,7 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig() {
 
 	experimentUpdateRes, err := s.c.Experiment.PutAPIV1Experiment(&experiment2.PutAPIV1ExperimentParams{
 		Request: &models2.RequestsUpdateCompleteExperimentRequest{
-			ExperimentID:        &plRes.Payload.ID,
+			ExperimentID:      &plRes.Payload.ID,
 			Config:            `{"experiment_key": "val", "experiment_variable": "${test_variable_orchestrator_config}"}`,
 			DisableValidation: true,
 		},
@@ -132,9 +131,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig() {
 
 	addDsRes1, err := s.c.Experiment.PostAPIV1ExperimentDataset(&experiment2.PostAPIV1ExperimentDatasetParams{
 		Request: &models2.RequestsAddDatasetToExperimentRequest{
-			DatasetID: &dsRes1.Payload.ID,
+			DatasetID:    &dsRes1.Payload.ID,
 			Alias:        ptr("test-alias-orchestrator-config-experiment-datasets-1"),
-			ExperimentID:   &plRes.Payload.ID,
+			ExperimentID: &plRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -144,9 +143,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig() {
 
 	addDsRes2, err := s.c.Experiment.PostAPIV1ExperimentDataset(&experiment2.PostAPIV1ExperimentDatasetParams{
 		Request: &models2.RequestsAddDatasetToExperimentRequest{
-			DatasetID: &dsRes2.Payload.ID,
+			DatasetID:    &dsRes2.Payload.ID,
 			Alias:        ptr("test-alias-orchestrator-config-experiment-datasets-2"),
-			ExperimentID:   &plRes.Payload.ID,
+			ExperimentID: &plRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -171,9 +170,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig() {
 	s.Require().Equal("test_value_orchestrator_config_old", *insVarRes.Payload.Variable.Value)
 
 	versions1, err := s.c.Experiment.GetAPIV2ExperimentVariableVersions(&experiment2.GetAPIV2ExperimentVariableVersionsParams{
-		From:       int64(0),
-		Limit:      int64(100),
-		VariableID: insVarRes.Payload.Variable.ID,
+		From:         int64(0),
+		Limit:        int64(100),
+		VariableID:   insVarRes.Payload.Variable.ID,
 		ExperimentID: plRes.Payload.ID,
 	})
 	s.Require().NoError(err)
@@ -199,9 +198,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig() {
 	s.Require().Equal("{\n  \"OnecloudDatacenters\": [\n    \"pc\"\n  ],\n  \"OnecloudQueue\": \"prod.streamflow.prod\"\n}", *updRes.Payload.Variable.Value)
 
 	versions2, err := s.c.Experiment.GetAPIV2ExperimentVariableVersions(&experiment2.GetAPIV2ExperimentVariableVersionsParams{
-		From:       int64(0),
-		Limit:      int64(100),
-		VariableID: insVarRes.Payload.Variable.ID,
+		From:         int64(0),
+		Limit:        int64(100),
+		VariableID:   insVarRes.Payload.Variable.ID,
 		ExperimentID: plRes.Payload.ID,
 	})
 	s.Require().NoError(err)
@@ -219,7 +218,7 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig() {
 
 	getvarsRes, err := s.c.Experiment.GetAPIV1ExperimentVariables(&experiment2.GetAPIV1ExperimentVariablesParams{
 		ExperimentID: plRes.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(getvarsRes)
@@ -241,7 +240,7 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig() {
 
 	orchestratorConfigRes, err := s.c.Experiment.GetAPIV1ExperimentOrchestrator(&experiment2.GetAPIV1ExperimentOrchestratorParams{
 		ExperimentID: plRes.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(orchestratorConfigRes)
@@ -255,9 +254,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig() {
 
 	var jsonConfigExpected bytes.Buffer
 	err = tmpl.Execute(&jsonConfigExpected, map[string]string{
-		"ExperimentID":  strconv.FormatInt(plRes.Payload.ID, 10),
-		"ProjectID":   strconv.FormatInt(projRes.Payload.ID, 10),
-		"NamespaceID": strconv.FormatInt(nsRes.Payload.ID, 10),
+		"ExperimentID": strconv.FormatInt(plRes.Payload.ID, 10),
+		"ProjectID":    strconv.FormatInt(projRes.Payload.ID, 10),
+		"NamespaceID":  strconv.FormatInt(nsRes.Payload.ID, 10),
 	})
 	s.Require().NoError(err)
 
@@ -275,9 +274,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig() {
 
 	listLogsRes, err := s.c.Experiment.GetAPIV1ExperimentLogs(&experiment2.GetAPIV1ExperimentLogsParams{
 		ExperimentID: &plRes.Payload.ID,
-		From:       0,
-		Limit:      10,
-		Context:    s.ctx,
+		From:         0,
+		Limit:        10,
+		Context:      s.ctx,
 	})
 
 	s.Require().NoError(err)
@@ -345,9 +344,8 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfigWithNullConfigs() {
 
 	projRes, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-orchestrator-config-null-configs"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-orchestrator-config-null-configs"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -395,9 +393,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfigWithNullConfigs() {
 
 	addDsRes1, err := s.c.Experiment.PostAPIV1ExperimentDataset(&experiment2.PostAPIV1ExperimentDatasetParams{
 		Request: &models2.RequestsAddDatasetToExperimentRequest{
-			DatasetID: &dsRes1.Payload.ID,
+			DatasetID:    &dsRes1.Payload.ID,
 			Alias:        ptr("test-alias-orchestrator-config-experiment-datasets-null-configs-1"),
-			ExperimentID:   &plRes.Payload.ID,
+			ExperimentID: &plRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -407,9 +405,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfigWithNullConfigs() {
 
 	addDsRes2, err := s.c.Experiment.PostAPIV1ExperimentDataset(&experiment2.PostAPIV1ExperimentDatasetParams{
 		Request: &models2.RequestsAddDatasetToExperimentRequest{
-			DatasetID: &dsRes2.Payload.ID,
+			DatasetID:    &dsRes2.Payload.ID,
 			Alias:        ptr("test-alias-orchestrator-config-experiment-datasets-null-configs-2"),
-			ExperimentID:   &plRes.Payload.ID,
+			ExperimentID: &plRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -419,7 +417,7 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfigWithNullConfigs() {
 
 	orchestratorConfigRes, err := s.c.Experiment.GetAPIV1ExperimentOrchestrator(&experiment2.GetAPIV1ExperimentOrchestratorParams{
 		ExperimentID: plRes.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(orchestratorConfigRes)
@@ -433,9 +431,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfigWithNullConfigs() {
 
 	var jsonConfigExpected bytes.Buffer
 	err = tmpl.Execute(&jsonConfigExpected, map[string]string{
-		"ExperimentID":  strconv.FormatInt(plRes.Payload.ID, 10),
-		"ProjectID":   strconv.FormatInt(projRes.Payload.ID, 10),
-		"NamespaceID": strconv.FormatInt(nsRes.Payload.ID, 10),
+		"ExperimentID": strconv.FormatInt(plRes.Payload.ID, 10),
+		"ProjectID":    strconv.FormatInt(projRes.Payload.ID, 10),
+		"NamespaceID":  strconv.FormatInt(nsRes.Payload.ID, 10),
 	})
 	s.Require().NoError(err)
 
@@ -457,9 +455,8 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfigWithNoDatasets() {
 
 	projRes, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-orchestrator-config-no-datasets"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-orchestrator-config-no-datasets"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -480,7 +477,7 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfigWithNoDatasets() {
 
 	orchestratorConfigRes, err := s.c.Experiment.GetAPIV1ExperimentOrchestrator(&experiment2.GetAPIV1ExperimentOrchestratorParams{
 		ExperimentID: plRes.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(orchestratorConfigRes)
@@ -494,9 +491,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfigWithNoDatasets() {
 
 	var jsonConfigExpected bytes.Buffer
 	err = tmpl.Execute(&jsonConfigExpected, map[string]string{
-		"ExperimentID":  strconv.FormatInt(plRes.Payload.ID, 10),
-		"ProjectID":   strconv.FormatInt(projRes.Payload.ID, 10),
-		"NamespaceID": strconv.FormatInt(nsRes.Payload.ID, 10),
+		"ExperimentID": strconv.FormatInt(plRes.Payload.ID, 10),
+		"ProjectID":    strconv.FormatInt(projRes.Payload.ID, 10),
+		"NamespaceID":  strconv.FormatInt(nsRes.Payload.ID, 10),
 	})
 	s.Require().NoError(err)
 
@@ -535,9 +532,8 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig2() {
 
 	projRes, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-orchestrator-config"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-orchestrator-config"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -610,7 +606,7 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig2() {
 
 	experimentUpdateRes, err := s.c.Experiment.PutAPIV1Experiment(&experiment2.PutAPIV1ExperimentParams{
 		Request: &models2.RequestsUpdateCompleteExperimentRequest{
-			ExperimentID:        &plRes.Payload.ID,
+			ExperimentID:      &plRes.Payload.ID,
 			Config:            `{"experiment_key": "val", "experiment_variable": "${test_variable_orchestrator_config}"}`,
 			DisableValidation: true,
 		},
@@ -622,9 +618,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig2() {
 
 	addDsRes1, err := s.c.Experiment.PostAPIV1ExperimentDataset(&experiment2.PostAPIV1ExperimentDatasetParams{
 		Request: &models2.RequestsAddDatasetToExperimentRequest{
-			DatasetID: &dsRes1.Payload.ID,
+			DatasetID:    &dsRes1.Payload.ID,
 			Alias:        ptr("test-alias-orchestrator-config-experiment-datasets-1"),
-			ExperimentID:   &plRes.Payload.ID,
+			ExperimentID: &plRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -634,9 +630,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig2() {
 
 	addDsRes2, err := s.c.Experiment.PostAPIV1ExperimentDataset(&experiment2.PostAPIV1ExperimentDatasetParams{
 		Request: &models2.RequestsAddDatasetToExperimentRequest{
-			DatasetID: &dsRes2.Payload.ID,
+			DatasetID:    &dsRes2.Payload.ID,
 			Alias:        ptr("test-alias-orchestrator-config-experiment-datasets-2"),
-			ExperimentID:   &plRes.Payload.ID,
+			ExperimentID: &plRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -679,7 +675,7 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig2() {
 
 	getvarsRes, err := s.c.Experiment.GetAPIV1ExperimentVariables(&experiment2.GetAPIV1ExperimentVariablesParams{
 		ExperimentID: plRes.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(getvarsRes)
@@ -701,7 +697,7 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig2() {
 
 	orchestratorConfigRes, err := s.c.Experiment.GetAPIV1ExperimentOrchestrator(&experiment2.GetAPIV1ExperimentOrchestratorParams{
 		ExperimentID: plRes.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(orchestratorConfigRes)
@@ -715,9 +711,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig2() {
 
 	var jsonConfigExpected bytes.Buffer
 	err = tmpl.Execute(&jsonConfigExpected, map[string]string{
-		"ExperimentID":  strconv.FormatInt(plRes.Payload.ID, 10),
-		"ProjectID":   strconv.FormatInt(projRes.Payload.ID, 10),
-		"NamespaceID": strconv.FormatInt(nsRes.Payload.ID, 10),
+		"ExperimentID": strconv.FormatInt(plRes.Payload.ID, 10),
+		"ProjectID":    strconv.FormatInt(projRes.Payload.ID, 10),
+		"NamespaceID":  strconv.FormatInt(nsRes.Payload.ID, 10),
 	})
 	s.Require().NoError(err)
 
@@ -735,9 +731,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfig2() {
 
 	listLogsRes, err := s.c.Experiment.GetAPIV1ExperimentLogs(&experiment2.GetAPIV1ExperimentLogsParams{
 		ExperimentID: &plRes.Payload.ID,
-		From:       0,
-		Limit:      10,
-		Context:    s.ctx,
+		From:         0,
+		Limit:        10,
+		Context:      s.ctx,
 	})
 
 	s.Require().NoError(err)
@@ -823,9 +819,8 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfigDataSchemaV2() {
 
 	projRes, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-orchestrator-config"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-orchestrator-config"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -897,9 +892,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfigDataSchemaV2() {
 
 	addDsRes1, err := s.c.Experiment.PostAPIV1ExperimentDataset(&experiment2.PostAPIV1ExperimentDatasetParams{
 		Request: &models2.RequestsAddDatasetToExperimentRequest{
-			DatasetID: &dsRes1.Payload.ID,
+			DatasetID:    &dsRes1.Payload.ID,
 			Alias:        ptr("test-alias-orchestrator-config-experiment-datasets-1"),
-			ExperimentID:   &plRes.Payload.ID,
+			ExperimentID: &plRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -909,9 +904,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfigDataSchemaV2() {
 
 	addDsRes2, err := s.c.Experiment.PostAPIV1ExperimentDataset(&experiment2.PostAPIV1ExperimentDatasetParams{
 		Request: &models2.RequestsAddDatasetToExperimentRequest{
-			DatasetID: &dsRes2.Payload.ID,
+			DatasetID:    &dsRes2.Payload.ID,
 			Alias:        ptr("test-alias-orchestrator-config-experiment-datasets-2"),
-			ExperimentID:   &plRes.Payload.ID,
+			ExperimentID: &plRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -921,7 +916,7 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfigDataSchemaV2() {
 
 	orchestratorConfigRes, err := s.c.Experiment.GetAPIV1ExperimentOrchestrator(&experiment2.GetAPIV1ExperimentOrchestratorParams{
 		ExperimentID: plRes.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(orchestratorConfigRes)
@@ -935,9 +930,9 @@ func (s *StreamflowTestSuite) TestGetOrchestratorConfigDataSchemaV2() {
 
 	var jsonConfigExpected bytes.Buffer
 	err = tmpl.Execute(&jsonConfigExpected, map[string]string{
-		"ExperimentID":  strconv.FormatInt(plRes.Payload.ID, 10),
-		"ProjectID":   strconv.FormatInt(projRes.Payload.ID, 10),
-		"NamespaceID": strconv.FormatInt(nsRes.Payload.ID, 10),
+		"ExperimentID": strconv.FormatInt(plRes.Payload.ID, 10),
+		"ProjectID":    strconv.FormatInt(projRes.Payload.ID, 10),
+		"NamespaceID":  strconv.FormatInt(nsRes.Payload.ID, 10),
 	})
 	s.Require().NoError(err)
 

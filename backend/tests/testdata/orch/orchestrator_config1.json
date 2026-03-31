@@ -6,7 +6,6 @@
                 "ExperimentName": "test-experiment-orchestrator-config",
                 "Project": "test-project-orchestrator-config",
                 "ProjectId": "{{.ProjectID}}",
-                "AbcProductId": "1234",
                 "namespace_key": "val",
                 "project_key": "val"
         },

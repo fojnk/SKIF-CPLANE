@@ -56,8 +56,8 @@ ORDER BY created_at DESC
 
 type SelectDatasetVersionsParams struct {
 	DatasetID pgtype.Int4
-	Limit        int32
-	Offset       int32
+	Limit     int32
+	Offset    int32
 }
 
 type SelectDatasetVersionsRow struct {
@@ -130,10 +130,10 @@ LIMIT $4 OFFSET $3
 `
 
 type SelectExperimentVariableVersionsParams struct {
-	VariableID interface{}
+	VariableID   interface{}
 	ExperimentID interface{}
-	OffsetVal  int32
-	LimitVal   int32
+	OffsetVal    int32
+	LimitVal     int32
 }
 
 type SelectExperimentVariableVersionsRow struct {

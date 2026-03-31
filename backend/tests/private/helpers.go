@@ -1,6 +1,8 @@
 package private
 
 import (
+	"fmt"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -21,6 +23,11 @@ func derefSlice[T any](t *testing.T, slice []*T) []T {
 func ptr[T any](val T) *T {
 	return &val
 }
+
+var (
+	grantCubeSystemOnce     sync.Once
+	grantCubeSystemFirstErr error
+)
 
 func (s *StreamflowTestSuite) grantNamespace(namespaceID int64) {
 	var req models2.RequestsCreateRuleRequest
@@ -54,23 +61,44 @@ func (s *StreamflowTestSuite) grantNamespace(namespaceID int64) {
 }
 
 func (s *StreamflowTestSuite) grantCubeSystem() {
-	req := models2.RequestsCreateRuleRequest{
-		ObjectType:      ptr("cube"),
-		ObjectAttribute: ptr("cube"),
-		ObjectID:        ptr(int64(0)),
-		Action:          ptr("03D"),
-	}
-
-	ruleRes, err := s.c.Rule.PostAPIV1Rule(&rule.PostAPIV1RuleParams{
-		Request:         &req,
-		XSuperuserToken: ptr("super_user_token"),
-		Context:         s.ctx,
+	grantCubeSystemOnce.Do(func() {
+		req := models2.RequestsCreateRuleRequest{
+			ObjectType:      ptr("cube"),
+			ObjectAttribute: ptr("cube"),
+			ObjectID:        ptr(int64(0)),
+			Action:          ptr("03D"),
+		}
+		ruleRes, err := s.c.Rule.PostAPIV1Rule(&rule.PostAPIV1RuleParams{
+			Request:         &req,
+			XSuperuserToken: ptr("super_user_token"),
+			Context:         s.ctx,
+		})
+		if err != nil {
+			grantCubeSystemFirstErr = err
+			return
+		}
+		if ruleRes == nil || ruleRes.Payload == nil {
+			grantCubeSystemFirstErr = fmt.Errorf("grantCubeSystem: empty rule response")
+			return
+		}
+		grantRes, err := s.c.ACL.PostAPIV1Grant(&cacl.PostAPIV1GrantParams{
+			Request: &models2.RequestsGrantRequest{
+				UserID: s.userID,
+				RuleID: ruleRes.Payload.ID,
+			},
+			XSuperuserToken: ptr("super_user_token"),
+			Context:         s.ctx,
+		})
+		if err != nil {
+			grantCubeSystemFirstErr = err
+			return
+		}
+		if grantRes == nil {
+			grantCubeSystemFirstErr = fmt.Errorf("grantCubeSystem: empty grant response")
+			return
+		}
 	})
-
-	s.Require().NoError(err)
-	s.Require().NotNil(ruleRes)
-
-	s.grantRule(ruleRes.Payload.ID)
+	s.Require().NoError(grantCubeSystemFirstErr)
 }
 
 func (s *StreamflowTestSuite) grantRule(ruleID int64) {

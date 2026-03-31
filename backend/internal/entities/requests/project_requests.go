@@ -44,9 +44,6 @@ type ListProjectsRequest struct {
 type ListPinnedProjectsRequest struct {
 }
 
-type CreateProjectRolesRequest struct {
-}
-
 type CreateProjectRequest struct {
 	NamespaceID int32  `json:"namespace_id" validate:"required"`
 	Name        string `json:"name" validate:"required,max=128"`

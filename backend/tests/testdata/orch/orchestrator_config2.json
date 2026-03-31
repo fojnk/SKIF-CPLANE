@@ -1,7 +1,6 @@
 {
   "Meta": {
     "Namespace": "tst-ns-ocf",
-    "AbcProductId":"1234",
     "NamespaceId": "{{.NamespaceID}}",
     "ExperimentId": "{{.ExperimentID}}",
     "ExperimentName": "test-experiment-orchestrator-config",

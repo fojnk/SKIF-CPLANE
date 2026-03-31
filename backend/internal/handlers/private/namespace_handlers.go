@@ -13,6 +13,7 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/handlers/shared"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/logger"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/acl"
+	owner_roles "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/owner_roles"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/update_log"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service"
 )
@@ -70,8 +71,7 @@ func createNamespaceHandler(ctx context.Context, svc *service.Service, l *logger
 		},
 	})
 
-	// Infrastructure operations - ACL/IDM integration remains in controller
-	err = svc.IIDMService.CreateNamespaceOwnerRole(ctx, id, u)
+	err = owner_roles.CreateNamespaceOwnerRole(ctx, svc.Repo, l, id, u)
 	if err != nil {
 		return nil, &responses.ErrorResponse{
 			ExternalMessage: "failed to create namespace owner role",
@@ -213,7 +213,7 @@ func updateNamespaceHandler(ctx context.Context, svc *service.Service, l *logger
 		}
 	}
 
-	// Get old name for IDM sync check
+	// Load previous state for update log
 	oldNamespace, err := svc.GetNamespace(ctx, r.ID, u.Username)
 	if err != nil {
 		l.Error("failed to get namespace", err)

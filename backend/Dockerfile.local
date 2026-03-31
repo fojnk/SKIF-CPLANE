@@ -4,8 +4,8 @@ RUN apk add --no-cache git ca-certificates
 
 WORKDIR /app
 
-ARG GOPRIVATE=gitlab.corp.mail.ru
-ENV GOPRIVATE=${GOPRIVATE}
+ENV GOPROXY=https://proxy.golang.org,direct
+ENV GOSUMDB=sum.golang.org
 
 COPY go.mod go.sum ./
 COPY local ./local

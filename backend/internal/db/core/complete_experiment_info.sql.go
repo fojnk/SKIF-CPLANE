@@ -78,16 +78,16 @@ type CompleteExperimentInfoRow struct {
 	ExperimentOrchID      pgtype.Text
 	ExperimentName        string
 	ExperimentDescription string
-	AbcProductID        string
-	ProjectName         string
-	ProjectID           int32
-	NamespaceName       string
-	NamespaceID         int32
-	ProjectConfig       []byte
-	NamespaceConfig     []byte
+	AbcProductID          string
+	ProjectName           string
+	ProjectID             int32
+	NamespaceName         string
+	NamespaceID           int32
+	ProjectConfig         []byte
+	NamespaceConfig       []byte
 	ExperimentConfig      pgtype.Text
-	Datasets         []byte
-	Variables           []byte
+	Datasets              []byte
+	Variables             []byte
 }
 
 func (q *Queries) CompleteExperimentInfo(ctx context.Context, id int32) (CompleteExperimentInfoRow, error) {

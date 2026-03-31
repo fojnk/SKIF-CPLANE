@@ -15,9 +15,8 @@ type Querier interface {
 	AddRuleToRole(ctx context.Context, arg AddRuleToRoleParams) error
 	AddUserToGroup(ctx context.Context, arg AddUserToGroupParams) error
 	BaseTemplateIDByExperimentID(ctx context.Context, id int32) (int32, error)
-	CheckKafkaDatasetDuplicate(ctx context.Context, arg CheckKafkaDatasetDuplicateParams) ([]int32, error)
 	CheckExperimentLimit(ctx context.Context, id int32) (int32, error)
-	CheckRobotToken(ctx context.Context, token string) error
+	CheckKafkaDatasetDuplicate(ctx context.Context, arg CheckKafkaDatasetDuplicateParams) ([]int32, error)
 	CheckUserHasRight(ctx context.Context, arg CheckUserHasRightParams) (int64, error)
 	CheckYTDatasetDuplicate(ctx context.Context, arg CheckYTDatasetDuplicateParams) ([]int32, error)
 	CompleteExperimentInfo(ctx context.Context, id int32) (CompleteExperimentInfoRow, error)
@@ -26,31 +25,26 @@ type Querier interface {
 	DatasetFromLink(ctx context.Context, id int32) (DatasetFromLinkRow, error)
 	DatasetFromLinkByAlias(ctx context.Context, arg DatasetFromLinkByAliasParams) (DatasetFromLinkByAliasRow, error)
 	DeactivateAllBannersExcept(ctx context.Context, id int32) error
-	DeleteAlertGroups(ctx context.Context, alertGroupID []int32) *DeleteAlertGroupsBatchResults
-	DeleteAlertRule(ctx context.Context, ruleID []int32) *DeleteAlertRuleBatchResults
-	DeleteAllObjectMatches(ctx context.Context, arg DeleteAllObjectMatchesParams) error
 	DeleteAllExperimentVersions(ctx context.Context, parentID int32) error
-	DeleteAllRobotTokens(ctx context.Context, robotID int32) error
+	DeleteAllObjectMatches(ctx context.Context, arg DeleteAllObjectMatchesParams) error
 	DeleteAppBanner(ctx context.Context, id int32) error
 	DeleteAppUpdate(ctx context.Context, id int32) error
 	DeleteAppliedVersion(ctx context.Context, id int32) error
 	DeleteBatchUsersFromGroup(ctx context.Context, arg []DeleteBatchUsersFromGroupParams) *DeleteBatchUsersFromGroupBatchResults
 	DeleteBatchUsersFromRole(ctx context.Context, arg []DeleteBatchUsersFromRoleParams) *DeleteBatchUsersFromRoleBatchResults
 	DeleteDataset(ctx context.Context, id int32) error
-	DeleteNamespace(ctx context.Context, id int32) error
-	DeleteNamespaceConfig(ctx context.Context, id int32) error
-	DeleteNamespaceVariable(ctx context.Context, id int32) error
-	DeleteNotificationProductIds(ctx context.Context, productID []int32) *DeleteNotificationProductIdsBatchResults
-	DeletePinnedProject(ctx context.Context, arg DeletePinnedProjectParams) error
 	DeleteExperiment(ctx context.Context, id int32) error
 	DeleteExperimentDataset(ctx context.Context, arg DeleteExperimentDatasetParams) error
 	DeleteExperimentTemplate(ctx context.Context, id int32) error
 	DeleteExperimentVariable(ctx context.Context, id int32) error
 	DeleteExperimentVariableByExperimentID(ctx context.Context, id int32) error
+	DeleteNamespace(ctx context.Context, id int32) error
+	DeleteNamespaceConfig(ctx context.Context, id int32) error
+	DeleteNamespaceVariable(ctx context.Context, id int32) error
+	DeletePinnedProject(ctx context.Context, arg DeletePinnedProjectParams) error
 	DeleteProject(ctx context.Context, id int32) error
 	DeleteProjectConfig(ctx context.Context, id int32) error
 	DeleteProjectVariable(ctx context.Context, id int32) error
-	DeleteRobotToken(ctx context.Context, id int32) error
 	DeleteRoleMatchById(ctx context.Context, id int32) error
 	DeleteUserRoles(ctx context.Context, arg DeleteUserRolesParams) error
 	DeleteUserRulesForDeletedRoles(ctx context.Context, arg DeleteUserRulesForDeletedRolesParams) error
@@ -59,6 +53,9 @@ type Querier interface {
 	DisclaimUserGroupRule(ctx context.Context, arg DisclaimUserGroupRuleParams) error
 	DisclaimUserRole(ctx context.Context, arg DisclaimUserRoleParams) error
 	DisclaimUserRule(ctx context.Context, arg DisclaimUserRuleParams) error
+	ExperimentStart(ctx context.Context, id int32) error
+	ExperimentStatus(ctx context.Context, id int32) (string, error)
+	ExperimentStop(ctx context.Context, id int32) error
 	GetABCGroupRange(ctx context.Context, arg GetABCGroupRangeParams) ([]TUserGroup, error)
 	GetDatasetLinkedExperiments(ctx context.Context, arg GetDatasetLinkedExperimentsParams) ([]GetDatasetLinkedExperimentsRow, error)
 	GetDatasetNamespace(ctx context.Context, id int32) (GetDatasetNamespaceRow, error)
@@ -66,9 +63,6 @@ type Querier interface {
 	GetDatasetsCount(ctx context.Context, namespaceID pgtype.Int4) (int64, error)
 	GetDatasetsCountInProject(ctx context.Context, projectID pgtype.Int4) (int64, error)
 	GetDuplicateListing(ctx context.Context) ([]GetDuplicateListingRow, error)
-	GetLinksCountByDatasetID(ctx context.Context, datasetID int32) (int64, error)
-	GetLinksCountByExperimentID(ctx context.Context, experimentID int32) (int64, error)
-	GetNamespacesWithoutRole(ctx context.Context) ([]TNamespace, error)
 	GetExperimentDataset(ctx context.Context, arg GetExperimentDatasetParams) (GetExperimentDatasetRow, error)
 	GetExperimentDatasets(ctx context.Context, experimentID int32) ([]GetExperimentDatasetsRow, error)
 	GetExperimentNamespace(ctx context.Context, id int32) (GetExperimentNamespaceRow, error)
@@ -76,6 +70,9 @@ type Querier interface {
 	GetExperimentVariables(ctx context.Context, experimentID int32) ([]GetExperimentVariablesRow, error)
 	GetExperimentVariables2(ctx context.Context, experimentID int32) ([]GetExperimentVariables2Row, error)
 	GetExperimentsCount(ctx context.Context, projectID int32) (int64, error)
+	GetLinksCountByDatasetID(ctx context.Context, datasetID int32) (int64, error)
+	GetLinksCountByExperimentID(ctx context.Context, experimentID int32) (int64, error)
+	GetNamespacesWithoutRole(ctx context.Context) ([]TNamespace, error)
 	GetProjectNamespace(ctx context.Context, id int32) (GetProjectNamespaceRow, error)
 	GetProjectsCount(ctx context.Context, namespaceID int32) (int64, error)
 	GetProjectsWithoutRole(ctx context.Context) ([]TProject, error)
@@ -94,8 +91,6 @@ type Querier interface {
 	GrantUserGroupRule(ctx context.Context, arg GrantUserGroupRuleParams) error
 	GrantUserRole(ctx context.Context, arg GrantUserRoleParams) error
 	GrantUserRule(ctx context.Context, arg GrantUserRuleParams) error
-	InsertAlertGroup(ctx context.Context, arg InsertAlertGroupParams) error
-	InsertAlertRule(ctx context.Context, arg []InsertAlertRuleParams) *InsertAlertRuleBatchResults
 	InsertAppBanner(ctx context.Context, arg InsertAppBannerParams) (int32, error)
 	InsertAppUpdate(ctx context.Context, arg InsertAppUpdateParams) (TAppUpdate, error)
 	InsertBatchUsersToGroup(ctx context.Context, arg []InsertBatchUsersToGroupParams) *InsertBatchUsersToGroupBatchResults
@@ -104,12 +99,6 @@ type Querier interface {
 	InsertDatasetUpdateLog(ctx context.Context, arg InsertDatasetUpdateLogParams) error
 	InsertDatasetUpdateLogV2(ctx context.Context, arg InsertDatasetUpdateLogV2Params) error
 	InsertDatasetVersion(ctx context.Context, arg InsertDatasetVersionParams) (TDatasetV, error)
-	InsertNamespace(ctx context.Context, name string) (int32, error)
-	InsertNamespaceConfig(ctx context.Context, arg InsertNamespaceConfigParams) (int32, error)
-	InsertNamespaceUpdateLog(ctx context.Context, arg InsertNamespaceUpdateLogParams) error
-	InsertNamespaceVariable(ctx context.Context, arg InsertNamespaceVariableParams) (int32, error)
-	InsertNewUsers(ctx context.Context, name []string) *InsertNewUsersBatchResults
-	InsertPinnedProject(ctx context.Context, arg InsertPinnedProjectParams) (TUserPinnedProject, error)
 	InsertExperiment(ctx context.Context, arg InsertExperimentParams) (int32, error)
 	InsertExperimentAppliedVersion(ctx context.Context, arg InsertExperimentAppliedVersionParams) error
 	InsertExperimentDataset(ctx context.Context, arg InsertExperimentDatasetParams) (int32, error)
@@ -121,13 +110,16 @@ type Querier interface {
 	InsertExperimentVariableVersion(ctx context.Context, arg InsertExperimentVariableVersionParams) (TExperimentVariableV, error)
 	InsertExperimentVariables(ctx context.Context, arg []InsertExperimentVariablesParams) *InsertExperimentVariablesBatchResults
 	InsertExperimentVariablesV2(ctx context.Context, arg []InsertExperimentVariablesV2Params) *InsertExperimentVariablesV2BatchResults
-	InsertProduct(ctx context.Context, productID int32) error
+	InsertNamespace(ctx context.Context, name string) (int32, error)
+	InsertNamespaceConfig(ctx context.Context, arg InsertNamespaceConfigParams) (int32, error)
+	InsertNamespaceUpdateLog(ctx context.Context, arg InsertNamespaceUpdateLogParams) error
+	InsertNamespaceVariable(ctx context.Context, arg InsertNamespaceVariableParams) (int32, error)
+	InsertNewUsers(ctx context.Context, name []string) *InsertNewUsersBatchResults
+	InsertPinnedProject(ctx context.Context, arg InsertPinnedProjectParams) (TUserPinnedProject, error)
 	InsertProject(ctx context.Context, arg InsertProjectParams) (TProject, error)
 	InsertProjectConfig(ctx context.Context, arg InsertProjectConfigParams) (int32, error)
 	InsertProjectUpdateLog(ctx context.Context, arg InsertProjectUpdateLogParams) error
 	InsertProjectVariable(ctx context.Context, arg InsertProjectVariableParams) (int32, error)
-	InsertRobot(ctx context.Context, name string) (int32, error)
-	InsertRobotToken(ctx context.Context, arg InsertRobotTokenParams) (RobotToken, error)
 	InsertRole(ctx context.Context, arg InsertRoleParams) (TRole, error)
 	InsertRoleObjectMatch(ctx context.Context, arg InsertRoleObjectMatchParams) (TRoleObjectMatch, error)
 	InsertRoleOwner(ctx context.Context, arg InsertRoleOwnerParams) (TRoleOwner, error)
@@ -138,28 +130,21 @@ type Querier interface {
 	LockABCSyncer(ctx context.Context) (bool, error)
 	NamespaceIDByExperimentID(ctx context.Context, id int32) (int32, error)
 	NamespaceIDByProjectID(ctx context.Context, id int32) (int32, error)
-	ExperimentStart(ctx context.Context, id int32) error
-	ExperimentStatus(ctx context.Context, id int32) (string, error)
-	ExperimentStop(ctx context.Context, id int32) error
 	ProjectAbcGroupListing(ctx context.Context) ([]ProjectAbcGroupListingRow, error)
 	RemoveRuleFromRole(ctx context.Context, arg RemoveRuleFromRoleParams) error
 	RemoveUserFromGroup(ctx context.Context, arg RemoveUserFromGroupParams) error
 	SelectACLMatchesForUser(ctx context.Context, userID int32) ([]SelectACLMatchesForUserRow, error)
 	SelectACLMatchesForUserGroup(ctx context.Context, userGroupID pgtype.Int4) ([]SelectACLMatchesForUserGroupRow, error)
 	SelectActiveAppBanner(ctx context.Context) (TAppBanner, error)
-	SelectAlertGroup(ctx context.Context, arg SelectAlertGroupParams) (TAlertGroup, error)
-	SelectAlertGroups(ctx context.Context, experimentID int32) ([]TAlertGroup, error)
-	SelectAlerts(ctx context.Context, arg SelectAlertsParams) ([]SelectAlertsRow, error)
-	SelectAlertsByTemplate(ctx context.Context, arg SelectAlertsByTemplateParams) ([]SelectAlertsByTemplateRow, error)
 	SelectAllDatasetsUpdateLogsByNamespaceID(ctx context.Context, arg SelectAllDatasetsUpdateLogsByNamespaceIDParams) ([]SelectAllDatasetsUpdateLogsByNamespaceIDRow, error)
 	SelectAllDatasetsUpdateLogsByProjdectID(ctx context.Context, arg SelectAllDatasetsUpdateLogsByProjdectIDParams) ([]SelectAllDatasetsUpdateLogsByProjdectIDRow, error)
-	SelectAllNamespacesUpdateLogs(ctx context.Context, arg SelectAllNamespacesUpdateLogsParams) ([]SelectAllNamespacesUpdateLogsRow, error)
 	SelectAllExperimentsUpdateLogs(ctx context.Context, arg SelectAllExperimentsUpdateLogsParams) ([]SelectAllExperimentsUpdateLogsRow, error)
+	SelectAllNamespacesUpdateLogs(ctx context.Context, arg SelectAllNamespacesUpdateLogsParams) ([]SelectAllNamespacesUpdateLogsRow, error)
 	SelectAllProjectsUpdateLogs(ctx context.Context, arg SelectAllProjectsUpdateLogsParams) ([]SelectAllProjectsUpdateLogsRow, error)
+	SelectAppAbout(ctx context.Context) (TAppAbout, error)
 	SelectAppBanner(ctx context.Context, id int32) (TAppBanner, error)
 	SelectAppBanners(ctx context.Context) ([]TAppBanner, error)
 	SelectAppUpcoming(ctx context.Context) (TAppUpcoming, error)
-	SelectAppAbout(ctx context.Context) (TAppAbout, error)
 	SelectAppUpdate(ctx context.Context, id int32) (TAppUpdate, error)
 	SelectAppUpdates(ctx context.Context) ([]TAppUpdate, error)
 	SelectAppUpdatesByDateRange(ctx context.Context, arg SelectAppUpdatesByDateRangeParams) ([]TAppUpdate, error)
@@ -178,29 +163,16 @@ type Querier interface {
 	SelectCurrentAppBanner(ctx context.Context) (TAppBanner, error)
 	SelectCurrentNamespaceConfig(ctx context.Context, id int32) (SelectCurrentNamespaceConfigRow, error)
 	SelectCurrentProjectConfig(ctx context.Context, id int32) (SelectCurrentProjectConfigRow, error)
-	SelectDatasets(ctx context.Context, arg SelectDatasetsParams) ([]SelectDatasetsRow, error)
 	SelectDataset(ctx context.Context, id int32) (SelectDatasetRow, error)
 	SelectDatasetCurrVersion(ctx context.Context, id int32) (int32, error)
 	SelectDatasetLog(ctx context.Context, id int32) (SelectDatasetLogRow, error)
 	SelectDatasetUpdateLogs(ctx context.Context, arg SelectDatasetUpdateLogsParams) ([]SelectDatasetUpdateLogsRow, error)
 	SelectDatasetVersion(ctx context.Context, id int32) (TDatasetV, error)
 	SelectDatasetVersions(ctx context.Context, arg SelectDatasetVersionsParams) ([]SelectDatasetVersionsRow, error)
+	SelectDatasets(ctx context.Context, arg SelectDatasetsParams) ([]SelectDatasetsRow, error)
 	SelectDatasetsByProjectId(ctx context.Context, projectID pgtype.Int4) ([]SelectDatasetsByProjectIdRow, error)
-	SelectGroupById(ctx context.Context, alertGroupID int32) (TAlertGroup, error)
-	SelectGroupsByProductIds(ctx context.Context, productID int32) ([]TAlertGroup, error)
-	SelectNamespace(ctx context.Context, id int32) (SelectNamespaceRow, error)
-	SelectNamespaceConfig(ctx context.Context, id int32) (SelectNamespaceConfigRow, error)
-	SelectNamespaceConfigVersions(ctx context.Context, namespaceID int32) ([]SelectNamespaceConfigVersionsRow, error)
-	SelectNamespaceLog(ctx context.Context, id int32) (SelectNamespaceLogRow, error)
-	SelectNamespaceUpdateLogs(ctx context.Context, arg SelectNamespaceUpdateLogsParams) ([]SelectNamespaceUpdateLogsRow, error)
-	SelectNamespaceVariable(ctx context.Context, id int32) (SelectNamespaceVariableRow, error)
-	SelectNamespaceVariables(ctx context.Context, namespaceID int32) ([]SelectNamespaceVariablesRow, error)
-	SelectNamespaceWithDeleted(ctx context.Context, id int32) (SelectNamespaceWithDeletedRow, error)
-	SelectNamespaces(ctx context.Context) ([]SelectNamespacesRow, error)
-	SelectNamespacesWithRole(ctx context.Context) ([]TNamespace, error)
 	SelectExperiment(ctx context.Context, id int32) (SelectExperimentRow, error)
 	SelectExperimentAppliedVersion(ctx context.Context, experimentID int32) (TExperimentStatus, error)
-	SelectExperimentForAlerts(ctx context.Context, id int32) (SelectExperimentForAlertsRow, error)
 	SelectExperimentLog(ctx context.Context, id int32) (SelectExperimentLogRow, error)
 	SelectExperimentTemplate(ctx context.Context, id int32) (SelectExperimentTemplateRow, error)
 	SelectExperimentTemplateVs(ctx context.Context, parentID int32) ([]SelectExperimentTemplateVsRow, error)
@@ -212,8 +184,16 @@ type Querier interface {
 	SelectExperimentVariableVersions(ctx context.Context, arg SelectExperimentVariableVersionsParams) ([]SelectExperimentVariableVersionsRow, error)
 	SelectExperimentVersions(ctx context.Context, arg SelectExperimentVersionsParams) ([]SelectExperimentVersionsRow, error)
 	SelectExperiments(ctx context.Context, projectID int32) ([]SelectExperimentsRow, error)
-	SelectProduct(ctx context.Context, productID int32) (int32, error)
-	SelectProducts(ctx context.Context, experimentID int32) ([]int32, error)
+	SelectNamespace(ctx context.Context, id int32) (SelectNamespaceRow, error)
+	SelectNamespaceConfig(ctx context.Context, id int32) (SelectNamespaceConfigRow, error)
+	SelectNamespaceConfigVersions(ctx context.Context, namespaceID int32) ([]SelectNamespaceConfigVersionsRow, error)
+	SelectNamespaceLog(ctx context.Context, id int32) (SelectNamespaceLogRow, error)
+	SelectNamespaceUpdateLogs(ctx context.Context, arg SelectNamespaceUpdateLogsParams) ([]SelectNamespaceUpdateLogsRow, error)
+	SelectNamespaceVariable(ctx context.Context, id int32) (SelectNamespaceVariableRow, error)
+	SelectNamespaceVariables(ctx context.Context, namespaceID int32) ([]SelectNamespaceVariablesRow, error)
+	SelectNamespaceWithDeleted(ctx context.Context, id int32) (SelectNamespaceWithDeletedRow, error)
+	SelectNamespaces(ctx context.Context) ([]SelectNamespacesRow, error)
+	SelectNamespacesWithRole(ctx context.Context) ([]TNamespace, error)
 	SelectProject(ctx context.Context, arg SelectProjectParams) (SelectProjectRow, error)
 	SelectProjectABCProductID(ctx context.Context, id int32) (SelectProjectABCProductIDRow, error)
 	SelectProjectConfig(ctx context.Context, id int32) (SelectProjectConfigRow, error)
@@ -228,8 +208,6 @@ type Querier interface {
 	SelectProjectsV2(ctx context.Context, arg SelectProjectsV2Params) ([]SelectProjectsV2Row, error)
 	SelectProjectsWithDeleted(ctx context.Context, namespaceID int32) ([]TProject, error)
 	SelectProjectsWithRole(ctx context.Context) ([]TProject, error)
-	SelectRobotToken(ctx context.Context, id int32) (RobotToken, error)
-	SelectRobotTokens(ctx context.Context, robotID int32) ([]RobotToken, error)
 	SelectRole(ctx context.Context, roleID int32) ([]SelectRoleRow, error)
 	SelectRoleByIdmId(ctx context.Context, idmID string) (TRole, error)
 	SelectRoles(ctx context.Context) ([]TRole, error)
@@ -241,16 +219,16 @@ type Querier interface {
 	SelectUsersByRoleID(ctx context.Context, roleID pgtype.Int4) ([]TUser, error)
 	TemplateIDByExperimentID(ctx context.Context, id int32) (int32, error)
 	UnlockABCSyncer(ctx context.Context) (bool, error)
-	UpdateAlertRule(ctx context.Context, arg []UpdateAlertRuleParams) *UpdateAlertRuleBatchResults
+	// param: content *string
+	// param: links *string
+	UpdateAppAbout(ctx context.Context, arg UpdateAppAboutParams) (TAppAbout, error)
 	// param: active *bool
+	// param: type *text
 	// param: starts *timestamp
 	// param: ends *timestamp
 	UpdateAppBanner(ctx context.Context, arg UpdateAppBannerParams) (TAppBanner, error)
 	// param: content string
 	UpdateAppUpcoming(ctx context.Context, content string) (TAppUpcoming, error)
-	// param: content *string
-	// param: links *string
-	UpdateAppAbout(ctx context.Context, arg UpdateAppAboutParams) (TAppAbout, error)
 	// param: title string
 	// param: description string
 	// param: content string
@@ -266,9 +244,6 @@ type Querier interface {
 	UpdateDatasetLogComment(ctx context.Context, arg UpdateDatasetLogCommentParams) error
 	UpdateDatasetVersion(ctx context.Context, arg UpdateDatasetVersionParams) (TDataset, error)
 	UpdateDatasetVersionComment(ctx context.Context, arg UpdateDatasetVersionCommentParams) (TDatasetV, error)
-	UpdateNamespace(ctx context.Context, arg UpdateNamespaceParams) error
-	UpdateNamespaceLogComment(ctx context.Context, arg UpdateNamespaceLogCommentParams) error
-	UpdateNamespaceVariable(ctx context.Context, arg UpdateNamespaceVariableParams) error
 	UpdateExperiment(ctx context.Context, arg UpdateExperimentParams) error
 	UpdateExperimentAppliedVersion(ctx context.Context, arg UpdateExperimentAppliedVersionParams) error
 	UpdateExperimentDataset(ctx context.Context, arg UpdateExperimentDatasetParams) error
@@ -280,6 +255,9 @@ type Querier interface {
 	UpdateExperimentVariable(ctx context.Context, arg UpdateExperimentVariableParams) error
 	UpdateExperimentVariableVersion(ctx context.Context, arg UpdateExperimentVariableVersionParams) (TExperimentVariable, error)
 	UpdateExperimentVariableVersionComment(ctx context.Context, arg UpdateExperimentVariableVersionCommentParams) (TExperimentVariableV, error)
+	UpdateNamespace(ctx context.Context, arg UpdateNamespaceParams) error
+	UpdateNamespaceLogComment(ctx context.Context, arg UpdateNamespaceLogCommentParams) error
+	UpdateNamespaceVariable(ctx context.Context, arg UpdateNamespaceVariableParams) error
 	UpdateProject(ctx context.Context, arg UpdateProjectParams) (TProject, error)
 	UpdateProjectAbcGroup(ctx context.Context) error
 	UpdateProjectLogComment(ctx context.Context, arg UpdateProjectLogCommentParams) error

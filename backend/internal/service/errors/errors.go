@@ -53,12 +53,10 @@ const (
 	EntityAppUpdate        EntityType = "app_update"
 	EntityAppUpcoming      EntityType = "app_upcoming"
 	EntityAppAbout         EntityType = "app_about"
-	EntityRobot            EntityType = "robot"
 	EntityACL              EntityType = "acl"
 	EntityOrchestrator     EntityType = "orchestrator"
 	EntityGeneric          EntityType = "generic"
-	EntityCube             EntityType = "cube"
-	EntityAlerts           EntityType = "alerts"
+	EntityCube EntityType = "cube"
 )
 
 // ExternalMessageError представляет локализованное сообщение об ошибке
@@ -433,14 +431,6 @@ var EntityMessages = map[EntityType]EntityErrorMessages{
 		Internal:    "Внутренняя ошибка при работе с about контентом",
 		Unavailable: "Сервис about временно недоступен",
 	},
-	EntityRobot: {
-		NotFound:    "Робот не найден",
-		Exists:      "Робот с таким именем уже существует",
-		Forbidden:   "У вас нет прав для работы с этим роботом",
-		BadRequest:  "Некорректные данные робота",
-		Internal:    "Внутренняя ошибка при работе с роботом",
-		Unavailable: "Сервис роботов временно недоступен",
-	},
 	EntityACL: {
 		NotFound:    "Права доступа не найдены",
 		Exists:      "Такие права уже существуют",
@@ -472,12 +462,6 @@ var EntityMessages = map[EntityType]EntityErrorMessages{
 		BadRequest:  "Некорректные данные куба",
 		Internal:    "Внутренняя ошибка при работе с кубами",
 		Unavailable: "Сервис кубов временно недоступен",
-	},
-	EntityAlerts: {
-		Forbidden:   "У вас нет прав для работы с алертми",
-		BadRequest:  "Некорректные данные алертов",
-		Internal:    "Внутренняя ошибка при работе с алертми",
-		Unavailable: "Сервис алертов временно недоступен",
 	},
 }
 
