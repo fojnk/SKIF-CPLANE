@@ -1,0 +1,1 @@
+import{j as t,q as n,I as e}from"./bundle.BgNwub1V.js";import{C as m}from"./ChevronDown.ZKJKlcRF.js";const c=n("arrow-toggle");function g({size:o=16,direction:a="bottom",className:r,qa:s}){return t.jsx("span",{style:{width:o,height:o},className:c({direction:a},r),"data-qa":s,children:t.jsx(e,{data:m,size:o})})}export{g as A};
