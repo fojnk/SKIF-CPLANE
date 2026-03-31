@@ -1,0 +1,31 @@
+<%
+const { config, route, utils } = it;
+const { _, formatDescription, fmtToJSDocLine, pascalCase, require } = utils;
+const { raw, request, routeName } = route;
+
+const jsDocDescription = raw.description ?
+    ` * @description ${formatDescription(raw.description, true)}` :
+    fmtToJSDocLine('No description', { eol: false });
+const jsDocLines = _.compact([
+    _.size(raw.tags) && ` * @tags ${raw.tags.join(", ")}`,
+    raw.summary && ` * @summary ${raw.summary}`,
+    ` * @request ${_.upperCase(request.method)}:${raw.route}`,
+    raw.deprecated && ` * @deprecated`,
+    routeName.duplicate && ` * @originalName ${routeName.original}`,
+    routeName.duplicate && ` * @duplicate`,
+    request.security && ` * @secure`,
+    ...(config.generateResponses && raw.responsesTypes.length
+    ? [
+      "* @responses <br/>",
+      ...raw.responsesTypes.map(
+        ({ type, status, description, isSuccess }) => ` *  **${status}** ${_.replace(_.replace(type, /\/\*/g, "\\*"), /\*\//g, "*\\")} ${description} <br/>`,
+      )
+    ]
+    : []),
+]).map(str => str.trimEnd()).join("\n");
+
+return {
+  description: jsDocDescription,
+  lines: jsDocLines,
+}
+%>

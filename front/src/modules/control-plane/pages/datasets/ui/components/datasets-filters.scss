@@ -1,0 +1,21 @@
+.filters {
+    flex-wrap: nowrap;
+}
+
+.filters__search {
+    flex: 1 1 auto;
+}
+
+.filters__search>* {
+    width: 100%;
+}
+
+@media (max-width: 1400px) {
+    .filters {
+        flex-wrap: wrap;
+    }
+
+    .filters__search {
+        flex: 0 0 100%;
+    }
+}

@@ -1,0 +1,1 @@
+System.register(["./bundle-legacy.DBSXt6rL.js"],(function(e,t){"use strict";var n;return{setters:[e=>{n=e.d}],execute:function(){e("P",(({children:e,element:t=document.getElementById("portal")})=>t?n.createPortal(e,t):null))}}}));

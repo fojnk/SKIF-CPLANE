@@ -1,0 +1,24 @@
+:root {
+  --value-bg: rgba(240, 240, 240, 0.5);
+  --value-bg-border: #EAEAEA;
+  --value-bg-dark: #141414;
+  --value-bg-border-dark: #2d2a2a;
+}
+
+.valueBox {
+  background-color: var(--value-bg);
+  padding: 4px 26px 4px 6px;
+  border-radius: 4px;
+  min-height: 26px;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--value-bg-border);
+}
+
+:global(.g-root_theme_dark) {
+  .valueBox {
+    background-color: var(--value-bg-dark);
+    border: 1px solid var(--value-bg-border-dark);
+  }
+}
+

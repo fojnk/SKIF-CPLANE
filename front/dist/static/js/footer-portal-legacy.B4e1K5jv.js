@@ -1,0 +1,1 @@
+System.register(["./bundle-legacy.DBSXt6rL.js","./portal-legacy.R9iDHcD4.js","./footer-legacy.DDA5AylL.js","./footer-actions-legacy.C62mbwea.js"],(function(e,t){"use strict";var r,l,n,o;return{setters:[e=>{r=e.c,l=e.j},e=>{n=e.P},e=>{o=e.footerElement},null],execute:function(){e("FooterPortal",(({children:e})=>{const t=r(o.$value);return l.jsx(n,{element:t,children:e})}))}}}));

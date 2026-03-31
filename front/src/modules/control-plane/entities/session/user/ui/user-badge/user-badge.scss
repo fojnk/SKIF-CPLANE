@@ -1,0 +1,30 @@
+.user-badge {
+  min-width: 32px;
+  min-height: 32px;
+
+  .g-user-avatar__figure {
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+  }
+
+  > img {
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+  }
+
+  .g-user__avatar {
+    flex: none;
+  }
+
+  .g-user__info {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &.compact {
+    width: 100%;
+  }
+}

@@ -1,0 +1,1 @@
+import{c as r,j as e}from"./bundle.BgNwub1V.js";import{P as m}from"./portal.BliMjj8P.js";import{footerElement as s}from"./footer.ClTvqzRg.js";import"./footer-actions.hKwG_7Vz.js";const l=({children:o})=>{const t=r(s.$value);return e.jsx(m,{element:t,children:o})};export{l as FooterPortal};

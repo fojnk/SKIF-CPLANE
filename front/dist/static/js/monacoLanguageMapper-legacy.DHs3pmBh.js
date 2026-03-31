@@ -1,0 +1,1 @@
+System.register([],(function(t,e){"use strict";return{execute:function(){t("g",(t=>{switch(t){case"json":return"json";case"yql":return"yql";case"python":return"python";default:return"plaintext"}}))}}}));

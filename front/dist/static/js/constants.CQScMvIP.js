@@ -1,0 +1,1 @@
+import{D as e,L as t}from"./types.Cp9yX6UH.js";t.Update,t.NewVariable,t.UpdateVariable;const A=[{value:e.QUEUE,content:e.QUEUE},{value:e.KAFKA,content:e.KAFKA},{value:e.KEY_VALUE,content:e.KEY_VALUE},{value:e.STATIC_TABLE_DIR,content:e.STATIC_TABLE_DIR}];export{A as D};

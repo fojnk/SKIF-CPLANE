@@ -1,0 +1,1 @@
+import{c as n,j as t,f as o}from"./bundle.BgNwub1V.js";import{e}from"./index.B-a2gGWb.js";import{G as i}from"./Gear.weC8ceb5.js";const p=()=>{const[s]=n([e]),r=()=>{s({})};return t.jsxs(o,{onClick:r,width:"auto",children:[t.jsx(o.Icon,{children:t.jsx(i,{})}),"Form"]})};export{p as F};

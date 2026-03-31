@@ -1,0 +1,38 @@
+.page-header {
+  &__breadcrumbs {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+
+  &__breadcrumb {
+    display: flex;
+    align-items: center;
+
+    &:not(:last-child):after {
+      content: '/';
+      align-items: center;
+      color: var(--g-color-text-secondary);
+      display: flex;
+      padding: 0 2px;
+    }
+
+    &:last-child {
+      &:not(.ignore-current-styles) {
+        > .g-button {
+          pointer-events: none;
+        }
+
+        .g-button__text {
+          font-weight: 600;
+        }
+
+        > .g-select {
+          .g-select-control__option-text {
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+}
