@@ -76,7 +76,7 @@ func (q *Queries) IsExistsActiveBlockBanners(ctx context.Context) (*bool, error)
 }
 
 const selectActiveAppBanner = `-- name: SelectActiveAppBanner :one
-SELECT id, type, title, message, active, color, created_at, updated_at, starts, ends, color_dark FROM t_app_banner
+SELECT id, type, title, message, active, color, created_at, updated_at, color_dark, starts, ends FROM t_app_banner
 WHERE active = true
   AND (starts IS NULL OR starts <= NOW())
   AND (ends IS NULL OR ends >= NOW())
@@ -95,15 +95,15 @@ func (q *Queries) SelectActiveAppBanner(ctx context.Context) (TAppBanner, error)
 		&i.Color,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.ColorDark,
 		&i.Starts,
 		&i.Ends,
-		&i.ColorDark,
 	)
 	return i, err
 }
 
 const selectAppBanner = `-- name: SelectAppBanner :one
-SELECT id, type, title, message, active, color, created_at, updated_at, starts, ends, color_dark FROM t_app_banner WHERE id = $1
+SELECT id, type, title, message, active, color, created_at, updated_at, color_dark, starts, ends FROM t_app_banner WHERE id = $1
 `
 
 func (q *Queries) SelectAppBanner(ctx context.Context, id int32) (TAppBanner, error) {
@@ -118,15 +118,15 @@ func (q *Queries) SelectAppBanner(ctx context.Context, id int32) (TAppBanner, er
 		&i.Color,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.ColorDark,
 		&i.Starts,
 		&i.Ends,
-		&i.ColorDark,
 	)
 	return i, err
 }
 
 const selectAppBanners = `-- name: SelectAppBanners :many
-SELECT id, type, title, message, active, color, created_at, updated_at, starts, ends, color_dark FROM t_app_banner ORDER BY created_at DESC
+SELECT id, type, title, message, active, color, created_at, updated_at, color_dark, starts, ends FROM t_app_banner ORDER BY created_at DESC
 `
 
 func (q *Queries) SelectAppBanners(ctx context.Context) ([]TAppBanner, error) {
@@ -147,9 +147,9 @@ func (q *Queries) SelectAppBanners(ctx context.Context) ([]TAppBanner, error) {
 			&i.Color,
 			&i.CreatedAt,
 			&i.UpdatedAt,
+			&i.ColorDark,
 			&i.Starts,
 			&i.Ends,
-			&i.ColorDark,
 		); err != nil {
 			return nil, err
 		}
@@ -162,7 +162,7 @@ func (q *Queries) SelectAppBanners(ctx context.Context) ([]TAppBanner, error) {
 }
 
 const selectCurrentAppBanner = `-- name: SelectCurrentAppBanner :one
-SELECT id, type, title, message, active, color, created_at, updated_at, starts, ends, color_dark FROM t_app_banner 
+SELECT id, type, title, message, active, color, created_at, updated_at, color_dark, starts, ends FROM t_app_banner 
 WHERE active = true 
   AND (starts IS NULL OR starts <= NOW())
   AND (ends IS NULL OR ends >= NOW())
@@ -182,9 +182,9 @@ func (q *Queries) SelectCurrentAppBanner(ctx context.Context) (TAppBanner, error
 		&i.Color,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.ColorDark,
 		&i.Starts,
 		&i.Ends,
-		&i.ColorDark,
 	)
 	return i, err
 }
@@ -201,7 +201,7 @@ SET
     starts = CASE WHEN $8::timestamp IS NOT NULL THEN $8 ELSE starts END,
     ends = CASE WHEN $9::timestamp IS NOT NULL THEN $9 ELSE ends END,
     updated_at = NOW()
-WHERE id = $1 RETURNING id, type, title, message, active, color, created_at, updated_at, starts, ends, color_dark
+WHERE id = $1 RETURNING id, type, title, message, active, color, created_at, updated_at, color_dark, starts, ends
 `
 
 type UpdateAppBannerParams struct {
@@ -217,6 +217,7 @@ type UpdateAppBannerParams struct {
 }
 
 // param: active *bool
+// param: type *text
 // param: starts *timestamp
 // param: ends *timestamp
 func (q *Queries) UpdateAppBanner(ctx context.Context, arg UpdateAppBannerParams) (TAppBanner, error) {
@@ -241,9 +242,9 @@ func (q *Queries) UpdateAppBanner(ctx context.Context, arg UpdateAppBannerParams
 		&i.Color,
 		&i.CreatedAt,
 		&i.UpdatedAt,
+		&i.ColorDark,
 		&i.Starts,
 		&i.Ends,
-		&i.ColorDark,
 	)
 	return i, err
 }

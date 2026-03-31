@@ -29,40 +29,6 @@ export enum AclRightDC {
   RightDeleteVariable = 'delete_variable',
 }
 
-export interface AlertsAlertDC {
-  alert_description: string;
-  alert_template_id: number;
-  delay_firing?: string;
-  delay_resolving?: string;
-  graphic_name: string;
-  has_limit: boolean;
-  limit: string;
-  rule_id: number;
-  severity: string;
-  severity_is_active: boolean;
-  type_limit: string;
-}
-
-export interface AlertsAlertRuleInputDC {
-  alert_template_id: number;
-  delay_firing?: string;
-  delay_resolving?: string;
-  limit: string;
-  severity: string;
-  severity_is_active: boolean;
-}
-
-export interface AlertsAlertsDC {
-  alert_description: string;
-  alert_name: string;
-  alerts: AlertsAlertDC[];
-}
-
-export interface AlertsTypeLimitsDC {
-  description: string;
-  types: string[];
-}
-
 export interface AuthorizeListParamsDC {
   /** redirect url */
   redirect_url?: string;
@@ -800,11 +766,6 @@ export enum JobdTaskStatusDC {
   TaskStatusRunning = 'running',
 }
 
-export interface JwtClientTokenInfoDC {
-  expires_in?: string;
-  token?: string;
-}
-
 export type LogoutListDataDC = any;
 
 export type LogoutListErrorDC = ResponsesErrorResponseDC;
@@ -934,20 +895,6 @@ export interface RequestsApplyProjectConfigRequestDC {
   project_id: number;
 }
 
-export interface RequestsChangeAlertBodyDC {
-  alert_template_id: number;
-  delay_firing?: string;
-  delay_resolving?: string;
-  limit: string;
-  rule_id: number;
-  severity: string;
-  severity_is_active: boolean;
-}
-
-export interface RequestsChangeAlertSeveritiesBodyDC {
-  alert_rules: AlertsAlertRuleInputDC[];
-}
-
 export interface RequestsCompleteExperimentValidateRequestDC {
   experimentConfig: string;
   /** @format int32 */
@@ -974,10 +921,6 @@ export interface RequestsCopyDatasetRequestV2DC {
   name: string;
   project_id?: number;
   src_dataset_id: number;
-}
-
-export interface RequestsCreateAlertGroupBodyDC {
-  alert_rules: AlertsAlertRuleInputDC[];
 }
 
 export interface RequestsCreateAppBannerRequestDC {
@@ -1075,14 +1018,10 @@ export interface RequestsCreateProjectRequestDC {
 
 export type RequestsCreateProjectRolesRequestDC = {};
 
-export interface RequestsCreateRobotRequestDC {
-  /** @maxLength 128 */
-  name: string;
-}
-
 export interface RequestsCreateRoleRequestDC {
   description?: string;
-  idm_id: string;
+  /** Optional stable key for t_role.idm_id; generated server-side if omitted */
+  idm_id?: string;
   /**
    * @minLength 1
    * @maxLength 128
@@ -1123,16 +1062,6 @@ export interface RequestsDatasetValidateRequestDC {
   datasetConfig: string;
 }
 
-export interface RequestsDeleteAlertsBodyDC {
-  alert_group_id: number;
-  deleting_rules: number[];
-}
-
-export interface RequestsDeleteAllTokenForRobotRequestDC {
-  /** @maxLength 128 */
-  name: string;
-}
-
 export interface RequestsDeleteAppBannerRequestDC {
   id?: number;
 }
@@ -1170,11 +1099,6 @@ export interface RequestsDisclaimRequestDC {
   rule_id?: number;
   user_group_id?: number;
   user_id?: number;
-}
-
-export interface RequestsGenerateTokenForRobotRequestDC {
-  /** @maxLength 128 */
-  name: string;
 }
 
 export interface RequestsGetExperimentAvailableDatasetsToLinkRequestDC {
@@ -1463,7 +1387,6 @@ export interface RequestsUpdateProjectRequestDC {
 export interface RequestsUpdateRoleRequestDC {
   description?: string;
   id: number;
-  idm_id: string;
   /**
    * @minLength 1
    * @maxLength 128
@@ -1493,15 +1416,6 @@ export interface ResponsesAddPinnedProjectResponseDC {
   id?: number;
   project_id?: number;
   project_name?: string;
-}
-
-export interface ResponsesAlertTemplateResponseDC {
-  alert_description: string;
-  alert_name: string;
-  alert_template_id: number;
-  graphic_name: string;
-  has_limit: boolean;
-  type_limit: string;
 }
 
 export interface ResponsesApplyDatasetResponseDC {
@@ -1596,12 +1510,6 @@ export interface ResponsesCreateProjectRolesResponseDC {
   roles_created?: number;
 }
 
-export interface ResponsesCreateRobotResponseDC {
-  access_token?: JwtClientTokenInfoDC;
-  id?: number;
-  name?: string;
-}
-
 export interface ResponsesCreateRoleResponseDC {
   id?: number;
 }
@@ -1638,20 +1546,6 @@ export interface ResponsesErrorResponseDC {
   external_message?: string;
   http_status_code?: number;
   internal_error?: any;
-}
-
-export interface ResponsesGetAlertGroupResponseDC {
-  alert_group_id: number;
-  alerts: AlertsAlertsDC[];
-  notification_product_id: number;
-  experiment_id: number;
-}
-
-export interface ResponsesGetAlertOptionsResponseDC {
-  alert_templates: ResponsesAlertTemplateResponseDC[];
-  delay_firing: AlertsTypeLimitsDC;
-  delay_resolving: AlertsTypeLimitsDC;
-  type_limits: Record<string, AlertsTypeLimitsDC>;
 }
 
 export interface ResponsesGetAppBannerResponseDC {
@@ -2779,18 +2673,6 @@ export interface V1ProjectsListParamsDC {
   namespace_id: number;
 }
 
-export type V1RobotCreateDataDC = ResponsesCreateRobotResponseDC;
-
-export type V1RobotCreateErrorDC = ResponsesErrorResponseDC;
-
-export type V1RobotTokenCreateDataDC = ResponsesCreateRobotResponseDC;
-
-export type V1RobotTokenCreateErrorDC = ResponsesErrorResponseDC;
-
-export type V1RobotTokensDeleteDataDC = ResponsesEmptyResponseDC;
-
-export type V1RobotTokensDeleteErrorDC = ResponsesErrorResponseDC;
-
 export type V1RoleCreateDataDC = ResponsesCreateRoleResponseDC;
 
 export type V1RoleCreateErrorDC = ResponsesErrorResponseDC;
@@ -3098,76 +2980,6 @@ export type V2IdmProjectRolesSyncCreateErrorDC = ResponsesErrorResponseDC;
 export type V2NamespacesListDataDC = ResponsesListNamespacesV2ResponseDC;
 
 export type V2NamespacesListErrorDC = ResponsesErrorResponseDC;
-
-export type V2ExperimentAlertsCreateDataDC = ResponsesGetAlertGroupResponseDC;
-
-export type V2ExperimentAlertsCreateErrorDC = ResponsesErrorResponseDC;
-
-export interface V2ExperimentAlertsCreateParamsDC {
-  /** experiment id */
-  experiment_id: number;
-  /** notification product id */
-  product_id: number;
-}
-
-export type V2ExperimentAlertsDeleteDataDC = ResponsesGetAlertGroupResponseDC;
-
-export type V2ExperimentAlertsDeleteErrorDC = ResponsesErrorResponseDC;
-
-export interface V2ExperimentAlertsDeleteParamsDC {
-  /** experiment id */
-  experiment_id: number;
-  /** notification product id */
-  product_id: number;
-}
-
-export type V2ExperimentAlertsListDataDC = ResponsesGetAlertGroupResponseDC;
-
-export type V2ExperimentAlertsListErrorDC = ResponsesErrorResponseDC;
-
-export interface V2ExperimentAlertsListParamsDC {
-  /** experiment id */
-  experiment_id: number;
-  /** notification product id */
-  product_id: number;
-}
-
-export type V2ExperimentAlertsOptionsListDataDC =
-  ResponsesGetAlertOptionsResponseDC;
-
-export type V2ExperimentAlertsOptionsListErrorDC = ResponsesErrorResponseDC;
-
-export type V2ExperimentAlertsProductsListDataDC = number[];
-
-export type V2ExperimentAlertsProductsListErrorDC = ResponsesErrorResponseDC;
-
-export interface V2ExperimentAlertsProductsListParamsDC {
-  /** experiment id */
-  experiment_id: number;
-}
-
-export type V2ExperimentAlertsRuleUpdateDataDC = any;
-
-export type V2ExperimentAlertsRuleUpdateErrorDC = ResponsesErrorResponseDC;
-
-export interface V2ExperimentAlertsRuleUpdateParamsDC {
-  /** experiment id */
-  experiment_id: number;
-  /** notification product id */
-  product_id: number;
-}
-
-export type V2ExperimentAlertsTemplateUpdateDataDC =
-  ResponsesGetAlertGroupResponseDC;
-
-export type V2ExperimentAlertsTemplateUpdateErrorDC = ResponsesErrorResponseDC;
-
-export interface V2ExperimentAlertsTemplateUpdateParamsDC {
-  /** experiment id */
-  experiment_id: number;
-  /** notification product id */
-  product_id: number;
-}
 
 export type V2ExperimentConfigApplyUpdateDataDC = ResponsesEmptyResponseDC;
 

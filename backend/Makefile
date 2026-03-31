@@ -4,6 +4,9 @@ endif
 
 TIMESTAMP = $(shell TZ=Europe/Moscow date +%Y%m%d%H%M%S)
 
+# Docker Compose V2 (`docker compose`); override with `DOCKER_COMPOSE=docker-compose` if you use the legacy binary.
+DOCKER_COMPOSE ?= docker compose
+
 sqlgen:
 	$(shell go env GOPATH)/bin/sqlc generate -f internal/db/sqlc.yaml
 	mockgen -source=internal/db/db.go -destination=internal/mocks/db/db.go -package=dbmock
@@ -13,17 +16,10 @@ build-amd:
 build:
 	mkdir -p bin
 	go build -ldflags="-X 'main.version=$(VERSION)'" -o ./bin/streamflow-cplane ./cmd/
-swagger: swagger-private swagger-public
+swagger: swagger-private
 swagger-private:
-	swag init -g internal/app/app.go -o internal/docs/private_docs/ --exclude internal/handlers/public
-swagger-public:
-	swag init -g internal/app/app_public.go -o internal/docs/public_docs/ --exclude internal/handlers/private --instanceName public
-swagger-client: swagger-public-client swagger-private-client
-
-swagger-public-client:
-	rm -rf tests/public/client
-	rm -rf tests/public/models
-	swagger generate client --target=./tests/public --spec=./internal/docs/public_docs/public_swagger.json
+	swag init -g internal/app/app.go -o internal/docs/private_docs/ 
+swagger-client: swagger-private-client
 
 swagger-private-client:
 	rm -rf tests/private/client
@@ -32,37 +28,21 @@ swagger-private-client:
 
 orchestrator-client:
 	go tool oapi-codegen --config=./internal/clients/orchestrator/client/config.yaml  ./internal/clients/orchestrator.openapi.yaml
-
-one-alerts-client:
-	$(shell go env GOPATH)/bin/oapi-codegen --config=./internal/clients/one_alerts/config.yaml ./internal/clients/one_alerts.openapi.yaml
-
-one-alerts-test-server:
-	$(shell go env GOPATH)/bin/oapi-codegen --config=./tests/testenv/one_alerts/server.config.yaml ./internal/clients/one_alerts.openapi.yaml
-
-jobd-client:
-	$(shell go env GOPATH)/bin/oapi-codegen --config=./internal/clients/jobd/config.yaml ./internal/clients/jobd.openapi.yaml
 docker-build:
-	docker build --secret id=netrc,src=${HOME}/.netrc -t cplane:$(VERSION) -f ./tests/Dockerfile .
+	docker build -t cplane:$(VERSION) -f ./tests/Dockerfile .
 docker-build-test:
-	docker build --secret id=netrc,src=${HOME}/.netrc -t cplane:current_test -f ./tests/Dockerfile .
-	cd tests/testenv && docker build --secret id=netrc,src=${HOME}/.netrc -t testenv:current_test .
+	docker build -t cplane:current_test -f ./tests/Dockerfile .
+	cd tests/testenv && docker build -t testenv:current_test .
 test-end2end: docker-build-test test-end2end-private test-end2end-public
 
 test-end2end-private: docker-build-test
-	cd tests && docker-compose up -d
+	cd tests && $(DOCKER_COMPOSE) up -d
 	./tests/waiter.sh
 	-go test -count=1 -v ./tests/private
 	docker exec -it tests-cplane-1 cat log.log > ./tests/private_log.log
-	cd tests && docker-compose down -v
+	cd tests && $(DOCKER_COMPOSE) down -v
 	rm -r ./tests/pgdata
 
-test-end2end-public: docker-build-test
-	cd tests && docker-compose up -d
-	./tests/waiter.sh
-	-go test -count=1 -v ./tests/public
-	docker exec -it tests-cplane-1 cat log.log > ./tests/public_log.log
-	cd tests && docker-compose down -v
-	rm -r ./tests/pgdata
 
 new_migrate:
 	touch "./migrations/up/$(TIMESTAMP)_$(NAME).up.sql"

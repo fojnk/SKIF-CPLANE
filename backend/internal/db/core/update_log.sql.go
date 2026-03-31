@@ -17,13 +17,13 @@ VALUES ($1, $2, $3, $4, $5, $6, $7)
 `
 
 type InsertDatasetUpdateLogParams struct {
-	NamespaceID  int32
-	ProjectID    pgtype.Int4
-	DatasetID int32
-	Username     string
-	Act          string
-	Details      []byte
-	Comment      string
+	NamespaceID int32
+	ProjectID   pgtype.Int4
+	DatasetID   int32
+	Username    string
+	Act         string
+	Details     []byte
+	Comment     string
 }
 
 func (q *Queries) InsertDatasetUpdateLog(ctx context.Context, arg InsertDatasetUpdateLogParams) error {
@@ -45,18 +45,44 @@ VALUES ($1, $2, $3, $4, $5, $6)
 `
 
 type InsertDatasetUpdateLogV2Params struct {
-	ProjectID    pgtype.Int4
+	ProjectID pgtype.Int4
 	DatasetID int32
-	Username     string
-	Act          string
-	Details      []byte
-	Comment      string
+	Username  string
+	Act       string
+	Details   []byte
+	Comment   string
 }
 
 func (q *Queries) InsertDatasetUpdateLogV2(ctx context.Context, arg InsertDatasetUpdateLogV2Params) error {
 	_, err := q.db.Exec(ctx, insertDatasetUpdateLogV2,
 		arg.ProjectID,
 		arg.DatasetID,
+		arg.Username,
+		arg.Act,
+		arg.Details,
+		arg.Comment,
+	)
+	return err
+}
+
+const insertExperimentUpdateLog = `-- name: InsertExperimentUpdateLog :exec
+INSERT INTO t_experiment_update_log (project_id, experiment_id, username, act, details, comment)
+VALUES ($1, $2, $3, $4, $5, $6)
+`
+
+type InsertExperimentUpdateLogParams struct {
+	ProjectID    int32
+	ExperimentID int32
+	Username     string
+	Act          string
+	Details      []byte
+	Comment      string
+}
+
+func (q *Queries) InsertExperimentUpdateLog(ctx context.Context, arg InsertExperimentUpdateLogParams) error {
+	_, err := q.db.Exec(ctx, insertExperimentUpdateLog,
+		arg.ProjectID,
+		arg.ExperimentID,
 		arg.Username,
 		arg.Act,
 		arg.Details,
@@ -81,32 +107,6 @@ type InsertNamespaceUpdateLogParams struct {
 func (q *Queries) InsertNamespaceUpdateLog(ctx context.Context, arg InsertNamespaceUpdateLogParams) error {
 	_, err := q.db.Exec(ctx, insertNamespaceUpdateLog,
 		arg.NamespaceID,
-		arg.Username,
-		arg.Act,
-		arg.Details,
-		arg.Comment,
-	)
-	return err
-}
-
-const insertExperimentUpdateLog = `-- name: InsertExperimentUpdateLog :exec
-INSERT INTO t_experiment_update_log (project_id, experiment_id, username, act, details, comment)
-VALUES ($1, $2, $3, $4, $5, $6)
-`
-
-type InsertExperimentUpdateLogParams struct {
-	ProjectID  int32
-	ExperimentID int32
-	Username   string
-	Act        string
-	Details    []byte
-	Comment    string
-}
-
-func (q *Queries) InsertExperimentUpdateLog(ctx context.Context, arg InsertExperimentUpdateLogParams) error {
-	_, err := q.db.Exec(ctx, insertExperimentUpdateLog,
-		arg.ProjectID,
-		arg.ExperimentID,
 		arg.Username,
 		arg.Act,
 		arg.Details,
@@ -157,17 +157,17 @@ type SelectAllDatasetsUpdateLogsByNamespaceIDParams struct {
 }
 
 type SelectAllDatasetsUpdateLogsByNamespaceIDRow struct {
-	ID           int32
-	CreatedAt    pgtype.Timestamp
-	NamespaceID  int32
-	DatasetID int32
-	Username     string
-	Act          string
-	Details      []byte
-	ProjectID    pgtype.Int4
-	Comment      string
-	Total        int64
-	Name         string
+	ID          int32
+	CreatedAt   pgtype.Timestamp
+	NamespaceID int32
+	DatasetID   int32
+	Username    string
+	Act         string
+	Details     []byte
+	ProjectID   pgtype.Int4
+	Comment     string
+	Total       int64
+	Name        string
 }
 
 func (q *Queries) SelectAllDatasetsUpdateLogsByNamespaceID(ctx context.Context, arg SelectAllDatasetsUpdateLogsByNamespaceIDParams) ([]SelectAllDatasetsUpdateLogsByNamespaceIDRow, error) {
@@ -218,17 +218,17 @@ type SelectAllDatasetsUpdateLogsByProjdectIDParams struct {
 }
 
 type SelectAllDatasetsUpdateLogsByProjdectIDRow struct {
-	ID           int32
-	CreatedAt    pgtype.Timestamp
-	NamespaceID  int32
-	DatasetID int32
-	Username     string
-	Act          string
-	Details      []byte
-	ProjectID    pgtype.Int4
-	Comment      string
-	Total        int64
-	Name         string
+	ID          int32
+	CreatedAt   pgtype.Timestamp
+	NamespaceID int32
+	DatasetID   int32
+	Username    string
+	Act         string
+	Details     []byte
+	ProjectID   pgtype.Int4
+	Comment     string
+	Total       int64
+	Name        string
 }
 
 func (q *Queries) SelectAllDatasetsUpdateLogsByProjdectID(ctx context.Context, arg SelectAllDatasetsUpdateLogsByProjdectIDParams) ([]SelectAllDatasetsUpdateLogsByProjdectIDRow, error) {
@@ -249,6 +249,67 @@ func (q *Queries) SelectAllDatasetsUpdateLogsByProjdectID(ctx context.Context, a
 			&i.Act,
 			&i.Details,
 			&i.ProjectID,
+			&i.Comment,
+			&i.Total,
+			&i.Name,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const selectAllExperimentsUpdateLogs = `-- name: SelectAllExperimentsUpdateLogs :many
+SELECT t_experiment_update_log.id, t_experiment_update_log.created_at, t_experiment_update_log.project_id, t_experiment_update_log.experiment_id, t_experiment_update_log.username, t_experiment_update_log.act, t_experiment_update_log.details, t_experiment_update_log.comment, COUNT(*) OVER() AS total, COALESCE(v_real_experiment_template.name, '[deleted]') AS name FROM t_experiment_update_log
+LEFT JOIN t_experiment ON t_experiment_update_log.experiment_id = t_experiment.id
+LEFT JOIN t_experiment_template_v ON t_experiment.template_v_id = t_experiment_template_v.id
+LEFT JOIN v_real_experiment_template ON t_experiment_template_v.parent_id = v_real_experiment_template.id
+WHERE t_experiment_update_log.project_id = $1
+ORDER BY t_experiment_update_log.created_at DESC
+OFFSET $2
+LIMIT $3
+`
+
+type SelectAllExperimentsUpdateLogsParams struct {
+	ProjectID int32
+	Offset    int32
+	Limit     int32
+}
+
+type SelectAllExperimentsUpdateLogsRow struct {
+	ID           int32
+	CreatedAt    pgtype.Timestamp
+	ProjectID    int32
+	ExperimentID int32
+	Username     string
+	Act          string
+	Details      []byte
+	Comment      string
+	Total        int64
+	Name         string
+}
+
+func (q *Queries) SelectAllExperimentsUpdateLogs(ctx context.Context, arg SelectAllExperimentsUpdateLogsParams) ([]SelectAllExperimentsUpdateLogsRow, error) {
+	rows, err := q.db.Query(ctx, selectAllExperimentsUpdateLogs, arg.ProjectID, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SelectAllExperimentsUpdateLogsRow
+	for rows.Next() {
+		var i SelectAllExperimentsUpdateLogsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.ProjectID,
+			&i.ExperimentID,
+			&i.Username,
+			&i.Act,
+			&i.Details,
 			&i.Comment,
 			&i.Total,
 			&i.Name,
@@ -301,67 +362,6 @@ func (q *Queries) SelectAllNamespacesUpdateLogs(ctx context.Context, arg SelectA
 			&i.ID,
 			&i.CreatedAt,
 			&i.NamespaceID,
-			&i.Username,
-			&i.Act,
-			&i.Details,
-			&i.Comment,
-			&i.Total,
-			&i.Name,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const selectAllExperimentsUpdateLogs = `-- name: SelectAllExperimentsUpdateLogs :many
-SELECT t_experiment_update_log.id, t_experiment_update_log.created_at, t_experiment_update_log.project_id, t_experiment_update_log.experiment_id, t_experiment_update_log.username, t_experiment_update_log.act, t_experiment_update_log.details, t_experiment_update_log.comment, COUNT(*) OVER() AS total, COALESCE(v_real_experiment_template.name, '[deleted]') AS name FROM t_experiment_update_log
-LEFT JOIN t_experiment ON t_experiment_update_log.experiment_id = t_experiment.id
-LEFT JOIN t_experiment_template_v ON t_experiment.template_v_id = t_experiment_template_v.id
-LEFT JOIN v_real_experiment_template ON t_experiment_template_v.parent_id = v_real_experiment_template.id
-WHERE t_experiment_update_log.project_id = $1
-ORDER BY t_experiment_update_log.created_at DESC
-OFFSET $2
-LIMIT $3
-`
-
-type SelectAllExperimentsUpdateLogsParams struct {
-	ProjectID int32
-	Offset    int32
-	Limit     int32
-}
-
-type SelectAllExperimentsUpdateLogsRow struct {
-	ID         int32
-	CreatedAt  pgtype.Timestamp
-	ProjectID  int32
-	ExperimentID int32
-	Username   string
-	Act        string
-	Details    []byte
-	Comment    string
-	Total      int64
-	Name       string
-}
-
-func (q *Queries) SelectAllExperimentsUpdateLogs(ctx context.Context, arg SelectAllExperimentsUpdateLogsParams) ([]SelectAllExperimentsUpdateLogsRow, error) {
-	rows, err := q.db.Query(ctx, selectAllExperimentsUpdateLogs, arg.ProjectID, arg.Offset, arg.Limit)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []SelectAllExperimentsUpdateLogsRow
-	for rows.Next() {
-		var i SelectAllExperimentsUpdateLogsRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.CreatedAt,
-			&i.ProjectID,
-			&i.ExperimentID,
 			&i.Username,
 			&i.Act,
 			&i.Details,
@@ -445,16 +445,16 @@ WHERE t_dataset_update_log.id = $1
 `
 
 type SelectDatasetLogRow struct {
-	ID           int32
-	CreatedAt    pgtype.Timestamp
-	NamespaceID  int32
-	DatasetID int32
-	Username     string
-	Act          string
-	Details      []byte
-	ProjectID    pgtype.Int4
-	Comment      string
-	Name         string
+	ID          int32
+	CreatedAt   pgtype.Timestamp
+	NamespaceID int32
+	DatasetID   int32
+	Username    string
+	Act         string
+	Details     []byte
+	ProjectID   pgtype.Int4
+	Comment     string
+	Name        string
 }
 
 func (q *Queries) SelectDatasetLog(ctx context.Context, id int32) (SelectDatasetLogRow, error) {
@@ -486,22 +486,22 @@ LIMIT $3
 
 type SelectDatasetUpdateLogsParams struct {
 	DatasetID int32
-	Offset       int32
-	Limit        int32
+	Offset    int32
+	Limit     int32
 }
 
 type SelectDatasetUpdateLogsRow struct {
-	ID           int32
-	CreatedAt    pgtype.Timestamp
-	NamespaceID  int32
-	DatasetID int32
-	Username     string
-	Act          string
-	Details      []byte
-	ProjectID    pgtype.Int4
-	Comment      string
-	Total        int64
-	Name         string
+	ID          int32
+	CreatedAt   pgtype.Timestamp
+	NamespaceID int32
+	DatasetID   int32
+	Username    string
+	Act         string
+	Details     []byte
+	ProjectID   pgtype.Int4
+	Comment     string
+	Total       int64
+	Name        string
 }
 
 func (q *Queries) SelectDatasetUpdateLogs(ctx context.Context, arg SelectDatasetUpdateLogsParams) ([]SelectDatasetUpdateLogsRow, error) {
@@ -522,6 +522,104 @@ func (q *Queries) SelectDatasetUpdateLogs(ctx context.Context, arg SelectDataset
 			&i.Act,
 			&i.Details,
 			&i.ProjectID,
+			&i.Comment,
+			&i.Total,
+			&i.Name,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const selectExperimentLog = `-- name: SelectExperimentLog :one
+SELECT t_experiment_update_log.id, t_experiment_update_log.created_at, t_experiment_update_log.project_id, t_experiment_update_log.experiment_id, t_experiment_update_log.username, t_experiment_update_log.act, t_experiment_update_log.details, t_experiment_update_log.comment, COALESCE(v_real_experiment_template.name, '[deleted]') AS name FROM t_experiment_update_log
+LEFT JOIN t_experiment ON t_experiment_update_log.experiment_id = t_experiment.id
+LEFT JOIN t_experiment_template_v ON t_experiment.template_v_id = t_experiment_template_v.id
+LEFT JOIN v_real_experiment_template ON t_experiment_template_v.parent_id = v_real_experiment_template.id
+WHERE t_experiment_update_log.id = $1
+`
+
+type SelectExperimentLogRow struct {
+	ID           int32
+	CreatedAt    pgtype.Timestamp
+	ProjectID    int32
+	ExperimentID int32
+	Username     string
+	Act          string
+	Details      []byte
+	Comment      string
+	Name         string
+}
+
+func (q *Queries) SelectExperimentLog(ctx context.Context, id int32) (SelectExperimentLogRow, error) {
+	row := q.db.QueryRow(ctx, selectExperimentLog, id)
+	var i SelectExperimentLogRow
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.ProjectID,
+		&i.ExperimentID,
+		&i.Username,
+		&i.Act,
+		&i.Details,
+		&i.Comment,
+		&i.Name,
+	)
+	return i, err
+}
+
+const selectExperimentUpdateLogs = `-- name: SelectExperimentUpdateLogs :many
+SELECT t_experiment_update_log.id, t_experiment_update_log.created_at, t_experiment_update_log.project_id, t_experiment_update_log.experiment_id, t_experiment_update_log.username, t_experiment_update_log.act, t_experiment_update_log.details, t_experiment_update_log.comment, COUNT(*) OVER() AS total, COALESCE(v_real_experiment_template.name, '[deleted]') AS name FROM t_experiment_update_log
+LEFT JOIN t_experiment ON t_experiment_update_log.experiment_id = t_experiment.id
+LEFT JOIN t_experiment_template_v ON t_experiment.template_v_id = t_experiment_template_v.id
+LEFT JOIN v_real_experiment_template ON t_experiment_template_v.parent_id = v_real_experiment_template.id
+WHERE t_experiment_update_log.experiment_id = $1
+ORDER BY t_experiment_update_log.created_at DESC
+OFFSET $2
+LIMIT $3
+`
+
+type SelectExperimentUpdateLogsParams struct {
+	ExperimentID int32
+	Offset       int32
+	Limit        int32
+}
+
+type SelectExperimentUpdateLogsRow struct {
+	ID           int32
+	CreatedAt    pgtype.Timestamp
+	ProjectID    int32
+	ExperimentID int32
+	Username     string
+	Act          string
+	Details      []byte
+	Comment      string
+	Total        int64
+	Name         string
+}
+
+func (q *Queries) SelectExperimentUpdateLogs(ctx context.Context, arg SelectExperimentUpdateLogsParams) ([]SelectExperimentUpdateLogsRow, error) {
+	rows, err := q.db.Query(ctx, selectExperimentUpdateLogs, arg.ExperimentID, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SelectExperimentUpdateLogsRow
+	for rows.Next() {
+		var i SelectExperimentUpdateLogsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.ProjectID,
+			&i.ExperimentID,
+			&i.Username,
+			&i.Act,
+			&i.Details,
 			&i.Comment,
 			&i.Total,
 			&i.Name,
@@ -609,104 +707,6 @@ func (q *Queries) SelectNamespaceUpdateLogs(ctx context.Context, arg SelectNames
 			&i.ID,
 			&i.CreatedAt,
 			&i.NamespaceID,
-			&i.Username,
-			&i.Act,
-			&i.Details,
-			&i.Comment,
-			&i.Total,
-			&i.Name,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const selectExperimentLog = `-- name: SelectExperimentLog :one
-SELECT t_experiment_update_log.id, t_experiment_update_log.created_at, t_experiment_update_log.project_id, t_experiment_update_log.experiment_id, t_experiment_update_log.username, t_experiment_update_log.act, t_experiment_update_log.details, t_experiment_update_log.comment, COALESCE(v_real_experiment_template.name, '[deleted]') AS name FROM t_experiment_update_log
-LEFT JOIN t_experiment ON t_experiment_update_log.experiment_id = t_experiment.id
-LEFT JOIN t_experiment_template_v ON t_experiment.template_v_id = t_experiment_template_v.id
-LEFT JOIN v_real_experiment_template ON t_experiment_template_v.parent_id = v_real_experiment_template.id
-WHERE t_experiment_update_log.id = $1
-`
-
-type SelectExperimentLogRow struct {
-	ID         int32
-	CreatedAt  pgtype.Timestamp
-	ProjectID  int32
-	ExperimentID int32
-	Username   string
-	Act        string
-	Details    []byte
-	Comment    string
-	Name       string
-}
-
-func (q *Queries) SelectExperimentLog(ctx context.Context, id int32) (SelectExperimentLogRow, error) {
-	row := q.db.QueryRow(ctx, selectExperimentLog, id)
-	var i SelectExperimentLogRow
-	err := row.Scan(
-		&i.ID,
-		&i.CreatedAt,
-		&i.ProjectID,
-		&i.ExperimentID,
-		&i.Username,
-		&i.Act,
-		&i.Details,
-		&i.Comment,
-		&i.Name,
-	)
-	return i, err
-}
-
-const selectExperimentUpdateLogs = `-- name: SelectExperimentUpdateLogs :many
-SELECT t_experiment_update_log.id, t_experiment_update_log.created_at, t_experiment_update_log.project_id, t_experiment_update_log.experiment_id, t_experiment_update_log.username, t_experiment_update_log.act, t_experiment_update_log.details, t_experiment_update_log.comment, COUNT(*) OVER() AS total, COALESCE(v_real_experiment_template.name, '[deleted]') AS name FROM t_experiment_update_log
-LEFT JOIN t_experiment ON t_experiment_update_log.experiment_id = t_experiment.id
-LEFT JOIN t_experiment_template_v ON t_experiment.template_v_id = t_experiment_template_v.id
-LEFT JOIN v_real_experiment_template ON t_experiment_template_v.parent_id = v_real_experiment_template.id
-WHERE t_experiment_update_log.experiment_id = $1
-ORDER BY t_experiment_update_log.created_at DESC
-OFFSET $2
-LIMIT $3
-`
-
-type SelectExperimentUpdateLogsParams struct {
-	ExperimentID int32
-	Offset     int32
-	Limit      int32
-}
-
-type SelectExperimentUpdateLogsRow struct {
-	ID         int32
-	CreatedAt  pgtype.Timestamp
-	ProjectID  int32
-	ExperimentID int32
-	Username   string
-	Act        string
-	Details    []byte
-	Comment    string
-	Total      int64
-	Name       string
-}
-
-func (q *Queries) SelectExperimentUpdateLogs(ctx context.Context, arg SelectExperimentUpdateLogsParams) ([]SelectExperimentUpdateLogsRow, error) {
-	rows, err := q.db.Query(ctx, selectExperimentUpdateLogs, arg.ExperimentID, arg.Offset, arg.Limit)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []SelectExperimentUpdateLogsRow
-	for rows.Next() {
-		var i SelectExperimentUpdateLogsRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.CreatedAt,
-			&i.ProjectID,
-			&i.ExperimentID,
 			&i.Username,
 			&i.Act,
 			&i.Details,
@@ -832,20 +832,6 @@ func (q *Queries) UpdateDatasetLogComment(ctx context.Context, arg UpdateDataset
 	return err
 }
 
-const updateNamespaceLogComment = `-- name: UpdateNamespaceLogComment :exec
-UPDATE t_namespace_update_log SET comment=$1 WHERE id=$2
-`
-
-type UpdateNamespaceLogCommentParams struct {
-	Comment string
-	ID      int32
-}
-
-func (q *Queries) UpdateNamespaceLogComment(ctx context.Context, arg UpdateNamespaceLogCommentParams) error {
-	_, err := q.db.Exec(ctx, updateNamespaceLogComment, arg.Comment, arg.ID)
-	return err
-}
-
 const updateExperimentLogComment = `-- name: UpdateExperimentLogComment :exec
 UPDATE t_experiment_update_log SET comment=$1 WHERE id=$2
 `
@@ -857,6 +843,20 @@ type UpdateExperimentLogCommentParams struct {
 
 func (q *Queries) UpdateExperimentLogComment(ctx context.Context, arg UpdateExperimentLogCommentParams) error {
 	_, err := q.db.Exec(ctx, updateExperimentLogComment, arg.Comment, arg.ID)
+	return err
+}
+
+const updateNamespaceLogComment = `-- name: UpdateNamespaceLogComment :exec
+UPDATE t_namespace_update_log SET comment=$1 WHERE id=$2
+`
+
+type UpdateNamespaceLogCommentParams struct {
+	Comment string
+	ID      int32
+}
+
+func (q *Queries) UpdateNamespaceLogComment(ctx context.Context, arg UpdateNamespaceLogCommentParams) error {
+	_, err := q.db.Exec(ctx, updateNamespaceLogComment, arg.Comment, arg.ID)
 	return err
 }
 

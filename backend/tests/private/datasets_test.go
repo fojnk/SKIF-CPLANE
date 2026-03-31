@@ -25,9 +25,8 @@ func (s *StreamflowTestSuite) TestDatasetPublicAndManaged() {
 	// PROJECT 1
 	projRes, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project6"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project6"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -80,7 +79,7 @@ func (s *StreamflowTestSuite) TestDatasetPublicAndManaged() {
 	// get dataset 1
 	getRes, err := s.c.Dataset.GetAPIV2Dataset(&dataset2.GetAPIV2DatasetParams{
 		DatasetID: res.Payload.ID,
-		Context:      s.ctx,
+		Context:   s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(getRes)
@@ -131,9 +130,8 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 	// PROJECT 1
 	projRes, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -157,9 +155,8 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 	// PROJECT 2
 	projRes2, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test2-project"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test2-project"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -187,9 +184,9 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 	// copy dataset 1 to project 2
 	copyRes, err := s.c.Dataset.PostAPIV2DatasetCopy(&dataset2.PostAPIV2DatasetCopyParams{
 		Request: &models2.RequestsCopyDatasetRequestV2{
-			ProjectID:       projRes2.Payload.ID,
+			ProjectID:    projRes2.Payload.ID,
 			SrcDatasetID: &res.Payload.ID,
-			Name:            ptr("test-dataset-copy"),
+			Name:         ptr("test-dataset-copy"),
 		},
 		Context: s.ctx,
 	})
@@ -236,7 +233,7 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 	copyRes2, err := s.c.Dataset.PostAPIV2DatasetCopy(&dataset2.PostAPIV2DatasetCopyParams{
 		Request: &models2.RequestsCopyDatasetRequestV2{
 			SrcDatasetID: &res.Payload.ID,
-			Name:            ptr("test-dataset-copy2"),
+			Name:         ptr("test-dataset-copy2"),
 		},
 		Context: s.ctx,
 	})
@@ -299,10 +296,10 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 	)
 
 	dsVersions, err := s.c.Dataset.GetAPIV2DatasetVersions(&dataset2.GetAPIV2DatasetVersionsParams{
-		Context:      s.ctx,
+		Context:   s.ctx,
 		DatasetID: res.Payload.ID,
-		From:         0,
-		Limit:        10,
+		From:      0,
+		Limit:     10,
 	})
 
 	s.Require().NoError(err)
@@ -348,7 +345,7 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 	// get dataset 1
 	getRes, err := s.c.Dataset.GetAPIV2Dataset(&dataset2.GetAPIV2DatasetParams{
 		DatasetID: res.Payload.ID,
-		Context:      s.ctx,
+		Context:   s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(getRes)
@@ -377,10 +374,10 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 	s.Require().Equal("updated-dataset", updateRes.Payload.Dataset.Name)
 
 	dsVersions2, err := s.c.Dataset.GetAPIV2DatasetVersions(&dataset2.GetAPIV2DatasetVersionsParams{
-		Context:      s.ctx,
+		Context:   s.ctx,
 		DatasetID: res.Payload.ID,
-		From:         0,
-		Limit:        10,
+		From:      0,
+		Limit:     10,
 	})
 
 	s.Require().NoError(err)
@@ -521,9 +518,8 @@ func (s *StreamflowTestSuite) TestDatasetSearch2() {
 	// PROJECT 1
 	projRes, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -573,7 +569,7 @@ func (s *StreamflowTestSuite) TestDatasetSearch2() {
 	copyRes2, err := s.c.Dataset.PostAPIV2DatasetCopy(&dataset2.PostAPIV2DatasetCopyParams{
 		Request: &models2.RequestsCopyDatasetRequestV2{
 			SrcDatasetID: &res.Payload.ID,
-			Name:            ptr("test-dataset-copy2"),
+			Name:         ptr("test-dataset-copy2"),
 		},
 		Context: s.ctx,
 	})
@@ -585,7 +581,7 @@ func (s *StreamflowTestSuite) TestDatasetSearch2() {
 	s.Require().Equal("Queue", copyRes2.Payload.Type)
 
 	check, err := s.c.Dataset.GetAPIV2Dataset(&dataset2.GetAPIV2DatasetParams{
-		Context:      s.ctx,
+		Context:   s.ctx,
 		DatasetID: copyRes2.Payload.ID,
 	})
 	s.Require().NoError(err)

@@ -1,8 +1,8 @@
 package private
 
 import (
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	experiment2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/experiment"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/project"
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
@@ -24,9 +24,8 @@ func (s *StreamflowTestSuite) TestExperimentStatus() {
 	// Create project
 	projResp, err := s.c.Project.PostAPIV1Project(&project.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-experiment-status"),
-			NamespaceID:  ptr(nsResp.Payload.ID),
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-experiment-status"),
+			NamespaceID: ptr(nsResp.Payload.ID),
 		},
 
 		Context: s.ctx,
@@ -61,7 +60,7 @@ func (s *StreamflowTestSuite) TestExperimentStatus() {
 	// get status
 	statusResp, err := s.c.Experiment.GetAPIV1ExperimentStatus(&experiment2.GetAPIV1ExperimentStatusParams{
 		ExperimentID: cpResp.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(statusResp)
@@ -82,7 +81,7 @@ func (s *StreamflowTestSuite) TestExperimentStatus() {
 	// get status
 	statusResp, err = s.c.Experiment.GetAPIV1ExperimentStatus(&experiment2.GetAPIV1ExperimentStatusParams{
 		ExperimentID: cpResp.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(statusResp)
@@ -93,9 +92,9 @@ func (s *StreamflowTestSuite) TestExperimentStatus() {
 
 	listLogsRes, err := s.c.Experiment.GetAPIV1ExperimentLogs(&experiment2.GetAPIV1ExperimentLogsParams{
 		ExperimentID: &cpResp.Payload.ID,
-		From:       0,
-		Limit:      10,
-		Context:    s.ctx,
+		From:         0,
+		Limit:        10,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(listLogsRes)

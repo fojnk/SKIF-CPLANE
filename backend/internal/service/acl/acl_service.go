@@ -3,6 +3,9 @@ package service
 import (
 	"context"
 	"fmt"
+	"strings"
+
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	dbcore "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/db/core"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/dto"
@@ -349,10 +352,14 @@ func (s *ACLService) ListUserGroupMatches(ctx context.Context, userGroupID int32
 
 // CreateRole создает новую роль
 func (s *ACLService) CreateRole(ctx context.Context, name, description string, idmID string) (int32, error) {
+	key := strings.TrimSpace(idmID)
+	if key == "" {
+		key = "cplane_" + uuid.NewString()
+	}
 	role, err := s.repo.DB.InsertRole(ctx, dbcore.InsertRoleParams{
 		Name:        name,
 		Description: description,
-        IdmID:       idmID,
+		IdmID:       key,
 	})
 	if err != nil {
 		s.repo.Logger.Error("failed to insert role", err)
@@ -432,7 +439,7 @@ func (s *ACLService) CreateRule(ctx context.Context, objectType, objectAttribute
 		return 0, serviceerrors.NewInternalError("Не удалось создать правило", err)
 	}
 
-	s.repo.Logger.Info(fmt.Sprintf("created rule id: %d, object_type: %s, object_attribute: %s, object_id: %d, action: %s", 
+	s.repo.Logger.Info(fmt.Sprintf("created rule id: %d, object_type: %s, object_attribute: %s, object_id: %d, action: %s",
 		id, objectType, objectAttribute, objectID, action))
 
 	return id, nil
@@ -479,4 +486,3 @@ func (s *ACLService) GetProjectRights(ctx context.Context, userInfo *user.UserIn
 func (s *ACLService) GetNamespaceRights(ctx context.Context, userInfo *user.UserInfo, namespaceID int32) ([]acl.Right, error) {
 	return acl.GetNamespaceRights(ctx, &s.repo.Config.ACL, s.repo.Logger, s.repo.DB, "", userInfo, namespaceID)
 }
-

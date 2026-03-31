@@ -4,10 +4,10 @@ WORKDIR /frontend
 
 RUN apk add --no-cache python3 make g++
 
-COPY cplane/frontend/package*.json ./
+COPY front/package*.json ./
 RUN npm ci
 
-COPY cplane/frontend/ ./
+COPY front/ ./
 
 ENV NODE_ENV=production
 ENV NODE_OPTIONS=--max-old-space-size=2048

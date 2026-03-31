@@ -4,9 +4,6 @@ DROP VIEW IF EXISTS v_real_dataset;
 DROP VIEW IF EXISTS v_real_project;
 DROP VIEW IF EXISTS v_real_namespace;
 
-DROP TABLE IF EXISTS t_alert_rules CASCADE;
-DROP TABLE IF EXISTS t_alert_groups CASCADE;
-DROP TABLE IF EXISTS t_products CASCADE;
 DROP TABLE IF EXISTS t_app_updates CASCADE;
 DROP TABLE IF EXISTS t_app_about CASCADE;
 DROP TABLE IF EXISTS t_app_upcoming CASCADE;

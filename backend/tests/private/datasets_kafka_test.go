@@ -24,9 +24,8 @@ func (s *StreamflowTestSuite) TestDatasetKafka() {
 	// PROJECT
 	projRes, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-kafka"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-kafka"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -65,7 +64,7 @@ func (s *StreamflowTestSuite) TestDatasetKafka() {
 	// get dataset
 	getRes, err := s.c.Dataset.GetAPIV2Dataset(&dataset2.GetAPIV2DatasetParams{
 		DatasetID: res.Payload.ID,
-		Context:      s.ctx,
+		Context:   s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(getRes)

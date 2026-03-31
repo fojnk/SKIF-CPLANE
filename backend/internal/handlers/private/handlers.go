@@ -586,43 +586,6 @@ var Definitions = []shared.Definition{
 		Handler: shared.CreateHandler(updateExperimentVariableVersionHandler, setters.EmptySetParam[requests.UpdateExperimentVariableVersionRequest], validation.DefaultValidate[requests.UpdateExperimentVariableVersionRequest]),
 		Method:  http.MethodPut,
 	},
-	// Alerts
-	{
-		Path:        "/api/v2/experiment/alerts/options",
-		Handler:     shared.CreateHandler(getAlertOptionsHandler, setters.EmptySetParam[requests.EmptyAlertRequest], validation.DefaultValidate[requests.EmptyAlertRequest]),
-		Method:      http.MethodGet,
-		DisableAuth: true,
-	},
-	{
-		Path:    "/api/v2/experiment/alerts/products",
-		Handler: shared.CreateHandler(getProductsHandler, setters.SetGetProductsParams, validation.ValidateGetProductsRequest, "experiment_id"),
-		Method:  http.MethodGet,
-	},
-	{
-		Path:    "/api/v2/experiment/alerts",
-		Handler: shared.CreateHandler(getAlertGroupHandler, setters.SetGetAlertsParams, validation.ValidateGetAlertsRequest, "experiment_id", "product_id"),
-		Method:  http.MethodGet,
-	},
-	{
-		Path:    "/api/v2/experiment/alerts",
-		Handler: shared.CreateHandler(createAlertsHandler, setters.SetCreateAlertGroupParams, validation.DefaultValidate[requests.CreateAlertGroupRequest], "experiment_id", "product_id"),
-		Method:  http.MethodPost,
-	},
-	{
-		Path:    "/api/v2/experiment/alerts",
-		Handler: shared.CreateHandler(deleteAlertGroupHandler, setters.SetDeleteAlertGroupParams, validation.DefaultValidate[requests.DeleteAlertsRequest], "experiment_id", "product_id"),
-		Method:  http.MethodDelete,
-	},
-	{
-		Path:    "/api/v2/experiment/alerts/template",
-		Handler: shared.CreateHandler(changeAlertSeveritiesHandler, setters.SetChangeAlertSeveritiesParams, validation.DefaultValidate[requests.ChangeAlertSeveritiesRequest], "experiment_id", "product_id"),
-		Method:  http.MethodPut,
-	},
-	{
-		Path:    "/api/v2/experiment/alerts/rule",
-		Handler: shared.CreateHandler(changeAlertHandler, setters.SetChangeAlertParams, validation.DefaultValidate[requests.ChangeAlertRequest], "experiment_id", "product_id", "rule_id"),
-		Method:  http.MethodPut,
-	},
 	// Dataset
 	{
 		Path:    "/api/v2/dataset/config/validate",
@@ -829,38 +792,11 @@ var Definitions = []shared.Definition{
 		Handler: shared.CreateHandler(updateAppAboutHandler, setters.EmptySetParam[requests.UpdateAppAboutRequest], validation.DefaultValidate[requests.UpdateAppAboutRequest]),
 		Method:  http.MethodPut,
 	},
-	// Robot
-	{
-		Path:    "/api/v1/robot/tokens",
-		Handler: shared.CreateHandler(deleteAllRobotTokensHandler, setters.EmptySetParam[requests.DeleteAllTokenForRobotRequest], validation.DefaultValidate[requests.DeleteAllTokenForRobotRequest]),
-		Method:  http.MethodDelete,
-	},
-	{
-		Path:    "/api/v1/robot/token",
-		Handler: shared.CreateHandler(generateTokenForRobotHandler, setters.EmptySetParam[requests.GenerateTokenForRobotRequest], validation.DefaultValidate[requests.GenerateTokenForRobotRequest]),
-		Method:  http.MethodPost,
-	},
-	{
-		Path:    "/api/v1/robot",
-		Handler: shared.CreateHandler(createRobotHandler, setters.EmptySetParam[requests.CreateRobotRequest], validation.DefaultValidate[requests.CreateRobotRequest]),
-		Method:  http.MethodPost,
-	},
 	// Schema
 	{
 		Path:    "/api/v2/schema",
 		Handler: shared.CreateHandler(getConfigSchemaHandler, setters.SetGetSchema, validation.DefaultValidate[requests.GetSchemaRequest], "config_type"),
 		Method:  http.MethodGet,
-	},
-	// IDM
-	{
-		Path:    "/api/v2/idm/project/roles",
-		Handler: shared.CreateHandler(createProjectRolesHandler, setters.EmptySetParam[requests.CreateProjectRolesRequest], validation.DefaultValidate[requests.CreateProjectRolesRequest]),
-		Method:  http.MethodPost,
-	},
-	{
-		Path:    "/api/v2/idm/namespace/roles",
-		Handler: shared.CreateHandler(createNamespaceRolesHandler, setters.EmptySetParam[requests.CreateNamespaceRolesRequest], validation.DefaultValidate[requests.CreateNamespaceRolesRequest]),
-		Method:  http.MethodPost,
 	},
 	// Forms
 	{

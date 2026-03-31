@@ -120,7 +120,7 @@ AND experiment_id = $2
 `
 
 type DeleteExperimentDatasetParams struct {
-	ID         int32
+	ID           int32
 	ExperimentID int32
 }
 
@@ -152,18 +152,18 @@ LIMIT $2 OFFSET $3
 
 type GetDatasetLinkedExperimentsParams struct {
 	DatasetID int32
-	Limit        int32
-	Offset       int32
+	Limit     int32
+	Offset    int32
 }
 
 type GetDatasetLinkedExperimentsRow struct {
-	LinkID       int32
-	Alias        string
+	LinkID         int32
+	Alias          string
 	ExperimentID   pgtype.Int4
 	ExperimentName pgtype.Text
-	ProjectID    pgtype.Int4
-	ProjectName  pgtype.Text
-	Total        int64
+	ProjectID      pgtype.Int4
+	ProjectName    pgtype.Text
+	Total          int64
 }
 
 func (q *Queries) GetDatasetLinkedExperiments(ctx context.Context, arg GetDatasetLinkedExperimentsParams) ([]GetDatasetLinkedExperimentsRow, error) {
@@ -209,7 +209,7 @@ ORDER BY cluster_prefix, path
 type GetDuplicateListingRow struct {
 	ClusterPrefix pgtype.Bits
 	Path          interface{}
-	DatasetIds interface{}
+	DatasetIds    interface{}
 	Cnt           int64
 }
 
@@ -255,17 +255,17 @@ WHERE t_experiment_dataset.experiment_id = $1 AND t_dataset.deleted = FALSE AND 
 
 type GetExperimentDatasetParams struct {
 	ExperimentID int32
-	Alias      string
+	Alias        string
 }
 
 type GetExperimentDatasetRow struct {
-	LinkID       int32
-	Alias        string
-	Name         string
-	Type         string
-	DatasetID int32
-	ProjectID    int32
-	ProjectName  string
+	LinkID      int32
+	Alias       string
+	Name        string
+	Type        string
+	DatasetID   int32
+	ProjectID   int32
+	ProjectName string
 }
 
 func (q *Queries) GetExperimentDataset(ctx context.Context, arg GetExperimentDatasetParams) (GetExperimentDatasetRow, error) {
@@ -300,13 +300,13 @@ ORDER BY t_experiment_dataset.alias, t_dataset.name
 `
 
 type GetExperimentDatasetsRow struct {
-	LinkID       int32
-	Alias        string
-	Name         string
-	Type         string
-	DatasetID int32
-	ProjectID    int32
-	ProjectName  string
+	LinkID      int32
+	Alias       string
+	Name        string
+	Type        string
+	DatasetID   int32
+	ProjectID   int32
+	ProjectName string
 }
 
 func (q *Queries) GetExperimentDatasets(ctx context.Context, experimentID int32) ([]GetExperimentDatasetsRow, error) {
@@ -395,8 +395,8 @@ RETURNING id
 `
 
 type InsertExperimentDatasetParams struct {
-	ExperimentID   int32
-	DatasetID int32
+	ExperimentID int32
+	DatasetID    int32
 	Alias        string
 }
 

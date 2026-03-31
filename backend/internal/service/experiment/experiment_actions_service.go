@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/jackc/pgx/v5/pgtype"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/clients"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/clients/orchestrator/client"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/db/core"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/dto"
@@ -20,7 +19,7 @@ import (
 	serviceerrors "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/errors"
 )
 
-// StartExperiment запускает experiment через jobd (если доступен) или напрямую через orchestrator
+// StartExperiment запускает experiment через orchestrator
 func (p *ExperimentService) StartExperiment(ctx context.Context, experimentID int32, username ...string) error {
 	experiment, err := p.repo.DB.SelectCompleteExperiment(ctx, experimentID)
 	if err != nil {
@@ -30,63 +29,6 @@ func (p *ExperimentService) StartExperiment(ctx context.Context, experimentID in
 
 	orchID := experiment.OrchID.String
 
-	// Если jobd доступен, создаем джобу
-	if p.repo.Clients.Jobd != nil && len(username) > 0 && username[0] != "" {
-		entity := &clients.LinkedEntity{
-			Type: "experiment",
-			Id:   int64(experimentID),
-		}
-
-		execTarget := "orchestrator"
-		tags := []string{"experiment", "start"}
-		jobName := fmt.Sprintf("start-experiment-%d", experimentID)
-		desc := fmt.Sprintf("Start experiment %d", experimentID)
-		jobConfig := map[string]interface{}{
-			"experiment_id": orchID,
-		}
-
-		stepDesc := "Start experiment"
-		stepOrder := int32(0)
-		stepConfig := map[string]interface{}{
-			"type":        "experiment_start",
-			"experiment_id": orchID,
-		}
-		steps := []clients.CreateStep{
-			{
-				Name:        "start_experiment",
-				Description: &stepDesc,
-				Order:       &stepOrder,
-				Config:      &stepConfig,
-			},
-		}
-
-		createJobReq := clients.CreateJobRequest{
-			Name:            jobName,
-			Description:     &desc,
-			Type:            "experiment_start",
-			ExecutionTarget: &execTarget,
-			Config:          &jobConfig,
-			Entity:          entity,
-			Tags:            &tags,
-			Steps:           &steps,
-		}
-
-		ctxWithUserID := clients.WithUserID(ctx, username[0])
-		jobResp, err := p.repo.Clients.Jobd.CreateJob(ctxWithUserID, createJobReq)
-		if err != nil {
-			p.repo.Logger.Error("failed to create start experiment job in jobd, falling back to direct orchestrator call", err)
-			// Fallback to direct orchestrator call
-		} else {
-			var jobID int64
-			if jobResp.Job != nil && jobResp.Job.Id != nil {
-				jobID = *jobResp.Job.Id
-			}
-			p.repo.Logger.Info(fmt.Sprintf("Start experiment job created in jobd: job_id=%d, experiment_id=%d", jobID, experimentID))
-			return nil
-		}
-	}
-
-	// Fallback: прямой вызов orchestrator
 	resp, err := p.repo.Clients.Orchestrator.Client.PostV1ExperimentsStartWithResponse(ctx, &client.PostV1ExperimentsStartParams{
 		ExperimentId: orchID,
 	}, client.PostV1ExperimentsStartJSONRequestBody(make(map[string]interface{})))
@@ -102,7 +44,7 @@ func (p *ExperimentService) StartExperiment(ctx context.Context, experimentID in
 	return nil
 }
 
-// StopExperiment останавливает experiment через jobd (если доступен) или напрямую через orchestrator
+// StopExperiment останавливает experiment через orchestrator
 func (p *ExperimentService) StopExperiment(ctx context.Context, experimentID int32, username ...string) error {
 	experiment, err := p.repo.DB.SelectCompleteExperiment(ctx, experimentID)
 	if err != nil {
@@ -112,63 +54,6 @@ func (p *ExperimentService) StopExperiment(ctx context.Context, experimentID int
 
 	orchID := experiment.OrchID.String
 
-	// Если jobd доступен, создаем джобу
-	if p.repo.Clients.Jobd != nil && len(username) > 0 && username[0] != "" {
-		entity := &clients.LinkedEntity{
-			Type: "experiment",
-			Id:   int64(experimentID),
-		}
-
-		execTarget := "orchestrator"
-		tags := []string{"experiment", "stop"}
-		jobName := fmt.Sprintf("stop-experiment-%d", experimentID)
-		desc := fmt.Sprintf("Stop experiment %d", experimentID)
-		jobConfig := map[string]interface{}{
-			"experiment_id": orchID,
-		}
-
-		stepDesc := "Stop experiment"
-		stepOrder := int32(0)
-		stepConfig := map[string]interface{}{
-			"type":        "experiment_stop",
-			"experiment_id": orchID,
-		}
-		steps := []clients.CreateStep{
-			{
-				Name:        "stop_experiment",
-				Description: &stepDesc,
-				Order:       &stepOrder,
-				Config:      &stepConfig,
-			},
-		}
-
-		createJobReq := clients.CreateJobRequest{
-			Name:            jobName,
-			Description:     &desc,
-			Type:            "experiment_stop",
-			ExecutionTarget: &execTarget,
-			Config:          &jobConfig,
-			Entity:          entity,
-			Tags:            &tags,
-			Steps:           &steps,
-		}
-
-		ctxWithUserID := clients.WithUserID(ctx, username[0])
-		jobResp, err := p.repo.Clients.Jobd.CreateJob(ctxWithUserID, createJobReq)
-		if err != nil {
-			p.repo.Logger.Error("failed to create stop experiment job in jobd, falling back to direct orchestrator call", err)
-			// Fallback to direct orchestrator call
-		} else {
-			var jobID int64
-			if jobResp.Job != nil && jobResp.Job.Id != nil {
-				jobID = *jobResp.Job.Id
-			}
-			p.repo.Logger.Info(fmt.Sprintf("Stop experiment job created in jobd: job_id=%d, experiment_id=%d", jobID, experimentID))
-			return nil
-		}
-	}
-
-	// Fallback: прямой вызов orchestrator
 	resp, err := p.repo.Clients.Orchestrator.Client.PostV1ExperimentsStopWithResponse(ctx, &client.PostV1ExperimentsStopParams{
 		ExperimentId: orchID,
 	}, client.PostV1ExperimentsStopJSONRequestBody(make(map[string]interface{})))

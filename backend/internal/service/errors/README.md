@@ -42,7 +42,7 @@ type ServiceError struct {
 - `EntityExperimentVariable` - переменные пайплайна
 - `EntityUser`, `EntityUserGroup`, `EntityRole`, `EntityRule` - управление доступом
 - `EntityUpdateLog`, `EntityVersion` - версионирование
-- `EntityAppBanner`, `EntityRobot` - прочие сущности
+- `EntityAppBanner` - прочие сущности
 - `EntityGeneric` - для общих случаев
 
 ## Использование в сервисном слое

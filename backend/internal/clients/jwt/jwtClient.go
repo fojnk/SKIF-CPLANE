@@ -109,17 +109,6 @@ func (j *Client) CreateAccessAndRefreshJWT(username string) (*TokenInfo, *TokenI
 	return accessToken, refreshToken, nil
 }
 
-func (j *Client) CreateRobotToken(username string) (*TokenInfo, error) {
-	accessExpire := time.Now().Add(j.RefreshExpireTime * 10)
-
-	accessToken, err := j.CreateJWT(username, accessExpire)
-	if err != nil {
-		return nil, err
-	}
-
-	return accessToken, nil
-}
-
 func (j *Client) RefreshToken(refreshToken string) (*TokenInfo, *TokenInfo, error) {
 	claims, err := j.ValidateJWT(refreshToken)
 	if err != nil {

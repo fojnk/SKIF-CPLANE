@@ -15,7 +15,6 @@ import (
 
 	pgtype "github.com/jackc/pgx/v5/pgtype"
 	core "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/db/core"
-	alerts "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/dto/alerts"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -41,20 +40,6 @@ func NewMockDB(ctrl *gomock.Controller) *MockDB {
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockDB) EXPECT() *MockDBMockRecorder {
 	return m.recorder
-}
-
-// AddNewProduct mocks base method.
-func (m *MockDB) AddNewProduct(ctx context.Context, productID int32) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "AddNewProduct", ctx, productID)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// AddNewProduct indicates an expected call of AddNewProduct.
-func (mr *MockDBMockRecorder) AddNewProduct(ctx, productID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddNewProduct", reflect.TypeOf((*MockDB)(nil).AddNewProduct), ctx, productID)
 }
 
 // AddRoleToBatchUsers mocks base method.
@@ -114,21 +99,6 @@ func (mr *MockDBMockRecorder) BaseTemplateIDByExperimentID(ctx, id any) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BaseTemplateIDByExperimentID", reflect.TypeOf((*MockDB)(nil).BaseTemplateIDByExperimentID), ctx, id)
 }
 
-// CheckKafkaDatasetDuplicate mocks base method.
-func (m *MockDB) CheckKafkaDatasetDuplicate(ctx context.Context, arg core.CheckKafkaDatasetDuplicateParams) ([]int32, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CheckKafkaDatasetDuplicate", ctx, arg)
-	ret0, _ := ret[0].([]int32)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CheckKafkaDatasetDuplicate indicates an expected call of CheckKafkaDatasetDuplicate.
-func (mr *MockDBMockRecorder) CheckKafkaDatasetDuplicate(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckKafkaDatasetDuplicate", reflect.TypeOf((*MockDB)(nil).CheckKafkaDatasetDuplicate), ctx, arg)
-}
-
 // CheckExperimentLimit mocks base method.
 func (m *MockDB) CheckExperimentLimit(ctx context.Context, id int32) (int32, error) {
 	m.ctrl.T.Helper()
@@ -144,18 +114,19 @@ func (mr *MockDBMockRecorder) CheckExperimentLimit(ctx, id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckExperimentLimit", reflect.TypeOf((*MockDB)(nil).CheckExperimentLimit), ctx, id)
 }
 
-// CheckRobotToken mocks base method.
-func (m *MockDB) CheckRobotToken(ctx context.Context, token string) error {
+// CheckKafkaDatasetDuplicate mocks base method.
+func (m *MockDB) CheckKafkaDatasetDuplicate(ctx context.Context, arg core.CheckKafkaDatasetDuplicateParams) ([]int32, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CheckRobotToken", ctx, token)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret := m.ctrl.Call(m, "CheckKafkaDatasetDuplicate", ctx, arg)
+	ret0, _ := ret[0].([]int32)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
-// CheckRobotToken indicates an expected call of CheckRobotToken.
-func (mr *MockDBMockRecorder) CheckRobotToken(ctx, token any) *gomock.Call {
+// CheckKafkaDatasetDuplicate indicates an expected call of CheckKafkaDatasetDuplicate.
+func (mr *MockDBMockRecorder) CheckKafkaDatasetDuplicate(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckRobotToken", reflect.TypeOf((*MockDB)(nil).CheckRobotToken), ctx, token)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CheckKafkaDatasetDuplicate", reflect.TypeOf((*MockDB)(nil).CheckKafkaDatasetDuplicate), ctx, arg)
 }
 
 // CheckUserHasRight mocks base method.
@@ -201,6 +172,21 @@ func (m *MockDB) CompleteExperimentInfo(ctx context.Context, id int32) (core.Com
 func (mr *MockDBMockRecorder) CompleteExperimentInfo(ctx, id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CompleteExperimentInfo", reflect.TypeOf((*MockDB)(nil).CompleteExperimentInfo), ctx, id)
+}
+
+// CountAppUpdatesPaginated mocks base method.
+func (m *MockDB) CountAppUpdatesPaginated(ctx context.Context, dollar_1 *bool) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CountAppUpdatesPaginated", ctx, dollar_1)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CountAppUpdatesPaginated indicates an expected call of CountAppUpdatesPaginated.
+func (mr *MockDBMockRecorder) CountAppUpdatesPaginated(ctx, dollar_1 any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountAppUpdatesPaginated", reflect.TypeOf((*MockDB)(nil).CountAppUpdatesPaginated), ctx, dollar_1)
 }
 
 // CreateUserRoles mocks base method.
@@ -261,62 +247,6 @@ func (mr *MockDBMockRecorder) DeactivateAllBannersExcept(ctx, id any) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeactivateAllBannersExcept", reflect.TypeOf((*MockDB)(nil).DeactivateAllBannersExcept), ctx, id)
 }
 
-// DeleteAlertGroup mocks base method.
-func (m *MockDB) DeleteAlertGroup(ctx context.Context, alertGroup alerts.AlertGroup) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteAlertGroup", ctx, alertGroup)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteAlertGroup indicates an expected call of DeleteAlertGroup.
-func (mr *MockDBMockRecorder) DeleteAlertGroup(ctx, alertGroup any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAlertGroup", reflect.TypeOf((*MockDB)(nil).DeleteAlertGroup), ctx, alertGroup)
-}
-
-// DeleteAlertGroups mocks base method.
-func (m *MockDB) DeleteAlertGroups(ctx context.Context, alertGroupID []int32) *core.DeleteAlertGroupsBatchResults {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteAlertGroups", ctx, alertGroupID)
-	ret0, _ := ret[0].(*core.DeleteAlertGroupsBatchResults)
-	return ret0
-}
-
-// DeleteAlertGroups indicates an expected call of DeleteAlertGroups.
-func (mr *MockDBMockRecorder) DeleteAlertGroups(ctx, alertGroupID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAlertGroups", reflect.TypeOf((*MockDB)(nil).DeleteAlertGroups), ctx, alertGroupID)
-}
-
-// DeleteAlertRule mocks base method.
-func (m *MockDB) DeleteAlertRule(ctx context.Context, ruleID []int32) *core.DeleteAlertRuleBatchResults {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteAlertRule", ctx, ruleID)
-	ret0, _ := ret[0].(*core.DeleteAlertRuleBatchResults)
-	return ret0
-}
-
-// DeleteAlertRule indicates an expected call of DeleteAlertRule.
-func (mr *MockDBMockRecorder) DeleteAlertRule(ctx, ruleID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAlertRule", reflect.TypeOf((*MockDB)(nil).DeleteAlertRule), ctx, ruleID)
-}
-
-// DeleteAllObjectMatches mocks base method.
-func (m *MockDB) DeleteAllObjectMatches(ctx context.Context, arg core.DeleteAllObjectMatchesParams) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteAllObjectMatches", ctx, arg)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteAllObjectMatches indicates an expected call of DeleteAllObjectMatches.
-func (mr *MockDBMockRecorder) DeleteAllObjectMatches(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAllObjectMatches", reflect.TypeOf((*MockDB)(nil).DeleteAllObjectMatches), ctx, arg)
-}
-
 // DeleteAllExperimentVersions mocks base method.
 func (m *MockDB) DeleteAllExperimentVersions(ctx context.Context, parentID int32) error {
 	m.ctrl.T.Helper()
@@ -331,32 +261,18 @@ func (mr *MockDBMockRecorder) DeleteAllExperimentVersions(ctx, parentID any) *go
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAllExperimentVersions", reflect.TypeOf((*MockDB)(nil).DeleteAllExperimentVersions), ctx, parentID)
 }
 
-// DeleteAllRobotTokens mocks base method.
-func (m *MockDB) DeleteAllRobotTokens(ctx context.Context, robotID int32) error {
+// DeleteAllObjectMatches mocks base method.
+func (m *MockDB) DeleteAllObjectMatches(ctx context.Context, arg core.DeleteAllObjectMatchesParams) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteAllRobotTokens", ctx, robotID)
+	ret := m.ctrl.Call(m, "DeleteAllObjectMatches", ctx, arg)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeleteAllRobotTokens indicates an expected call of DeleteAllRobotTokens.
-func (mr *MockDBMockRecorder) DeleteAllRobotTokens(ctx, robotID any) *gomock.Call {
+// DeleteAllObjectMatches indicates an expected call of DeleteAllObjectMatches.
+func (mr *MockDBMockRecorder) DeleteAllObjectMatches(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAllRobotTokens", reflect.TypeOf((*MockDB)(nil).DeleteAllRobotTokens), ctx, robotID)
-}
-
-// DeleteAlrtRules mocks base method.
-func (m *MockDB) DeleteAlrtRules(ctx context.Context, ruleIDs []int32) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteAlrtRules", ctx, ruleIDs)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteAlrtRules indicates an expected call of DeleteAlrtRules.
-func (mr *MockDBMockRecorder) DeleteAlrtRules(ctx, ruleIDs any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAlrtRules", reflect.TypeOf((*MockDB)(nil).DeleteAlrtRules), ctx, ruleIDs)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAllObjectMatches", reflect.TypeOf((*MockDB)(nil).DeleteAllObjectMatches), ctx, arg)
 }
 
 // DeleteAppBanner mocks base method.
@@ -443,76 +359,6 @@ func (mr *MockDBMockRecorder) DeleteDataset(ctx, id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteDataset", reflect.TypeOf((*MockDB)(nil).DeleteDataset), ctx, id)
 }
 
-// DeleteNamespace mocks base method.
-func (m *MockDB) DeleteNamespace(ctx context.Context, id int32) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteNamespace", ctx, id)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteNamespace indicates an expected call of DeleteNamespace.
-func (mr *MockDBMockRecorder) DeleteNamespace(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNamespace", reflect.TypeOf((*MockDB)(nil).DeleteNamespace), ctx, id)
-}
-
-// DeleteNamespaceConfig mocks base method.
-func (m *MockDB) DeleteNamespaceConfig(ctx context.Context, id int32) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteNamespaceConfig", ctx, id)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteNamespaceConfig indicates an expected call of DeleteNamespaceConfig.
-func (mr *MockDBMockRecorder) DeleteNamespaceConfig(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNamespaceConfig", reflect.TypeOf((*MockDB)(nil).DeleteNamespaceConfig), ctx, id)
-}
-
-// DeleteNamespaceVariable mocks base method.
-func (m *MockDB) DeleteNamespaceVariable(ctx context.Context, id int32) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteNamespaceVariable", ctx, id)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteNamespaceVariable indicates an expected call of DeleteNamespaceVariable.
-func (mr *MockDBMockRecorder) DeleteNamespaceVariable(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNamespaceVariable", reflect.TypeOf((*MockDB)(nil).DeleteNamespaceVariable), ctx, id)
-}
-
-// DeleteNotificationProductIds mocks base method.
-func (m *MockDB) DeleteNotificationProductIds(ctx context.Context, productID []int32) *core.DeleteNotificationProductIdsBatchResults {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteNotificationProductIds", ctx, productID)
-	ret0, _ := ret[0].(*core.DeleteNotificationProductIdsBatchResults)
-	return ret0
-}
-
-// DeleteNotificationProductIds indicates an expected call of DeleteNotificationProductIds.
-func (mr *MockDBMockRecorder) DeleteNotificationProductIds(ctx, productID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNotificationProductIds", reflect.TypeOf((*MockDB)(nil).DeleteNotificationProductIds), ctx, productID)
-}
-
-// DeletePinnedProject mocks base method.
-func (m *MockDB) DeletePinnedProject(ctx context.Context, arg core.DeletePinnedProjectParams) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeletePinnedProject", ctx, arg)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeletePinnedProject indicates an expected call of DeletePinnedProject.
-func (mr *MockDBMockRecorder) DeletePinnedProject(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeletePinnedProject", reflect.TypeOf((*MockDB)(nil).DeletePinnedProject), ctx, arg)
-}
-
 // DeleteExperiment mocks base method.
 func (m *MockDB) DeleteExperiment(ctx context.Context, id int32) error {
 	m.ctrl.T.Helper()
@@ -583,6 +429,62 @@ func (mr *MockDBMockRecorder) DeleteExperimentVariableByExperimentID(ctx, id any
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteExperimentVariableByExperimentID", reflect.TypeOf((*MockDB)(nil).DeleteExperimentVariableByExperimentID), ctx, id)
 }
 
+// DeleteNamespace mocks base method.
+func (m *MockDB) DeleteNamespace(ctx context.Context, id int32) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteNamespace", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteNamespace indicates an expected call of DeleteNamespace.
+func (mr *MockDBMockRecorder) DeleteNamespace(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNamespace", reflect.TypeOf((*MockDB)(nil).DeleteNamespace), ctx, id)
+}
+
+// DeleteNamespaceConfig mocks base method.
+func (m *MockDB) DeleteNamespaceConfig(ctx context.Context, id int32) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteNamespaceConfig", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteNamespaceConfig indicates an expected call of DeleteNamespaceConfig.
+func (mr *MockDBMockRecorder) DeleteNamespaceConfig(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNamespaceConfig", reflect.TypeOf((*MockDB)(nil).DeleteNamespaceConfig), ctx, id)
+}
+
+// DeleteNamespaceVariable mocks base method.
+func (m *MockDB) DeleteNamespaceVariable(ctx context.Context, id int32) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteNamespaceVariable", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteNamespaceVariable indicates an expected call of DeleteNamespaceVariable.
+func (mr *MockDBMockRecorder) DeleteNamespaceVariable(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNamespaceVariable", reflect.TypeOf((*MockDB)(nil).DeleteNamespaceVariable), ctx, id)
+}
+
+// DeletePinnedProject mocks base method.
+func (m *MockDB) DeletePinnedProject(ctx context.Context, arg core.DeletePinnedProjectParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeletePinnedProject", ctx, arg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeletePinnedProject indicates an expected call of DeletePinnedProject.
+func (mr *MockDBMockRecorder) DeletePinnedProject(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeletePinnedProject", reflect.TypeOf((*MockDB)(nil).DeletePinnedProject), ctx, arg)
+}
+
 // DeleteProject mocks base method.
 func (m *MockDB) DeleteProject(ctx context.Context, id int32) error {
 	m.ctrl.T.Helper()
@@ -623,20 +525,6 @@ func (m *MockDB) DeleteProjectVariable(ctx context.Context, id int32) error {
 func (mr *MockDBMockRecorder) DeleteProjectVariable(ctx, id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteProjectVariable", reflect.TypeOf((*MockDB)(nil).DeleteProjectVariable), ctx, id)
-}
-
-// DeleteRobotToken mocks base method.
-func (m *MockDB) DeleteRobotToken(ctx context.Context, id int32) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteRobotToken", ctx, id)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteRobotToken indicates an expected call of DeleteRobotToken.
-func (mr *MockDBMockRecorder) DeleteRobotToken(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteRobotToken", reflect.TypeOf((*MockDB)(nil).DeleteRobotToken), ctx, id)
 }
 
 // DeleteRoleMatchById mocks base method.
@@ -752,6 +640,49 @@ func (mr *MockDBMockRecorder) DisclaimUserRule(ctx, arg any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DisclaimUserRule", reflect.TypeOf((*MockDB)(nil).DisclaimUserRule), ctx, arg)
 }
 
+// ExperimentStart mocks base method.
+func (m *MockDB) ExperimentStart(ctx context.Context, id int32) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExperimentStart", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ExperimentStart indicates an expected call of ExperimentStart.
+func (mr *MockDBMockRecorder) ExperimentStart(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExperimentStart", reflect.TypeOf((*MockDB)(nil).ExperimentStart), ctx, id)
+}
+
+// ExperimentStatus mocks base method.
+func (m *MockDB) ExperimentStatus(ctx context.Context, id int32) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExperimentStatus", ctx, id)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ExperimentStatus indicates an expected call of ExperimentStatus.
+func (mr *MockDBMockRecorder) ExperimentStatus(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExperimentStatus", reflect.TypeOf((*MockDB)(nil).ExperimentStatus), ctx, id)
+}
+
+// ExperimentStop mocks base method.
+func (m *MockDB) ExperimentStop(ctx context.Context, id int32) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExperimentStop", ctx, id)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// ExperimentStop indicates an expected call of ExperimentStop.
+func (mr *MockDBMockRecorder) ExperimentStop(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExperimentStop", reflect.TypeOf((*MockDB)(nil).ExperimentStop), ctx, id)
+}
+
 // GetABCGroupRange mocks base method.
 func (m *MockDB) GetABCGroupRange(ctx context.Context, arg core.GetABCGroupRangeParams) ([]core.TUserGroup, error) {
 	m.ctrl.T.Helper()
@@ -765,38 +696,6 @@ func (m *MockDB) GetABCGroupRange(ctx context.Context, arg core.GetABCGroupRange
 func (mr *MockDBMockRecorder) GetABCGroupRange(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetABCGroupRange", reflect.TypeOf((*MockDB)(nil).GetABCGroupRange), ctx, arg)
-}
-
-// GetAlertGroupExperiment mocks base method.
-func (m *MockDB) GetAlertGroupExperiment(ctx context.Context, experimentID int32) (alerts.Experiment, bool, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAlertGroupExperiment", ctx, experimentID)
-	ret0, _ := ret[0].(alerts.Experiment)
-	ret1, _ := ret[1].(bool)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
-}
-
-// GetAlertGroupExperiment indicates an expected call of GetAlertGroupExperiment.
-func (mr *MockDBMockRecorder) GetAlertGroupExperiment(ctx, experimentID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAlertGroupExperiment", reflect.TypeOf((*MockDB)(nil).GetAlertGroupExperiment), ctx, experimentID)
-}
-
-// GetAlerts mocks base method.
-func (m *MockDB) GetAlerts(ctx context.Context, experimentID, productID int32) (alerts.AlertGroup, bool, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAlerts", ctx, experimentID, productID)
-	ret0, _ := ret[0].(alerts.AlertGroup)
-	ret1, _ := ret[1].(bool)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
-}
-
-// GetAlerts indicates an expected call of GetAlerts.
-func (mr *MockDBMockRecorder) GetAlerts(ctx, experimentID, productID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAlerts", reflect.TypeOf((*MockDB)(nil).GetAlerts), ctx, experimentID, productID)
 }
 
 // GetDatasetLinkedExperiments mocks base method.
@@ -887,51 +786,6 @@ func (m *MockDB) GetDuplicateListing(ctx context.Context) ([]core.GetDuplicateLi
 func (mr *MockDBMockRecorder) GetDuplicateListing(ctx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDuplicateListing", reflect.TypeOf((*MockDB)(nil).GetDuplicateListing), ctx)
-}
-
-// GetLinksCountByDatasetID mocks base method.
-func (m *MockDB) GetLinksCountByDatasetID(ctx context.Context, datasetID int32) (int64, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetLinksCountByDatasetID", ctx, datasetID)
-	ret0, _ := ret[0].(int64)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetLinksCountByDatasetID indicates an expected call of GetLinksCountByDatasetID.
-func (mr *MockDBMockRecorder) GetLinksCountByDatasetID(ctx, datasetID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLinksCountByDatasetID", reflect.TypeOf((*MockDB)(nil).GetLinksCountByDatasetID), ctx, datasetID)
-}
-
-// GetLinksCountByExperimentID mocks base method.
-func (m *MockDB) GetLinksCountByExperimentID(ctx context.Context, experimentID int32) (int64, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetLinksCountByExperimentID", ctx, experimentID)
-	ret0, _ := ret[0].(int64)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetLinksCountByExperimentID indicates an expected call of GetLinksCountByExperimentID.
-func (mr *MockDBMockRecorder) GetLinksCountByExperimentID(ctx, experimentID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLinksCountByExperimentID", reflect.TypeOf((*MockDB)(nil).GetLinksCountByExperimentID), ctx, experimentID)
-}
-
-// GetNamespacesWithoutRole mocks base method.
-func (m *MockDB) GetNamespacesWithoutRole(ctx context.Context) ([]core.TNamespace, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetNamespacesWithoutRole", ctx)
-	ret0, _ := ret[0].([]core.TNamespace)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// GetNamespacesWithoutRole indicates an expected call of GetNamespacesWithoutRole.
-func (mr *MockDBMockRecorder) GetNamespacesWithoutRole(ctx any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNamespacesWithoutRole", reflect.TypeOf((*MockDB)(nil).GetNamespacesWithoutRole), ctx)
 }
 
 // GetExperimentDataset mocks base method.
@@ -1039,19 +893,49 @@ func (mr *MockDBMockRecorder) GetExperimentsCount(ctx, projectID any) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetExperimentsCount", reflect.TypeOf((*MockDB)(nil).GetExperimentsCount), ctx, projectID)
 }
 
-// GetProductId mocks base method.
-func (m *MockDB) GetProductId(ctx context.Context, productID int32) (int32, error) {
+// GetLinksCountByDatasetID mocks base method.
+func (m *MockDB) GetLinksCountByDatasetID(ctx context.Context, datasetID int32) (int64, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetProductId", ctx, productID)
-	ret0, _ := ret[0].(int32)
+	ret := m.ctrl.Call(m, "GetLinksCountByDatasetID", ctx, datasetID)
+	ret0, _ := ret[0].(int64)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetProductId indicates an expected call of GetProductId.
-func (mr *MockDBMockRecorder) GetProductId(ctx, productID any) *gomock.Call {
+// GetLinksCountByDatasetID indicates an expected call of GetLinksCountByDatasetID.
+func (mr *MockDBMockRecorder) GetLinksCountByDatasetID(ctx, datasetID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProductId", reflect.TypeOf((*MockDB)(nil).GetProductId), ctx, productID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLinksCountByDatasetID", reflect.TypeOf((*MockDB)(nil).GetLinksCountByDatasetID), ctx, datasetID)
+}
+
+// GetLinksCountByExperimentID mocks base method.
+func (m *MockDB) GetLinksCountByExperimentID(ctx context.Context, experimentID int32) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetLinksCountByExperimentID", ctx, experimentID)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetLinksCountByExperimentID indicates an expected call of GetLinksCountByExperimentID.
+func (mr *MockDBMockRecorder) GetLinksCountByExperimentID(ctx, experimentID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLinksCountByExperimentID", reflect.TypeOf((*MockDB)(nil).GetLinksCountByExperimentID), ctx, experimentID)
+}
+
+// GetNamespacesWithoutRole mocks base method.
+func (m *MockDB) GetNamespacesWithoutRole(ctx context.Context) ([]core.TNamespace, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetNamespacesWithoutRole", ctx)
+	ret0, _ := ret[0].([]core.TNamespace)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetNamespacesWithoutRole indicates an expected call of GetNamespacesWithoutRole.
+func (mr *MockDBMockRecorder) GetNamespacesWithoutRole(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNamespacesWithoutRole", reflect.TypeOf((*MockDB)(nil).GetNamespacesWithoutRole), ctx)
 }
 
 // GetProjectNamespace mocks base method.
@@ -1172,38 +1056,6 @@ func (m *MockDB) GetRolesByObjectAndType(ctx context.Context, arg core.GetRolesB
 func (mr *MockDBMockRecorder) GetRolesByObjectAndType(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRolesByObjectAndType", reflect.TypeOf((*MockDB)(nil).GetRolesByObjectAndType), ctx, arg)
-}
-
-// GetRules mocks base method.
-func (m *MockDB) GetRules(ctx context.Context, experimentID, productID int32) (map[int32]alerts.AlertRule, int32, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetRules", ctx, experimentID, productID)
-	ret0, _ := ret[0].(map[int32]alerts.AlertRule)
-	ret1, _ := ret[1].(int32)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
-}
-
-// GetRules indicates an expected call of GetRules.
-func (mr *MockDBMockRecorder) GetRules(ctx, experimentID, productID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRules", reflect.TypeOf((*MockDB)(nil).GetRules), ctx, experimentID, productID)
-}
-
-// GetRulesByTemplate mocks base method.
-func (m *MockDB) GetRulesByTemplate(ctx context.Context, experimentID, productID, templateID int32) (map[int32]alerts.AlertRule, int32, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetRulesByTemplate", ctx, experimentID, productID, templateID)
-	ret0, _ := ret[0].(map[int32]alerts.AlertRule)
-	ret1, _ := ret[1].(int32)
-	ret2, _ := ret[2].(error)
-	return ret0, ret1, ret2
-}
-
-// GetRulesByTemplate indicates an expected call of GetRulesByTemplate.
-func (mr *MockDBMockRecorder) GetRulesByTemplate(ctx, experimentID, productID, templateID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRulesByTemplate", reflect.TypeOf((*MockDB)(nil).GetRulesByTemplate), ctx, experimentID, productID, templateID)
 }
 
 // GetTableDuplicates mocks base method.
@@ -1352,63 +1204,6 @@ func (mr *MockDBMockRecorder) GrantUserRule(ctx, arg any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GrantUserRule", reflect.TypeOf((*MockDB)(nil).GrantUserRule), ctx, arg)
 }
 
-// InsertAlertGroup mocks base method.
-func (m *MockDB) InsertAlertGroup(ctx context.Context, arg core.InsertAlertGroupParams) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertAlertGroup", ctx, arg)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// InsertAlertGroup indicates an expected call of InsertAlertGroup.
-func (mr *MockDBMockRecorder) InsertAlertGroup(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertAlertGroup", reflect.TypeOf((*MockDB)(nil).InsertAlertGroup), ctx, arg)
-}
-
-// InsertAlertRule mocks base method.
-func (m *MockDB) InsertAlertRule(ctx context.Context, arg []core.InsertAlertRuleParams) *core.InsertAlertRuleBatchResults {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertAlertRule", ctx, arg)
-	ret0, _ := ret[0].(*core.InsertAlertRuleBatchResults)
-	return ret0
-}
-
-// InsertAlertRule indicates an expected call of InsertAlertRule.
-func (mr *MockDBMockRecorder) InsertAlertRule(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertAlertRule", reflect.TypeOf((*MockDB)(nil).InsertAlertRule), ctx, arg)
-}
-
-// InsertAlertRulesTx mocks base method.
-func (m *MockDB) InsertAlertRulesTx(ctx context.Context, alertGroupID int32, alertRules []alerts.AlertRuleInput) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertAlertRulesTx", ctx, alertGroupID, alertRules)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// InsertAlertRulesTx indicates an expected call of InsertAlertRulesTx.
-func (mr *MockDBMockRecorder) InsertAlertRulesTx(ctx, alertGroupID, alertRules any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertAlertRulesTx", reflect.TypeOf((*MockDB)(nil).InsertAlertRulesTx), ctx, alertGroupID, alertRules)
-}
-
-// CreateAlertGroupTx mocks base method.
-func (m *MockDB) CreateAlertGroupTx(ctx context.Context, productID int32, experimentID int32) (int32, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateAlertGroupTx", ctx, productID, experimentID)
-	ret0, _ := ret[0].(int32)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CreateAlertGroupTx indicates an expected call of CreateAlertGroupTx.
-func (mr *MockDBMockRecorder) CreateAlertGroupTx(ctx, productID, experimentID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateAlertGroupTx", reflect.TypeOf((*MockDB)(nil).CreateAlertGroupTx), ctx, productID, experimentID)
-}
-
 // InsertAppBanner mocks base method.
 func (m *MockDB) InsertAppBanner(ctx context.Context, arg core.InsertAppBannerParams) (int32, error) {
 	m.ctrl.T.Helper()
@@ -1524,94 +1319,6 @@ func (m *MockDB) InsertDatasetVersion(ctx context.Context, arg core.InsertDatase
 func (mr *MockDBMockRecorder) InsertDatasetVersion(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertDatasetVersion", reflect.TypeOf((*MockDB)(nil).InsertDatasetVersion), ctx, arg)
-}
-
-// InsertNamespace mocks base method.
-func (m *MockDB) InsertNamespace(ctx context.Context, name string) (int32, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertNamespace", ctx, name)
-	ret0, _ := ret[0].(int32)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// InsertNamespace indicates an expected call of InsertNamespace.
-func (mr *MockDBMockRecorder) InsertNamespace(ctx, name any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertNamespace", reflect.TypeOf((*MockDB)(nil).InsertNamespace), ctx, name)
-}
-
-// InsertNamespaceConfig mocks base method.
-func (m *MockDB) InsertNamespaceConfig(ctx context.Context, arg core.InsertNamespaceConfigParams) (int32, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertNamespaceConfig", ctx, arg)
-	ret0, _ := ret[0].(int32)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// InsertNamespaceConfig indicates an expected call of InsertNamespaceConfig.
-func (mr *MockDBMockRecorder) InsertNamespaceConfig(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertNamespaceConfig", reflect.TypeOf((*MockDB)(nil).InsertNamespaceConfig), ctx, arg)
-}
-
-// InsertNamespaceUpdateLog mocks base method.
-func (m *MockDB) InsertNamespaceUpdateLog(ctx context.Context, arg core.InsertNamespaceUpdateLogParams) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertNamespaceUpdateLog", ctx, arg)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// InsertNamespaceUpdateLog indicates an expected call of InsertNamespaceUpdateLog.
-func (mr *MockDBMockRecorder) InsertNamespaceUpdateLog(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertNamespaceUpdateLog", reflect.TypeOf((*MockDB)(nil).InsertNamespaceUpdateLog), ctx, arg)
-}
-
-// InsertNamespaceVariable mocks base method.
-func (m *MockDB) InsertNamespaceVariable(ctx context.Context, arg core.InsertNamespaceVariableParams) (int32, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertNamespaceVariable", ctx, arg)
-	ret0, _ := ret[0].(int32)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// InsertNamespaceVariable indicates an expected call of InsertNamespaceVariable.
-func (mr *MockDBMockRecorder) InsertNamespaceVariable(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertNamespaceVariable", reflect.TypeOf((*MockDB)(nil).InsertNamespaceVariable), ctx, arg)
-}
-
-// InsertNewUsers mocks base method.
-func (m *MockDB) InsertNewUsers(ctx context.Context, name []string) *core.InsertNewUsersBatchResults {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertNewUsers", ctx, name)
-	ret0, _ := ret[0].(*core.InsertNewUsersBatchResults)
-	return ret0
-}
-
-// InsertNewUsers indicates an expected call of InsertNewUsers.
-func (mr *MockDBMockRecorder) InsertNewUsers(ctx, name any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertNewUsers", reflect.TypeOf((*MockDB)(nil).InsertNewUsers), ctx, name)
-}
-
-// InsertPinnedProject mocks base method.
-func (m *MockDB) InsertPinnedProject(ctx context.Context, arg core.InsertPinnedProjectParams) (core.TUserPinnedProject, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertPinnedProject", ctx, arg)
-	ret0, _ := ret[0].(core.TUserPinnedProject)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// InsertPinnedProject indicates an expected call of InsertPinnedProject.
-func (mr *MockDBMockRecorder) InsertPinnedProject(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertPinnedProject", reflect.TypeOf((*MockDB)(nil).InsertPinnedProject), ctx, arg)
 }
 
 // InsertExperiment mocks base method.
@@ -1789,18 +1496,92 @@ func (mr *MockDBMockRecorder) InsertExperimentVariablesV2(ctx, arg any) *gomock.
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertExperimentVariablesV2", reflect.TypeOf((*MockDB)(nil).InsertExperimentVariablesV2), ctx, arg)
 }
 
-// InsertProduct mocks base method.
-func (m *MockDB) InsertProduct(ctx context.Context, productID int32) error {
+// InsertNamespace mocks base method.
+func (m *MockDB) InsertNamespace(ctx context.Context, name string) (int32, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertProduct", ctx, productID)
+	ret := m.ctrl.Call(m, "InsertNamespace", ctx, name)
+	ret0, _ := ret[0].(int32)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// InsertNamespace indicates an expected call of InsertNamespace.
+func (mr *MockDBMockRecorder) InsertNamespace(ctx, name any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertNamespace", reflect.TypeOf((*MockDB)(nil).InsertNamespace), ctx, name)
+}
+
+// InsertNamespaceConfig mocks base method.
+func (m *MockDB) InsertNamespaceConfig(ctx context.Context, arg core.InsertNamespaceConfigParams) (int32, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InsertNamespaceConfig", ctx, arg)
+	ret0, _ := ret[0].(int32)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// InsertNamespaceConfig indicates an expected call of InsertNamespaceConfig.
+func (mr *MockDBMockRecorder) InsertNamespaceConfig(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertNamespaceConfig", reflect.TypeOf((*MockDB)(nil).InsertNamespaceConfig), ctx, arg)
+}
+
+// InsertNamespaceUpdateLog mocks base method.
+func (m *MockDB) InsertNamespaceUpdateLog(ctx context.Context, arg core.InsertNamespaceUpdateLogParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InsertNamespaceUpdateLog", ctx, arg)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// InsertProduct indicates an expected call of InsertProduct.
-func (mr *MockDBMockRecorder) InsertProduct(ctx, productID any) *gomock.Call {
+// InsertNamespaceUpdateLog indicates an expected call of InsertNamespaceUpdateLog.
+func (mr *MockDBMockRecorder) InsertNamespaceUpdateLog(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertProduct", reflect.TypeOf((*MockDB)(nil).InsertProduct), ctx, productID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertNamespaceUpdateLog", reflect.TypeOf((*MockDB)(nil).InsertNamespaceUpdateLog), ctx, arg)
+}
+
+// InsertNamespaceVariable mocks base method.
+func (m *MockDB) InsertNamespaceVariable(ctx context.Context, arg core.InsertNamespaceVariableParams) (int32, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InsertNamespaceVariable", ctx, arg)
+	ret0, _ := ret[0].(int32)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// InsertNamespaceVariable indicates an expected call of InsertNamespaceVariable.
+func (mr *MockDBMockRecorder) InsertNamespaceVariable(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertNamespaceVariable", reflect.TypeOf((*MockDB)(nil).InsertNamespaceVariable), ctx, arg)
+}
+
+// InsertNewUsers mocks base method.
+func (m *MockDB) InsertNewUsers(ctx context.Context, name []string) *core.InsertNewUsersBatchResults {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InsertNewUsers", ctx, name)
+	ret0, _ := ret[0].(*core.InsertNewUsersBatchResults)
+	return ret0
+}
+
+// InsertNewUsers indicates an expected call of InsertNewUsers.
+func (mr *MockDBMockRecorder) InsertNewUsers(ctx, name any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertNewUsers", reflect.TypeOf((*MockDB)(nil).InsertNewUsers), ctx, name)
+}
+
+// InsertPinnedProject mocks base method.
+func (m *MockDB) InsertPinnedProject(ctx context.Context, arg core.InsertPinnedProjectParams) (core.TUserPinnedProject, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InsertPinnedProject", ctx, arg)
+	ret0, _ := ret[0].(core.TUserPinnedProject)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// InsertPinnedProject indicates an expected call of InsertPinnedProject.
+func (mr *MockDBMockRecorder) InsertPinnedProject(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertPinnedProject", reflect.TypeOf((*MockDB)(nil).InsertPinnedProject), ctx, arg)
 }
 
 // InsertProject mocks base method.
@@ -1860,36 +1641,6 @@ func (m *MockDB) InsertProjectVariable(ctx context.Context, arg core.InsertProje
 func (mr *MockDBMockRecorder) InsertProjectVariable(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertProjectVariable", reflect.TypeOf((*MockDB)(nil).InsertProjectVariable), ctx, arg)
-}
-
-// InsertRobot mocks base method.
-func (m *MockDB) InsertRobot(ctx context.Context, name string) (int32, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertRobot", ctx, name)
-	ret0, _ := ret[0].(int32)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// InsertRobot indicates an expected call of InsertRobot.
-func (mr *MockDBMockRecorder) InsertRobot(ctx, name any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertRobot", reflect.TypeOf((*MockDB)(nil).InsertRobot), ctx, name)
-}
-
-// InsertRobotToken mocks base method.
-func (m *MockDB) InsertRobotToken(ctx context.Context, arg core.InsertRobotTokenParams) (core.RobotToken, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertRobotToken", ctx, arg)
-	ret0, _ := ret[0].(core.RobotToken)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// InsertRobotToken indicates an expected call of InsertRobotToken.
-func (mr *MockDBMockRecorder) InsertRobotToken(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertRobotToken", reflect.TypeOf((*MockDB)(nil).InsertRobotToken), ctx, arg)
 }
 
 // InsertRole mocks base method.
@@ -2042,49 +1793,6 @@ func (mr *MockDBMockRecorder) NamespaceIDByProjectID(ctx, id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NamespaceIDByProjectID", reflect.TypeOf((*MockDB)(nil).NamespaceIDByProjectID), ctx, id)
 }
 
-// ExperimentStart mocks base method.
-func (m *MockDB) ExperimentStart(ctx context.Context, id int32) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ExperimentStart", ctx, id)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// ExperimentStart indicates an expected call of ExperimentStart.
-func (mr *MockDBMockRecorder) ExperimentStart(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExperimentStart", reflect.TypeOf((*MockDB)(nil).ExperimentStart), ctx, id)
-}
-
-// ExperimentStatus mocks base method.
-func (m *MockDB) ExperimentStatus(ctx context.Context, id int32) (string, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ExperimentStatus", ctx, id)
-	ret0, _ := ret[0].(string)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// ExperimentStatus indicates an expected call of ExperimentStatus.
-func (mr *MockDBMockRecorder) ExperimentStatus(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExperimentStatus", reflect.TypeOf((*MockDB)(nil).ExperimentStatus), ctx, id)
-}
-
-// ExperimentStop mocks base method.
-func (m *MockDB) ExperimentStop(ctx context.Context, id int32) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ExperimentStop", ctx, id)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// ExperimentStop indicates an expected call of ExperimentStop.
-func (mr *MockDBMockRecorder) ExperimentStop(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExperimentStop", reflect.TypeOf((*MockDB)(nil).ExperimentStop), ctx, id)
-}
-
 // ProjectAbcGroupListing mocks base method.
 func (m *MockDB) ProjectAbcGroupListing(ctx context.Context) ([]core.ProjectAbcGroupListingRow, error) {
 	m.ctrl.T.Helper()
@@ -2173,66 +1881,6 @@ func (mr *MockDBMockRecorder) SelectActiveAppBanner(ctx any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectActiveAppBanner", reflect.TypeOf((*MockDB)(nil).SelectActiveAppBanner), ctx)
 }
 
-// SelectAlertGroup mocks base method.
-func (m *MockDB) SelectAlertGroup(ctx context.Context, arg core.SelectAlertGroupParams) (core.TAlertGroup, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectAlertGroup", ctx, arg)
-	ret0, _ := ret[0].(core.TAlertGroup)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectAlertGroup indicates an expected call of SelectAlertGroup.
-func (mr *MockDBMockRecorder) SelectAlertGroup(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAlertGroup", reflect.TypeOf((*MockDB)(nil).SelectAlertGroup), ctx, arg)
-}
-
-// SelectAlertGroups mocks base method.
-func (m *MockDB) SelectAlertGroups(ctx context.Context, experimentID int32) ([]core.TAlertGroup, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectAlertGroups", ctx, experimentID)
-	ret0, _ := ret[0].([]core.TAlertGroup)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectAlertGroups indicates an expected call of SelectAlertGroups.
-func (mr *MockDBMockRecorder) SelectAlertGroups(ctx, experimentID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAlertGroups", reflect.TypeOf((*MockDB)(nil).SelectAlertGroups), ctx, experimentID)
-}
-
-// SelectAlerts mocks base method.
-func (m *MockDB) SelectAlerts(ctx context.Context, arg core.SelectAlertsParams) ([]core.SelectAlertsRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectAlerts", ctx, arg)
-	ret0, _ := ret[0].([]core.SelectAlertsRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectAlerts indicates an expected call of SelectAlerts.
-func (mr *MockDBMockRecorder) SelectAlerts(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAlerts", reflect.TypeOf((*MockDB)(nil).SelectAlerts), ctx, arg)
-}
-
-// SelectAlertsByTemplate mocks base method.
-func (m *MockDB) SelectAlertsByTemplate(ctx context.Context, arg core.SelectAlertsByTemplateParams) ([]core.SelectAlertsByTemplateRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectAlertsByTemplate", ctx, arg)
-	ret0, _ := ret[0].([]core.SelectAlertsByTemplateRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectAlertsByTemplate indicates an expected call of SelectAlertsByTemplate.
-func (mr *MockDBMockRecorder) SelectAlertsByTemplate(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAlertsByTemplate", reflect.TypeOf((*MockDB)(nil).SelectAlertsByTemplate), ctx, arg)
-}
-
 // SelectAllDatasetsUpdateLogsByNamespaceID mocks base method.
 func (m *MockDB) SelectAllDatasetsUpdateLogsByNamespaceID(ctx context.Context, arg core.SelectAllDatasetsUpdateLogsByNamespaceIDParams) ([]core.SelectAllDatasetsUpdateLogsByNamespaceIDRow, error) {
 	m.ctrl.T.Helper()
@@ -2263,21 +1911,6 @@ func (mr *MockDBMockRecorder) SelectAllDatasetsUpdateLogsByProjdectID(ctx, arg a
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAllDatasetsUpdateLogsByProjdectID", reflect.TypeOf((*MockDB)(nil).SelectAllDatasetsUpdateLogsByProjdectID), ctx, arg)
 }
 
-// SelectAllNamespacesUpdateLogs mocks base method.
-func (m *MockDB) SelectAllNamespacesUpdateLogs(ctx context.Context, arg core.SelectAllNamespacesUpdateLogsParams) ([]core.SelectAllNamespacesUpdateLogsRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectAllNamespacesUpdateLogs", ctx, arg)
-	ret0, _ := ret[0].([]core.SelectAllNamespacesUpdateLogsRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectAllNamespacesUpdateLogs indicates an expected call of SelectAllNamespacesUpdateLogs.
-func (mr *MockDBMockRecorder) SelectAllNamespacesUpdateLogs(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAllNamespacesUpdateLogs", reflect.TypeOf((*MockDB)(nil).SelectAllNamespacesUpdateLogs), ctx, arg)
-}
-
 // SelectAllExperimentsUpdateLogs mocks base method.
 func (m *MockDB) SelectAllExperimentsUpdateLogs(ctx context.Context, arg core.SelectAllExperimentsUpdateLogsParams) ([]core.SelectAllExperimentsUpdateLogsRow, error) {
 	m.ctrl.T.Helper()
@@ -2293,6 +1926,21 @@ func (mr *MockDBMockRecorder) SelectAllExperimentsUpdateLogs(ctx, arg any) *gomo
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAllExperimentsUpdateLogs", reflect.TypeOf((*MockDB)(nil).SelectAllExperimentsUpdateLogs), ctx, arg)
 }
 
+// SelectAllNamespacesUpdateLogs mocks base method.
+func (m *MockDB) SelectAllNamespacesUpdateLogs(ctx context.Context, arg core.SelectAllNamespacesUpdateLogsParams) ([]core.SelectAllNamespacesUpdateLogsRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectAllNamespacesUpdateLogs", ctx, arg)
+	ret0, _ := ret[0].([]core.SelectAllNamespacesUpdateLogsRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectAllNamespacesUpdateLogs indicates an expected call of SelectAllNamespacesUpdateLogs.
+func (mr *MockDBMockRecorder) SelectAllNamespacesUpdateLogs(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAllNamespacesUpdateLogs", reflect.TypeOf((*MockDB)(nil).SelectAllNamespacesUpdateLogs), ctx, arg)
+}
+
 // SelectAllProjectsUpdateLogs mocks base method.
 func (m *MockDB) SelectAllProjectsUpdateLogs(ctx context.Context, arg core.SelectAllProjectsUpdateLogsParams) ([]core.SelectAllProjectsUpdateLogsRow, error) {
 	m.ctrl.T.Helper()
@@ -2306,6 +1954,21 @@ func (m *MockDB) SelectAllProjectsUpdateLogs(ctx context.Context, arg core.Selec
 func (mr *MockDBMockRecorder) SelectAllProjectsUpdateLogs(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAllProjectsUpdateLogs", reflect.TypeOf((*MockDB)(nil).SelectAllProjectsUpdateLogs), ctx, arg)
+}
+
+// SelectAppAbout mocks base method.
+func (m *MockDB) SelectAppAbout(ctx context.Context) (core.TAppAbout, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectAppAbout", ctx)
+	ret0, _ := ret[0].(core.TAppAbout)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectAppAbout indicates an expected call of SelectAppAbout.
+func (mr *MockDBMockRecorder) SelectAppAbout(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAppAbout", reflect.TypeOf((*MockDB)(nil).SelectAppAbout), ctx)
 }
 
 // SelectAppBanner mocks base method.
@@ -2411,21 +2074,6 @@ func (m *MockDB) SelectAppUpdatesPaginated(ctx context.Context, arg core.SelectA
 func (mr *MockDBMockRecorder) SelectAppUpdatesPaginated(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAppUpdatesPaginated", reflect.TypeOf((*MockDB)(nil).SelectAppUpdatesPaginated), ctx, arg)
-}
-
-// CountAppUpdatesPaginated mocks base method.
-func (m *MockDB) CountAppUpdatesPaginated(ctx context.Context, dollar_1 *bool) (int64, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CountAppUpdatesPaginated", ctx, dollar_1)
-	ret0, _ := ret[0].(int64)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// CountAppUpdatesPaginated indicates an expected call of CountAppUpdatesPaginated.
-func (mr *MockDBMockRecorder) CountAppUpdatesPaginated(ctx, dollar_1 any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountAppUpdatesPaginated", reflect.TypeOf((*MockDB)(nil).CountAppUpdatesPaginated), ctx, dollar_1)
 }
 
 // SelectAppUpdatesPublished mocks base method.
@@ -2608,21 +2256,6 @@ func (mr *MockDBMockRecorder) SelectCurrentProjectConfig(ctx, id any) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectCurrentProjectConfig", reflect.TypeOf((*MockDB)(nil).SelectCurrentProjectConfig), ctx, id)
 }
 
-// SelectDatasets mocks base method.
-func (m *MockDB) SelectDatasets(ctx context.Context, arg core.SelectDatasetsParams) ([]core.SelectDatasetsRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectDatasets", ctx, arg)
-	ret0, _ := ret[0].([]core.SelectDatasetsRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectDatasets indicates an expected call of SelectDatasets.
-func (mr *MockDBMockRecorder) SelectDatasets(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectDatasets", reflect.TypeOf((*MockDB)(nil).SelectDatasets), ctx, arg)
-}
-
 // SelectDataset mocks base method.
 func (m *MockDB) SelectDataset(ctx context.Context, id int32) (core.SelectDatasetRow, error) {
 	m.ctrl.T.Helper()
@@ -2713,6 +2346,21 @@ func (mr *MockDBMockRecorder) SelectDatasetVersions(ctx, arg any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectDatasetVersions", reflect.TypeOf((*MockDB)(nil).SelectDatasetVersions), ctx, arg)
 }
 
+// SelectDatasets mocks base method.
+func (m *MockDB) SelectDatasets(ctx context.Context, arg core.SelectDatasetsParams) ([]core.SelectDatasetsRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectDatasets", ctx, arg)
+	ret0, _ := ret[0].([]core.SelectDatasetsRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectDatasets indicates an expected call of SelectDatasets.
+func (mr *MockDBMockRecorder) SelectDatasets(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectDatasets", reflect.TypeOf((*MockDB)(nil).SelectDatasets), ctx, arg)
+}
+
 // SelectDatasetsByProjectId mocks base method.
 func (m *MockDB) SelectDatasetsByProjectId(ctx context.Context, projectID pgtype.Int4) ([]core.SelectDatasetsByProjectIdRow, error) {
 	m.ctrl.T.Helper()
@@ -2726,186 +2374,6 @@ func (m *MockDB) SelectDatasetsByProjectId(ctx context.Context, projectID pgtype
 func (mr *MockDBMockRecorder) SelectDatasetsByProjectId(ctx, projectID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectDatasetsByProjectId", reflect.TypeOf((*MockDB)(nil).SelectDatasetsByProjectId), ctx, projectID)
-}
-
-// SelectGroupById mocks base method.
-func (m *MockDB) SelectGroupById(ctx context.Context, alertGroupID int32) (core.TAlertGroup, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectGroupById", ctx, alertGroupID)
-	ret0, _ := ret[0].(core.TAlertGroup)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectGroupById indicates an expected call of SelectGroupById.
-func (mr *MockDBMockRecorder) SelectGroupById(ctx, alertGroupID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectGroupById", reflect.TypeOf((*MockDB)(nil).SelectGroupById), ctx, alertGroupID)
-}
-
-// SelectGroupsByProductIds mocks base method.
-func (m *MockDB) SelectGroupsByProductIds(ctx context.Context, productID int32) ([]core.TAlertGroup, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectGroupsByProductIds", ctx, productID)
-	ret0, _ := ret[0].([]core.TAlertGroup)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectGroupsByProductIds indicates an expected call of SelectGroupsByProductIds.
-func (mr *MockDBMockRecorder) SelectGroupsByProductIds(ctx, productID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectGroupsByProductIds", reflect.TypeOf((*MockDB)(nil).SelectGroupsByProductIds), ctx, productID)
-}
-
-// SelectNamespace mocks base method.
-func (m *MockDB) SelectNamespace(ctx context.Context, id int32) (core.SelectNamespaceRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectNamespace", ctx, id)
-	ret0, _ := ret[0].(core.SelectNamespaceRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectNamespace indicates an expected call of SelectNamespace.
-func (mr *MockDBMockRecorder) SelectNamespace(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespace", reflect.TypeOf((*MockDB)(nil).SelectNamespace), ctx, id)
-}
-
-// SelectNamespaceConfig mocks base method.
-func (m *MockDB) SelectNamespaceConfig(ctx context.Context, id int32) (core.SelectNamespaceConfigRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectNamespaceConfig", ctx, id)
-	ret0, _ := ret[0].(core.SelectNamespaceConfigRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectNamespaceConfig indicates an expected call of SelectNamespaceConfig.
-func (mr *MockDBMockRecorder) SelectNamespaceConfig(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceConfig", reflect.TypeOf((*MockDB)(nil).SelectNamespaceConfig), ctx, id)
-}
-
-// SelectNamespaceConfigVersions mocks base method.
-func (m *MockDB) SelectNamespaceConfigVersions(ctx context.Context, namespaceID int32) ([]core.SelectNamespaceConfigVersionsRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectNamespaceConfigVersions", ctx, namespaceID)
-	ret0, _ := ret[0].([]core.SelectNamespaceConfigVersionsRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectNamespaceConfigVersions indicates an expected call of SelectNamespaceConfigVersions.
-func (mr *MockDBMockRecorder) SelectNamespaceConfigVersions(ctx, namespaceID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceConfigVersions", reflect.TypeOf((*MockDB)(nil).SelectNamespaceConfigVersions), ctx, namespaceID)
-}
-
-// SelectNamespaceLog mocks base method.
-func (m *MockDB) SelectNamespaceLog(ctx context.Context, id int32) (core.SelectNamespaceLogRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectNamespaceLog", ctx, id)
-	ret0, _ := ret[0].(core.SelectNamespaceLogRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectNamespaceLog indicates an expected call of SelectNamespaceLog.
-func (mr *MockDBMockRecorder) SelectNamespaceLog(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceLog", reflect.TypeOf((*MockDB)(nil).SelectNamespaceLog), ctx, id)
-}
-
-// SelectNamespaceUpdateLogs mocks base method.
-func (m *MockDB) SelectNamespaceUpdateLogs(ctx context.Context, arg core.SelectNamespaceUpdateLogsParams) ([]core.SelectNamespaceUpdateLogsRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectNamespaceUpdateLogs", ctx, arg)
-	ret0, _ := ret[0].([]core.SelectNamespaceUpdateLogsRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectNamespaceUpdateLogs indicates an expected call of SelectNamespaceUpdateLogs.
-func (mr *MockDBMockRecorder) SelectNamespaceUpdateLogs(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceUpdateLogs", reflect.TypeOf((*MockDB)(nil).SelectNamespaceUpdateLogs), ctx, arg)
-}
-
-// SelectNamespaceVariable mocks base method.
-func (m *MockDB) SelectNamespaceVariable(ctx context.Context, id int32) (core.SelectNamespaceVariableRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectNamespaceVariable", ctx, id)
-	ret0, _ := ret[0].(core.SelectNamespaceVariableRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectNamespaceVariable indicates an expected call of SelectNamespaceVariable.
-func (mr *MockDBMockRecorder) SelectNamespaceVariable(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceVariable", reflect.TypeOf((*MockDB)(nil).SelectNamespaceVariable), ctx, id)
-}
-
-// SelectNamespaceVariables mocks base method.
-func (m *MockDB) SelectNamespaceVariables(ctx context.Context, namespaceID int32) ([]core.SelectNamespaceVariablesRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectNamespaceVariables", ctx, namespaceID)
-	ret0, _ := ret[0].([]core.SelectNamespaceVariablesRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectNamespaceVariables indicates an expected call of SelectNamespaceVariables.
-func (mr *MockDBMockRecorder) SelectNamespaceVariables(ctx, namespaceID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceVariables", reflect.TypeOf((*MockDB)(nil).SelectNamespaceVariables), ctx, namespaceID)
-}
-
-// SelectNamespaceWithDeleted mocks base method.
-func (m *MockDB) SelectNamespaceWithDeleted(ctx context.Context, id int32) (core.SelectNamespaceWithDeletedRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectNamespaceWithDeleted", ctx, id)
-	ret0, _ := ret[0].(core.SelectNamespaceWithDeletedRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectNamespaceWithDeleted indicates an expected call of SelectNamespaceWithDeleted.
-func (mr *MockDBMockRecorder) SelectNamespaceWithDeleted(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceWithDeleted", reflect.TypeOf((*MockDB)(nil).SelectNamespaceWithDeleted), ctx, id)
-}
-
-// SelectNamespaces mocks base method.
-func (m *MockDB) SelectNamespaces(ctx context.Context) ([]core.SelectNamespacesRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectNamespaces", ctx)
-	ret0, _ := ret[0].([]core.SelectNamespacesRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectNamespaces indicates an expected call of SelectNamespaces.
-func (mr *MockDBMockRecorder) SelectNamespaces(ctx any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaces", reflect.TypeOf((*MockDB)(nil).SelectNamespaces), ctx)
-}
-
-// SelectNamespacesWithRole mocks base method.
-func (m *MockDB) SelectNamespacesWithRole(ctx context.Context) ([]core.TNamespace, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectNamespacesWithRole", ctx)
-	ret0, _ := ret[0].([]core.TNamespace)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectNamespacesWithRole indicates an expected call of SelectNamespacesWithRole.
-func (mr *MockDBMockRecorder) SelectNamespacesWithRole(ctx any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespacesWithRole", reflect.TypeOf((*MockDB)(nil).SelectNamespacesWithRole), ctx)
 }
 
 // SelectExperiment mocks base method.
@@ -2936,21 +2404,6 @@ func (m *MockDB) SelectExperimentAppliedVersion(ctx context.Context, experimentI
 func (mr *MockDBMockRecorder) SelectExperimentAppliedVersion(ctx, experimentID any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectExperimentAppliedVersion", reflect.TypeOf((*MockDB)(nil).SelectExperimentAppliedVersion), ctx, experimentID)
-}
-
-// SelectExperimentForAlerts mocks base method.
-func (m *MockDB) SelectExperimentForAlerts(ctx context.Context, id int32) (core.SelectExperimentForAlertsRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectExperimentForAlerts", ctx, id)
-	ret0, _ := ret[0].(core.SelectExperimentForAlertsRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectExperimentForAlerts indicates an expected call of SelectExperimentForAlerts.
-func (mr *MockDBMockRecorder) SelectExperimentForAlerts(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectExperimentForAlerts", reflect.TypeOf((*MockDB)(nil).SelectExperimentForAlerts), ctx, id)
 }
 
 // SelectExperimentLog mocks base method.
@@ -3118,34 +2571,154 @@ func (mr *MockDBMockRecorder) SelectExperiments(ctx, projectID any) *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectExperiments", reflect.TypeOf((*MockDB)(nil).SelectExperiments), ctx, projectID)
 }
 
-// SelectProduct mocks base method.
-func (m *MockDB) SelectProduct(ctx context.Context, productID int32) (int32, error) {
+// SelectNamespace mocks base method.
+func (m *MockDB) SelectNamespace(ctx context.Context, id int32) (core.SelectNamespaceRow, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectProduct", ctx, productID)
-	ret0, _ := ret[0].(int32)
+	ret := m.ctrl.Call(m, "SelectNamespace", ctx, id)
+	ret0, _ := ret[0].(core.SelectNamespaceRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// SelectProduct indicates an expected call of SelectProduct.
-func (mr *MockDBMockRecorder) SelectProduct(ctx, productID any) *gomock.Call {
+// SelectNamespace indicates an expected call of SelectNamespace.
+func (mr *MockDBMockRecorder) SelectNamespace(ctx, id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectProduct", reflect.TypeOf((*MockDB)(nil).SelectProduct), ctx, productID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespace", reflect.TypeOf((*MockDB)(nil).SelectNamespace), ctx, id)
 }
 
-// SelectProducts mocks base method.
-func (m *MockDB) SelectProducts(ctx context.Context, experimentID int32) ([]int32, error) {
+// SelectNamespaceConfig mocks base method.
+func (m *MockDB) SelectNamespaceConfig(ctx context.Context, id int32) (core.SelectNamespaceConfigRow, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectProducts", ctx, experimentID)
-	ret0, _ := ret[0].([]int32)
+	ret := m.ctrl.Call(m, "SelectNamespaceConfig", ctx, id)
+	ret0, _ := ret[0].(core.SelectNamespaceConfigRow)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// SelectProducts indicates an expected call of SelectProducts.
-func (mr *MockDBMockRecorder) SelectProducts(ctx, experimentID any) *gomock.Call {
+// SelectNamespaceConfig indicates an expected call of SelectNamespaceConfig.
+func (mr *MockDBMockRecorder) SelectNamespaceConfig(ctx, id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectProducts", reflect.TypeOf((*MockDB)(nil).SelectProducts), ctx, experimentID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceConfig", reflect.TypeOf((*MockDB)(nil).SelectNamespaceConfig), ctx, id)
+}
+
+// SelectNamespaceConfigVersions mocks base method.
+func (m *MockDB) SelectNamespaceConfigVersions(ctx context.Context, namespaceID int32) ([]core.SelectNamespaceConfigVersionsRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectNamespaceConfigVersions", ctx, namespaceID)
+	ret0, _ := ret[0].([]core.SelectNamespaceConfigVersionsRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectNamespaceConfigVersions indicates an expected call of SelectNamespaceConfigVersions.
+func (mr *MockDBMockRecorder) SelectNamespaceConfigVersions(ctx, namespaceID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceConfigVersions", reflect.TypeOf((*MockDB)(nil).SelectNamespaceConfigVersions), ctx, namespaceID)
+}
+
+// SelectNamespaceLog mocks base method.
+func (m *MockDB) SelectNamespaceLog(ctx context.Context, id int32) (core.SelectNamespaceLogRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectNamespaceLog", ctx, id)
+	ret0, _ := ret[0].(core.SelectNamespaceLogRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectNamespaceLog indicates an expected call of SelectNamespaceLog.
+func (mr *MockDBMockRecorder) SelectNamespaceLog(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceLog", reflect.TypeOf((*MockDB)(nil).SelectNamespaceLog), ctx, id)
+}
+
+// SelectNamespaceUpdateLogs mocks base method.
+func (m *MockDB) SelectNamespaceUpdateLogs(ctx context.Context, arg core.SelectNamespaceUpdateLogsParams) ([]core.SelectNamespaceUpdateLogsRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectNamespaceUpdateLogs", ctx, arg)
+	ret0, _ := ret[0].([]core.SelectNamespaceUpdateLogsRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectNamespaceUpdateLogs indicates an expected call of SelectNamespaceUpdateLogs.
+func (mr *MockDBMockRecorder) SelectNamespaceUpdateLogs(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceUpdateLogs", reflect.TypeOf((*MockDB)(nil).SelectNamespaceUpdateLogs), ctx, arg)
+}
+
+// SelectNamespaceVariable mocks base method.
+func (m *MockDB) SelectNamespaceVariable(ctx context.Context, id int32) (core.SelectNamespaceVariableRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectNamespaceVariable", ctx, id)
+	ret0, _ := ret[0].(core.SelectNamespaceVariableRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectNamespaceVariable indicates an expected call of SelectNamespaceVariable.
+func (mr *MockDBMockRecorder) SelectNamespaceVariable(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceVariable", reflect.TypeOf((*MockDB)(nil).SelectNamespaceVariable), ctx, id)
+}
+
+// SelectNamespaceVariables mocks base method.
+func (m *MockDB) SelectNamespaceVariables(ctx context.Context, namespaceID int32) ([]core.SelectNamespaceVariablesRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectNamespaceVariables", ctx, namespaceID)
+	ret0, _ := ret[0].([]core.SelectNamespaceVariablesRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectNamespaceVariables indicates an expected call of SelectNamespaceVariables.
+func (mr *MockDBMockRecorder) SelectNamespaceVariables(ctx, namespaceID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceVariables", reflect.TypeOf((*MockDB)(nil).SelectNamespaceVariables), ctx, namespaceID)
+}
+
+// SelectNamespaceWithDeleted mocks base method.
+func (m *MockDB) SelectNamespaceWithDeleted(ctx context.Context, id int32) (core.SelectNamespaceWithDeletedRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectNamespaceWithDeleted", ctx, id)
+	ret0, _ := ret[0].(core.SelectNamespaceWithDeletedRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectNamespaceWithDeleted indicates an expected call of SelectNamespaceWithDeleted.
+func (mr *MockDBMockRecorder) SelectNamespaceWithDeleted(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceWithDeleted", reflect.TypeOf((*MockDB)(nil).SelectNamespaceWithDeleted), ctx, id)
+}
+
+// SelectNamespaces mocks base method.
+func (m *MockDB) SelectNamespaces(ctx context.Context) ([]core.SelectNamespacesRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectNamespaces", ctx)
+	ret0, _ := ret[0].([]core.SelectNamespacesRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectNamespaces indicates an expected call of SelectNamespaces.
+func (mr *MockDBMockRecorder) SelectNamespaces(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaces", reflect.TypeOf((*MockDB)(nil).SelectNamespaces), ctx)
+}
+
+// SelectNamespacesWithRole mocks base method.
+func (m *MockDB) SelectNamespacesWithRole(ctx context.Context) ([]core.TNamespace, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectNamespacesWithRole", ctx)
+	ret0, _ := ret[0].([]core.TNamespace)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectNamespacesWithRole indicates an expected call of SelectNamespacesWithRole.
+func (mr *MockDBMockRecorder) SelectNamespacesWithRole(ctx any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespacesWithRole", reflect.TypeOf((*MockDB)(nil).SelectNamespacesWithRole), ctx)
 }
 
 // SelectProject mocks base method.
@@ -3358,36 +2931,6 @@ func (mr *MockDBMockRecorder) SelectProjectsWithRole(ctx any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectProjectsWithRole", reflect.TypeOf((*MockDB)(nil).SelectProjectsWithRole), ctx)
 }
 
-// SelectRobotToken mocks base method.
-func (m *MockDB) SelectRobotToken(ctx context.Context, id int32) (core.RobotToken, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectRobotToken", ctx, id)
-	ret0, _ := ret[0].(core.RobotToken)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectRobotToken indicates an expected call of SelectRobotToken.
-func (mr *MockDBMockRecorder) SelectRobotToken(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectRobotToken", reflect.TypeOf((*MockDB)(nil).SelectRobotToken), ctx, id)
-}
-
-// SelectRobotTokens mocks base method.
-func (m *MockDB) SelectRobotTokens(ctx context.Context, robotID int32) ([]core.RobotToken, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectRobotTokens", ctx, robotID)
-	ret0, _ := ret[0].([]core.RobotToken)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectRobotTokens indicates an expected call of SelectRobotTokens.
-func (mr *MockDBMockRecorder) SelectRobotTokens(ctx, robotID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectRobotTokens", reflect.TypeOf((*MockDB)(nil).SelectRobotTokens), ctx, robotID)
-}
-
 // SelectRole mocks base method.
 func (m *MockDB) SelectRole(ctx context.Context, roleID int32) ([]core.SelectRoleRow, error) {
 	m.ctrl.T.Helper()
@@ -3567,18 +3110,19 @@ func (mr *MockDBMockRecorder) UnlockABCSyncer(ctx any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UnlockABCSyncer", reflect.TypeOf((*MockDB)(nil).UnlockABCSyncer), ctx)
 }
 
-// UpdateAlertRule mocks base method.
-func (m *MockDB) UpdateAlertRule(ctx context.Context, arg []core.UpdateAlertRuleParams) *core.UpdateAlertRuleBatchResults {
+// UpdateAppAbout mocks base method.
+func (m *MockDB) UpdateAppAbout(ctx context.Context, arg core.UpdateAppAboutParams) (core.TAppAbout, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateAlertRule", ctx, arg)
-	ret0, _ := ret[0].(*core.UpdateAlertRuleBatchResults)
-	return ret0
+	ret := m.ctrl.Call(m, "UpdateAppAbout", ctx, arg)
+	ret0, _ := ret[0].(core.TAppAbout)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
-// UpdateAlertRule indicates an expected call of UpdateAlertRule.
-func (mr *MockDBMockRecorder) UpdateAlertRule(ctx, arg any) *gomock.Call {
+// UpdateAppAbout indicates an expected call of UpdateAppAbout.
+func (mr *MockDBMockRecorder) UpdateAppAbout(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAlertRule", reflect.TypeOf((*MockDB)(nil).UpdateAlertRule), ctx, arg)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAppAbout", reflect.TypeOf((*MockDB)(nil).UpdateAppAbout), ctx, arg)
 }
 
 // UpdateAppBanner mocks base method.
@@ -3609,36 +3153,6 @@ func (m *MockDB) UpdateAppUpcoming(ctx context.Context, content string) (core.TA
 func (mr *MockDBMockRecorder) UpdateAppUpcoming(ctx, content any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAppUpcoming", reflect.TypeOf((*MockDB)(nil).UpdateAppUpcoming), ctx, content)
-}
-
-// SelectAppAbout mocks base method.
-func (m *MockDB) SelectAppAbout(ctx context.Context) (core.TAppAbout, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectAppAbout", ctx)
-	ret0, _ := ret[0].(core.TAppAbout)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectAppAbout indicates an expected call of SelectAppAbout.
-func (mr *MockDBMockRecorder) SelectAppAbout(ctx any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectAppAbout", reflect.TypeOf((*MockDB)(nil).SelectAppAbout), ctx)
-}
-
-// UpdateAppAbout mocks base method.
-func (m *MockDB) UpdateAppAbout(ctx context.Context, arg core.UpdateAppAboutParams) (core.TAppAbout, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateAppAbout", ctx, arg)
-	ret0, _ := ret[0].(core.TAppAbout)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// UpdateAppAbout indicates an expected call of UpdateAppAbout.
-func (mr *MockDBMockRecorder) UpdateAppAbout(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAppAbout", reflect.TypeOf((*MockDB)(nil).UpdateAppAbout), ctx, arg)
 }
 
 // UpdateAppUpdate mocks base method.
@@ -3756,48 +3270,6 @@ func (m *MockDB) UpdateDatasetVersionComment(ctx context.Context, arg core.Updat
 func (mr *MockDBMockRecorder) UpdateDatasetVersionComment(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateDatasetVersionComment", reflect.TypeOf((*MockDB)(nil).UpdateDatasetVersionComment), ctx, arg)
-}
-
-// UpdateNamespace mocks base method.
-func (m *MockDB) UpdateNamespace(ctx context.Context, arg core.UpdateNamespaceParams) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateNamespace", ctx, arg)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UpdateNamespace indicates an expected call of UpdateNamespace.
-func (mr *MockDBMockRecorder) UpdateNamespace(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNamespace", reflect.TypeOf((*MockDB)(nil).UpdateNamespace), ctx, arg)
-}
-
-// UpdateNamespaceLogComment mocks base method.
-func (m *MockDB) UpdateNamespaceLogComment(ctx context.Context, arg core.UpdateNamespaceLogCommentParams) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateNamespaceLogComment", ctx, arg)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UpdateNamespaceLogComment indicates an expected call of UpdateNamespaceLogComment.
-func (mr *MockDBMockRecorder) UpdateNamespaceLogComment(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNamespaceLogComment", reflect.TypeOf((*MockDB)(nil).UpdateNamespaceLogComment), ctx, arg)
-}
-
-// UpdateNamespaceVariable mocks base method.
-func (m *MockDB) UpdateNamespaceVariable(ctx context.Context, arg core.UpdateNamespaceVariableParams) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateNamespaceVariable", ctx, arg)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UpdateNamespaceVariable indicates an expected call of UpdateNamespaceVariable.
-func (mr *MockDBMockRecorder) UpdateNamespaceVariable(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNamespaceVariable", reflect.TypeOf((*MockDB)(nil).UpdateNamespaceVariable), ctx, arg)
 }
 
 // UpdateExperiment mocks base method.
@@ -3955,6 +3427,48 @@ func (m *MockDB) UpdateExperimentVariableVersionComment(ctx context.Context, arg
 func (mr *MockDBMockRecorder) UpdateExperimentVariableVersionComment(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateExperimentVariableVersionComment", reflect.TypeOf((*MockDB)(nil).UpdateExperimentVariableVersionComment), ctx, arg)
+}
+
+// UpdateNamespace mocks base method.
+func (m *MockDB) UpdateNamespace(ctx context.Context, arg core.UpdateNamespaceParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateNamespace", ctx, arg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateNamespace indicates an expected call of UpdateNamespace.
+func (mr *MockDBMockRecorder) UpdateNamespace(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNamespace", reflect.TypeOf((*MockDB)(nil).UpdateNamespace), ctx, arg)
+}
+
+// UpdateNamespaceLogComment mocks base method.
+func (m *MockDB) UpdateNamespaceLogComment(ctx context.Context, arg core.UpdateNamespaceLogCommentParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateNamespaceLogComment", ctx, arg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateNamespaceLogComment indicates an expected call of UpdateNamespaceLogComment.
+func (mr *MockDBMockRecorder) UpdateNamespaceLogComment(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNamespaceLogComment", reflect.TypeOf((*MockDB)(nil).UpdateNamespaceLogComment), ctx, arg)
+}
+
+// UpdateNamespaceVariable mocks base method.
+func (m *MockDB) UpdateNamespaceVariable(ctx context.Context, arg core.UpdateNamespaceVariableParams) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateNamespaceVariable", ctx, arg)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateNamespaceVariable indicates an expected call of UpdateNamespaceVariable.
+func (mr *MockDBMockRecorder) UpdateNamespaceVariable(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNamespaceVariable", reflect.TypeOf((*MockDB)(nil).UpdateNamespaceVariable), ctx, arg)
 }
 
 // UpdateProject mocks base method.

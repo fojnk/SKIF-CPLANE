@@ -26,6 +26,3 @@ type CreateNamespaceRequest struct {
 	Name    string `json:"name" validate:"required,min=1,max=10"`
 	Comment string `json:"comment"`
 }
-
-type CreateNamespaceRolesRequest struct {
-}
