@@ -5,8 +5,8 @@ import (
 	"os"
 	"text/template"
 
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	experiment2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/experiment"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/project"
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
@@ -26,9 +26,8 @@ func (s *StreamflowTestSuite) TestExperimentValidation() {
 
 	projRes, err := s.c.Project.PostAPIV1Project(&project.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-experiment"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-experiment"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -65,7 +64,7 @@ func (s *StreamflowTestSuite) TestExperimentValidation() {
 
 	getRes, err := s.c.Experiment.GetAPIV1Experiment(&experiment2.GetAPIV1ExperimentParams{
 		ExperimentID: res.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(getRes)
@@ -83,7 +82,7 @@ func (s *StreamflowTestSuite) TestExperimentValidation() {
 
 	updateRes, err := s.c.Experiment.PutAPIV1Experiment(&experiment2.PutAPIV1ExperimentParams{
 		Request: &models2.RequestsUpdateCompleteExperimentRequest{
-			ExperimentID:        ptr(res.Payload.ID),
+			ExperimentID:      ptr(res.Payload.ID),
 			Name:              "updated-experiment",
 			Config:            "{\"hello\": \"world\"}",
 			Comment:           "add some things",
@@ -150,9 +149,9 @@ func (s *StreamflowTestSuite) TestExperimentValidation() {
 		updateRes2, err := s.c.Experiment.PutAPIV1Experiment(&experiment2.PutAPIV1ExperimentParams{
 			Request: &models2.RequestsUpdateCompleteExperimentRequest{
 				ExperimentID: ptr(res.Payload.ID),
-				Name:       "updated-experiment",
-				Config:     jsonConfigExpected.String(),
-				Comment:    "add some things",
+				Name:         "updated-experiment",
+				Config:       jsonConfigExpected.String(),
+				Comment:      "add some things",
 			},
 			Context: s.ctx,
 		})
@@ -190,7 +189,7 @@ func (s *StreamflowTestSuite) TestExperimentValidation() {
 
 		updateRes2, err := s.c.Experiment.PutAPIV1Experiment(&experiment2.PutAPIV1ExperimentParams{
 			Request: &models2.RequestsUpdateCompleteExperimentRequest{
-				ExperimentID:        ptr(res.Payload.ID),
+				ExperimentID:      ptr(res.Payload.ID),
 				Name:              "updated-experiment",
 				Config:            jsonConfigExpected.String(),
 				Comment:           "add some things",
@@ -230,9 +229,8 @@ func (s *StreamflowTestSuite) TestExperimentQuota() {
 
 	projRes, err := s.c.Project.PostAPIV1Project(&project.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-experiment"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-experiment"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -269,7 +267,7 @@ func (s *StreamflowTestSuite) TestExperimentQuota() {
 
 	getRes, err := s.c.Experiment.GetAPIV1Experiment(&experiment2.GetAPIV1ExperimentParams{
 		ExperimentID: res.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(getRes)
@@ -334,9 +332,9 @@ func (s *StreamflowTestSuite) TestExperimentQuota() {
 	updateRes2, err := s.c.Experiment.PutAPIV1Experiment(&experiment2.PutAPIV1ExperimentParams{
 		Request: &models2.RequestsUpdateCompleteExperimentRequest{
 			ExperimentID: ptr(res.Payload.ID),
-			Name:       "updated-experiment",
-			Config:     jsonConfigExpected.String(),
-			Comment:    "add some things",
+			Name:         "updated-experiment",
+			Config:       jsonConfigExpected.String(),
+			Comment:      "add some things",
 		},
 		Context: s.ctx,
 	})
@@ -379,9 +377,9 @@ func (s *StreamflowTestSuite) TestExperimentQuota() {
 	updateRes1, err := s.c.Experiment.PutAPIV1Experiment(&experiment2.PutAPIV1ExperimentParams{
 		Request: &models2.RequestsUpdateCompleteExperimentRequest{
 			ExperimentID: ptr(res.Payload.ID),
-			Name:       "updated-experiment",
-			Config:     jsonConfigExpected1.String(),
-			Comment:    "add some things",
+			Name:         "updated-experiment",
+			Config:       jsonConfigExpected1.String(),
+			Comment:      "add some things",
 		},
 		Context: s.ctx,
 	})
@@ -428,9 +426,8 @@ func (s *StreamflowTestSuite) TestExperimentValidationRun() {
 
 	projRes, err := s.c.Project.PostAPIV1Project(&project.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-val-run"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-val-run"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})

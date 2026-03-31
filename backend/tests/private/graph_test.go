@@ -2,8 +2,8 @@ package private
 
 import (
 	"github.com/stretchr/testify/require"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	experiment2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/experiment"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/project"
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
@@ -25,9 +25,8 @@ func (s *StreamflowTestSuite) TestProjectGraph() {
 
 	projResp, err := s.c.Project.PostAPIV1Project(&project.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-graph"),
-			NamespaceID:  &namespaceID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-graph"),
+			NamespaceID: &namespaceID,
 		},
 		Context: s.ctx,
 	})

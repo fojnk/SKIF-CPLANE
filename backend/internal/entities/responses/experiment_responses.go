@@ -50,6 +50,27 @@ type GetCompleteExperimentsResponse struct {
 	Rights []acl.Right `json:"rights"`
 }
 
+// MarshalJSON includes rights. Embeddable dto.CompleteExperiment has its own MarshalJSON; without this,
+// encoding/json would marshal only the DTO and drop rights.
+func (r GetCompleteExperimentsResponse) MarshalJSON() ([]byte, error) {
+	type Alias dto.CompleteExperiment
+	return json.Marshal(struct {
+		Alias
+		Rights         []acl.Right `json:"rights"`
+		ExperimentID   int32       `json:"experiment_id"`
+		ExperimentName string      `json:"experiment_name"`
+		ModelID        int32       `json:"model_id"`
+		ModelName      string      `json:"model_name"`
+	}{
+		Alias:          Alias(r.CompleteExperiment),
+		Rights:         r.Rights,
+		ExperimentID:   r.ID,
+		ExperimentName: r.Name,
+		ModelID:        r.ID,
+		ModelName:      r.Name,
+	})
+}
+
 type ListCompleteExperimentsResponse struct {
 	Experiments []dto.CompleteExperimentList `json:"experiments"`
 }

@@ -22,9 +22,8 @@ func (s *StreamflowTestSuite) TestPinnedProjects() {
 
 	res, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -43,9 +42,8 @@ func (s *StreamflowTestSuite) TestPinnedProjects() {
 	s.Require().Contains(
 		derefSlice(s.T(), listRes.Payload.Projects),
 		models2.DtoProject{
-			ID:           res.Payload.ID,
-			Name:         "test-project",
-			AbcProductID: "1234",
+			ID:   res.Payload.ID,
+			Name: "test-project",
 		},
 	)
 

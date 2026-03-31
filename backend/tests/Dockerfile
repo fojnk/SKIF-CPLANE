@@ -1,17 +1,16 @@
-FROM golang:1.23.7-alpine AS base
+FROM golang:1.24.2-alpine AS base
 
-RUN apk add --no-cache make git
+RUN apk add --no-cache make git ca-certificates
 
-ENV GOPROXY=https://oneart.vkteam.ru/repository/golang/
-ENV GOSUMDB="sum.golang.org https://oneart.vkteam.ru/repository/golang-sum/"
-ENV GOPRIVATE=gitlab.corp.mail.ru
+ENV GOPROXY=https://proxy.golang.org,direct
+ENV GOSUMDB=sum.golang.org
 
 WORKDIR /go/src/streamflow-cplane
 
 COPY ./go.mod ./go.sum /go/src/streamflow-cplane/
+COPY ./local/libs/models /go/src/streamflow-cplane/local/libs/models
 
-RUN --mount=type=secret,id=netrc,dst=/root/.netrc \
-    go mod download -x
+RUN go mod download -x
 COPY ./cmd ./cmd
 COPY ./internal ./internal
 
@@ -20,8 +19,7 @@ FROM base AS build
 
 ARG VERSION
 RUN mkdir -p bin
-RUN --mount=type=secret,id=netrc,dst=/root/.netrc \
-    go build -ldflags="-X 'main.version=${VERSION}'" -o ./bin/streamflow-cplane ./cmd/
+RUN go build -ldflags="-X 'main.version=${VERSION}'" -o ./bin/streamflow-cplane ./cmd/
 
 FROM ubuntu:22.04 AS bin
 
@@ -29,6 +27,5 @@ COPY --from=build /go/src/streamflow-cplane/bin/streamflow-cplane /streamflow-cp
 COPY ./tests/config.yaml ./config.yaml
 COPY ./migrations ./migrations
 COPY ./templates ./templates
-RUN mkdir /test_alerts
 COPY ./json ./json
 ENTRYPOINT ["/streamflow-cplane", "${VERSION}"]

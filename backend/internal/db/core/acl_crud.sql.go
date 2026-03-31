@@ -56,24 +56,6 @@ func (q *Queries) GetUserInfoByName(ctx context.Context, name string) (TUser, er
 	return i, err
 }
 
-const insertRobot = `-- name: InsertRobot :one
-WITH ins AS (
-INSERT INTO t_user(name, is_robot) VALUES($1, TRUE)
-ON CONFLICT DO NOTHING
-    RETURNING id
-    )
-SELECT id FROM ins
-UNION ALL
-SELECT id FROM t_user WHERE name = $1
-`
-
-func (q *Queries) InsertRobot(ctx context.Context, name string) (int32, error) {
-	row := q.db.QueryRow(ctx, insertRobot, name)
-	var id int32
-	err := row.Scan(&id)
-	return id, err
-}
-
 const insertRole = `-- name: InsertRole :one
 INSERT INTO t_role(name, description, idm_id) VALUES ($1, $2, $3) RETURNING id, name, description, idm_id
 `

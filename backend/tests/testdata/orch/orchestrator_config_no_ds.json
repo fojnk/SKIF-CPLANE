@@ -1,7 +1,6 @@
 {
         "Meta": {
                 "Namespace": "t-ocfg-nds",
-                "AbcProductId":"1234",
                 "ExperimentId": "{{.ExperimentID}}",
                 "ExperimentName": "test-experiment-orchestrator-config-no-datasets",
                 "Project": "test-project-orchestrator-config-no-datasets",

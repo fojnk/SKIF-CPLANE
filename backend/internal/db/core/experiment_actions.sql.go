@@ -36,7 +36,7 @@ WHERE t_experiment_dataset.alias = $1 AND t_dataset.deleted = FALSE AND t_experi
 `
 
 type DatasetFromLinkByAliasParams struct {
-	Alias      string
+	Alias        string
 	ExperimentID int32
 }
 
@@ -76,6 +76,38 @@ DELETE FROM t_experiment_variable WHERE id = $1
 
 func (q *Queries) DeleteExperimentVariableByExperimentID(ctx context.Context, id int32) error {
 	_, err := q.db.Exec(ctx, deleteExperimentVariableByExperimentID, id)
+	return err
+}
+
+const experimentStart = `-- name: ExperimentStart :exec
+UPDATE t_experiment
+SET status = 'pending start'
+WHERE id = $1 AND deleted = FALSE
+`
+
+func (q *Queries) ExperimentStart(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, experimentStart, id)
+	return err
+}
+
+const experimentStatus = `-- name: ExperimentStatus :one
+SELECT status FROM t_experiment WHERE id = $1 AND deleted = FALSE
+`
+
+func (q *Queries) ExperimentStatus(ctx context.Context, id int32) (string, error) {
+	row := q.db.QueryRow(ctx, experimentStatus, id)
+	var status string
+	err := row.Scan(&status)
+	return status, err
+}
+
+const experimentStop = `-- name: ExperimentStop :exec
+UPDATE t_experiment
+SET status = 'stopped' WHERE id = $1 AND deleted = FALSE
+`
+
+func (q *Queries) ExperimentStop(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, experimentStop, id)
 	return err
 }
 
@@ -171,7 +203,7 @@ RETURNING id, experiment_id, current_version, last_updated, orch_config
 `
 
 type InsertExperimentAppliedVersionParams struct {
-	ExperimentID     int32
+	ExperimentID   int32
 	CurrentVersion int32
 	OrchConfig     string
 }
@@ -187,7 +219,7 @@ INSERT INTO t_experiment_variable (experiment_id, name) VALUES ($1, $2) RETURNIN
 
 type InsertExperimentVariableParams struct {
 	ExperimentID int32
-	Name       string
+	Name         string
 }
 
 func (q *Queries) InsertExperimentVariable(ctx context.Context, arg InsertExperimentVariableParams) (int32, error) {
@@ -233,38 +265,6 @@ func (q *Queries) InsertExperimentVariableVersion(ctx context.Context, arg Inser
 	return i, err
 }
 
-const experimentStart = `-- name: ExperimentStart :exec
-UPDATE t_experiment
-SET status = 'pending start'
-WHERE id = $1 AND deleted = FALSE
-`
-
-func (q *Queries) ExperimentStart(ctx context.Context, id int32) error {
-	_, err := q.db.Exec(ctx, experimentStart, id)
-	return err
-}
-
-const experimentStatus = `-- name: ExperimentStatus :one
-SELECT status FROM t_experiment WHERE id = $1 AND deleted = FALSE
-`
-
-func (q *Queries) ExperimentStatus(ctx context.Context, id int32) (string, error) {
-	row := q.db.QueryRow(ctx, experimentStatus, id)
-	var status string
-	err := row.Scan(&status)
-	return status, err
-}
-
-const experimentStop = `-- name: ExperimentStop :exec
-UPDATE t_experiment
-SET status = 'stopped' WHERE id = $1 AND deleted = FALSE
-`
-
-func (q *Queries) ExperimentStop(ctx context.Context, id int32) error {
-	_, err := q.db.Exec(ctx, experimentStop, id)
-	return err
-}
-
 const selectExperimentAppliedVersion = `-- name: SelectExperimentAppliedVersion :one
 SELECT id, experiment_id, current_version, last_updated, orch_config FROM t_experiment_status WHERE experiment_id = $1
 `
@@ -294,7 +294,7 @@ type SelectExperimentVariableRow struct {
 	Name          string
 	Value         string
 	Type          string
-	ExperimentID    int32
+	ExperimentID  int32
 	VersionID     int32
 	VersionIDName int32
 }
@@ -322,17 +322,17 @@ WHERE pr.name = $1 AND pr.experiment_id = $2
 `
 
 type SelectExperimentVariableV2Params struct {
-	Name       string
+	Name         string
 	ExperimentID int32
 }
 
 type SelectExperimentVariableV2Row struct {
-	ID         int32
-	Name       string
-	Value      string
-	Type       string
+	ID           int32
+	Name         string
+	Value        string
+	Type         string
 	ExperimentID int32
-	VersionID  int32
+	VersionID    int32
 }
 
 func (q *Queries) SelectExperimentVariableV2(ctx context.Context, arg SelectExperimentVariableV2Params) (SelectExperimentVariableV2Row, error) {
@@ -375,9 +375,9 @@ AND experiment_id = $2
 `
 
 type UpdateExperimentDatasetParams struct {
-	ID         int32
+	ID           int32
 	ExperimentID int32
-	Alias      string
+	Alias        string
 }
 
 func (q *Queries) UpdateExperimentDataset(ctx context.Context, arg UpdateExperimentDatasetParams) error {
@@ -392,9 +392,9 @@ WHERE id = $2 AND experiment_id = $3
 `
 
 type UpdateExperimentDatasetIDInLinkParams struct {
-	DatasetID int32
+	DatasetID    int32
 	ID           int32
-	ExperimentID   int32
+	ExperimentID int32
 }
 
 func (q *Queries) UpdateExperimentDatasetIDInLink(ctx context.Context, arg UpdateExperimentDatasetIDInLinkParams) error {

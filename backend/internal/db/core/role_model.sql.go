@@ -150,7 +150,7 @@ func (q *Queries) DisclaimUserRule(ctx context.Context, arg DisclaimUserRulePara
 }
 
 const getNamespacesWithoutRole = `-- name: GetNamespacesWithoutRole :many
-SELECT ns.id, ns.name, ns.created_at, ns.namespace_version_id, ns.deleted, ns.unlimited FROM t_namespace ns
+SELECT ns.id, ns.name, ns.created_at, ns.deleted, ns.namespace_version_id, ns.unlimited FROM t_namespace ns
 LEFT JOIN t_role_object_match rm ON rm.object_id = ns.id AND rm.object_type = 'namespace'
 WHERE rm.object_id IS NULL AND ns.deleted=false
 `
@@ -168,8 +168,8 @@ func (q *Queries) GetNamespacesWithoutRole(ctx context.Context) ([]TNamespace, e
 			&i.ID,
 			&i.Name,
 			&i.CreatedAt,
-			&i.NamespaceVersionID,
 			&i.Deleted,
+			&i.NamespaceVersionID,
 			&i.Unlimited,
 		); err != nil {
 			return nil, err
@@ -183,7 +183,7 @@ func (q *Queries) GetNamespacesWithoutRole(ctx context.Context) ([]TNamespace, e
 }
 
 const getProjectsWithoutRole = `-- name: GetProjectsWithoutRole :many
-SELECT pr.id, pr.namespace_id, pr.name, pr.description, pr.created_at, pr.project_version_id, pr.deleted, pr.unlimited, pr.updated_at, pr.abc_product_id FROM t_project pr
+SELECT pr.id, pr.namespace_id, pr.name, pr.description, pr.created_at, pr.deleted, pr.project_version_id, pr.unlimited, pr.updated_at, pr.abc_product_id FROM t_project pr
 LEFT JOIN t_role_object_match rm ON rm.object_id = pr.id AND rm.object_type = 'project'
 WHERE rm.object_id IS NULL AND pr.deleted=false
 `
@@ -203,8 +203,8 @@ func (q *Queries) GetProjectsWithoutRole(ctx context.Context) ([]TProject, error
 			&i.Name,
 			&i.Description,
 			&i.CreatedAt,
-			&i.ProjectVersionID,
 			&i.Deleted,
+			&i.ProjectVersionID,
 			&i.Unlimited,
 			&i.UpdatedAt,
 			&i.AbcProductID,

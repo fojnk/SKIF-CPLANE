@@ -2,8 +2,8 @@ package private
 
 import (
 	dataset2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/dataset"
-	namespace2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	experiment2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/experiment"
+	namespace2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	project2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/project"
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
@@ -26,9 +26,8 @@ func (s *StreamflowTestSuite) TestDeletes() {
 	// create project
 	prRes, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			NamespaceID:  &nsRes.Payload.ID,
-			Name:         ptr("del-pr"),
-			AbcProductID: ptr("1234"),
+			NamespaceID: &nsRes.Payload.ID,
+			Name:        ptr("del-pr"),
 		},
 		Context: s.ctx,
 	})
@@ -64,8 +63,8 @@ func (s *StreamflowTestSuite) TestDeletes() {
 	// link dataset to experiment
 	linkRes, err := s.c.Experiment.PostAPIV1ExperimentDataset(&experiment2.PostAPIV1ExperimentDatasetParams{
 		Request: &models2.RequestsAddDatasetToExperimentRequest{
-			ExperimentID:   &plRes.Payload.ID,
-			DatasetID: &dsRes.Payload.ID,
+			ExperimentID: &plRes.Payload.ID,
+			DatasetID:    &dsRes.Payload.ID,
 			Alias:        ptr("del-ds-alias"),
 		},
 		Context: s.ctx,
@@ -113,7 +112,7 @@ func (s *StreamflowTestSuite) TestDeletes() {
 	// remove dataset from experiment
 	delLinkRes, err := s.c.Experiment.DeleteAPIV1ExperimentDataset(&experiment2.DeleteAPIV1ExperimentDatasetParams{
 		Request: &models2.RequestsRemoveDatasetFromExperimentRequest{
-			LinkID:     &linkRes.Payload.LinkID,
+			LinkID:       &linkRes.Payload.LinkID,
 			ExperimentID: &plRes.Payload.ID,
 		},
 		Context: s.ctx,
@@ -125,7 +124,7 @@ func (s *StreamflowTestSuite) TestDeletes() {
 	// ensure link is deleted
 	getLinkRes, err := s.c.Experiment.GetAPIV1ExperimentDatasets(&experiment2.GetAPIV1ExperimentDatasetsParams{
 		ExperimentID: plRes.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().Len(getLinkRes.Payload.Datasets, 0)

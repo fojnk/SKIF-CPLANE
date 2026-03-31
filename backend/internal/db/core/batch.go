@@ -66,94 +66,6 @@ func (b *AddRoleToBatchUsersBatchResults) Close() error {
 	return b.br.Close()
 }
 
-const deleteAlertGroups = `-- name: DeleteAlertGroups :batchexec
-DELETE FROM t_alert_groups
-WHERE alert_group_id = $1
-`
-
-type DeleteAlertGroupsBatchResults struct {
-	br     pgx.BatchResults
-	tot    int
-	closed bool
-}
-
-func (q *Queries) DeleteAlertGroups(ctx context.Context, alertGroupID []int32) *DeleteAlertGroupsBatchResults {
-	batch := &pgx.Batch{}
-	for _, a := range alertGroupID {
-		vals := []interface{}{
-			a,
-		}
-		batch.Queue(deleteAlertGroups, vals...)
-	}
-	br := q.db.SendBatch(ctx, batch)
-	return &DeleteAlertGroupsBatchResults{br, len(alertGroupID), false}
-}
-
-func (b *DeleteAlertGroupsBatchResults) Exec(f func(int, error)) {
-	defer b.br.Close()
-	for t := 0; t < b.tot; t++ {
-		if b.closed {
-			if f != nil {
-				f(t, ErrBatchAlreadyClosed)
-			}
-			continue
-		}
-		_, err := b.br.Exec()
-		if f != nil {
-			f(t, err)
-		}
-	}
-}
-
-func (b *DeleteAlertGroupsBatchResults) Close() error {
-	b.closed = true
-	return b.br.Close()
-}
-
-const deleteAlertRule = `-- name: DeleteAlertRule :batchexec
-DELETE FROM t_alert_rules
-WHERE rule_id = $1
-`
-
-type DeleteAlertRuleBatchResults struct {
-	br     pgx.BatchResults
-	tot    int
-	closed bool
-}
-
-func (q *Queries) DeleteAlertRule(ctx context.Context, ruleID []int32) *DeleteAlertRuleBatchResults {
-	batch := &pgx.Batch{}
-	for _, a := range ruleID {
-		vals := []interface{}{
-			a,
-		}
-		batch.Queue(deleteAlertRule, vals...)
-	}
-	br := q.db.SendBatch(ctx, batch)
-	return &DeleteAlertRuleBatchResults{br, len(ruleID), false}
-}
-
-func (b *DeleteAlertRuleBatchResults) Exec(f func(int, error)) {
-	defer b.br.Close()
-	for t := 0; t < b.tot; t++ {
-		if b.closed {
-			if f != nil {
-				f(t, ErrBatchAlreadyClosed)
-			}
-			continue
-		}
-		_, err := b.br.Exec()
-		if f != nil {
-			f(t, err)
-		}
-	}
-}
-
-func (b *DeleteAlertRuleBatchResults) Close() error {
-	b.closed = true
-	return b.br.Close()
-}
-
 const deleteBatchUsersFromGroup = `-- name: DeleteBatchUsersFromGroup :batchexec
 DELETE FROM t_user_group_match 
 WHERE user_id = $1 AND user_group_id = $2
@@ -254,119 +166,6 @@ func (b *DeleteBatchUsersFromRoleBatchResults) Close() error {
 	return b.br.Close()
 }
 
-const deleteNotificationProductIds = `-- name: DeleteNotificationProductIds :batchexec
-DELETE FROM t_products
-WHERE product_id = $1
-`
-
-type DeleteNotificationProductIdsBatchResults struct {
-	br     pgx.BatchResults
-	tot    int
-	closed bool
-}
-
-func (q *Queries) DeleteNotificationProductIds(ctx context.Context, productID []int32) *DeleteNotificationProductIdsBatchResults {
-	batch := &pgx.Batch{}
-	for _, a := range productID {
-		vals := []interface{}{
-			a,
-		}
-		batch.Queue(deleteNotificationProductIds, vals...)
-	}
-	br := q.db.SendBatch(ctx, batch)
-	return &DeleteNotificationProductIdsBatchResults{br, len(productID), false}
-}
-
-func (b *DeleteNotificationProductIdsBatchResults) Exec(f func(int, error)) {
-	defer b.br.Close()
-	for t := 0; t < b.tot; t++ {
-		if b.closed {
-			if f != nil {
-				f(t, ErrBatchAlreadyClosed)
-			}
-			continue
-		}
-		_, err := b.br.Exec()
-		if f != nil {
-			f(t, err)
-		}
-	}
-}
-
-func (b *DeleteNotificationProductIdsBatchResults) Close() error {
-	b.closed = true
-	return b.br.Close()
-}
-
-const insertAlertRule = `-- name: InsertAlertRule :batchexec
-INSERT INTO t_alert_rules (
-	alert_group_id,
-	template_alert_id,
-	severity_name,
-	severity_is_active,
-	alert_limit,
-	delay_firing,
-	delay_resolving
-) VALUES (
-	$1, $2, $3, $4, $5, $6, $7
-)
-`
-
-type InsertAlertRuleBatchResults struct {
-	br     pgx.BatchResults
-	tot    int
-	closed bool
-}
-
-type InsertAlertRuleParams struct {
-	AlertGroupID     int32
-	TemplateAlertID  int32
-	SeverityName     string
-	SeverityIsActive *bool
-	AlertLimit       string
-	DelayFiring      string
-	DelayResolving   string
-}
-
-func (q *Queries) InsertAlertRule(ctx context.Context, arg []InsertAlertRuleParams) *InsertAlertRuleBatchResults {
-	batch := &pgx.Batch{}
-	for _, a := range arg {
-		vals := []interface{}{
-			a.AlertGroupID,
-			a.TemplateAlertID,
-			a.SeverityName,
-			a.SeverityIsActive,
-			a.AlertLimit,
-			a.DelayFiring,
-			a.DelayResolving,
-		}
-		batch.Queue(insertAlertRule, vals...)
-	}
-	br := q.db.SendBatch(ctx, batch)
-	return &InsertAlertRuleBatchResults{br, len(arg), false}
-}
-
-func (b *InsertAlertRuleBatchResults) Exec(f func(int, error)) {
-	defer b.br.Close()
-	for t := 0; t < b.tot; t++ {
-		if b.closed {
-			if f != nil {
-				f(t, ErrBatchAlreadyClosed)
-			}
-			continue
-		}
-		_, err := b.br.Exec()
-		if f != nil {
-			f(t, err)
-		}
-	}
-}
-
-func (b *InsertAlertRuleBatchResults) Close() error {
-	b.closed = true
-	return b.br.Close()
-}
-
 const insertBatchUsersToGroup = `-- name: InsertBatchUsersToGroup :batchexec
 INSERT INTO t_user_group_match (user_id, user_group_id) VALUES ($1, $2) ON CONFLICT DO NOTHING
 `
@@ -416,56 +215,6 @@ func (b *InsertBatchUsersToGroupBatchResults) Close() error {
 	return b.br.Close()
 }
 
-const insertNewUsers = `-- name: InsertNewUsers :batchone
-WITH ins AS (
-        INSERT INTO t_user(name) VALUES($1) ON CONFLICT DO NOTHING RETURNING id
-)
-SELECT id FROM ins
-UNION ALL
-SELECT id FROM t_user WHERE name = $1
-`
-
-type InsertNewUsersBatchResults struct {
-	br     pgx.BatchResults
-	tot    int
-	closed bool
-}
-
-func (q *Queries) InsertNewUsers(ctx context.Context, name []string) *InsertNewUsersBatchResults {
-	batch := &pgx.Batch{}
-	for _, a := range name {
-		vals := []interface{}{
-			a,
-		}
-		batch.Queue(insertNewUsers, vals...)
-	}
-	br := q.db.SendBatch(ctx, batch)
-	return &InsertNewUsersBatchResults{br, len(name), false}
-}
-
-func (b *InsertNewUsersBatchResults) QueryRow(f func(int, int32, error)) {
-	defer b.br.Close()
-	for t := 0; t < b.tot; t++ {
-		var id int32
-		if b.closed {
-			if f != nil {
-				f(t, id, ErrBatchAlreadyClosed)
-			}
-			continue
-		}
-		row := b.br.QueryRow()
-		err := row.Scan(&id)
-		if f != nil {
-			f(t, id, err)
-		}
-	}
-}
-
-func (b *InsertNewUsersBatchResults) Close() error {
-	b.closed = true
-	return b.br.Close()
-}
-
 const insertExperimentDatasets = `-- name: InsertExperimentDatasets :batchone
 INSERT INTO t_experiment_dataset (experiment_id, dataset_id, alias)
 VALUES ($1, $2, $3)
@@ -479,8 +228,8 @@ type InsertExperimentDatasetsBatchResults struct {
 }
 
 type InsertExperimentDatasetsParams struct {
-	ExperimentID   int32
-	DatasetID int32
+	ExperimentID int32
+	DatasetID    int32
 	Alias        string
 }
 
@@ -533,9 +282,9 @@ type InsertExperimentVariablesBatchResults struct {
 
 type InsertExperimentVariablesParams struct {
 	ExperimentID int32
-	Name       string
-	Value      string
-	Type       string
+	Name         string
+	Value        string
+	Type         string
 }
 
 func (q *Queries) InsertExperimentVariables(ctx context.Context, arg []InsertExperimentVariablesParams) *InsertExperimentVariablesBatchResults {
@@ -603,11 +352,11 @@ type InsertExperimentVariablesV2BatchResults struct {
 
 type InsertExperimentVariablesV2Params struct {
 	ExperimentID int32
-	Name       string
-	Value      string
-	Type       string
-	Creator    string
-	Comment    string
+	Name         string
+	Value        string
+	Type         string
+	Creator      string
+	Comment      string
 }
 
 func (q *Queries) InsertExperimentVariablesV2(ctx context.Context, arg []InsertExperimentVariablesV2Params) *InsertExperimentVariablesV2BatchResults {
@@ -650,69 +399,52 @@ func (b *InsertExperimentVariablesV2BatchResults) Close() error {
 	return b.br.Close()
 }
 
-const updateAlertRule = `-- name: UpdateAlertRule :batchexec
-UPDATE t_alert_rules
-SET
-	template_alert_id = $1,
-	severity_name = $2,
-	severity_is_active = $3,
-	alert_limit = $4,
-	delay_firing = $5,
-	delay_resolving = $6
-WHERE rule_id = $7
+const insertNewUsers = `-- name: InsertNewUsers :batchone
+WITH ins AS (
+        INSERT INTO t_user(name) VALUES($1) ON CONFLICT DO NOTHING RETURNING id
+)
+SELECT id FROM ins
+UNION ALL
+SELECT id FROM t_user WHERE name = $1
 `
 
-type UpdateAlertRuleBatchResults struct {
+type InsertNewUsersBatchResults struct {
 	br     pgx.BatchResults
 	tot    int
 	closed bool
 }
 
-type UpdateAlertRuleParams struct {
-	TemplateAlertID  int32
-	SeverityName     string
-	SeverityIsActive *bool
-	AlertLimit       string
-	DelayFiring      string
-	DelayResolving   string
-	RuleID           int32
-}
-
-func (q *Queries) UpdateAlertRule(ctx context.Context, arg []UpdateAlertRuleParams) *UpdateAlertRuleBatchResults {
+func (q *Queries) InsertNewUsers(ctx context.Context, name []string) *InsertNewUsersBatchResults {
 	batch := &pgx.Batch{}
-	for _, a := range arg {
+	for _, a := range name {
 		vals := []interface{}{
-			a.TemplateAlertID,
-			a.SeverityName,
-			a.SeverityIsActive,
-			a.AlertLimit,
-			a.DelayFiring,
-			a.DelayResolving,
-			a.RuleID,
+			a,
 		}
-		batch.Queue(updateAlertRule, vals...)
+		batch.Queue(insertNewUsers, vals...)
 	}
 	br := q.db.SendBatch(ctx, batch)
-	return &UpdateAlertRuleBatchResults{br, len(arg), false}
+	return &InsertNewUsersBatchResults{br, len(name), false}
 }
 
-func (b *UpdateAlertRuleBatchResults) Exec(f func(int, error)) {
+func (b *InsertNewUsersBatchResults) QueryRow(f func(int, int32, error)) {
 	defer b.br.Close()
 	for t := 0; t < b.tot; t++ {
+		var id int32
 		if b.closed {
 			if f != nil {
-				f(t, ErrBatchAlreadyClosed)
+				f(t, id, ErrBatchAlreadyClosed)
 			}
 			continue
 		}
-		_, err := b.br.Exec()
+		row := b.br.QueryRow()
+		err := row.Scan(&id)
 		if f != nil {
-			f(t, err)
+			f(t, id, err)
 		}
 	}
 }
 
-func (b *UpdateAlertRuleBatchResults) Close() error {
+func (b *InsertNewUsersBatchResults) Close() error {
 	b.closed = true
 	return b.br.Close()
 }

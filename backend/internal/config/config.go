@@ -28,11 +28,8 @@ type Config struct {
 	Clients       struct {
 		Auth         clients.AuthClientConfig         `yaml:"auth"`
 		Orchestrator clients.OrchestratorClientConfig `yaml:"orchestrator"`
-		IDM          clients.IDMClientConfig          `yaml:"idm"`
 		OAuth        oauth.OAuthConfig                `yaml:"oauth"`
 		JWT          jwt_client.JWTConfig             `yaml:"jwt"`
-		Jobd         clients.JobdClientConfig         `yaml:"jobd"`
-		OneAlerts    clients.OneAlertsClientConfig    `yaml:"one_alerts"`
 	} `yaml:"clients"`
 	SessionCache   cache.SessionCacheConfig `yaml:"session_cache"`
 	ExperimentURLs map[string]struct {

@@ -1,10 +1,9 @@
-FROM golang:1.23.2-alpine AS base
+FROM golang:1.24.2-alpine AS base
 
-RUN apk add --no-cache make
+RUN apk add --no-cache make ca-certificates
 
-ENV GOPROXY=https://oneart.vkteam.ru/repository/golang/
-ENV GOSUMDB="sum.golang.org https://oneart.vkteam.ru/repository/golang-sum/"
-ENV GOPRIVATE=gitlab.corp.mail.ru
+ENV GOPROXY=https://proxy.golang.org,direct
+ENV GOSUMDB=sum.golang.org
 
 WORKDIR /go/src/streamflow-testenv
 

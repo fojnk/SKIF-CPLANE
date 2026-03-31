@@ -1,8 +1,0 @@
-package: jobd
-output: ./internal/clients/jobd/client.gen.go
-generate:
-  models: true
-  client: true
-output-options:
-  skip-prune: true
-

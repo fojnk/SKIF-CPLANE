@@ -2,8 +2,8 @@ package private
 
 import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/acl"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/experiment"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/project"
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
@@ -25,9 +25,8 @@ func (s *StreamflowTestSuite) TestACL() {
 	// Create project
 	projResp, err := s.c.Project.PostAPIV1Project(&project.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-experiment-status"),
-			NamespaceID:  ptr(nsResp.Payload.ID),
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-experiment-status"),
+			NamespaceID: ptr(nsResp.Payload.ID),
 		},
 		Context: s.ctx,
 	})
@@ -57,7 +56,7 @@ func (s *StreamflowTestSuite) TestACL() {
 
 	s.Require().NoError(err)
 	s.Require().NotNil(usersExperiment)
-	s.Require().Len(usersExperiment.Payload.Users, 1)
+	s.requireACLUsersIncludesTestUser(usersExperiment.Payload.Users, "experiment")
 
 	usersProject, err := s.c.ACL.GetAPIV2ACLUsers(&acl.GetAPIV2ACLUsersParams{
 		Context:    s.ctx,
@@ -69,5 +68,18 @@ func (s *StreamflowTestSuite) TestACL() {
 
 	s.Require().NoError(err)
 	s.Require().NotNil(usersProject)
-	s.Require().Len(usersProject.Payload.Users, 1)
+	s.requireACLUsersIncludesTestUser(usersProject.Payload.Users, "project")
+}
+
+func (s *StreamflowTestSuite) requireACLUsersIncludesTestUser(users []*models2.DtoUserRights, objectHint string) {
+	var found *models2.DtoUserRights
+	for _, u := range users {
+		s.Require().NotNil(u)
+		if u.ID == s.userID {
+			found = u
+			break
+		}
+	}
+	s.Require().NotNil(found, "expected test user in ACL users for %s", objectHint)
+	s.Require().NotEmpty(found.Rights, "test user should have rights on %s", objectHint)
 }

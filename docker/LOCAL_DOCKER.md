@@ -28,5 +28,5 @@ docker compose up --build
 
 ## Важно
 
-Сборка backend использует зависимости из приватного GitLab (`gitlab.corp.mail.ru`).  
-Если у вашей машины нет доступа к этим зависимостям, сборка backend не пройдет — тогда нужно настроить доступ к приватным Go-модулям (например, через `.netrc`/корпоративный proxy).
+Сборка backend тянет публичные модули через `proxy.golang.org` (GitHub и зеркала).  
+Пакет `libs/models` подключается из каталога `backend/local/libs/models` (`replace` в `go.mod`), отдельный `.netrc` не нужен.

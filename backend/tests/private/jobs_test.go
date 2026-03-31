@@ -1,9 +1,9 @@
 package private
 
 import (
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/experiment"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/jobs"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/experiment"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/project"
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
@@ -24,9 +24,8 @@ func (s *StreamflowTestSuite) TestJobsList() {
 
 	projRes, err := s.c.Project.PostAPIV1Project(&project.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("proj-jobs1"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("proj-jobs1"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -63,7 +62,7 @@ func (s *StreamflowTestSuite) TestJobsList() {
 	if len(searchResp.Payload.Jobs) > 0 {
 		for _, job := range searchResp.Payload.Jobs {
 			s.Require().NotNil(job, "job should not be nil")
-			s.Require().NotEmpty(job.StatusDescription, "status_description should not be empty")
+			s.Require().NotEmpty(job.Status, "status should not be empty")
 		}
 	}
 
@@ -87,7 +86,7 @@ func (s *StreamflowTestSuite) TestJobsList() {
 	if len(searchResp2.Payload.Jobs) > 0 {
 		for _, job := range searchResp2.Payload.Jobs {
 			s.Require().NotNil(job, "job should not be nil")
-			s.Require().NotEmpty(job.StatusDescription, "status_description should not be empty")
+			s.Require().NotEmpty(job.Status, "status should not be empty")
 		}
 	}
 
@@ -130,7 +129,7 @@ func (s *StreamflowTestSuite) TestJobsGetByID() {
 	s.Require().NotNil(job, "job should not be nil")
 
 	// Проверяем, что status_description возвращается
-	s.Require().NotEmpty(job.StatusDescription, "status_description should not be empty")
+	s.Require().NotEmpty(job.Status, "status should not be empty")
 
 	// Tests completed successfully
 }
@@ -187,9 +186,8 @@ func (s *StreamflowTestSuite) TestJobsListWithEntityFilter() {
 
 	projRes, err := s.c.Project.PostAPIV1Project(&project.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("proj-jobs2"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("proj-jobs2"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})

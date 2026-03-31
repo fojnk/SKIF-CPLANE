@@ -1,1 +1,0 @@
-export { ChangeLogViewerSettingsModal } from './modal';

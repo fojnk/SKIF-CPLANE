@@ -1,1 +1,0 @@
-import{b as s,j as a}from"./bundle.BgNwub1V.js";const t=s(null),c=({children:e,style:r})=>a.jsx("div",{ref:t.set,className:"page-header__breadcrumbs",style:r,children:e});export{c as Breadcrumbs,t as breadcrumbsElement};

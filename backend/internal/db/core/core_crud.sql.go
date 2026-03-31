@@ -20,15 +20,6 @@ func (q *Queries) DeleteDataset(ctx context.Context, id int32) error {
 	return err
 }
 
-const deleteNamespace = `-- name: DeleteNamespace :exec
-UPDATE t_namespace SET deleted = TRUE WHERE id = $1
-`
-
-func (q *Queries) DeleteNamespace(ctx context.Context, id int32) error {
-	_, err := q.db.Exec(ctx, deleteNamespace, id)
-	return err
-}
-
 const deleteExperiment = `-- name: DeleteExperiment :exec
 UPDATE t_experiment_template SET deleted = TRUE WHERE id IN (
     SELECT t_experiment_template_v.parent_id FROM t_experiment_template_v
@@ -51,6 +42,15 @@ func (q *Queries) DeleteExperimentTemplate(ctx context.Context, id int32) error 
 	return err
 }
 
+const deleteNamespace = `-- name: DeleteNamespace :exec
+UPDATE t_namespace SET deleted = TRUE WHERE id = $1
+`
+
+func (q *Queries) DeleteNamespace(ctx context.Context, id int32) error {
+	_, err := q.db.Exec(ctx, deleteNamespace, id)
+	return err
+}
+
 const deleteProject = `-- name: DeleteProject :exec
 UPDATE t_project SET deleted = TRUE WHERE id = $1
 `
@@ -61,7 +61,7 @@ func (q *Queries) DeleteProject(ctx context.Context, id int32) error {
 }
 
 const insertDataset = `-- name: InsertDataset :one
-INSERT INTO t_dataset(name, type, params, schema, public, managed, project_id) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id, name, type, params, schema, namespace_id, is_external, created_at, uuid, deleted, public, managed, project_id, updated_at, version_id
+INSERT INTO t_dataset(name, type, params, schema, public, managed, project_id) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING id, name, type, params, schema, namespace_id, is_external, created_at, deleted, public, managed, project_id, updated_at, version_id
 `
 
 type InsertDatasetParams struct {
@@ -94,7 +94,6 @@ func (q *Queries) InsertDataset(ctx context.Context, arg InsertDatasetParams) (T
 		&i.NamespaceID,
 		&i.IsExternal,
 		&i.CreatedAt,
-		&i.Uuid,
 		&i.Deleted,
 		&i.Public,
 		&i.Managed,
@@ -113,13 +112,13 @@ RETURNING id, dataset_id, version, params, schema, public, managed, type, commen
 
 type InsertDatasetVersionParams struct {
 	DatasetID pgtype.Int4
-	Params       string
-	Schema       string
-	Type         string
-	Managed      bool
-	Public       bool
-	Comment      string
-	Creator      string
+	Params    string
+	Schema    string
+	Type      string
+	Managed   bool
+	Public    bool
+	Comment   string
+	Creator   string
 }
 
 func (q *Queries) InsertDatasetVersion(ctx context.Context, arg InsertDatasetVersionParams) (TDatasetV, error) {
@@ -148,17 +147,6 @@ func (q *Queries) InsertDatasetVersion(ctx context.Context, arg InsertDatasetVer
 		&i.CreatedAt,
 	)
 	return i, err
-}
-
-const insertNamespace = `-- name: InsertNamespace :one
-INSERT INTO t_namespace(name) VALUES($1) RETURNING id
-`
-
-func (q *Queries) InsertNamespace(ctx context.Context, name string) (int32, error) {
-	row := q.db.QueryRow(ctx, insertNamespace, name)
-	var id int32
-	err := row.Scan(&id)
-	return id, err
 }
 
 const insertExperiment = `-- name: InsertExperiment :one
@@ -223,8 +211,19 @@ func (q *Queries) InsertExperimentTemplateV(ctx context.Context, arg InsertExper
 	return id, err
 }
 
+const insertNamespace = `-- name: InsertNamespace :one
+INSERT INTO t_namespace(name) VALUES($1) RETURNING id
+`
+
+func (q *Queries) InsertNamespace(ctx context.Context, name string) (int32, error) {
+	row := q.db.QueryRow(ctx, insertNamespace, name)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
+}
+
 const insertProject = `-- name: InsertProject :one
-INSERT INTO t_project(namespace_id, name, description, abc_product_id) VALUES($1, $2, $3, $4) RETURNING id, namespace_id, name, description, created_at, project_version_id, deleted, unlimited, updated_at, abc_product_id
+INSERT INTO t_project(namespace_id, name, description, abc_product_id) VALUES($1, $2, $3, $4) RETURNING id, namespace_id, name, description, created_at, deleted, project_version_id, unlimited, updated_at, abc_product_id
 `
 
 type InsertProjectParams struct {
@@ -248,11 +247,47 @@ func (q *Queries) InsertProject(ctx context.Context, arg InsertProjectParams) (T
 		&i.Name,
 		&i.Description,
 		&i.CreatedAt,
-		&i.ProjectVersionID,
 		&i.Deleted,
+		&i.ProjectVersionID,
 		&i.Unlimited,
 		&i.UpdatedAt,
 		&i.AbcProductID,
+	)
+	return i, err
+}
+
+const selectDataset = `-- name: SelectDataset :one
+SELECT ds.id, ds.name, ds_v.type, ds_v.params, ds_v.schema, ds_v.public, ds_v.managed, ds.project_id, ds.version_id
+FROM t_dataset ds
+JOIN t_dataset_v ds_v ON ds_v.id = ds.version_id
+WHERE ds.id = $1 AND ds.deleted = FALSE
+`
+
+type SelectDatasetRow struct {
+	ID        int32
+	Name      string
+	Type      string
+	Params    string
+	Schema    string
+	Public    bool
+	Managed   bool
+	ProjectID pgtype.Int4
+	VersionID int32
+}
+
+func (q *Queries) SelectDataset(ctx context.Context, id int32) (SelectDatasetRow, error) {
+	row := q.db.QueryRow(ctx, selectDataset, id)
+	var i SelectDatasetRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Type,
+		&i.Params,
+		&i.Schema,
+		&i.Public,
+		&i.Managed,
+		&i.ProjectID,
+		&i.VersionID,
 	)
 	return i, err
 }
@@ -369,23 +404,23 @@ type SelectDatasetsParams struct {
 	Namespace       interface{}
 	Project         interface{}
 	AvailableToLink *bool
-	Experiment        int32
+	Experiment      int32
 }
 
 type SelectDatasetsRow struct {
-	ID                  int32
-	Name                string
-	Type                string
-	Public              bool
-	Managed             bool
-	ProjectID           pgtype.Int4
-	ProjectName         pgtype.Text
-	NamespaceID         pgtype.Int4
-	NamespaceName       pgtype.Text
-	UpdatedAt           pgtype.Timestamp
-	CreatedAt           pgtype.Timestamp
+	ID                    int32
+	Name                  string
+	Type                  string
+	Public                bool
+	Managed               bool
+	ProjectID             pgtype.Int4
+	ProjectName           pgtype.Text
+	NamespaceID           pgtype.Int4
+	NamespaceName         pgtype.Text
+	UpdatedAt             pgtype.Timestamp
+	CreatedAt             pgtype.Timestamp
 	LinkedExperimentCount int64
-	Total               int64
+	Total                 int64
 }
 
 func (q *Queries) SelectDatasets(ctx context.Context, arg SelectDatasetsParams) ([]SelectDatasetsRow, error) {
@@ -437,42 +472,6 @@ func (q *Queries) SelectDatasets(ctx context.Context, arg SelectDatasetsParams) 
 	return items, nil
 }
 
-const selectDataset = `-- name: SelectDataset :one
-SELECT ds.id, ds.name, ds_v.type, ds_v.params, ds_v.schema, ds_v.public, ds_v.managed, ds.project_id, ds.version_id
-FROM t_dataset ds
-JOIN t_dataset_v ds_v ON ds_v.id = ds.version_id
-WHERE ds.id = $1 AND ds.deleted = FALSE
-`
-
-type SelectDatasetRow struct {
-	ID        int32
-	Name      string
-	Type      string
-	Params    string
-	Schema    string
-	Public    bool
-	Managed   bool
-	ProjectID pgtype.Int4
-	VersionID int32
-}
-
-func (q *Queries) SelectDataset(ctx context.Context, id int32) (SelectDatasetRow, error) {
-	row := q.db.QueryRow(ctx, selectDataset, id)
-	var i SelectDatasetRow
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Type,
-		&i.Params,
-		&i.Schema,
-		&i.Public,
-		&i.Managed,
-		&i.ProjectID,
-		&i.VersionID,
-	)
-	return i, err
-}
-
 const selectDatasetsByProjectId = `-- name: SelectDatasetsByProjectId :many
 SELECT ds.id, ds.name, ds_v.type, ds_v.params, ds_v.schema, ds_v.public, ds_v.managed
 FROM t_dataset ds
@@ -507,121 +506,6 @@ func (q *Queries) SelectDatasetsByProjectId(ctx context.Context, projectID pgtyp
 			&i.Schema,
 			&i.Public,
 			&i.Managed,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const selectNamespace = `-- name: SelectNamespace :one
-SELECT t_namespace.id, t_namespace.name, t_namespace_config_v.id as config_version_id, t_namespace_config_v.config
-FROM t_namespace
-JOIN t_namespace_config_v ON t_namespace.namespace_version_id = t_namespace_config_v.id
-WHERE t_namespace.id = $1 AND t_namespace.deleted = FALSE
-`
-
-type SelectNamespaceRow struct {
-	ID              int32
-	Name            string
-	ConfigVersionID int32
-	Config          []byte
-}
-
-func (q *Queries) SelectNamespace(ctx context.Context, id int32) (SelectNamespaceRow, error) {
-	row := q.db.QueryRow(ctx, selectNamespace, id)
-	var i SelectNamespaceRow
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.ConfigVersionID,
-		&i.Config,
-	)
-	return i, err
-}
-
-const selectNamespaceWithDeleted = `-- name: SelectNamespaceWithDeleted :one
-SELECT t_namespace.id, t_namespace.name, t_namespace.deleted, t_namespace_config_v.id as config_version_id, t_namespace_config_v.config
-FROM t_namespace
-JOIN t_namespace_config_v ON t_namespace.namespace_version_id = t_namespace_config_v.id
-WHERE t_namespace.id = $1
-`
-
-type SelectNamespaceWithDeletedRow struct {
-	ID              int32
-	Name            string
-	Deleted         bool
-	ConfigVersionID int32
-	Config          []byte
-}
-
-func (q *Queries) SelectNamespaceWithDeleted(ctx context.Context, id int32) (SelectNamespaceWithDeletedRow, error) {
-	row := q.db.QueryRow(ctx, selectNamespaceWithDeleted, id)
-	var i SelectNamespaceWithDeletedRow
-	err := row.Scan(
-		&i.ID,
-		&i.Name,
-		&i.Deleted,
-		&i.ConfigVersionID,
-		&i.Config,
-	)
-	return i, err
-}
-
-const selectNamespaces = `-- name: SelectNamespaces :many
-SELECT id, name FROM t_namespace WHERE deleted = FALSE ORDER BY created_at DESC
-`
-
-type SelectNamespacesRow struct {
-	ID   int32
-	Name string
-}
-
-func (q *Queries) SelectNamespaces(ctx context.Context) ([]SelectNamespacesRow, error) {
-	rows, err := q.db.Query(ctx, selectNamespaces)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []SelectNamespacesRow
-	for rows.Next() {
-		var i SelectNamespacesRow
-		if err := rows.Scan(&i.ID, &i.Name); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const selectNamespacesWithRole = `-- name: SelectNamespacesWithRole :many
-SELECT ns.id, ns.name, ns.created_at, ns.namespace_version_id, ns.deleted, ns.unlimited FROM t_namespace ns
-JOIN t_role_object_match rm ON rm.object_id = ns.id AND rm.object_type = 'namespace'
-`
-
-func (q *Queries) SelectNamespacesWithRole(ctx context.Context) ([]TNamespace, error) {
-	rows, err := q.db.Query(ctx, selectNamespacesWithRole)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []TNamespace
-	for rows.Next() {
-		var i TNamespace
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.CreatedAt,
-			&i.NamespaceVersionID,
-			&i.Deleted,
-			&i.Unlimited,
 		); err != nil {
 			return nil, err
 		}
@@ -785,6 +669,121 @@ func (q *Queries) SelectExperiments(ctx context.Context, projectID int32) ([]Sel
 	for rows.Next() {
 		var i SelectExperimentsRow
 		if err := rows.Scan(&i.ID, &i.TemplateVID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const selectNamespace = `-- name: SelectNamespace :one
+SELECT t_namespace.id, t_namespace.name, t_namespace_config_v.id as config_version_id, t_namespace_config_v.config
+FROM t_namespace
+JOIN t_namespace_config_v ON t_namespace.namespace_version_id = t_namespace_config_v.id
+WHERE t_namespace.id = $1 AND t_namespace.deleted = FALSE
+`
+
+type SelectNamespaceRow struct {
+	ID              int32
+	Name            string
+	ConfigVersionID int32
+	Config          []byte
+}
+
+func (q *Queries) SelectNamespace(ctx context.Context, id int32) (SelectNamespaceRow, error) {
+	row := q.db.QueryRow(ctx, selectNamespace, id)
+	var i SelectNamespaceRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.ConfigVersionID,
+		&i.Config,
+	)
+	return i, err
+}
+
+const selectNamespaceWithDeleted = `-- name: SelectNamespaceWithDeleted :one
+SELECT t_namespace.id, t_namespace.name, t_namespace.deleted, t_namespace_config_v.id as config_version_id, t_namespace_config_v.config
+FROM t_namespace
+JOIN t_namespace_config_v ON t_namespace.namespace_version_id = t_namespace_config_v.id
+WHERE t_namespace.id = $1
+`
+
+type SelectNamespaceWithDeletedRow struct {
+	ID              int32
+	Name            string
+	Deleted         bool
+	ConfigVersionID int32
+	Config          []byte
+}
+
+func (q *Queries) SelectNamespaceWithDeleted(ctx context.Context, id int32) (SelectNamespaceWithDeletedRow, error) {
+	row := q.db.QueryRow(ctx, selectNamespaceWithDeleted, id)
+	var i SelectNamespaceWithDeletedRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Deleted,
+		&i.ConfigVersionID,
+		&i.Config,
+	)
+	return i, err
+}
+
+const selectNamespaces = `-- name: SelectNamespaces :many
+SELECT id, name FROM t_namespace WHERE deleted = FALSE ORDER BY created_at DESC
+`
+
+type SelectNamespacesRow struct {
+	ID   int32
+	Name string
+}
+
+func (q *Queries) SelectNamespaces(ctx context.Context) ([]SelectNamespacesRow, error) {
+	rows, err := q.db.Query(ctx, selectNamespaces)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SelectNamespacesRow
+	for rows.Next() {
+		var i SelectNamespacesRow
+		if err := rows.Scan(&i.ID, &i.Name); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const selectNamespacesWithRole = `-- name: SelectNamespacesWithRole :many
+SELECT ns.id, ns.name, ns.created_at, ns.deleted, ns.namespace_version_id, ns.unlimited FROM t_namespace ns
+JOIN t_role_object_match rm ON rm.object_id = ns.id AND rm.object_type = 'namespace'
+`
+
+func (q *Queries) SelectNamespacesWithRole(ctx context.Context) ([]TNamespace, error) {
+	rows, err := q.db.Query(ctx, selectNamespacesWithRole)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []TNamespace
+	for rows.Next() {
+		var i TNamespace
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.CreatedAt,
+			&i.Deleted,
+			&i.NamespaceVersionID,
+			&i.Unlimited,
+		); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -1059,8 +1058,8 @@ type SelectProjectsV2Row struct {
 	UpdatedAt       pgtype.Timestamp
 	IsPinned        *bool
 	Total           int64
-	ExperimentCount   int64
-	DatasetCount int64
+	ExperimentCount int64
+	DatasetCount    int64
 }
 
 func (q *Queries) SelectProjectsV2(ctx context.Context, arg SelectProjectsV2Params) ([]SelectProjectsV2Row, error) {
@@ -1104,7 +1103,7 @@ func (q *Queries) SelectProjectsV2(ctx context.Context, arg SelectProjectsV2Para
 }
 
 const selectProjectsWithDeleted = `-- name: SelectProjectsWithDeleted :many
-SELECT id, namespace_id, name, description, created_at, project_version_id, deleted, unlimited, updated_at, abc_product_id FROM t_project WHERE namespace_id = $1 ORDER BY (created_at, id) DESC
+SELECT id, namespace_id, name, description, created_at, deleted, project_version_id, unlimited, updated_at, abc_product_id FROM t_project WHERE namespace_id = $1 ORDER BY (created_at, id) DESC
 `
 
 func (q *Queries) SelectProjectsWithDeleted(ctx context.Context, namespaceID int32) ([]TProject, error) {
@@ -1122,8 +1121,8 @@ func (q *Queries) SelectProjectsWithDeleted(ctx context.Context, namespaceID int
 			&i.Name,
 			&i.Description,
 			&i.CreatedAt,
-			&i.ProjectVersionID,
 			&i.Deleted,
+			&i.ProjectVersionID,
 			&i.Unlimited,
 			&i.UpdatedAt,
 			&i.AbcProductID,
@@ -1139,7 +1138,7 @@ func (q *Queries) SelectProjectsWithDeleted(ctx context.Context, namespaceID int
 }
 
 const selectProjectsWithRole = `-- name: SelectProjectsWithRole :many
-SELECT pr.id, pr.namespace_id, pr.name, pr.description, pr.created_at, pr.project_version_id, pr.deleted, pr.unlimited, pr.updated_at, pr.abc_product_id FROM t_project pr
+SELECT pr.id, pr.namespace_id, pr.name, pr.description, pr.created_at, pr.deleted, pr.project_version_id, pr.unlimited, pr.updated_at, pr.abc_product_id FROM t_project pr
 JOIN t_role_object_match rm ON rm.object_id = pr.id AND rm.object_type = 'project'
 `
 
@@ -1158,8 +1157,8 @@ func (q *Queries) SelectProjectsWithRole(ctx context.Context) ([]TProject, error
 			&i.Name,
 			&i.Description,
 			&i.CreatedAt,
-			&i.ProjectVersionID,
 			&i.Deleted,
+			&i.ProjectVersionID,
 			&i.Unlimited,
 			&i.UpdatedAt,
 			&i.AbcProductID,
@@ -1178,7 +1177,7 @@ const updateDataset = `-- name: UpdateDataset :one
 UPDATE t_dataset SET
     name = CASE WHEN $2::text != '' THEN $2::text ELSE name END,
     updated_at = now()
-WHERE id = $1 RETURNING id, name, type, params, schema, namespace_id, is_external, created_at, uuid, deleted, public, managed, project_id, updated_at, version_id
+WHERE id = $1 RETURNING id, name, type, params, schema, namespace_id, is_external, created_at, deleted, public, managed, project_id, updated_at, version_id
 `
 
 type UpdateDatasetParams struct {
@@ -1198,7 +1197,6 @@ func (q *Queries) UpdateDataset(ctx context.Context, arg UpdateDatasetParams) (T
 		&i.NamespaceID,
 		&i.IsExternal,
 		&i.CreatedAt,
-		&i.Uuid,
 		&i.Deleted,
 		&i.Public,
 		&i.Managed,
@@ -1213,7 +1211,7 @@ const updateDatasetVersion = `-- name: UpdateDatasetVersion :one
 UPDATE t_dataset SET
       version_id = $2,
       updated_at = NOW()
-WHERE id = $1 RETURNING id, name, type, params, schema, namespace_id, is_external, created_at, uuid, deleted, public, managed, project_id, updated_at, version_id
+WHERE id = $1 RETURNING id, name, type, params, schema, namespace_id, is_external, created_at, deleted, public, managed, project_id, updated_at, version_id
 `
 
 type UpdateDatasetVersionParams struct {
@@ -1233,7 +1231,6 @@ func (q *Queries) UpdateDatasetVersion(ctx context.Context, arg UpdateDatasetVer
 		&i.NamespaceID,
 		&i.IsExternal,
 		&i.CreatedAt,
-		&i.Uuid,
 		&i.Deleted,
 		&i.Public,
 		&i.Managed,
@@ -1272,20 +1269,6 @@ func (q *Queries) UpdateDatasetVersionComment(ctx context.Context, arg UpdateDat
 		&i.CreatedAt,
 	)
 	return i, err
-}
-
-const updateNamespace = `-- name: UpdateNamespace :exec
-UPDATE t_namespace SET name = CASE WHEN $2::text != '' THEN $2::text ELSE name END WHERE id = $1 AND deleted = FALSE
-`
-
-type UpdateNamespaceParams struct {
-	ID   int32
-	Name string
-}
-
-func (q *Queries) UpdateNamespace(ctx context.Context, arg UpdateNamespaceParams) error {
-	_, err := q.db.Exec(ctx, updateNamespace, arg.ID, arg.Name)
-	return err
 }
 
 const updateExperiment = `-- name: UpdateExperiment :exec
@@ -1365,13 +1348,27 @@ func (q *Queries) UpdateExperimentTemplateV(ctx context.Context, arg UpdateExper
 	return i, err
 }
 
+const updateNamespace = `-- name: UpdateNamespace :exec
+UPDATE t_namespace SET name = CASE WHEN $2::text != '' THEN $2::text ELSE name END WHERE id = $1 AND deleted = FALSE
+`
+
+type UpdateNamespaceParams struct {
+	ID   int32
+	Name string
+}
+
+func (q *Queries) UpdateNamespace(ctx context.Context, arg UpdateNamespaceParams) error {
+	_, err := q.db.Exec(ctx, updateNamespace, arg.ID, arg.Name)
+	return err
+}
+
 const updateProject = `-- name: UpdateProject :one
 UPDATE t_project SET name = CASE WHEN $2::text != '' THEN $2::text ELSE name END,
                      description = CASE WHEN $3::text != '' THEN $3::text ELSE description END,
                      abc_product_id = CASE WHEN $4::text != '' THEN $4::text ELSE abc_product_id END,
                      updated_at = now()
     WHERE id = $1 AND deleted = FALSE
-    RETURNING id, namespace_id, name, description, created_at, project_version_id, deleted, unlimited, updated_at, abc_product_id
+    RETURNING id, namespace_id, name, description, created_at, deleted, project_version_id, unlimited, updated_at, abc_product_id
 `
 
 type UpdateProjectParams struct {
@@ -1395,8 +1392,8 @@ func (q *Queries) UpdateProject(ctx context.Context, arg UpdateProjectParams) (T
 		&i.Name,
 		&i.Description,
 		&i.CreatedAt,
-		&i.ProjectVersionID,
 		&i.Deleted,
+		&i.ProjectVersionID,
 		&i.Unlimited,
 		&i.UpdatedAt,
 		&i.AbcProductID,
