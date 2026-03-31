@@ -175,12 +175,6 @@ func (s *AuthService) GetUserInfoFromRequest(r *http.Request) (*user.UserInfo, e
 	return pkg.GetUserInfo(r, s.repo, s.repo.Logger)
 }
 
-// GetRobotInfoFromRequest получает информацию о роботе из HTTP запроса (Bearer token)
-// Использует кэш и JWT для валидации
-func (s *AuthService) GetRobotInfoFromRequest(r *http.Request) (*user.UserInfo, error) {
-	return pkg.GetRobotInfo(r, s.repo, s.repo.Logger)
-}
-
 // ExchangeCodeForToken обменивает OAuth код на access token
 func (s *AuthService) ExchangeCodeForToken(code, redirectUri string) (*dto.OAuthAccessToken, error) {
 	if s.isLocalAuthEnabled() {

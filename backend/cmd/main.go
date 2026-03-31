@@ -8,19 +8,10 @@ import (
 )
 
 func main() {
-	serverApp, err := app.NewApp(context.Background()) // TODO: make it an argument parameter
+	serverApp, err := app.NewApp(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	go func() {
-		serverAppPublic, err := app.NewAppPublic(context.Background()) // TODO: make it an argument parameter
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		serverAppPublic.Run()
-	}()
 
 	serverApp.Run()
 }

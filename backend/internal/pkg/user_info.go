@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strings"
 
-	"context"
 	"fmt"
 	"github.com/patrickmn/go-cache"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/models/user"
@@ -18,7 +17,6 @@ var (
 	sessionKey          = "oneui-session"
 	SessionHeader       = "X-AccessToken"
 	RefreshTokenHeader  = "X-Refresh-Token"
-	authorizationHeader = "Authorization"
 )
 
 func GetUserInfo(r *http.Request, repo *repository.Repository, logger *logger.Logger) (*user.UserInfo, error) {
@@ -62,47 +60,6 @@ func GetUserInfo(r *http.Request, repo *repository.Repository, logger *logger.Lo
 	}
 
 	userInfo := &user.UserInfo{Username: resp.Username}
-	if err := repo.Cache.SessionCache.Add(token, userInfo, cache.DefaultExpiration); err != nil {
-		metrics.CacheErrors.WithLabelValues().Inc()
-		logger.Error("failed to cache user info: %v", err)
-	}
-
-	return userInfo, nil
-}
-
-func GetRobotInfo(r *http.Request, repo *repository.Repository, logger *logger.Logger) (*user.UserInfo, error) {
-	metrics.PublicAPIRPS.WithLabelValues().Inc()
-	authHeader := r.Header.Get(authorizationHeader)
-	if authHeader == "" {
-		return nil, errors.New("authorization header missing")
-	}
-
-	parts := strings.SplitN(authHeader, " ", 2)
-	if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
-		return nil, errors.New("invalid authorization header format")
-	}
-
-	token := parts[1]
-
-	// Проверка кэша
-	val, found := repo.Cache.SessionCache.Get(token)
-	metrics.CacheRPS.WithLabelValues().Inc()
-	if found {
-		return val.(*user.UserInfo), nil
-	}
-
-	// Аутентификация по токену
-	err := repo.DB.CheckRobotToken(context.Background(), token)
-	if err != nil {
-		return nil, err
-	}
-
-	claims, err := repo.Clients.JwtClient.ValidateJWT(token)
-	if err != nil {
-		return nil, err
-	}
-
-	userInfo := &user.UserInfo{Username: claims.Username}
 	if err := repo.Cache.SessionCache.Add(token, userInfo, cache.DefaultExpiration); err != nil {
 		metrics.CacheErrors.WithLabelValues().Inc()
 		logger.Error("failed to cache user info: %v", err)

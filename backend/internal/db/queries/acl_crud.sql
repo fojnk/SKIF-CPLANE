@@ -6,16 +6,6 @@ SELECT id FROM ins
 UNION ALL
 SELECT id FROM t_user WHERE name = $1;
 
--- name: InsertRobot :one
-WITH ins AS (
-INSERT INTO t_user(name, is_robot) VALUES($1, TRUE)
-ON CONFLICT DO NOTHING
-    RETURNING id
-    )
-SELECT id FROM ins
-UNION ALL
-SELECT id FROM t_user WHERE name = $1;
-
 -- name: InsertUserGroup :one
 INSERT INTO t_user_group(name) VALUES($1) RETURNING id;
 

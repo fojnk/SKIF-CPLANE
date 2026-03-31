@@ -543,6 +543,7 @@ func (s *ProjectService) GetProjectURLs(ctx context.Context, projectID, userID i
 
 	responseURLs := make([]dto.ProjectURL, 0)
 	urlsWithoutCluster := make(map[string]bool) // Для отслеживания URLs без CLUSTER_NAME
+	abcProductID := meta.AbcProductId
 
 	// Генерируем URLs для каждого кластера
 	for _, cluster := range clusters {
@@ -583,6 +584,13 @@ func (s *ProjectService) GetProjectURLs(ctx context.Context, projectID, userID i
 			if strings.Contains(newURL, "YT_WORK_DIR") {
 				if workDir != "" {
 					newURL = strings.ReplaceAll(newURL, "YT_WORK_DIR", workDir)
+				} else {
+					continue
+				}
+			}
+			if strings.Contains(newURL, "ABC_PRODUCT_ID") {
+				if abcProductID != "" {
+					newURL = strings.ReplaceAll(newURL, "ABC_PRODUCT_ID", abcProductID)
 				} else {
 					continue
 				}

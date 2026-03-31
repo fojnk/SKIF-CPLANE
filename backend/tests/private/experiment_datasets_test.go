@@ -2,8 +2,8 @@ package private
 
 import (
 	dataset2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/dataset"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	experiment2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/experiment"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/project"
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
@@ -23,9 +23,8 @@ func (s *StreamflowTestSuite) TestExperimentDatasetsBasic() {
 
 	projRes, err := s.c.Project.PostAPIV1Project(&project.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-experiment-datasets"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-experiment-datasets"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -73,8 +72,8 @@ func (s *StreamflowTestSuite) TestExperimentDatasetsBasic() {
 	available, err := s.c.Experiment.PostAPIV2ExperimentSearchDatasets(&experiment2.PostAPIV2ExperimentSearchDatasetsParams{
 		Request: &models2.RequestsGetExperimentAvailableDatasetsToLinkRequest{
 			ExperimentID: &plRes.Payload.ID,
-			Limit:      ptr(int64(10)),
-			Offset:     ptr(int64(0)),
+			Limit:        ptr(int64(10)),
+			Offset:       ptr(int64(0)),
 			Filters: &models2.DtoDatasetFilters{
 				ProjectID: projRes.Payload.ID,
 			},
@@ -89,9 +88,9 @@ func (s *StreamflowTestSuite) TestExperimentDatasetsBasic() {
 
 	addDsRes, err := s.c.Experiment.PostAPIV1ExperimentDataset(&experiment2.PostAPIV1ExperimentDatasetParams{
 		Request: &models2.RequestsAddDatasetToExperimentRequest{
-			DatasetID: &dsRes.Payload.ID,
+			DatasetID:    &dsRes.Payload.ID,
 			Alias:        ptr("test-alias-experiment-datasets"),
-			ExperimentID:   &plRes.Payload.ID,
+			ExperimentID: &plRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -103,8 +102,8 @@ func (s *StreamflowTestSuite) TestExperimentDatasetsBasic() {
 
 	getPls, err := s.c.Dataset.GetAPIV2DatasetLinks(&dataset2.GetAPIV2DatasetLinksParams{
 		DatasetID: dsRes.Payload.ID,
-		Limit:        int64(10),
-		Offset:       int64(0),
+		Limit:     int64(10),
+		Offset:    int64(0),
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(getPls)
@@ -136,9 +135,9 @@ func (s *StreamflowTestSuite) TestExperimentDatasetsBasic() {
 
 	addDsRes2, err := s.c.Experiment.PostAPIV1ExperimentDataset(&experiment2.PostAPIV1ExperimentDatasetParams{
 		Request: &models2.RequestsAddDatasetToExperimentRequest{
-			DatasetID: &dsRes2.Payload.ID,
+			DatasetID:    &dsRes2.Payload.ID,
 			Alias:        ptr("test-alias-experiment-datasets-2"),
-			ExperimentID:   &plRes.Payload.ID,
+			ExperimentID: &plRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -171,7 +170,7 @@ func (s *StreamflowTestSuite) TestExperimentDatasetsBasic() {
 	delDsRes, err := s.c.Experiment.DeleteAPIV1ExperimentDataset(&experiment2.DeleteAPIV1ExperimentDatasetParams{
 		Request: &models2.RequestsRemoveDatasetFromExperimentRequest{
 			ExperimentID: &plRes.Payload.ID,
-			LinkID:     &addDsRes.Payload.LinkID,
+			LinkID:       &addDsRes.Payload.LinkID,
 		},
 		Context: s.ctx,
 	})
@@ -194,8 +193,8 @@ func (s *StreamflowTestSuite) TestExperimentDatasetsBasic() {
 	updateDsRes, err := s.c.Experiment.PutAPIV1ExperimentDataset(&experiment2.PutAPIV1ExperimentDatasetParams{
 		Request: &models2.RequestsUpdateExperimentDatasetRequest{
 			ExperimentID: &plRes.Payload.ID,
-			LinkID:     &addDsRes2.Payload.LinkID,
-			Alias:      ptr("test-alias-experiment-datasets-2-updated"),
+			LinkID:       &addDsRes2.Payload.LinkID,
+			Alias:        ptr("test-alias-experiment-datasets-2-updated"),
 		},
 		Context: s.ctx,
 	})
@@ -217,9 +216,9 @@ func (s *StreamflowTestSuite) TestExperimentDatasetsBasic() {
 
 	listLogsRes, err := s.c.Experiment.GetAPIV1ExperimentLogs(&experiment2.GetAPIV1ExperimentLogsParams{
 		ExperimentID: &plRes.Payload.ID,
-		From:       0,
-		Limit:      10,
-		Context:    s.ctx,
+		From:         0,
+		Limit:        10,
+		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
 	s.Require().NotNil(listLogsRes)

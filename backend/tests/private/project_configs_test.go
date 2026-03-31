@@ -23,10 +23,9 @@ func (s *StreamflowTestSuite) TestProjectConfigs() {
 
 	res, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-configs"),
-			NamespaceID:  &nsRes.Payload.ID,
-			Description:  "some project",
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-configs"),
+			NamespaceID: &nsRes.Payload.ID,
+			Description: "some project",
 		},
 		Context: s.ctx,
 	})
@@ -107,9 +106,8 @@ func (s *StreamflowTestSuite) TestProjectConfigVersions() {
 
 	res, err := s.c.Project.PostAPIV1Project(&project2.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project-config-versions"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project-config-versions"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})

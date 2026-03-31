@@ -30,31 +30,6 @@ var ABCSyncHeartbeat = promauto.NewGaugeVec(prometheus.GaugeOpts{
 	Help: "Heartbeat for the ABC sync",
 }, nil)
 
-var IDMSyncTime = promauto.NewHistogramVec(prometheus.HistogramOpts{
-	Name: "streamflow_cplane_idm_sync_time",
-	Help: "How long it took to sync the IDM permissions",
-}, []string{"group_name"})
-
-var IDMSyncErrors = promauto.NewCounterVec(prometheus.CounterOpts{
-	Name: "streamflow_cplane_idm_sync_errors",
-	Help: "How many errors occurred while syncing the IDM permissions",
-}, nil)
-
-var IDMUsersNum = promauto.NewGaugeVec(prometheus.GaugeOpts{
-	Name: "streamflow_cplane_idm_sync_users_num",
-	Help: "How many users are synced",
-}, nil)
-
-var IDMDeletedUsersNum = promauto.NewGaugeVec(prometheus.GaugeOpts{
-	Name: "streamflow_cplane_idm_deleted_users_num",
-	Help: "How many users are deleted",
-}, nil)
-
-var IDMSyncHeartbeat = promauto.NewGaugeVec(prometheus.GaugeOpts{
-	Name: "streamflow_cplane_idm_sync_heartbeat",
-	Help: "Heartbeat for the IDM sync",
-}, nil)
-
 var LogErrors = promauto.NewCounterVec(prometheus.CounterOpts{
 	Name: "streamflow_cplane_log_errors",
 	Help: "How many errors occurred while logging",
@@ -73,9 +48,4 @@ var CacheErrors = promauto.NewCounterVec(prometheus.CounterOpts{
 var CacheRPS = promauto.NewCounterVec(prometheus.CounterOpts{
 	Name: "streamflow_cplane_cache_rps",
 	Help: "How many requests goes to cache",
-}, nil)
-
-var PublicAPIRPS = promauto.NewCounterVec(prometheus.CounterOpts{
-	Name: "streamflow_cplane_public_rps",
-	Help: "How many requests goes to public api",
 }, nil)

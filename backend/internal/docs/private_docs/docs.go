@@ -1224,7 +1224,7 @@ const docTemplate = `{
                 "tags": [
                     "dataset"
                 ],
-                "summary": "apply dataset (uses jobd)",
+                "summary": "apply dataset (job queue disabled)",
                 "parameters": [
                     {
                         "description": "request body",
@@ -1528,7 +1528,7 @@ const docTemplate = `{
                 "tags": [
                     "jobs"
                 ],
-                "summary": "get events for all jobs with filters",
+                "summary": "get events for all jobs with filters (job queue disabled — empty)",
                 "parameters": [
                     {
                         "type": "integer",
@@ -1612,1108 +1612,6 @@ const docTemplate = `{
                     },
                     "503": {
                         "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/grant": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "acl"
-                ],
-                "summary": "grant permission",
-                "parameters": [
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.GrantRequest"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "superuser token",
-                        "name": "x-superuser-token",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.EmptyResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/graph": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "experiment"
-                ],
-                "summary": "get project graph",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "project id",
-                        "name": "project_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/private.getProjectGraphResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/job": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "jobs"
-                ],
-                "summary": "get job by ID",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Job ID",
-                        "name": "job_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/clients.GetJobResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/job/events": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "jobs"
-                ],
-                "summary": "get events for a specific job",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Job ID",
-                        "name": "job_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Event type filter",
-                        "name": "event_type",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Limit",
-                        "name": "limit",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Offset",
-                        "name": "offset",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/clients.ListEventsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/job/tasks": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "jobs"
-                ],
-                "summary": "get tasks for a specific job",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Job ID",
-                        "name": "job_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Task status filter",
-                        "name": "status",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/clients.ListTasksResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/jobs/search": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "jobs"
-                ],
-                "summary": "search and list jobs with filters",
-                "parameters": [
-                    {
-                        "description": "search filters (entity_type, entity_id, type, status, created_by, limit, offset, sort, order)",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.ListJobsRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ListJobsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "503": {
-                        "description": "Service Unavailable",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/namespace": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "namespace"
-                ],
-                "summary": "get namespace",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "namespace id",
-                        "name": "namespace_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.GetNamespaceResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "namespace"
-                ],
-                "summary": "update namespace",
-                "parameters": [
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.UpdateNamespaceRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.UpdateNamespaceResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "namespace"
-                ],
-                "summary": "create namespace",
-                "parameters": [
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.CreateNamespaceRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.CreateNamespaceResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "409": {
-                        "description": "Conflict - resource already exists",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "namespace"
-                ],
-                "summary": "delete namespace",
-                "parameters": [
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.DeleteNamespaceRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.EmptyResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/namespace/config": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "namespace"
-                ],
-                "summary": "get namespace config by id",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "config id",
-                        "name": "config_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.GetNamespaceConfigResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/namespace/configs": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "namespace"
-                ],
-                "summary": "list namespace configs",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "namespace id",
-                        "name": "namespace_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ListNamespaceConfigsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/namespace/log": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "namespace"
-                ],
-                "summary": "get namespace update log",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "log id",
-                        "name": "log_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.GetNamespaceLogResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "consumes": [
-                    "application/json"
-                ],
-                "tags": [
-                    "namespace"
-                ],
-                "summary": "update namespace log comment",
-                "parameters": [
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.UpdateNamespaceLogCommentRequest"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "superuser token",
-                        "name": "x-superuser-token",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/namespace/logs": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "namespace"
-                ],
-                "summary": "list namespace update logs",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "namespace id",
-                        "name": "namespace_id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "from",
-                        "name": "from",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "limit",
-                        "name": "limit",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ListNamespaceUpdateLogsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/namespaces": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "namespace"
-                ],
-                "summary": "list namespaces",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ListNamespacesResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/permissions": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "acl"
-                ],
-                "summary": "list user's permitted actions on the given resource",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "user id",
-                        "name": "user_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "scope",
-                        "name": "scope",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "superuser token",
-                        "name": "x-superuser-token",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.CheckPermissionsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/ping": {
-            "get": {
-                "description": "As if to say even louder to the world: here is the best ping handler in the world",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "meta"
-                ],
-                "summary": "ping me",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/private.pingResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.CreateAppBannerResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
                         }
@@ -4810,6 +3708,1108 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/grant": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "acl"
+                ],
+                "summary": "grant permission",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.GrantRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "superuser token",
+                        "name": "x-superuser-token",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.EmptyResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/graph": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "experiment"
+                ],
+                "summary": "get project graph",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "project id",
+                        "name": "project_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/private.getProjectGraphResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/job": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "summary": "get job by ID (job queue disabled)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Job ID",
+                        "name": "job_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/clients.GetJobResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/job/events": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "summary": "get events for a specific job (job queue disabled — empty)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Job ID",
+                        "name": "job_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Event type filter",
+                        "name": "event_type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/clients.ListEventsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/job/tasks": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "summary": "get tasks for a specific job (job queue disabled — empty)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Job ID",
+                        "name": "job_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Task status filter",
+                        "name": "status",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/clients.ListTasksResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/jobs/search": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jobs"
+                ],
+                "summary": "search and list jobs with filters (job queue disabled — always empty)",
+                "parameters": [
+                    {
+                        "description": "search filters (entity_type, entity_id, type, status, created_by, limit, offset, sort, order)",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.ListJobsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ListJobsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/namespace": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "namespace"
+                ],
+                "summary": "get namespace",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "namespace id",
+                        "name": "namespace_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.GetNamespaceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "namespace"
+                ],
+                "summary": "update namespace",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.UpdateNamespaceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.UpdateNamespaceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "namespace"
+                ],
+                "summary": "create namespace",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.CreateNamespaceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.CreateNamespaceResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict - resource already exists",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "namespace"
+                ],
+                "summary": "delete namespace",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.DeleteNamespaceRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.EmptyResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/namespace/config": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "namespace"
+                ],
+                "summary": "get namespace config by id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "config id",
+                        "name": "config_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.GetNamespaceConfigResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/namespace/configs": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "namespace"
+                ],
+                "summary": "list namespace configs",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "namespace id",
+                        "name": "namespace_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ListNamespaceConfigsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/namespace/log": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "namespace"
+                ],
+                "summary": "get namespace update log",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "log id",
+                        "name": "log_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.GetNamespaceLogResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "namespace"
+                ],
+                "summary": "update namespace log comment",
+                "parameters": [
+                    {
+                        "description": "request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/requests.UpdateNamespaceLogCommentRequest"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "superuser token",
+                        "name": "x-superuser-token",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/namespace/logs": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "namespace"
+                ],
+                "summary": "list namespace update logs",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "namespace id",
+                        "name": "namespace_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "from",
+                        "name": "from",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "limit",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ListNamespaceUpdateLogsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/namespaces": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "namespace"
+                ],
+                "summary": "list namespaces",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ListNamespacesResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/permissions": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "acl"
+                ],
+                "summary": "list user's permitted actions on the given resource",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "user id",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "scope",
+                        "name": "scope",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "superuser token",
+                        "name": "x-superuser-token",
+                        "in": "header"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.CheckPermissionsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/ping": {
+            "get": {
+                "description": "As if to say even louder to the world: here is the best ping handler in the world",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "meta"
+                ],
+                "summary": "ping me",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/private.pingResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.CreateAppBannerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/project": {
             "put": {
                 "consumes": [
@@ -5297,213 +5297,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/responses.ListProjectsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/robot": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "robot"
-                ],
-                "summary": "create robot",
-                "parameters": [
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.CreateRobotRequest"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "superuser token",
-                        "name": "x-superuser-token",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.CreateRobotResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/robot/token": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "robot"
-                ],
-                "summary": "generate robot token",
-                "parameters": [
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.GenerateTokenForRobotRequest"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "superuser token",
-                        "name": "x-superuser-token",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.CreateRobotResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/robot/tokens": {
-            "delete": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "robot"
-                ],
-                "summary": "delete all robot tokens",
-                "parameters": [
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.DeleteAllTokenForRobotRequest"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "superuser token",
-                        "name": "x-superuser-token",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.EmptyResponse"
                         }
                     },
                     "400": {
@@ -7786,944 +7579,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/forms/dataset": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "form"
-                ],
-                "summary": "get dataset config edit form",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "dataset type",
-                        "name": "type",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "dataset managed param",
-                        "name": "managed",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.GetFormResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/forms/experiment": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "form"
-                ],
-                "summary": "get project config edit form",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.GetFormResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/forms/project": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "form"
-                ],
-                "summary": "get project config edit form",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.GetFormResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/idm/namespace/roles": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "idm"
-                ],
-                "summary": "create and push namespace roles to idm",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "superuser token",
-                        "name": "x-superuser-token",
-                        "in": "header"
-                    },
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.CreateNamespaceRolesRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.CreateNamespaceRolesResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/idm/namespace/roles/sync": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "idm"
-                ],
-                "summary": "sync namespace roles to idm (if no ids - will be synced all namespace, overwise only in id list)",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "superuser token",
-                        "name": "x-superuser-token",
-                        "in": "header"
-                    },
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.SyncNamespaceRolesRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.SyncNamespaceRolesResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/idm/project/roles": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "idm"
-                ],
-                "summary": "create and push project roles to idm",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "superuser token",
-                        "name": "x-superuser-token",
-                        "in": "header"
-                    },
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.CreateProjectRolesRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.CreateProjectRolesResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/idm/project/roles/sync": {
-            "post": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "idm"
-                ],
-                "summary": "sync project roles to idm (if no ids - will be synced all projects, overwise only projects in id list)",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "superuser token",
-                        "name": "x-superuser-token",
-                        "in": "header"
-                    },
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.SyncProjectRolesRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.SyncProjectRolesResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/namespaces": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "namespace"
-                ],
-                "summary": "list namespaces v2",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ListNamespacesV2Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/experiment/alerts": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "alerts"
-                ],
-                "summary": "get alert group",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "experiment id",
-                        "name": "experiment_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "notification product id",
-                        "name": "product_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "superuser token",
-                        "name": "x-superuser-token",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.GetAlertGroupResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "alerts"
-                ],
-                "summary": "create alert group",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "experiment id",
-                        "name": "experiment_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "notification product id",
-                        "name": "product_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.CreateAlertGroupBody"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "superuser token",
-                        "name": "x-superuser-token",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.GetAlertGroupResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "alerts"
-                ],
-                "summary": "delete alert group",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "experiment id",
-                        "name": "experiment_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "notification product id",
-                        "name": "product_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.DeleteAlertsBody"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "superuser token",
-                        "name": "x-superuser-token",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.GetAlertGroupResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/experiment/alerts/options": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "alerts"
-                ],
-                "summary": "get alert templates",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.GetAlertOptionsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/experiment/alerts/products": {
-            "get": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "alerts"
-                ],
-                "summary": "get products for alerts",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "experiment id",
-                        "name": "experiment_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "superuser token",
-                        "name": "x-superuser-token",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "integer",
-                                "format": "int32"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/experiment/alerts/rule": {
-            "put": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "alerts"
-                ],
-                "summary": "change alert",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "experiment id",
-                        "name": "experiment_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "notification product id",
-                        "name": "product_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.ChangeAlertBody"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "superuser token",
-                        "name": "x-superuser-token",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/experiment/alerts/template": {
-            "put": {
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "alerts"
-                ],
-                "summary": "change alert severities",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "experiment id",
-                        "name": "experiment_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "notification product id",
-                        "name": "product_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.ChangeAlertSeveritiesBody"
-                        }
-                    },
-                    {
-                        "type": "string",
-                        "description": "superuser token",
-                        "name": "x-superuser-token",
-                        "in": "header"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.GetAlertGroupResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v2/experiment/config/apply": {
             "put": {
                 "consumes": [
@@ -8735,7 +7590,7 @@ const docTemplate = `{
                 "tags": [
                     "experiment"
                 ],
-                "summary": "apply experiment config (v2 - uses jobd)",
+                "summary": "apply experiment config (v2 — напрямую через оркестратор)",
                 "parameters": [
                     {
                         "description": "request body",
@@ -9218,6 +8073,252 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.ExperimentTemplate"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/forms/dataset": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "form"
+                ],
+                "summary": "get dataset config edit form",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "dataset type",
+                        "name": "type",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "dataset managed param",
+                        "name": "managed",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.GetFormResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/forms/experiment": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "form"
+                ],
+                "summary": "get project config edit form",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.GetFormResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/forms/project": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "form"
+                ],
+                "summary": "get project config edit form",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.GetFormResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/me/capabilities": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "acl"
+                ],
+                "summary": "get current user capabilities",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.UserCapabilitiesResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v2/namespaces": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "namespace"
+                ],
+                "summary": "list namespaces v2",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ListNamespacesV2Response"
                         }
                     },
                     "400": {
@@ -9798,10 +8899,10 @@ const docTemplate = `{
                 "tags": [
                     "experiment"
                 ],
-                "summary": "apply experiment config (v3 - supports both single stage and phased apply via jobd)",
+                "summary": "apply experiment config (v3 — напрямую через оркестратор; single_stage игнорируется)",
                 "parameters": [
                     {
-                        "description": "request body. Set single_stage=true for single stage job, omit or set false for phased apply",
+                        "description": "request body. single_stage устарел",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -10126,242 +9227,27 @@ const docTemplate = `{
                 "RightDeleteVariable"
             ]
         },
-        "alerts.Alert": {
-            "type": "object",
-            "required": [
-                "alert_description",
-                "alert_template_id",
-                "graphic_name",
-                "has_limit",
-                "limit",
-                "rule_id",
-                "severity",
-                "severity_is_active",
-                "type_limit"
-            ],
-            "properties": {
-                "alert_description": {
-                    "type": "string"
-                },
-                "alert_template_id": {
-                    "type": "integer"
-                },
-                "delay_firing": {
-                    "type": "string"
-                },
-                "delay_resolving": {
-                    "type": "string"
-                },
-                "graphic_name": {
-                    "type": "string"
-                },
-                "has_limit": {
-                    "type": "boolean"
-                },
-                "limit": {
-                    "type": "string"
-                },
-                "rule_id": {
-                    "type": "integer"
-                },
-                "severity": {
-                    "type": "string"
-                },
-                "severity_is_active": {
-                    "type": "boolean"
-                },
-                "type_limit": {
-                    "type": "string"
-                }
-            }
+        "clients.Event": {
+            "type": "object"
         },
-        "alerts.AlertRuleInput": {
-            "type": "object",
-            "required": [
-                "alert_template_id",
-                "limit",
-                "severity",
-                "severity_is_active"
-            ],
-            "properties": {
-                "alert_template_id": {
-                    "type": "integer"
-                },
-                "delay_firing": {
-                    "type": "string"
-                },
-                "delay_resolving": {
-                    "type": "string"
-                },
-                "limit": {
-                    "type": "string"
-                },
-                "severity": {
-                    "type": "string"
-                },
-                "severity_is_active": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "alerts.Alerts": {
-            "type": "object",
-            "required": [
-                "alert_description",
-                "alert_name",
-                "alerts"
-            ],
-            "properties": {
-                "alert_description": {
-                    "type": "string"
-                },
-                "alert_name": {
-                    "type": "string"
-                },
-                "alerts": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/alerts.Alert"
-                    }
-                }
-            }
-        },
-        "alerts.TypeLimits": {
-            "type": "object",
-            "required": [
-                "description",
-                "types"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "types": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
+        "clients.EventWithJob": {
+            "type": "object"
         },
         "clients.GetJobResponse": {
             "type": "object",
             "properties": {
                 "job": {
-                    "$ref": "#/definitions/jobd.Job"
+                    "$ref": "#/definitions/clients.Job"
                 }
             }
         },
         "clients.Job": {
             "type": "object",
             "properties": {
-                "config": {
-                    "description": "Config Конфигурация джобы",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "created_at": {
-                    "description": "CreatedAt Время создания",
-                    "type": "string"
-                },
-                "created_by": {
-                    "description": "CreatedBy Кто создал джобу",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "Description Описание джобы",
-                    "type": "string"
-                },
-                "entity_id": {
-                    "description": "EntityId ID связанной сущности",
-                    "type": "integer"
-                },
-                "entity_type": {
-                    "description": "EntityType Тип связанной сущности",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/jobd.JobEntityType"
-                        }
-                    ]
-                },
-                "error_message": {
-                    "description": "ErrorMessage Сообщение об ошибке",
-                    "type": "string"
-                },
-                "finished_at": {
-                    "description": "FinishedAt Время завершения",
-                    "type": "string"
-                },
                 "id": {
-                    "description": "Id ID джобы",
                     "type": "integer"
-                },
-                "max_retries": {
-                    "description": "MaxRetries Максимальное количество повторов",
-                    "type": "integer"
-                },
-                "name": {
-                    "description": "Name Название джобы",
-                    "type": "string"
-                },
-                "parameters": {
-                    "description": "Parameters Параметры джобы",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "priority": {
-                    "description": "Priority Приоритет выполнения",
-                    "type": "integer"
-                },
-                "progress": {
-                    "description": "Progress Прогресс выполнения (0-100)",
-                    "type": "integer"
-                },
-                "result": {
-                    "description": "Result Результат выполнения",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "retry_count": {
-                    "description": "RetryCount Текущее количество повторов",
-                    "type": "integer"
-                },
-                "stages": {
-                    "description": "Stages Стейджи джобы",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/jobd.Stage"
-                    }
-                },
-                "started_at": {
-                    "description": "StartedAt Время начала выполнения",
-                    "type": "string"
                 },
                 "status": {
-                    "description": "Status Текущий статус джобы",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/jobd.JobStatus"
-                        }
-                    ]
-                },
-                "status_description": {
-                    "description": "StatusDescription Описание статуса джобы",
-                    "type": "string"
-                },
-                "tags": {
-                    "description": "Tags Теги джобы",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "type": {
-                    "description": "Type Тип джобы",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "UpdatedAt Время последнего обновления",
                     "type": "string"
                 }
             }
@@ -10372,19 +9258,10 @@ const docTemplate = `{
                 "events": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/jobd.EventWithJob"
+                        "$ref": "#/definitions/clients.EventWithJob"
                     }
                 },
-                "limit": {
-                    "description": "Limit Лимит записей на странице",
-                    "type": "integer"
-                },
-                "offset": {
-                    "description": "Offset Смещение",
-                    "type": "integer"
-                },
                 "total": {
-                    "description": "Total Общее количество событий",
                     "type": "integer"
                 }
             }
@@ -10395,19 +9272,10 @@ const docTemplate = `{
                 "events": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/jobd.Event"
+                        "$ref": "#/definitions/clients.Event"
                     }
                 },
-                "limit": {
-                    "description": "Limit Лимит записей на странице",
-                    "type": "integer"
-                },
-                "offset": {
-                    "description": "Offset Смещение",
-                    "type": "integer"
-                },
                 "total": {
-                    "description": "Total Общее количество событий",
                     "type": "integer"
                 }
             }
@@ -10418,10 +9286,13 @@ const docTemplate = `{
                 "tasks": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/jobd.Task"
+                        "$ref": "#/definitions/clients.Task"
                     }
                 }
             }
+        },
+        "clients.Task": {
+            "type": "object"
         },
         "dto.AppAbout": {
             "type": "object",
@@ -10684,6 +9555,29 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.DatasetExperimentLink": {
+            "type": "object",
+            "properties": {
+                "alias": {
+                    "type": "string"
+                },
+                "alias_id": {
+                    "type": "integer"
+                },
+                "experiment_id": {
+                    "type": "integer"
+                },
+                "experiment_name": {
+                    "type": "string"
+                },
+                "project_id": {
+                    "type": "integer"
+                },
+                "project_name": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.DatasetFilters": {
             "type": "object",
             "properties": {
@@ -10749,29 +9643,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.DatasetExperimentLink": {
-            "type": "object",
-            "properties": {
-                "alias": {
-                    "type": "string"
-                },
-                "alias_id": {
-                    "type": "integer"
-                },
-                "experiment_id": {
-                    "type": "integer"
-                },
-                "experiment_name": {
-                    "type": "string"
-                },
-                "project_id": {
-                    "type": "integer"
-                },
-                "project_name": {
                     "type": "string"
                 }
             }
@@ -10880,179 +9751,6 @@ const docTemplate = `{
                 },
                 "version_id": {
                     "type": "integer"
-                }
-            }
-        },
-        "dto.LogRecord": {
-            "type": "object",
-            "properties": {
-                "entity_name": {
-                    "type": "string"
-                },
-                "entity_type": {
-                    "type": "string"
-                },
-                "records": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
-        "dto.MatchedRule": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "type": "string"
-                },
-                "object_attribute": {
-                    "type": "string"
-                },
-                "object_id": {
-                    "type": "integer"
-                },
-                "object_type": {
-                    "type": "string"
-                },
-                "role_id": {
-                    "type": "integer"
-                },
-                "role_name": {
-                    "type": "string"
-                },
-                "rule_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.Namespace": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "rights": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/acl.Right"
-                    }
-                }
-            }
-        },
-        "dto.NamespaceConfig": {
-            "type": "object",
-            "properties": {
-                "config": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.NamespaceConfigVersion": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.NamespaceShort": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.NamespaceUpdateLog": {
-            "type": "object",
-            "properties": {
-                "act": {
-                    "type": "string"
-                },
-                "comment": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "user": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.OAuthAccessToken": {
-            "type": "object",
-            "required": [
-                "access_token"
-            ],
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                },
-                "expires_in": {
-                    "type": "integer"
-                },
-                "refresh_token": {
-                    "type": "string"
-                },
-                "scope": {
-                    "type": "string"
-                },
-                "token_type": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.Permission": {
-            "type": "object",
-            "properties": {
-                "action": {
-                    "type": "string"
-                },
-                "object_attribute": {
-                    "type": "string"
-                },
-                "object_id": {
-                    "type": "integer"
-                },
-                "object_type": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.PinnedProject": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                },
-                "project_id": {
-                    "type": "integer"
-                },
-                "project_name": {
-                    "type": "string"
                 }
             }
         },
@@ -11347,12 +10045,182 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.LogRecord": {
+            "type": "object",
+            "properties": {
+                "entity_name": {
+                    "type": "string"
+                },
+                "entity_type": {
+                    "type": "string"
+                },
+                "records": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "dto.MatchedRule": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "object_attribute": {
+                    "type": "string"
+                },
+                "object_id": {
+                    "type": "integer"
+                },
+                "object_type": {
+                    "type": "string"
+                },
+                "role_id": {
+                    "type": "integer"
+                },
+                "role_name": {
+                    "type": "string"
+                },
+                "rule_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.Namespace": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "rights": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/acl.Right"
+                    }
+                }
+            }
+        },
+        "dto.NamespaceConfig": {
+            "type": "object",
+            "properties": {
+                "config": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.NamespaceConfigVersion": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.NamespaceShort": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.NamespaceUpdateLog": {
+            "type": "object",
+            "properties": {
+                "act": {
+                    "type": "string"
+                },
+                "comment": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.OAuthAccessToken": {
+            "type": "object",
+            "required": [
+                "access_token"
+            ],
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "expires_in": {
+                    "type": "integer"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
+                "scope": {
+                    "type": "string"
+                },
+                "token_type": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.Permission": {
+            "type": "object",
+            "properties": {
+                "action": {
+                    "type": "string"
+                },
+                "object_attribute": {
+                    "type": "string"
+                },
+                "object_id": {
+                    "type": "integer"
+                },
+                "object_type": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PinnedProject": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "project_id": {
+                    "type": "integer"
+                },
+                "project_name": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.Project": {
             "type": "object",
             "properties": {
-                "abc_product_id": {
-                    "type": "string"
-                },
                 "config": {
                     "type": "string"
                 },
@@ -11424,9 +10292,6 @@ const docTemplate = `{
         "dto.ProjectInfo": {
             "type": "object",
             "properties": {
-                "abc_product_id": {
-                    "type": "string"
-                },
                 "created_at": {
                     "type": "string"
                 },
@@ -11435,6 +10300,9 @@ const docTemplate = `{
                 },
                 "description": {
                     "type": "string"
+                },
+                "experiment_count": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
@@ -11450,9 +10318,6 @@ const docTemplate = `{
                 },
                 "namespace_name": {
                     "type": "string"
-                },
-                "experiment_count": {
-                    "type": "integer"
                 },
                 "rights": {
                     "type": "array",
@@ -11672,14 +10537,14 @@ const docTemplate = `{
                         "$ref": "#/definitions/dto.ValidationError"
                     }
                 },
+                "experiment_is_valid": {
+                    "type": "boolean"
+                },
                 "logs": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.LogRecord"
                     }
-                },
-                "experiment_is_valid": {
-                    "type": "boolean"
                 },
                 "summary": {
                     "type": "string"
@@ -11698,15 +10563,15 @@ const docTemplate = `{
                         "error1"
                     ]
                 },
+                "experiment_is_valid": {
+                    "type": "boolean",
+                    "example": true
+                },
                 "logs": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
-                },
-                "experiment_is_valid": {
-                    "type": "boolean",
-                    "example": true
                 },
                 "run_result": {
                     "$ref": "#/definitions/dto.RunResults"
@@ -11714,406 +10579,6 @@ const docTemplate = `{
                 "summary": {
                     "type": "string",
                     "example": "debug-run completed"
-                }
-            }
-        },
-        "jobd.Event": {
-            "type": "object",
-            "properties": {
-                "details": {
-                    "description": "Details Детали события",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "event_type": {
-                    "description": "EventType Тип события",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/jobd.EventEventType"
-                        }
-                    ]
-                },
-                "id": {
-                    "description": "Id ID события",
-                    "type": "integer"
-                },
-                "job_id": {
-                    "description": "JobId ID джобы",
-                    "type": "integer"
-                },
-                "timestamp": {
-                    "description": "Timestamp Время события",
-                    "type": "string"
-                },
-                "user_id": {
-                    "description": "UserId ID пользователя, инициировавшего событие",
-                    "type": "string"
-                }
-            }
-        },
-        "jobd.EventEventType": {
-            "type": "string",
-            "enum": [
-                "cancelled",
-                "completed",
-                "created",
-                "failed",
-                "paused",
-                "resumed",
-                "started",
-                "timeout"
-            ],
-            "x-enum-varnames": [
-                "EventEventTypeCancelled",
-                "EventEventTypeCompleted",
-                "EventEventTypeCreated",
-                "EventEventTypeFailed",
-                "EventEventTypePaused",
-                "EventEventTypeResumed",
-                "EventEventTypeStarted",
-                "EventEventTypeTimeout"
-            ]
-        },
-        "jobd.EventWithJob": {
-            "type": "object",
-            "properties": {
-                "details": {
-                    "description": "Details Детали события",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "event_type": {
-                    "description": "EventType Тип события",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/jobd.EventWithJobEventType"
-                        }
-                    ]
-                },
-                "id": {
-                    "description": "Id ID события",
-                    "type": "integer"
-                },
-                "job": {
-                    "$ref": "#/definitions/jobd.Job"
-                },
-                "job_id": {
-                    "description": "JobId ID джобы",
-                    "type": "integer"
-                },
-                "timestamp": {
-                    "description": "Timestamp Время события",
-                    "type": "string"
-                },
-                "user_id": {
-                    "description": "UserId ID пользователя, инициировавшего событие",
-                    "type": "string"
-                }
-            }
-        },
-        "jobd.EventWithJobEventType": {
-            "type": "string",
-            "enum": [
-                "cancelled",
-                "completed",
-                "created",
-                "failed",
-                "paused",
-                "resumed",
-                "started",
-                "timeout"
-            ],
-            "x-enum-varnames": [
-                "EventWithJobEventTypeCancelled",
-                "EventWithJobEventTypeCompleted",
-                "EventWithJobEventTypeCreated",
-                "EventWithJobEventTypeFailed",
-                "EventWithJobEventTypePaused",
-                "EventWithJobEventTypeResumed",
-                "EventWithJobEventTypeStarted",
-                "EventWithJobEventTypeTimeout"
-            ]
-        },
-        "jobd.Job": {
-            "type": "object",
-            "properties": {
-                "config": {
-                    "description": "Config Конфигурация джобы",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "created_at": {
-                    "description": "CreatedAt Время создания",
-                    "type": "string"
-                },
-                "created_by": {
-                    "description": "CreatedBy Кто создал джобу",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "Description Описание джобы",
-                    "type": "string"
-                },
-                "entity_id": {
-                    "description": "EntityId ID связанной сущности",
-                    "type": "integer"
-                },
-                "entity_type": {
-                    "description": "EntityType Тип связанной сущности",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/jobd.JobEntityType"
-                        }
-                    ]
-                },
-                "error_message": {
-                    "description": "ErrorMessage Сообщение об ошибке",
-                    "type": "string"
-                },
-                "finished_at": {
-                    "description": "FinishedAt Время завершения",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "Id ID джобы",
-                    "type": "integer"
-                },
-                "max_retries": {
-                    "description": "MaxRetries Максимальное количество повторов",
-                    "type": "integer"
-                },
-                "name": {
-                    "description": "Name Название джобы",
-                    "type": "string"
-                },
-                "parameters": {
-                    "description": "Parameters Параметры джобы",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "priority": {
-                    "description": "Priority Приоритет выполнения",
-                    "type": "integer"
-                },
-                "progress": {
-                    "description": "Progress Прогресс выполнения (0-100)",
-                    "type": "integer"
-                },
-                "result": {
-                    "description": "Result Результат выполнения",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "retry_count": {
-                    "description": "RetryCount Текущее количество повторов",
-                    "type": "integer"
-                },
-                "stages": {
-                    "description": "Stages Стейджи джобы",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/jobd.Stage"
-                    }
-                },
-                "started_at": {
-                    "description": "StartedAt Время начала выполнения",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "Status Текущий статус джобы",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/jobd.JobStatus"
-                        }
-                    ]
-                },
-                "status_description": {
-                    "description": "StatusDescription Описание статуса джобы",
-                    "type": "string"
-                },
-                "tags": {
-                    "description": "Tags Теги джобы",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "type": {
-                    "description": "Type Тип джобы",
-                    "type": "string"
-                },
-                "updated_at": {
-                    "description": "UpdatedAt Время последнего обновления",
-                    "type": "string"
-                }
-            }
-        },
-        "jobd.JobEntityType": {
-            "type": "string",
-            "enum": [
-                "dataset",
-                "namespace",
-                "experiment",
-                "project"
-            ],
-            "x-enum-varnames": [
-                "JobEntityTypeDataset",
-                "JobEntityTypeNamespace",
-                "JobEntityTypeExperiment",
-                "JobEntityTypeProject"
-            ]
-        },
-        "jobd.JobStatus": {
-            "type": "string",
-            "enum": [
-                "cancelled",
-                "completed",
-                "failed",
-                "paused",
-                "pending",
-                "queued",
-                "running",
-                "timeout"
-            ],
-            "x-enum-varnames": [
-                "JobStatusCancelled",
-                "JobStatusCompleted",
-                "JobStatusFailed",
-                "JobStatusPaused",
-                "JobStatusPending",
-                "JobStatusQueued",
-                "JobStatusRunning",
-                "JobStatusTimeout"
-            ]
-        },
-        "jobd.Stage": {
-            "type": "object",
-            "properties": {
-                "actions": {
-                    "description": "Actions Доступные действия для стейджа",
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "description": {
-                    "description": "Description Описание стейджа",
-                    "type": "string"
-                },
-                "logs": {
-                    "description": "Logs Логи стейджа в виде текста",
-                    "type": "string"
-                },
-                "name": {
-                    "description": "Name Название стейджа",
-                    "type": "string"
-                },
-                "order": {
-                    "description": "Order Порядок выполнения стейджа",
-                    "type": "integer"
-                },
-                "required": {
-                    "description": "Required Обязательный ли стейдж",
-                    "type": "boolean"
-                },
-                "step_id": {
-                    "description": "StepId ID соответствующего шага (если существует)",
-                    "type": "integer"
-                },
-                "step_status": {
-                    "description": "StepStatus Статус соответствующего шага (если существует)",
-                    "type": "string"
-                }
-            }
-        },
-        "jobd.Task": {
-            "type": "object",
-            "properties": {
-                "config": {
-                    "description": "Config Конфигурация таски",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "created_at": {
-                    "description": "CreatedAt Время создания",
-                    "type": "string"
-                },
-                "description": {
-                    "description": "Description Описание таски",
-                    "type": "string"
-                },
-                "error_message": {
-                    "description": "ErrorMessage Сообщение об ошибке",
-                    "type": "string"
-                },
-                "finished_at": {
-                    "description": "FinishedAt Время завершения",
-                    "type": "string"
-                },
-                "id": {
-                    "description": "Id ID таски",
-                    "type": "integer"
-                },
-                "job_id": {
-                    "description": "JobId ID джобы",
-                    "type": "integer"
-                },
-                "name": {
-                    "description": "Name Название таски",
-                    "type": "string"
-                },
-                "orch_task_id": {
-                    "description": "OrchTaskId ID таски в оркестраторе",
-                    "type": "string"
-                },
-                "order": {
-                    "description": "Order Порядок выполнения",
-                    "type": "integer"
-                },
-                "result": {
-                    "description": "Result Результат выполнения",
-                    "type": "object",
-                    "additionalProperties": true
-                },
-                "started_at": {
-                    "description": "StartedAt Время начала выполнения",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "Status Статус таски",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/jobd.TaskStatus"
-                        }
-                    ]
-                }
-            }
-        },
-        "jobd.TaskStatus": {
-            "type": "string",
-            "enum": [
-                "cancelled",
-                "completed",
-                "failed",
-                "pending",
-                "running"
-            ],
-            "x-enum-varnames": [
-                "TaskStatusCancelled",
-                "TaskStatusCompleted",
-                "TaskStatusFailed",
-                "TaskStatusPending",
-                "TaskStatusRunning"
-            ]
-        },
-        "jwt_client.TokenInfo": {
-            "type": "object",
-            "properties": {
-                "expires_in": {
-                    "type": "string"
-                },
-                "token": {
-                    "type": "string"
                 }
             }
         },
@@ -12407,53 +10872,6 @@ const docTemplate = `{
                 }
             }
         },
-        "requests.ChangeAlertBody": {
-            "type": "object",
-            "required": [
-                "alert_template_id",
-                "limit",
-                "rule_id",
-                "severity",
-                "severity_is_active"
-            ],
-            "properties": {
-                "alert_template_id": {
-                    "type": "integer"
-                },
-                "delay_firing": {
-                    "type": "string"
-                },
-                "delay_resolving": {
-                    "type": "string"
-                },
-                "limit": {
-                    "type": "string"
-                },
-                "rule_id": {
-                    "type": "integer"
-                },
-                "severity": {
-                    "type": "string"
-                },
-                "severity_is_active": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "requests.ChangeAlertSeveritiesBody": {
-            "type": "object",
-            "required": [
-                "alert_rules"
-            ],
-            "properties": {
-                "alert_rules": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/alerts.AlertRuleInput"
-                    }
-                }
-            }
-        },
         "requests.CompleteExperimentValidateRequest": {
             "type": "object",
             "required": [
@@ -12511,20 +10929,6 @@ const docTemplate = `{
                 },
                 "src_dataset_id": {
                     "type": "integer"
-                }
-            }
-        },
-        "requests.CreateAlertGroupBody": {
-            "type": "object",
-            "required": [
-                "alert_rules"
-            ],
-            "properties": {
-                "alert_rules": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/alerts.AlertRuleInput"
-                    }
                 }
             }
         },
@@ -12683,25 +11087,6 @@ const docTemplate = `{
                 }
             }
         },
-        "requests.CreateNamespaceRequest": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "comment": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 10,
-                    "minLength": 1
-                }
-            }
-        },
-        "requests.CreateNamespaceRolesRequest": {
-            "type": "object"
-        },
         "requests.CreateExperimentVariableRequest": {
             "type": "object",
             "required": [
@@ -12720,17 +11105,29 @@ const docTemplate = `{
                 }
             }
         },
+        "requests.CreateNamespaceRequest": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 10,
+                    "minLength": 1
+                }
+            }
+        },
         "requests.CreateProjectRequest": {
             "type": "object",
             "required": [
-                "abc_product_id",
                 "name",
                 "namespace_id"
             ],
             "properties": {
-                "abc_product_id": {
-                    "type": "string"
-                },
                 "comment": {
                     "type": "string"
                 },
@@ -12746,25 +11143,9 @@ const docTemplate = `{
                 }
             }
         },
-        "requests.CreateProjectRolesRequest": {
-            "type": "object"
-        },
-        "requests.CreateRobotRequest": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "name": {
-                    "type": "string",
-                    "maxLength": 128
-                }
-            }
-        },
         "requests.CreateRoleRequest": {
             "type": "object",
             "required": [
-                "idm_id",
                 "name"
             ],
             "properties": {
@@ -12772,6 +11153,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "idm_id": {
+                    "description": "IdmID is an optional stable external key stored in t_role.idm_id; when empty, a value is generated.",
                     "type": "string"
                 },
                 "name": {
@@ -12813,7 +11195,9 @@ const docTemplate = `{
                         "project",
                         "experiment",
                         "dataset",
-                        "cube"
+                        "cube",
+                        "workspace",
+                        "model"
                     ]
                 }
             }
@@ -12855,36 +11239,6 @@ const docTemplate = `{
                 }
             }
         },
-        "requests.DeleteAlertsBody": {
-            "type": "object",
-            "required": [
-                "alert_group_id",
-                "deleting_rules"
-            ],
-            "properties": {
-                "alert_group_id": {
-                    "type": "integer"
-                },
-                "deleting_rules": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                }
-            }
-        },
-        "requests.DeleteAllTokenForRobotRequest": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "name": {
-                    "type": "string",
-                    "maxLength": 128
-                }
-            }
-        },
         "requests.DeleteAppBannerRequest": {
             "type": "object",
             "properties": {
@@ -12923,6 +11277,17 @@ const docTemplate = `{
                 }
             }
         },
+        "requests.DeleteExperimentVariableRequest": {
+            "type": "object",
+            "required": [
+                "variable_id"
+            ],
+            "properties": {
+                "variable_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "requests.DeleteNamespaceRequest": {
             "type": "object",
             "required": [
@@ -12941,17 +11306,6 @@ const docTemplate = `{
             ],
             "properties": {
                 "project_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "requests.DeleteExperimentVariableRequest": {
-            "type": "object",
-            "required": [
-                "variable_id"
-            ],
-            "properties": {
-                "variable_id": {
                     "type": "integer"
                 }
             }
@@ -12981,119 +11335,6 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "type": "integer"
-                }
-            }
-        },
-        "requests.GenerateTokenForRobotRequest": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "name": {
-                    "type": "string",
-                    "maxLength": 128
-                }
-            }
-        },
-        "requests.GetExperimentAvailableDatasetsToLinkRequest": {
-            "type": "object",
-            "required": [
-                "limit",
-                "offset",
-                "experiment_id"
-            ],
-            "properties": {
-                "filters": {
-                    "$ref": "#/definitions/dto.DatasetFilters"
-                },
-                "limit": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "offset": {
-                    "type": "integer"
-                },
-                "experiment_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "requests.GrantRequest": {
-            "type": "object",
-            "properties": {
-                "role_id": {
-                    "type": "integer"
-                },
-                "rule_id": {
-                    "type": "integer"
-                },
-                "user_group_id": {
-                    "type": "integer"
-                },
-                "user_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "requests.ListJobsRequest": {
-            "type": "object",
-            "properties": {
-                "created_by": {
-                    "type": "string"
-                },
-                "entity_id": {
-                    "type": "integer"
-                },
-                "entity_type": {
-                    "type": "string"
-                },
-                "limit": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "offset": {
-                    "type": "integer"
-                },
-                "order": {
-                    "type": "string"
-                },
-                "sort": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "string"
-                }
-            }
-        },
-        "requests.ListProjectsRequestV2": {
-            "type": "object",
-            "required": [
-                "limit",
-                "offset"
-            ],
-            "properties": {
-                "limit": {
-                    "type": "integer",
-                    "maximum": 100,
-                    "minimum": 1
-                },
-                "namespace_id": {
-                    "type": "integer"
-                },
-                "offset": {
-                    "type": "integer"
-                },
-                "order_by": {
-                    "type": "string"
-                },
-                "search": {
-                    "type": "string"
                 }
             }
         },
@@ -13185,6 +11426,107 @@ const docTemplate = `{
                 }
             }
         },
+        "requests.GetExperimentAvailableDatasetsToLinkRequest": {
+            "type": "object",
+            "required": [
+                "experiment_id",
+                "limit",
+                "offset"
+            ],
+            "properties": {
+                "experiment_id": {
+                    "type": "integer"
+                },
+                "filters": {
+                    "$ref": "#/definitions/dto.DatasetFilters"
+                },
+                "limit": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "offset": {
+                    "type": "integer"
+                }
+            }
+        },
+        "requests.GrantRequest": {
+            "type": "object",
+            "properties": {
+                "role_id": {
+                    "type": "integer"
+                },
+                "rule_id": {
+                    "type": "integer"
+                },
+                "user_group_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "requests.ListJobsRequest": {
+            "type": "object",
+            "properties": {
+                "created_by": {
+                    "type": "string"
+                },
+                "entity_id": {
+                    "type": "integer"
+                },
+                "entity_type": {
+                    "type": "string"
+                },
+                "limit": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "offset": {
+                    "type": "integer"
+                },
+                "order": {
+                    "type": "string"
+                },
+                "sort": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "requests.ListProjectsRequestV2": {
+            "type": "object",
+            "required": [
+                "limit",
+                "offset"
+            ],
+            "properties": {
+                "limit": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "namespace_id": {
+                    "type": "integer"
+                },
+                "offset": {
+                    "type": "integer"
+                },
+                "order_by": {
+                    "type": "string"
+                },
+                "search": {
+                    "type": "string"
+                }
+            }
+        },
         "requests.ProjectValidateRequest": {
             "type": "object",
             "required": [
@@ -13199,14 +11541,14 @@ const docTemplate = `{
         "requests.RemoveDatasetFromExperimentRequest": {
             "type": "object",
             "required": [
-                "link_id",
-                "experiment_id"
+                "experiment_id",
+                "link_id"
             ],
             "properties": {
-                "link_id": {
+                "experiment_id": {
                     "type": "integer"
                 },
-                "experiment_id": {
+                "link_id": {
                     "type": "integer"
                 }
             }
@@ -13306,12 +11648,6 @@ const docTemplate = `{
                     "maxLength": 64
                 }
             }
-        },
-        "requests.SyncNamespaceRolesRequest": {
-            "type": "object"
-        },
-        "requests.SyncProjectRolesRequest": {
-            "type": "object"
         },
         "requests.UpdateAppAboutRequest": {
             "type": "object",
@@ -13434,12 +11770,12 @@ const docTemplate = `{
                 "disable_validation": {
                     "type": "boolean"
                 },
+                "experiment_id": {
+                    "type": "integer"
+                },
                 "name": {
                     "type": "string",
                     "maxLength": 128
-                },
-                "experiment_id": {
-                    "type": "integer"
                 }
             }
         },
@@ -13556,42 +11892,6 @@ const docTemplate = `{
                 }
             }
         },
-        "requests.UpdateNamespaceLogCommentRequest": {
-            "type": "object",
-            "required": [
-                "log_id",
-                "new_comment"
-            ],
-            "properties": {
-                "log_id": {
-                    "type": "integer"
-                },
-                "new_comment": {
-                    "type": "string"
-                }
-            }
-        },
-        "requests.UpdateNamespaceRequest": {
-            "type": "object",
-            "required": [
-                "id"
-            ],
-            "properties": {
-                "comment": {
-                    "type": "string"
-                },
-                "config": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 10
-                }
-            }
-        },
         "requests.UpdateExperimentConfigVersionRequest": {
             "type": "object",
             "required": [
@@ -13614,8 +11914,8 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "alias",
-                "link_id",
-                "experiment_id"
+                "experiment_id",
+                "link_id"
             ],
             "properties": {
                 "alias": {
@@ -13624,10 +11924,10 @@ const docTemplate = `{
                 "comment": {
                     "type": "string"
                 },
-                "link_id": {
+                "experiment_id": {
                     "type": "integer"
                 },
-                "experiment_id": {
+                "link_id": {
                     "type": "integer"
                 }
             }
@@ -13707,6 +12007,42 @@ const docTemplate = `{
                 }
             }
         },
+        "requests.UpdateNamespaceLogCommentRequest": {
+            "type": "object",
+            "required": [
+                "log_id",
+                "new_comment"
+            ],
+            "properties": {
+                "log_id": {
+                    "type": "integer"
+                },
+                "new_comment": {
+                    "type": "string"
+                }
+            }
+        },
+        "requests.UpdateNamespaceRequest": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "comment": {
+                    "type": "string"
+                },
+                "config": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 10
+                }
+            }
+        },
         "requests.UpdateProjectLogCommentRequest": {
             "type": "object",
             "required": [
@@ -13728,9 +12064,6 @@ const docTemplate = `{
                 "id"
             ],
             "properties": {
-                "abc_product_id": {
-                    "type": "string"
-                },
                 "comment": {
                     "type": "string"
                 },
@@ -13756,7 +12089,6 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "id",
-                "idm_id",
                 "name"
             ],
             "properties": {
@@ -13765,9 +12097,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
-                },
-                "idm_id": {
-                    "type": "string"
                 },
                 "name": {
                     "type": "string",
@@ -13830,37 +12159,6 @@ const docTemplate = `{
                 }
             }
         },
-        "responses.AlertTemplateResponse": {
-            "type": "object",
-            "required": [
-                "alert_description",
-                "alert_name",
-                "alert_template_id",
-                "graphic_name",
-                "has_limit",
-                "type_limit"
-            ],
-            "properties": {
-                "alert_description": {
-                    "type": "string"
-                },
-                "alert_name": {
-                    "type": "string"
-                },
-                "alert_template_id": {
-                    "type": "integer"
-                },
-                "graphic_name": {
-                    "type": "string"
-                },
-                "has_limit": {
-                    "type": "boolean"
-                },
-                "type_limit": {
-                    "type": "string"
-                }
-            }
-        },
         "responses.CheckACLResponse": {
             "type": "object",
             "properties": {
@@ -13868,17 +12166,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/acl.Right"
-                    }
-                }
-            }
-        },
-        "responses.CheckPermissionsResponse": {
-            "type": "object",
-            "properties": {
-                "permissions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.Permission"
                     }
                 }
             }
@@ -13894,6 +12181,17 @@ const docTemplate = `{
                 },
                 "saved_config": {
                     "type": "string"
+                }
+            }
+        },
+        "responses.CheckPermissionsResponse": {
+            "type": "object",
+            "properties": {
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.Permission"
+                    }
                 }
             }
         },
@@ -14026,22 +12324,6 @@ const docTemplate = `{
                 }
             }
         },
-        "responses.CreateNamespaceResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "responses.CreateNamespaceRolesResponse": {
-            "type": "object",
-            "properties": {
-                "roles_created": {
-                    "type": "integer"
-                }
-            }
-        },
         "responses.CreateExperimentVariableResponse": {
             "type": "object",
             "properties": {
@@ -14050,36 +12332,19 @@ const docTemplate = `{
                 }
             }
         },
+        "responses.CreateNamespaceResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
         "responses.CreateProjectResponse": {
             "type": "object",
             "properties": {
-                "abc_product_id": {
-                    "type": "string"
-                },
                 "description": {
                     "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "responses.CreateProjectRolesResponse": {
-            "type": "object",
-            "properties": {
-                "roles_created": {
-                    "type": "integer"
-                }
-            }
-        },
-        "responses.CreateRobotResponse": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "$ref": "#/definitions/jwt_client.TokenInfo"
                 },
                 "id": {
                     "type": "integer"
@@ -14169,58 +12434,20 @@ const docTemplate = `{
                 "internal_error": {}
             }
         },
-        "responses.GetAlertGroupResponse": {
+        "responses.ExperimentStatusResponse": {
             "type": "object",
-            "required": [
-                "alert_group_id",
-                "alerts",
-                "notification_product_id",
-                "experiment_id"
-            ],
             "properties": {
-                "alert_group_id": {
-                    "type": "integer"
+                "debug": {
+                    "type": "string"
                 },
-                "alerts": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/alerts.Alerts"
-                    }
+                "message": {
+                    "type": "string"
                 },
-                "notification_product_id": {
-                    "type": "integer"
+                "status": {
+                    "type": "string"
                 },
-                "experiment_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "responses.GetAlertOptionsResponse": {
-            "type": "object",
-            "required": [
-                "alert_templates",
-                "delay_firing",
-                "delay_resolving",
-                "type_limits"
-            ],
-            "properties": {
-                "alert_templates": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/responses.AlertTemplateResponse"
-                    }
-                },
-                "delay_firing": {
-                    "$ref": "#/definitions/alerts.TypeLimits"
-                },
-                "delay_resolving": {
-                    "$ref": "#/definitions/alerts.TypeLimits"
-                },
-                "type_limits": {
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/alerts.TypeLimits"
-                    }
+                "summary": {
+                    "type": "string"
                 }
             }
         },
@@ -14436,79 +12663,6 @@ const docTemplate = `{
                 }
             }
         },
-        "responses.GetFormResponse": {
-            "type": "object",
-            "properties": {
-                "params": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/params.Param"
-                    }
-                }
-            }
-        },
-        "responses.GetNamespaceConfigResponse": {
-            "type": "object",
-            "properties": {
-                "config": {
-                    "$ref": "#/definitions/dto.NamespaceConfig"
-                }
-            }
-        },
-        "responses.GetNamespaceLogResponse": {
-            "type": "object",
-            "properties": {
-                "act": {
-                    "type": "string"
-                },
-                "comment": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "details": {
-                    "$ref": "#/definitions/update_log.NamespaceUpdateLog"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "user": {
-                    "type": "string"
-                }
-            }
-        },
-        "responses.GetNamespaceResponse": {
-            "type": "object",
-            "properties": {
-                "config": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "rights": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/acl.Right"
-                    }
-                }
-            }
-        },
-        "responses.GetOrchestratorConfigResponse": {
-            "type": "object",
-            "properties": {
-                "config": {
-                    "type": "string"
-                }
-            }
-        },
         "responses.GetExperimentAvailableDatasetsToLinkResponse": {
             "type": "object",
             "properties": {
@@ -14596,6 +12750,79 @@ const docTemplate = `{
                 }
             }
         },
+        "responses.GetFormResponse": {
+            "type": "object",
+            "properties": {
+                "params": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/params.Param"
+                    }
+                }
+            }
+        },
+        "responses.GetNamespaceConfigResponse": {
+            "type": "object",
+            "properties": {
+                "config": {
+                    "$ref": "#/definitions/dto.NamespaceConfig"
+                }
+            }
+        },
+        "responses.GetNamespaceLogResponse": {
+            "type": "object",
+            "properties": {
+                "act": {
+                    "type": "string"
+                },
+                "comment": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "details": {
+                    "$ref": "#/definitions/update_log.NamespaceUpdateLog"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "user": {
+                    "type": "string"
+                }
+            }
+        },
+        "responses.GetNamespaceResponse": {
+            "type": "object",
+            "properties": {
+                "config": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "rights": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/acl.Right"
+                    }
+                }
+            }
+        },
+        "responses.GetOrchestratorConfigResponse": {
+            "type": "object",
+            "properties": {
+                "config": {
+                    "type": "string"
+                }
+            }
+        },
         "responses.GetProjectConfigResponse": {
             "type": "object",
             "properties": {
@@ -14633,9 +12860,6 @@ const docTemplate = `{
         "responses.GetProjectV2Response": {
             "type": "object",
             "properties": {
-                "abc_product_id": {
-                    "type": "string"
-                },
                 "config": {
                     "type": "string"
                 },
@@ -14779,6 +13003,57 @@ const docTemplate = `{
                 }
             }
         },
+        "responses.ListExperimentUpdateLogsResponse": {
+            "type": "object",
+            "properties": {
+                "logs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.ExperimentUpdateLog"
+                    }
+                },
+                "pages": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "responses.ListExperimentVariableVersionsResponse": {
+            "type": "object",
+            "properties": {
+                "pages": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "versions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.ExperimentVariableVersion"
+                    }
+                }
+            }
+        },
+        "responses.ListExperimentVersionsResponse": {
+            "type": "object",
+            "properties": {
+                "pages": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                },
+                "versions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.ExperimentVersion"
+                    }
+                }
+            }
+        },
         "responses.ListJobsResponse": {
             "type": "object",
             "properties": {
@@ -14856,57 +13131,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.PinnedProject"
-                    }
-                }
-            }
-        },
-        "responses.ListExperimentUpdateLogsResponse": {
-            "type": "object",
-            "properties": {
-                "logs": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.ExperimentUpdateLog"
-                    }
-                },
-                "pages": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "responses.ListExperimentVariableVersionsResponse": {
-            "type": "object",
-            "properties": {
-                "pages": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                },
-                "versions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.ExperimentVariableVersion"
-                    }
-                }
-            }
-        },
-        "responses.ListExperimentVersionsResponse": {
-            "type": "object",
-            "properties": {
-                "pages": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                },
-                "versions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.ExperimentVersion"
                     }
                 }
             }
@@ -15033,23 +13257,6 @@ const docTemplate = `{
                 }
             }
         },
-        "responses.ExperimentStatusResponse": {
-            "type": "object",
-            "properties": {
-                "debug": {
-                    "type": "string"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "string"
-                },
-                "summary": {
-                    "type": "string"
-                }
-            }
-        },
         "responses.SaveAppliedConfigResponse": {
             "type": "object",
             "properties": {
@@ -15072,34 +13279,6 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
-                }
-            }
-        },
-        "responses.SyncNamespaceRolesResponse": {
-            "type": "object",
-            "properties": {
-                "roles_errors": {
-                    "type": "integer"
-                },
-                "roles_synced": {
-                    "type": "integer"
-                },
-                "summary": {
-                    "type": "string"
-                }
-            }
-        },
-        "responses.SyncProjectRolesResponse": {
-            "type": "object",
-            "properties": {
-                "roles_errors": {
-                    "type": "integer"
-                },
-                "roles_synced": {
-                    "type": "integer"
-                },
-                "summary": {
-                    "type": "string"
                 }
             }
         },
@@ -15201,20 +13380,6 @@ const docTemplate = `{
                 }
             }
         },
-        "responses.UpdateNamespaceResponse": {
-            "type": "object",
-            "properties": {
-                "config": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
         "responses.UpdateExperimentDatasetResponse": {
             "type": "object",
             "properties": {
@@ -15234,6 +13399,20 @@ const docTemplate = `{
                 }
             }
         },
+        "responses.UpdateNamespaceResponse": {
+            "type": "object",
+            "properties": {
+                "config": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "responses.UpdateProjectResponse": {
             "type": "object",
             "properties": {
@@ -15250,6 +13429,28 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "responses.UserCapabilities": {
+            "type": "object",
+            "properties": {
+                "can_create_namespace": {
+                    "type": "boolean"
+                },
+                "can_manage_acl": {
+                    "type": "boolean"
+                },
+                "is_root": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "responses.UserCapabilitiesResponse": {
+            "type": "object",
+            "properties": {
+                "capabilities": {
+                    "$ref": "#/definitions/responses.UserCapabilities"
                 }
             }
         },
@@ -15318,40 +13519,6 @@ const docTemplate = `{
                 }
             }
         },
-        "update_log.Namespace": {
-            "type": "object",
-            "properties": {
-                "config": {
-                    "type": "string"
-                },
-                "config_version_id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "variable_name": {
-                    "type": "string"
-                },
-                "variable_type": {
-                    "type": "string"
-                },
-                "variable_value": {
-                    "type": "string"
-                }
-            }
-        },
-        "update_log.NamespaceUpdateLog": {
-            "type": "object",
-            "properties": {
-                "new": {
-                    "$ref": "#/definitions/update_log.Namespace"
-                },
-                "old": {
-                    "$ref": "#/definitions/update_log.Namespace"
-                }
-            }
-        },
         "update_log.Experiment": {
             "type": "object",
             "properties": {
@@ -15392,6 +13559,40 @@ const docTemplate = `{
                 },
                 "old": {
                     "$ref": "#/definitions/update_log.Experiment"
+                }
+            }
+        },
+        "update_log.Namespace": {
+            "type": "object",
+            "properties": {
+                "config": {
+                    "type": "string"
+                },
+                "config_version_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "variable_name": {
+                    "type": "string"
+                },
+                "variable_type": {
+                    "type": "string"
+                },
+                "variable_value": {
+                    "type": "string"
+                }
+            }
+        },
+        "update_log.NamespaceUpdateLog": {
+            "type": "object",
+            "properties": {
+                "new": {
+                    "$ref": "#/definitions/update_log.Namespace"
+                },
+                "old": {
+                    "$ref": "#/definitions/update_log.Namespace"
                 }
             }
         },

@@ -2,8 +2,8 @@ package private
 
 import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/dataset"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	experiment2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/experiment"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/namespace"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/client/project"
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
@@ -25,9 +25,8 @@ func (s *StreamflowTestSuite) TestExperimentCopyCrossNs() {
 	// PROJECT 1
 	projRes, err := s.c.Project.PostAPIV1Project(&project.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -65,9 +64,8 @@ func (s *StreamflowTestSuite) TestExperimentCopyCrossNs() {
 	// PROJECT 2
 	projRes2, err := s.c.Project.PostAPIV1Project(&project.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("copy-project"),
-			NamespaceID:  &nsRes2.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("copy-project"),
+			NamespaceID: &nsRes2.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -123,9 +121,9 @@ func (s *StreamflowTestSuite) TestExperimentCopyCrossNs() {
 	// LINK DATA SOURCE TO EXPERIMENT 1
 	addDsRes, err := s.c.Experiment.PostAPIV1ExperimentDataset(&experiment2.PostAPIV1ExperimentDatasetParams{
 		Request: &models2.RequestsAddDatasetToExperimentRequest{
-			DatasetID: &resDataset.Payload.ID,
+			DatasetID:    &resDataset.Payload.ID,
 			Alias:        ptr("test-alias-experiment-datasets"),
-			ExperimentID:   &res.Payload.ID,
+			ExperimentID: &res.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -155,8 +153,8 @@ func (s *StreamflowTestSuite) TestExperimentCopyCrossNs() {
 
 	res2, err := s.c.Experiment.PostAPIV1ExperimentCopy(&experiment2.PostAPIV1ExperimentCopyParams{
 		Request: &models2.RequestsCopyCompleteExperimentRequest{
-			Name:          ptr("copy-experiment"),
-			ProjectID:     &projRes2.Payload.ID,
+			Name:            ptr("copy-experiment"),
+			ProjectID:       &projRes2.Payload.ID,
 			SrcExperimentID: &res.Payload.ID,
 		},
 		Context: s.ctx,
@@ -183,7 +181,7 @@ func (s *StreamflowTestSuite) TestExperimentCopyCrossNs() {
 
 	copyResVars, err := s.c.Experiment.GetAPIV1ExperimentVariables(&experiment2.GetAPIV1ExperimentVariablesParams{
 		ExperimentID: res2.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 
 	s.Require().NoError(err)
@@ -221,9 +219,8 @@ func (s *StreamflowTestSuite) TestExperimentCopySameNsSameProject() {
 	// PROJECT 1
 	projRes, err := s.c.Project.PostAPIV1Project(&project.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("test-project"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("test-project"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -234,9 +231,8 @@ func (s *StreamflowTestSuite) TestExperimentCopySameNsSameProject() {
 	// PROJECT 2
 	projRes2, err := s.c.Project.PostAPIV1Project(&project.PostAPIV1ProjectParams{
 		Request: &models2.RequestsCreateProjectRequest{
-			Name:         ptr("copy-project"),
-			NamespaceID:  &nsRes.Payload.ID,
-			AbcProductID: ptr("1234"),
+			Name:        ptr("copy-project"),
+			NamespaceID: &nsRes.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -306,9 +302,9 @@ func (s *StreamflowTestSuite) TestExperimentCopySameNsSameProject() {
 	// LINK DATA SOURCE TO EXPERIMENT 1
 	addDsRes, err := s.c.Experiment.PostAPIV1ExperimentDataset(&experiment2.PostAPIV1ExperimentDatasetParams{
 		Request: &models2.RequestsAddDatasetToExperimentRequest{
-			DatasetID: &resDataset.Payload.ID,
+			DatasetID:    &resDataset.Payload.ID,
 			Alias:        ptr("test-alias-experiment-datasets"),
-			ExperimentID:   &res.Payload.ID,
+			ExperimentID: &res.Payload.ID,
 		},
 		Context: s.ctx,
 	})
@@ -338,8 +334,8 @@ func (s *StreamflowTestSuite) TestExperimentCopySameNsSameProject() {
 
 	res2, err := s.c.Experiment.PostAPIV1ExperimentCopy(&experiment2.PostAPIV1ExperimentCopyParams{
 		Request: &models2.RequestsCopyCompleteExperimentRequest{
-			Name:          ptr("copy-experiment"),
-			ProjectID:     &projRes2.Payload.ID,
+			Name:            ptr("copy-experiment"),
+			ProjectID:       &projRes2.Payload.ID,
 			SrcExperimentID: &res.Payload.ID,
 		},
 		Context: s.ctx,
@@ -366,7 +362,7 @@ func (s *StreamflowTestSuite) TestExperimentCopySameNsSameProject() {
 
 	copyResVars, err := s.c.Experiment.GetAPIV1ExperimentVariables(&experiment2.GetAPIV1ExperimentVariablesParams{
 		ExperimentID: res2.Payload.ID,
-		Context:    s.ctx,
+		Context:      s.ctx,
 	})
 
 	s.Require().NoError(err)

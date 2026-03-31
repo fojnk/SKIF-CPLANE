@@ -8,14 +8,6 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type RobotToken struct {
-	ID        int32
-	RobotID   int32
-	Token     string
-	CreatedAt pgtype.Timestamp
-	ExpiresAt pgtype.Timestamp
-}
-
 type TAclMatch struct {
 	ID          int32
 	UserGroupID pgtype.Int4
@@ -24,21 +16,11 @@ type TAclMatch struct {
 	RoleID      pgtype.Int4
 }
 
-type TAlertGroup struct {
-	AlertGroupID int32
-	ProductID    int32
-	ExperimentID   int32
-}
-
-type TAlertRule struct {
-	AlertGroupID     int32
-	TemplateAlertID  int32
-	RuleID           int32
-	SeverityName     string
-	SeverityIsActive *bool
-	AlertLimit       string
-	DelayFiring      string
-	DelayResolving   string
+type TAppAbout struct {
+	ID        int32
+	Content   string
+	Links     string
+	UpdatedAt pgtype.Timestamp
 }
 
 type TAppBanner struct {
@@ -50,9 +32,9 @@ type TAppBanner struct {
 	Color     string
 	CreatedAt pgtype.Timestamp
 	UpdatedAt pgtype.Timestamp
+	ColorDark string
 	Starts    pgtype.Timestamp
 	Ends      pgtype.Timestamp
-	ColorDark string
 }
 
 type TAppUpcoming struct {
@@ -61,24 +43,17 @@ type TAppUpcoming struct {
 	UpdatedAt pgtype.Timestamp
 }
 
-type TAppAbout struct {
-	ID        int32
-	Content   string
-	Links     string
-	UpdatedAt pgtype.Timestamp
-}
-
 type TAppUpdate struct {
 	ID          int32
 	Title       string
 	Description string
+	Content     string
 	VideoUrl    pgtype.Text
 	ImageUrl    pgtype.Text
 	ReleaseDate pgtype.Timestamp
 	IsPublished bool
 	CreatedAt   pgtype.Timestamp
 	UpdatedAt   pgtype.Timestamp
-	Content     string
 }
 
 type TCube struct {
@@ -103,7 +78,6 @@ type TDataset struct {
 	NamespaceID pgtype.Int4
 	IsExternal  pgtype.Bool
 	CreatedAt   pgtype.Timestamp
-	Uuid        pgtype.UUID
 	Deleted     bool
 	Public      bool
 	Managed     bool
@@ -113,37 +87,124 @@ type TDataset struct {
 }
 
 type TDatasetUpdateLog struct {
-	ID           int32
-	CreatedAt    pgtype.Timestamp
-	NamespaceID  int32
-	DatasetID int32
-	Username     string
-	Act          string
-	Details      []byte
-	ProjectID    pgtype.Int4
-	Comment      string
+	ID          int32
+	CreatedAt   pgtype.Timestamp
+	NamespaceID int32
+	DatasetID   int32
+	Username    string
+	Act         string
+	Details     []byte
+	ProjectID   pgtype.Int4
+	Comment     string
 }
 
 type TDatasetV struct {
-	ID           int32
+	ID        int32
 	DatasetID pgtype.Int4
-	Version      int32
-	Params       string
-	Schema       string
-	Public       bool
-	Managed      bool
-	Type         string
-	Comment      string
-	Creator      string
+	Version   int32
+	Params    string
+	Schema    string
+	Public    bool
+	Managed   bool
+	Type      string
+	Comment   string
+	Creator   string
+	CreatedAt pgtype.Timestamp
+}
+
+type TExperiment struct {
+	ID          int32
+	TemplateVID int32
+	ProjectID   int32
+	Status      string
+	OrchID      pgtype.Text
+	Deleted     bool
+	Unlimited   bool
+	UpdatedAt   pgtype.Timestamp
+}
+
+type TExperimentDataset struct {
+	ID           int32
+	ExperimentID int32
+	DatasetID    int32
+	Alias        string
 	CreatedAt    pgtype.Timestamp
+}
+
+type TExperimentIo struct {
+	ID           int32
+	ExperimentID int32
+	DsType       string
+	DsID         int32
+}
+
+type TExperimentStatus struct {
+	ID             int32
+	ExperimentID   int32
+	CurrentVersion int32
+	LastUpdated    pgtype.Timestamp
+	OrchConfig     string
+}
+
+type TExperimentTemplate struct {
+	ID          int32
+	NamespaceID int32
+	Name        string
+	Deleted     bool
+	Description string
+}
+
+type TExperimentTemplateV struct {
+	ID                    int32
+	ParentID              int32
+	VersionID             int32
+	Yql                   string
+	Config                pgtype.Text
+	ConfigPatch           pgtype.Text
+	CreatedAt             pgtype.Timestamp
+	Comment               string
+	Creator               string
+	AdditionalInformation []byte
+}
+
+type TExperimentUpdateLog struct {
+	ID           int32
+	CreatedAt    pgtype.Timestamp
+	ProjectID    int32
+	ExperimentID int32
+	Username     string
+	Act          string
+	Details      []byte
+	Comment      string
+}
+
+type TExperimentVariable struct {
+	ID           int32
+	ExperimentID int32
+	Name         string
+	Value        string
+	Type         string
+	UpdatedAt    pgtype.Timestamp
+	VersionID    int32
+}
+
+type TExperimentVariableV struct {
+	ID         int32
+	VariableID pgtype.Int4
+	Version    int32
+	Value      string
+	Type       string
+	Comment    string
+	Creator    string
+	CreatedAt  pgtype.Timestamp
 }
 
 type TNamespace struct {
 	ID                 int32
 	Name               string
 	CreatedAt          pgtype.Timestamp
-	NamespaceVersionID pgtype.Int4
 	Deleted            bool
+	NamespaceVersionID pgtype.Int4
 	Unlimited          bool
 }
 
@@ -174,104 +235,14 @@ type TNamespaceVariable struct {
 	CreatedAt   pgtype.Timestamp
 }
 
-type TExperiment struct {
-	ID          int32
-	TemplateVID int32
-	ProjectID   int32
-	Status      string
-	OrchID      pgtype.Text
-	Unlimited   bool
-	UpdatedAt   pgtype.Timestamp
-}
-
-type TExperimentDataset struct {
-	ID           int32
-	ExperimentID   int32
-	DatasetID int32
-	Alias        string
-	CreatedAt    pgtype.Timestamp
-}
-
-type TExperimentIo struct {
-	ID         int32
-	ExperimentID int32
-	DsType     string
-	DsID       int32
-}
-
-type TExperimentStatus struct {
-	ID             int32
-	ExperimentID     int32
-	CurrentVersion int32
-	LastUpdated    pgtype.Timestamp
-	OrchConfig     string
-}
-
-type TExperimentTemplate struct {
-	ID          int32
-	NamespaceID int32
-	Name        string
-	Deleted     bool
-	Description string
-}
-
-type TExperimentTemplateV struct {
-	ID                    int32
-	ParentID              int32
-	VersionID             int32
-	Yql                   string
-	Config                pgtype.Text
-	ConfigPatch           pgtype.Text
-	CreatedAt             pgtype.Timestamp
-	Comment               string
-	Creator               string
-	AdditionalInformation []byte
-}
-
-type TExperimentUpdateLog struct {
-	ID         int32
-	CreatedAt  pgtype.Timestamp
-	ProjectID  int32
-	ExperimentID int32
-	Username   string
-	Act        string
-	Details    []byte
-	Comment    string
-}
-
-type TExperimentVariable struct {
-	ID         int32
-	ExperimentID int32
-	Name       string
-	Value      string
-	Type       string
-	UpdatedAt  pgtype.Timestamp
-	VersionID  int32
-}
-
-type TExperimentVariableV struct {
-	ID         int32
-	VariableID pgtype.Int4
-	Version    int32
-	Value      string
-	Type       string
-	Comment    string
-	Creator    string
-	CreatedAt  pgtype.Timestamp
-}
-
-type TProduct struct {
-	ProductID int32
-}
-
 type TProject struct {
 	ID               int32
 	NamespaceID      int32
 	Name             string
 	Description      string
 	CreatedAt        pgtype.Timestamp
-	ProjectVersionID pgtype.Int4
 	Deleted          bool
+	ProjectVersionID pgtype.Int4
 	Unlimited        bool
 	UpdatedAt        pgtype.Timestamp
 	AbcProductID     string
@@ -332,9 +303,9 @@ type TRoleOwner struct {
 
 type TRule struct {
 	ID              int32
+	ObjectType      string
 	ObjectID        int32
 	Action          string
-	ObjectType      string
 	ObjectAttribute string
 }
 
@@ -343,7 +314,7 @@ type TUser struct {
 	Name     string
 	IsRobot  pgtype.Bool
 	LastSync pgtype.Timestamp
-	Deleted  *bool
+	Deleted  bool
 }
 
 type TUserGroup struct {
@@ -378,7 +349,6 @@ type VRealDataset struct {
 	NamespaceID pgtype.Int4
 	IsExternal  pgtype.Bool
 	CreatedAt   pgtype.Timestamp
-	Uuid        pgtype.UUID
 	Deleted     bool
 	Public      bool
 	Managed     bool
@@ -387,12 +357,15 @@ type VRealDataset struct {
 	VersionID   int32
 }
 
-type VRealNamespace struct {
-	ID                 int32
-	Name               string
-	CreatedAt          pgtype.Timestamp
-	NamespaceVersionID pgtype.Int4
-	Deleted            bool
+type VRealExperiment struct {
+	ID          int32
+	TemplateVID int32
+	ProjectID   int32
+	Status      string
+	OrchID      pgtype.Text
+	Deleted     bool
+	Unlimited   bool
+	UpdatedAt   pgtype.Timestamp
 }
 
 type VRealExperimentTemplate struct {
@@ -403,14 +376,23 @@ type VRealExperimentTemplate struct {
 	Description string
 }
 
+type VRealNamespace struct {
+	ID                 int32
+	Name               string
+	CreatedAt          pgtype.Timestamp
+	Deleted            bool
+	NamespaceVersionID pgtype.Int4
+	Unlimited          bool
+}
+
 type VRealProject struct {
 	ID               int32
 	NamespaceID      int32
 	Name             string
 	Description      string
 	CreatedAt        pgtype.Timestamp
-	ProjectVersionID pgtype.Int4
 	Deleted          bool
+	ProjectVersionID pgtype.Int4
 	Unlimited        bool
 	UpdatedAt        pgtype.Timestamp
 	AbcProductID     string

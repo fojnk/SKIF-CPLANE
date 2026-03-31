@@ -6,7 +6,7 @@ type YTClusterConfig struct {
 }
 
 type MetaYTConfig struct {
-	Token            string            `json:"Token"`
+	Token            string            `json:"Token" validate:"required_with=WorkDir"`
 	WorkDir          string            `json:"WorkDir"`
 	Cluster          string            `json:"Cluster"`
 	ProxyRole        string            `json:"ProxyRole"`

@@ -16,7 +16,12 @@ SELECT id, content, links, updated_at FROM t_app_about WHERE id = 1
 func (q *Queries) SelectAppAbout(ctx context.Context) (TAppAbout, error) {
 	row := q.db.QueryRow(ctx, selectAppAbout)
 	var i TAppAbout
-	err := row.Scan(&i.ID, &i.Content, &i.Links, &i.UpdatedAt)
+	err := row.Scan(
+		&i.ID,
+		&i.Content,
+		&i.Links,
+		&i.UpdatedAt,
+	)
 	return i, err
 }
 
@@ -39,6 +44,11 @@ type UpdateAppAboutParams struct {
 func (q *Queries) UpdateAppAbout(ctx context.Context, arg UpdateAppAboutParams) (TAppAbout, error) {
 	row := q.db.QueryRow(ctx, updateAppAbout, arg.Content, arg.Links)
 	var i TAppAbout
-	err := row.Scan(&i.ID, &i.Content, &i.Links, &i.UpdatedAt)
+	err := row.Scan(
+		&i.ID,
+		&i.Content,
+		&i.Links,
+		&i.UpdatedAt,
+	)
 	return i, err
 }
