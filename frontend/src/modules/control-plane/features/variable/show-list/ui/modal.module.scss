@@ -1,0 +1,6 @@
+.variableListDialog {
+  min-height: 400px;
+  :global(.g-table__head) {
+    display: none;
+  }
+}
