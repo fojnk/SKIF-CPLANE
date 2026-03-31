@@ -1,1 +1,0 @@
-import{r as n,j as s}from"./bundle.BgNwub1V.js";const x=({children:o,className:t,style:a})=>{const r=n.useCallback(e=>{e.stopPropagation()},[]);return s.jsx("div",{style:a,className:t,onKeyDown:r,role:"textbox",tabIndex:-1,children:o})};export{x as M};

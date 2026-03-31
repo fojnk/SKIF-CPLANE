@@ -1,1 +1,0 @@
-System.register(["./bundle-legacy.DBSXt6rL.js","./index-legacy.pFgSGkBg.js","./Gear-legacy.D6wh0VeI.js"],(function(e,s){"use strict";var t,c,n,r,i;return{setters:[e=>{t=e.c,c=e.j,n=e.f},e=>{r=e.e},e=>{i=e.G}],execute:function(){e("F",(()=>{const[e]=t([r]);return c.jsxs(n,{onClick:()=>{e({})},width:"auto",children:[c.jsx(n.Icon,{children:c.jsx(i,{})}),"Form"]})}))}}}));
