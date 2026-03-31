@@ -1,0 +1,35 @@
+.page-section {
+  display: flex;
+  flex-flow: column;
+
+  &__title-container {
+    margin-bottom: 16px;
+  }
+
+  &__title {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &__label, &__custom-label {
+    margin-left: 8px;
+  }
+
+  &__skeleton {
+    min-height: 60px;
+    max-width: 350px;
+  }
+
+  &__accordion-toggler {
+    margin-left: calc(var(--_--padding) * -1);
+  }
+
+
+  &.page-section--title-size-s {
+    .page-section {
+      &__title-container {
+        margin-bottom: 10px;
+      }
+    }
+  }
+}
