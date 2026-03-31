@@ -1,1 +1,0 @@
-System.register(["./bundle-legacy.DBSXt6rL.js"],(function(e,t){"use strict";var s,n;return{setters:[e=>{s=e.r,n=e.j}],execute:function(){e("M",(({children:e,className:t,style:r})=>{const a=s.useCallback((e=>{e.stopPropagation()}),[]);return n.jsx("div",{style:r,className:t,onKeyDown:a,role:"textbox",tabIndex:-1,children:e})}))}}}));
