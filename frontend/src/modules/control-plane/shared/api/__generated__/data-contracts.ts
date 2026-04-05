@@ -232,7 +232,6 @@ export enum DtoCubeTypeDC {
 
 export interface DtoDatasetDC {
   id?: number;
-  managed?: boolean;
   name?: string;
   params?: string;
   public?: boolean;
@@ -243,7 +242,6 @@ export interface DtoDatasetDC {
 
 export interface DtoDatasetFiltersDC {
   cluster?: string;
-  managed?: boolean | null;
   namespace_id?: number;
   path?: string;
   project_id?: number;
@@ -255,7 +253,6 @@ export interface DtoDatasetInfoDC {
   created_at?: string;
   id?: number;
   linked_experiments_count?: number;
-  managed?: boolean;
   name?: string;
   namespace_info?: DtoNamespaceDC;
   project_info?: DtoProjectCatalogInfoDC;
@@ -276,7 +273,6 @@ export interface DtoDatasetExperimentLinkDC {
 
 export interface DtoDatasetShortDC {
   id?: number;
-  managed?: boolean;
   name?: string;
   namespace_info?: DtoNamespaceDC;
   project_info?: DtoProjectCatalogInfoDC;
@@ -307,7 +303,6 @@ export interface DtoDatasetVersionTemplateDC {
   created_at?: string;
   creator?: string;
   id?: number;
-  managed?: boolean;
   params?: string;
   public?: boolean;
   schema?: string;
@@ -1036,7 +1031,6 @@ export interface RequestsCreateCubeRequestDC {
 
 export interface RequestsCreateDatasetRequestV2DC {
   comment?: string;
-  managed?: boolean;
   /** @maxLength 128 */
   name: string;
   params?: string;
@@ -1044,7 +1038,7 @@ export interface RequestsCreateDatasetRequestV2DC {
   public?: boolean;
   schema?: string;
   /** @maxLength 64 */
-  type?: 'Queue' | 'KeyValue' | 'StaticTableDir' | 'Kafka';
+  type: 'json' | 'kafka';
 }
 
 export interface RequestsCreateNamespaceRequestDC {
@@ -1065,7 +1059,7 @@ export interface RequestsCreateExperimentVariableRequestDC {
 }
 
 export interface RequestsCreateProjectRequestDC {
-  abc_product_id: string;
+  abc_product_id?: string;
   comment?: string;
   description?: string;
   /** @maxLength 128 */
@@ -1289,7 +1283,6 @@ export interface RequestsSearchDatasetsRequestDC {
    * @max 100
    */
   limit: number;
-  managed?: boolean | null;
   namespace_id?: number;
   offset: number;
   order_by?: string;
@@ -1371,14 +1364,13 @@ export interface RequestsUpdateDatasetRequestV2DC {
   comment?: string;
   disable_validation?: boolean;
   id: number;
-  managed?: boolean | null;
   /** @maxLength 128 */
   name?: string;
   params?: string;
   public?: boolean | null;
   schema?: string;
   /** @maxLength 64 */
-  type?: string;
+  type?: 'json' | 'kafka';
 }
 
 export interface RequestsUpdateDatasetVersionCommentRequestDC {
@@ -1565,7 +1557,6 @@ export interface ResponsesCreateCubeResponseDC {
 
 export interface ResponsesCreateDatasetResponseDC {
   id?: number;
-  managed?: boolean;
   name?: string;
   params?: string;
   public?: boolean;
@@ -1726,7 +1717,6 @@ export interface ResponsesGetDatasetLogResponseDC {
 
 export interface ResponsesGetDatasetV2ResponseDC {
   id?: number;
-  managed?: boolean;
   name?: string;
   params?: string;
   project_id?: number;
@@ -2082,7 +2072,6 @@ export interface TokenListParamsDC {
 
 export interface UpdateLogDatasetDC {
   job_id?: number;
-  managed?: boolean;
   name?: string;
   params?: string;
   public?: boolean;
@@ -3061,9 +3050,7 @@ export type V2FormsDatasetListDataDC = ResponsesGetFormResponseDC;
 export type V2FormsDatasetListErrorDC = ResponsesErrorResponseDC;
 
 export interface V2FormsDatasetListParamsDC {
-  /** dataset managed param */
-  managed: boolean;
-  /** dataset type */
+  /** dataset type (json, kafka; legacy types for existing rows) */
   type: string;
 }
 

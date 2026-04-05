@@ -196,7 +196,6 @@ WITH datasets AS (
         ds.name,
         ds_v.type,
         ds_v.public,
-        ds_v.managed,
         ds.project_id,
         pr.name        AS project_name,
         ns.id          AS namespace_id,
@@ -237,7 +236,6 @@ WITH datasets AS (
           (ds_v.params IS NOT NULL AND safe_jsonb_parse(ds_v.params) IS NOT NULL AND COALESCE(jsonb_extract_path_text(safe_jsonb_parse(ds_v.params), 'YT', 'Cluster'), '') ILIKE '%' || @cluster || '%'))
       AND (@path::text = '' OR
           (ds_v.params IS NOT NULL AND safe_jsonb_parse(ds_v.params) IS NOT NULL AND COALESCE(jsonb_extract_path_text(safe_jsonb_parse(ds_v.params), 'YT', 'Path'), '') ILIKE '%' || @path || '%'))
-      AND (@managed::bool IS NULL OR ds_v.managed = @managed)
       AND (@public::bool  IS NULL OR ds_v.public  = @public)
       AND (@namespace = 0     OR ns.id      = @namespace)
       AND (@project   = 0     OR pr.id      = @project)
@@ -256,7 +254,7 @@ WITH datasets AS (
       )
         )
     GROUP BY
-        ds.id, ds.name, ds_v.type, ds_v.public, ds_v.managed, ds_v.params,
+        ds.id, ds.name, ds_v.type, ds_v.public, ds_v.params,
         ds.project_id, pr.name, ns.id, ns.name,
         ds.updated_at, ds.created_at
 )
@@ -272,8 +270,6 @@ ORDER BY
     CASE WHEN @order_by = 'type_desc' THEN ds.type END DESC,
     CASE WHEN @order_by = 'public_asc' THEN ds.public END ASC,
     CASE WHEN @order_by = 'public_desc' THEN ds.public END DESC,
-    CASE WHEN @order_by = 'managed_asc' THEN ds.managed END ASC,
-    CASE WHEN @order_by = 'managed_desc' THEN ds.managed END DESC,
     CASE WHEN @order_by = 'namespace_asc' THEN ds.namespace_name END ASC,
     CASE WHEN @order_by = 'namespace_desc' THEN ds.namespace_name END DESC,
     CASE WHEN @order_by = 'project_asc' THEN ds.project_name END ASC,

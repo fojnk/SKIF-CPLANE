@@ -299,7 +299,6 @@ WITH datasets AS (
         ds.name,
         ds_v.type,
         ds_v.public,
-        ds_v.managed,
         ds.project_id,
         pr.name        AS project_name,
         ns.id          AS namespace_id,
@@ -340,30 +339,29 @@ WITH datasets AS (
           (ds_v.params IS NOT NULL AND safe_jsonb_parse(ds_v.params) IS NOT NULL AND COALESCE(jsonb_extract_path_text(safe_jsonb_parse(ds_v.params), 'YT', 'Cluster'), '') ILIKE '%' || $7 || '%'))
       AND ($8::text = '' OR
           (ds_v.params IS NOT NULL AND safe_jsonb_parse(ds_v.params) IS NOT NULL AND COALESCE(jsonb_extract_path_text(safe_jsonb_parse(ds_v.params), 'YT', 'Path'), '') ILIKE '%' || $8 || '%'))
-      AND ($9::bool IS NULL OR ds_v.managed = $9)
-      AND ($10::bool  IS NULL OR ds_v.public  = $10)
-      AND ($11 = 0     OR ns.id      = $11)
-      AND ($12   = 0     OR pr.id      = $12)
+      AND ($9::bool  IS NULL OR ds_v.public  = $9)
+      AND ($10 = 0     OR ns.id      = $10)
+      AND ($11   = 0     OR pr.id      = $11)
       AND (
-        $13::bool IS NULL
+        $12::bool IS NULL
       OR (
-        $13 = TRUE
+        $12 = TRUE
         AND (
           ds_v.public = TRUE
           OR ds.project_id = (
             SELECT pl2.project_id
             FROM t_experiment pl2
-            WHERE pl2.id = $14
+            WHERE pl2.id = $13
           )
         )
       )
         )
     GROUP BY
-        ds.id, ds.name, ds_v.type, ds_v.public, ds_v.managed, ds_v.params,
+        ds.id, ds.name, ds_v.type, ds_v.public, ds_v.params,
         ds.project_id, pr.name, ns.id, ns.name,
         ds.updated_at, ds.created_at
 )
-SELECT id, name, type, public, managed, project_id, project_name, namespace_id, namespace_name, updated_at, created_at, linked_experiment_count, total
+SELECT id, name, type, public, project_id, project_name, namespace_id, namespace_name, updated_at, created_at, linked_experiment_count, total
 FROM datasets ds
 ORDER BY
     CASE WHEN $3::varchar = '' THEN ds.updated_at END DESC,
@@ -375,8 +373,6 @@ ORDER BY
     CASE WHEN $3 = 'type_desc' THEN ds.type END DESC,
     CASE WHEN $3 = 'public_asc' THEN ds.public END ASC,
     CASE WHEN $3 = 'public_desc' THEN ds.public END DESC,
-    CASE WHEN $3 = 'managed_asc' THEN ds.managed END ASC,
-    CASE WHEN $3 = 'managed_desc' THEN ds.managed END DESC,
     CASE WHEN $3 = 'namespace_asc' THEN ds.namespace_name END ASC,
     CASE WHEN $3 = 'namespace_desc' THEN ds.namespace_name END DESC,
     CASE WHEN $3 = 'project_asc' THEN ds.project_name END ASC,
@@ -399,7 +395,6 @@ type SelectDatasetsParams struct {
 	Type            string
 	Cluster         string
 	Path            string
-	Managed         *bool
 	Public          *bool
 	Namespace       interface{}
 	Project         interface{}
@@ -412,7 +407,6 @@ type SelectDatasetsRow struct {
 	Name                  string
 	Type                  string
 	Public                bool
-	Managed               bool
 	ProjectID             pgtype.Int4
 	ProjectName           pgtype.Text
 	NamespaceID           pgtype.Int4
@@ -433,7 +427,6 @@ func (q *Queries) SelectDatasets(ctx context.Context, arg SelectDatasetsParams) 
 		arg.Type,
 		arg.Cluster,
 		arg.Path,
-		arg.Managed,
 		arg.Public,
 		arg.Namespace,
 		arg.Project,
@@ -452,7 +445,6 @@ func (q *Queries) SelectDatasets(ctx context.Context, arg SelectDatasetsParams) 
 			&i.Name,
 			&i.Type,
 			&i.Public,
-			&i.Managed,
 			&i.ProjectID,
 			&i.ProjectName,
 			&i.NamespaceID,

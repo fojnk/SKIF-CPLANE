@@ -152,13 +152,12 @@ type DatasetUpdateLog struct {
 }
 
 type Dataset struct {
-	Name    string `json:"name,omitempty"`
-	Schema  string `json:"schema,omitempty"`
-	Params  string `json:"params,omitempty"`
-	Type    string `json:"type,omitempty"`
-	Public  bool   `json:"public"`
-	Managed bool   `json:"managed"`
-	JobID   *int64 `json:"job_id,omitempty"`
+	Name   string `json:"name,omitempty"`
+	Schema string `json:"schema,omitempty"`
+	Params string `json:"params,omitempty"`
+	Type   string `json:"type,omitempty"`
+	Public bool   `json:"public"`
+	JobID  *int64 `json:"job_id,omitempty"`
 }
 
 func NewDatasetLog(ctx context.Context, db db.DB, l *logger.Logger, namespaceID int32, projectID pgtype.Int4, datasetID int32, username, comment string, act Action, details DatasetUpdateLog) {

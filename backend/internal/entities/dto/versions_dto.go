@@ -47,7 +47,6 @@ type DatasetVersionTemplate struct {
 	Params    string    `json:"params"`
 	Schema    string    `json:"schema"`
 	Public    bool      `json:"public"`
-	Managed   bool      `json:"managed"`
 	Creator   string    `json:"creator"`
 	Comment   string    `json:"comment"`
 	CreatedAt time.Time `json:"created_at"`

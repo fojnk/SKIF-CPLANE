@@ -12,7 +12,6 @@ import {
   FormParamEdit,
   getFormInitialValues,
 } from '@/modules/control-plane/shared/components/forms';
-import { DatasetType } from '@/modules/control-plane/shared/types';
 import { formatData } from '@/modules/control-plane/shared/utils/formatData';
 import { GlobalLoader } from '@/shared/ui/loaders';
 
@@ -99,11 +98,8 @@ export const DatasetConfig = () => {
 
   // Получаем параметры формы для dataset из кэша
   const dsFormParams = useMemo(() => {
-    if (datasetData?.type && datasetData?.managed !== undefined) {
-      const cacheKey = dsFormModel.createCacheKey(
-        datasetData.type as DatasetType,
-        datasetData.managed,
-      );
+    if (datasetData?.type) {
+      const cacheKey = dsFormModel.createCacheKey(datasetData.type);
       return dsFormCache[cacheKey] || null;
     }
     return null;
@@ -111,15 +107,8 @@ export const DatasetConfig = () => {
 
   // Загружаем параметры формы для dataset если их нет в кэше
   useEffect(() => {
-    if (
-      datasetData?.type &&
-      datasetData?.managed !== undefined &&
-      !dsFormParams
-    ) {
-      dsFormLoad({
-        type: datasetData.type as DatasetType,
-        managed: datasetData.managed,
-      });
+    if (datasetData?.type && !dsFormParams) {
+      dsFormLoad({ type: datasetData.type });
     }
   }, [datasetData, dsFormParams, dsFormLoad]);
 

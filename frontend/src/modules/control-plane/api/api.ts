@@ -40,3 +40,28 @@ export const loginFx = createEffect<
 
   return response.data ?? {};
 });
+
+export type RegisterBody = {
+  name: string;
+  email: string;
+  password: string;
+  display_name?: string;
+};
+
+export const registerFx = createEffect<
+  RegisterBody,
+  controlPlaneApi.dc.TokenListDataDC,
+  Error
+>(async (body) => {
+  const response = await http.request<
+    controlPlaneApi.dc.TokenListDataDC,
+    controlPlaneApi.dc.TokenListErrorDC
+  >({
+    path: `${buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl}/auth/register`,
+    method: 'POST',
+    type: ContentType.Json,
+    body,
+  });
+
+  return response.data ?? {};
+});

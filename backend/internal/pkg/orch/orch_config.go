@@ -31,8 +31,10 @@ type PublicSource struct {
 
 func getSourceType(dsType string, Managed bool) string {
 	switch dsType {
-	case "Kafka":
+	case "kafka", "Kafka":
 		return "ST_KAFKA"
+	case "json":
+		return "ST_STATIC_TABLE_DIR"
 	case "Queue":
 		if Managed {
 			return "ST_QUEUE"

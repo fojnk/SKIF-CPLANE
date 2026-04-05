@@ -88,6 +88,17 @@ func SetSearchDatasetsRequestParams(r *requests.SearchDatasetsRequest, name, val
 			r.OrderBy = value
 		}
 
+	case "public":
+		a := true
+		b := false
+		if value == "true" {
+			r.Public = &a
+		} else if value == "false" {
+			r.Public = &b
+		} else {
+			r.Public = nil
+		}
+
 	case "limit", "offset", "project_id", "namespace_id":
 		val, err := helpers.ParseInt32(name, value)
 		if err != nil {
@@ -102,28 +113,6 @@ func SetSearchDatasetsRequestParams(r *requests.SearchDatasetsRequest, name, val
 			r.ProjectID = val
 		case "namespace_id":
 			r.NamespaceID = val
-		case "public", "managed":
-			a := true
-			b := false
-			switch name {
-			case "public":
-				if value == "true" {
-					r.Public = &a
-				} else if value == "false" {
-					r.Public = &b
-				} else {
-					r.Public = nil
-				}
-			case "managed":
-				if value == "true" {
-					r.Managed = &a
-				} else if value == "false" {
-					r.Managed = &b
-				} else {
-					r.Managed = nil
-				}
-			}
-
 		default:
 			return &responses.ErrorResponse{
 				InternalError:   fmt.Errorf("invalid parameter: %s", name),

@@ -41,7 +41,6 @@ export const dsDiff = (details?: DsDetails): DatasetDiff => {
       schema: false,
       type: false,
       public: false,
-      managed: false,
     };
   const oldDs = details?.old;
   const newDs = details?.new;
@@ -52,7 +51,6 @@ export const dsDiff = (details?: DsDetails): DatasetDiff => {
     schema: isChanged(oldDs?.schema, newDs?.schema),
     type: isChanged(oldDs?.type, newDs?.type),
     public: isChangedBool(oldDs?.public, newDs?.public),
-    managed: isChangedBool(oldDs?.managed, newDs?.managed),
   };
 };
 

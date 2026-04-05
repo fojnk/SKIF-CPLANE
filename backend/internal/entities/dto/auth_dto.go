@@ -10,6 +10,7 @@ type OAuthAccessToken struct {
 
 type UserInfo struct {
 	Username           string   `json:"username"`
+	DisplayName        string   `json:"display_name,omitempty"`
 	Email              string   `json:"email" binding:"required"`
 	Avatar             string   `json:"avatar"`
 	FirstName          string   `json:"first_name"`

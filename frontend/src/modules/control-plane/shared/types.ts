@@ -55,10 +55,8 @@ export type EditorConfigType = 'project' | 'ds' | 'pipe' | 'ns' | 'ds2';
 export type EditorModeType = 'form' | 'code';
 export type EntityType = 'namespace' | 'dataset' | 'experiment' | 'project';
 export enum DatasetType {
-  QUEUE = 'Queue',
-  KEY_VALUE = 'KeyValue',
-  STATIC_TABLE_DIR = 'StaticTableDir',
-  KAFKA = 'Kafka',
+  JSON = 'json',
+  KAFKA = 'kafka',
 }
 export interface EditorDataDC {
   id: number;
@@ -101,8 +99,6 @@ export interface DsCatalogFilter {
   offset: number;
   search?: string;
   type?: string;
-  cluster?: string;
-  managed?: boolean;
   namespace_id?: number;
   project_id?: number;
   public?: boolean;
@@ -163,7 +159,6 @@ export interface DatasetDiff {
   schema?: boolean;
   type?: boolean;
   public?: boolean;
-  managed?: boolean;
 }
 
 export interface NamespaceDiff {

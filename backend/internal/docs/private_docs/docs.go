@@ -8123,15 +8123,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "dataset type",
+                        "description": "dataset type (json, kafka; legacy: Queue, KeyValue, StaticTableDir, Kafka)",
                         "name": "type",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "dataset managed param",
-                        "name": "managed",
                         "in": "query",
                         "required": true
                     }
@@ -9532,9 +9525,6 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "managed": {
-                    "type": "boolean"
-                },
                 "name": {
                     "type": "string"
                 },
@@ -9584,10 +9574,6 @@ const docTemplate = `{
                 "cluster": {
                     "type": "string"
                 },
-                "managed": {
-                    "type": "boolean",
-                    "x-nullable": true
-                },
                 "namespace_id": {
                     "type": "integer"
                 },
@@ -9617,9 +9603,6 @@ const docTemplate = `{
                 },
                 "linked_experiments_count": {
                     "type": "integer"
-                },
-                "managed": {
-                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"
@@ -9652,9 +9635,6 @@ const docTemplate = `{
             "properties": {
                 "id": {
                     "type": "integer"
-                },
-                "managed": {
-                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"
@@ -9733,9 +9713,6 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
-                },
-                "managed": {
-                    "type": "boolean"
                 },
                 "params": {
                     "type": "string"
@@ -11050,14 +11027,12 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "name",
-                "project_id"
+                "project_id",
+                "type"
             ],
             "properties": {
                 "comment": {
                     "type": "string"
-                },
-                "managed": {
-                    "type": "boolean"
                 },
                 "name": {
                     "type": "string",
@@ -11079,10 +11054,8 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 64,
                     "enum": [
-                        "Queue",
-                        "KeyValue",
-                        "StaticTableDir",
-                        "Kafka"
+                        "json",
+                        "kafka"
                     ]
                 }
             }
@@ -11617,10 +11590,6 @@ const docTemplate = `{
                     "maximum": 100,
                     "minimum": 1
                 },
-                "managed": {
-                    "type": "boolean",
-                    "x-nullable": true
-                },
                 "namespace_id": {
                     "type": "integer"
                 },
@@ -11836,10 +11805,6 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "managed": {
-                    "type": "boolean",
-                    "x-nullable": true
-                },
                 "name": {
                     "type": "string",
                     "maxLength": 128
@@ -11856,7 +11821,11 @@ const docTemplate = `{
                 },
                 "type": {
                     "type": "string",
-                    "maxLength": 64
+                    "maxLength": 64,
+                    "enum": [
+                        "json",
+                        "kafka"
+                    ]
                 }
             }
         },
@@ -12304,9 +12273,6 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "managed": {
-                    "type": "boolean"
-                },
                 "name": {
                     "type": "string"
                 },
@@ -12630,9 +12596,6 @@ const docTemplate = `{
             "properties": {
                 "id": {
                     "type": "integer"
-                },
-                "managed": {
-                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"
@@ -13487,9 +13450,6 @@ const docTemplate = `{
             "properties": {
                 "job_id": {
                     "type": "integer"
-                },
-                "managed": {
-                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"

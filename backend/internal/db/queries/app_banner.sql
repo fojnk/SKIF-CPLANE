@@ -11,10 +11,6 @@ WHERE active = true AND type = 'release_block'
 SELECT * FROM t_app_banner WHERE id = $1;
 
 -- name: UpdateAppBanner :one
--- param: active *bool
--- param: type *text
--- param: starts *timestamp
--- param: ends *timestamp
 UPDATE t_app_banner
 SET
     title = CASE WHEN @title::text != '' THEN @title::text ELSE title END,
@@ -22,9 +18,9 @@ SET
     active = CASE WHEN @active::bool IS NOT NULL THEN @active ELSE active END,
     color = CASE WHEN @color::text != '' THEN @color::text ELSE color END,
     color_dark = CASE WHEN @color_dark::text != '' THEN @color_dark::text ELSE color_dark END,
-    type = CASE WHEN @type::text IS NOT NULL THEN @type::text ELSE type END,
-    starts = CASE WHEN @starts::timestamp IS NOT NULL THEN @starts ELSE starts END,
-    ends = CASE WHEN @ends::timestamp IS NOT NULL THEN @ends ELSE ends END,
+    type = COALESCE(sqlc.narg('type'), type),
+    starts = COALESCE(sqlc.narg('starts'), starts),
+    ends = COALESCE(sqlc.narg('ends'), ends),
     updated_at = NOW()
 WHERE id = $1 RETURNING *;
 

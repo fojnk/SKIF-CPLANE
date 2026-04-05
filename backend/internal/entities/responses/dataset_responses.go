@@ -28,7 +28,6 @@ type CopyDatasetResponse struct {
 	Params  string `json:"params"`
 	Schema  string `json:"schema"`
 	Public  bool   `json:"public"`
-	Managed bool   `json:"managed"`
 }
 
 type CreateDatasetResponse struct {
@@ -38,7 +37,6 @@ type CreateDatasetResponse struct {
 	Params  string `json:"params"`
 	Schema  string `json:"schema"`
 	Public  bool   `json:"public"`
-	Managed bool   `json:"managed"`
 }
 
 type ListAllDatasetResponse struct {
@@ -64,7 +62,6 @@ type GetDatasetV2Response struct {
 	Params      string      `json:"params"`
 	Schema      string      `json:"schema"`
 	Public      bool        `json:"public"`
-	Managed     bool        `json:"managed"`
 	ProjectID   int32       `json:"project_id"`
 	ProjectName string      `json:"project_name"`
 	Rights      []acl.Right `json:"rights"`

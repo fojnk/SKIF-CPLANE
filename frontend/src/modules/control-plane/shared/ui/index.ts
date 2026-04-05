@@ -11,7 +11,6 @@ export * from './ds-type-label';
 export * from './ds-type-selector';
 export * from './form-field';
 export * from './log-viewer';
-export * from './managed-label';
 export * from './monaco';
 export * from './experiment-status';
 export * from './resizer';

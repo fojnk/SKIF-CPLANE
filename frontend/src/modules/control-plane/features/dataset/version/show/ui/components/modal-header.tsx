@@ -28,12 +28,10 @@ interface Props {
   mode: ShowVersionMode;
   head: boolean;
   setMode: (mode: ShowVersionMode) => void;
-  isManaged?: boolean;
   isPublic?: boolean;
   tab: Tab;
   setTab: (tab: Tab) => void;
   dsType?: string;
-  isHeadManaged?: boolean;
   isHeadPublic?: boolean;
   versionValue: string;
   comment?: string;
@@ -45,12 +43,10 @@ export const ModalHeader = ({
   mode,
   head,
   setMode,
-  isManaged,
   isPublic,
   tab,
   setTab,
   dsType,
-  isHeadManaged,
   isHeadPublic,
   versionValue,
   comment,
@@ -139,36 +135,6 @@ export const ModalHeader = ({
             <SegmentedRadioGroup.Option value="schema" content="Схема" />
           </SegmentedRadioGroup>
           <Flex gap={4} direction="row" alignItems="center">
-            {isManaged !== undefined && (
-              <Flex direction="row" alignItems="center" gap={1}>
-                <Text variant="subheader-1">Управляемый:</Text>
-                <Text
-                  color={isManaged ? 'positive' : 'danger'}
-                  style={{ lineHeight: 1 }}
-                >
-                  <Icon
-                    data={isManaged ? CircleCheck : CircleXmark}
-                    size={16}
-                  />
-                </Text>
-                {mode === 'compare' && isHeadManaged !== undefined && (
-                  <>
-                    <Text variant="subheader-1" color="secondary">
-                      |
-                    </Text>
-                    <Text
-                      color={isHeadManaged ? 'positive' : 'danger'}
-                      style={{ lineHeight: 1 }}
-                    >
-                      <Icon
-                        data={isHeadManaged ? CircleCheck : CircleXmark}
-                        size={16}
-                      />
-                    </Text>
-                  </>
-                )}
-              </Flex>
-            )}
             {isPublic !== undefined && (
               <Flex direction="row" alignItems="center" gap={1}>
                 <Text variant="subheader-1">Публичный:</Text>

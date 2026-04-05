@@ -19,11 +19,9 @@ export const DatasetsFiltersReset = ({ filter, setFilter }: Props) => {
   };
 
   const hasActive = [
-    filter.cluster,
     filter.namespace_id,
     filter.type,
     filter.public,
-    filter.managed,
     //filter.search,
   ].some((v) => v != null);
 

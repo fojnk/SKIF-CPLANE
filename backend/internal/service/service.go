@@ -31,12 +31,14 @@ import (
 	schemaService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/schema"
 	userService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/user"
 	validationService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/validation"
+	permissionRequestService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/permissionrequest"
 )
 
 type IAuthService interface {
 	GetAuthorizationURL(redirectUrl string) (string, error)
-	Login(username, password string) (*dto.OAuthAccessToken, error)
-	GetUserInfo(token string) (*dto.UserInfo, error)
+	Login(ctx context.Context, username, password string) (*dto.OAuthAccessToken, error)
+	Register(ctx context.Context, r *requests.RegisterRequest) (*dto.OAuthAccessToken, error)
+	GetUserInfo(ctx context.Context, token string) (*dto.UserInfo, error)
 	GetUserInfoFromRequest(r *http.Request) (*user.UserInfo, error)
 	ExchangeCodeForToken(code, redirectUri string) (*dto.OAuthAccessToken, error)
 	RefreshAccessToken(refreshToken string) (*dto.OAuthAccessToken, error)
@@ -119,7 +121,7 @@ type IExperimentService interface {
 
 type IDatasetService interface {
 	CreateDataset(ctx context.Context, dataset *dto.Dataset, inputProjectID int32, comment string, u *user.UserInfo) (*dto.Dataset, error)
-	UpdateDataset(ctx context.Context, updatedDataset *dto.Dataset, public, managed *bool, comment, username string) (*dto.Dataset, error)
+	UpdateDataset(ctx context.Context, updatedDataset *dto.Dataset, public *bool, comment, username string) (*dto.Dataset, error)
 	ListDatasetByProject(ctx context.Context, projectID int32) (*[]dto.Dataset, error)
 	GetDataset(ctx context.Context, datasetID int32) (*dto.DatasetWithProject, error)
 	GetDatasetWithProjectInfo(ctx context.Context, datasetID, userID int32) (*dto.Dataset, string, int32, error)
@@ -224,7 +226,7 @@ type IGraphService interface {
 }
 
 type IFormService interface {
-	GetDatasetFormParams(ctx context.Context, dsType string, managed bool) ([]params.Param, error)
+	GetDatasetFormParams(ctx context.Context, dsType string) ([]params.Param, error)
 	GetProjectFormParams(ctx context.Context) ([]params.Param, error)
 	GetPipelintFormsParams(ctx context.Context) ([]params.Param, error)
 }
@@ -301,6 +303,14 @@ type ICubeService interface {
 	GetCubeByID(ctx context.Context, ID int32) (*dto.Cube, error)
 }
 
+type IPermissionRequestService interface {
+	CreatePermissionRequest(ctx context.Context, username string, r *requests.CreatePermissionRequest) (*responses.PermissionRequestItem, error)
+	ListMyPermissionRequests(ctx context.Context, username string) ([]responses.PermissionRequestItem, error)
+	ListPermissionRequestsForAdmin(ctx context.Context, r *requests.ListPermissionRequestsAdminRequest) ([]responses.PermissionRequestItem, int64, error)
+	ApprovePermissionRequest(ctx context.Context, id int32, reviewerUsername string) error
+	RejectPermissionRequest(ctx context.Context, id int32, reviewerUsername string) error
+}
+
 type Service struct {
 	Repo *repository.Repository
 	IAuthService
@@ -318,6 +328,7 @@ type Service struct {
 	IFormService
 	IValidationService
 	ICubeService
+	IPermissionRequestService
 }
 
 func NewService(repo *repository.Repository) *Service {
@@ -339,8 +350,9 @@ func NewService(repo *repository.Repository) *Service {
 		ISchemaService:     schemaService.NewSchemaService(repo),
 		IGraphService:      graphSvc,
 		IFormService:       formService.NewFormService(repo),
-		IValidationService: validationService.NewValidationService(repo),
-		ICubeService:       cubeService.NewCubeService(repo),
+		IValidationService:          validationService.NewValidationService(repo),
+		ICubeService:                cubeService.NewCubeService(repo),
+		IPermissionRequestService:   permissionRequestService.NewService(repo),
 	}
 }
 

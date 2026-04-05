@@ -25,7 +25,6 @@ const saveFilterFx = createEffect((filter: DsCatalogFilter) => {
   // text filters
   query.search.set(filter.search ?? null);
   query.dsType.set(filter.type ?? null);
-  query.cluster.set(filter.cluster ?? null);
   query.orderBy.set(filter.order_by ?? null);
 
   // ids
@@ -33,10 +32,6 @@ const saveFilterFx = createEffect((filter: DsCatalogFilter) => {
   query.projectId.set(filter.project_id?.toString() ?? null);
 
   // flags
-  query.isManaged.set(
-    typeof filter.managed === 'boolean' ? (filter.managed ? '1' : '0') : null,
-  );
-
   query.isPublic.set(
     typeof filter.public === 'boolean' ? (filter.public ? '1' : '0') : null,
   );
@@ -67,10 +62,8 @@ sample({
       search: u(values.search),
       type: u(values.type),
       order_by: u(values.orderBy),
-      cluster: u(values.cluster),
       namespace_id: u(values.namespace_id),
       project_id: u(values.project_id),
-      managed: u(values.managed),
       public: u(values.public),
     };
   },

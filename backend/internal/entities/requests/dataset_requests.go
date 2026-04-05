@@ -29,11 +29,10 @@ type DeleteDatasetRequest struct {
 type CreateDatasetRequestV2 struct {
 	ProjectID int32  `json:"project_id" validate:"required"`
 	Name      string `json:"name" validate:"required,max=128"`
-	Type      string `json:"type" validate:"max=64,oneof=Queue KeyValue StaticTableDir Kafka"`
+	Type      string `json:"type" validate:"required,max=64,oneof=json kafka"`
 	Params    string `json:"params"`
 	Schema    string `json:"schema"`
 	Public    bool   `json:"public"`
-	Managed   bool   `json:"managed"`
 	Comment   string `json:"comment"`
 }
 
@@ -50,11 +49,10 @@ type CopyDatasetRequestV2 struct {
 type UpdateDatasetRequestV2 struct {
 	ID                int32  `json:"id" validate:"required"`
 	Name              string `json:"name" validate:"max=128"`
-	Type              string `json:"type" validate:"max=64"`
+	Type              string `json:"type" validate:"omitempty,max=64,oneof=json kafka"`
 	Schema            string `json:"schema"`
 	Params            string `json:"params"`
 	Public            *bool  `json:"public" extensions:"x-nullable"`
-	Managed           *bool  `json:"managed" extensions:"x-nullable"`
 	Comment           string `json:"comment"`
 	DisableValidation bool   `json:"disable_validation"`
 }
@@ -69,7 +67,6 @@ type SearchDatasetsRequest struct {
 	Search      string `json:"search"`
 	ProjectID   int32  `json:"project_id"`
 	Public      *bool  `json:"public" extensions:"x-nullable"`
-	Managed     *bool  `json:"managed" extensions:"x-nullable"`
 	Type        string `json:"type" validate:"max=64"`
 	NamespaceID int32  `json:"namespace_id"`
 	Cluster     string `json:"cluster"`

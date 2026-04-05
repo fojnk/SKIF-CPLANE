@@ -39,11 +39,6 @@ export const DsHeader = ({ dataset, project, link }: Props) => {
         <Flex direction="row" gap={2} alignItems="center">
           <DsActions dataset={dataset} project={project} />
           <DatasetTypeLabel type={dataset.type} showValue={false} size="s" />
-          {dataset.managed && (
-            <Label size="s" theme="clear">
-              Managed
-            </Label>
-          )}
           {dataset.public && (
             <Label size="s" theme="clear">
               Public
