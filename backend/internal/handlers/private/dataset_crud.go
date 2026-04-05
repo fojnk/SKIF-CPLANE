@@ -85,12 +85,11 @@ func createDatasetHandlerV2(ctx context.Context, svc *service.Service, l *logger
 	}
 
 	dataset := &dto.Dataset{
-		Name:    r.Name,
-		Type:    r.Type,
-		Params:  r.Params,
-		Schema:  r.Schema,
-		Public:  r.Public,
-		Managed: r.Managed,
+		Name:   r.Name,
+		Type:   r.Type,
+		Params: r.Params,
+		Schema: r.Schema,
+		Public: r.Public,
 	}
 
 	createdDataset, err := svc.CreateDataset(ctx, dataset, r.ProjectID, r.Comment, u)
@@ -103,23 +102,21 @@ func createDatasetHandlerV2(ctx context.Context, svc *service.Service, l *logger
 
 	svc.LogDatasetChange(ctx, 0, createdDataset.ProjectID, createdDataset.ID, u.Username, r.Comment, update_log.ActionNew, update_log.DatasetUpdateLog{
 		New: update_log.Dataset{
-			Name:    createdDataset.Name,
-			Schema:  createdDataset.Schema,
-			Params:  createdDataset.Params,
-			Type:    createdDataset.Type,
-			Public:  createdDataset.Public,
-			Managed: createdDataset.Managed,
+			Name:   createdDataset.Name,
+			Schema: createdDataset.Schema,
+			Params: createdDataset.Params,
+			Type:   createdDataset.Type,
+			Public: createdDataset.Public,
 		},
 	})
 
 	return &responses.CreateDatasetResponse{
-		ID:      createdDataset.ID,
-		Name:    createdDataset.Name,
-		Type:    createdDataset.Type,
-		Params:  createdDataset.Params,
-		Schema:  createdDataset.Schema,
-		Public:  createdDataset.Public,
-		Managed: createdDataset.Managed,
+		ID:     createdDataset.ID,
+		Name:   createdDataset.Name,
+		Type:   createdDataset.Type,
+		Params: createdDataset.Params,
+		Schema: createdDataset.Schema,
+		Public: createdDataset.Public,
 	}, nil
 }
 
@@ -173,23 +170,21 @@ func copyDatasetHandlerV2(ctx context.Context, svc *service.Service, l *logger.L
 
 	svc.LogDatasetChange(ctx, 0, project, newDataset.ID, u.Username, "", update_log.ActionNew, update_log.DatasetUpdateLog{
 		New: update_log.Dataset{
-			Name:    newDataset.Name,
-			Schema:  newDataset.Schema,
-			Params:  newDataset.Params,
-			Type:    newDataset.Type,
-			Public:  newDataset.Public,
-			Managed: newDataset.Managed,
+			Name:   newDataset.Name,
+			Schema: newDataset.Schema,
+			Params: newDataset.Params,
+			Type:   newDataset.Type,
+			Public: newDataset.Public,
 		},
 	})
 
 	return &responses.CopyDatasetResponse{
-		ID:      newDataset.ID,
-		Name:    newDataset.Name,
-		Type:    newDataset.Type,
-		Params:  newDataset.Params,
-		Schema:  newDataset.Schema,
-		Public:  newDataset.Public,
-		Managed: newDataset.Managed,
+		ID:     newDataset.ID,
+		Name:   newDataset.Name,
+		Type:   newDataset.Type,
+		Params: newDataset.Params,
+		Schema: newDataset.Schema,
+		Public: newDataset.Public,
 	}, nil
 }
 
@@ -248,16 +243,15 @@ func updateDatasetHandlerV2(ctx context.Context, svc *service.Service, l *logger
 	}
 
 	updatedDataset := &dto.Dataset{
-		ID:      r.ID,
-		Name:    r.Name,
-		Type:    r.Type,
-		Params:  r.Params,
-		Schema:  r.Schema,
-		Public:  dataset.Public,
-		Managed: dataset.Managed,
+		ID:     r.ID,
+		Name:   r.Name,
+		Type:   r.Type,
+		Params: r.Params,
+		Schema: r.Schema,
+		Public: dataset.Public,
 	}
 
-	newDataset, err := svc.UpdateDataset(ctx, updatedDataset, r.Public, r.Managed, r.Comment, u.Username)
+	newDataset, err := svc.UpdateDataset(ctx, updatedDataset, r.Public, r.Comment, u.Username)
 	if err != nil {
 		l.Error("failed to update dataset", err)
 		return nil, shared.ConvertServiceError(err, shared.EntityDataset)
@@ -266,32 +260,29 @@ func updateDatasetHandlerV2(ctx context.Context, svc *service.Service, l *logger
 	// Create update log
 	svc.LogDatasetChange(ctx, 0, dataset.ProjectID, dataset.ID, u.Username, r.Comment, update_log.ActionUpdate, update_log.DatasetUpdateLog{
 		New: update_log.Dataset{
-			Name:    newDataset.Name,
-			Schema:  newDataset.Schema,
-			Params:  newDataset.Params,
-			Type:    newDataset.Type,
-			Public:  newDataset.Public,
-			Managed: newDataset.Managed,
+			Name:   newDataset.Name,
+			Schema: newDataset.Schema,
+			Params: newDataset.Params,
+			Type:   newDataset.Type,
+			Public: newDataset.Public,
 		},
 		Old: update_log.Dataset{
-			Name:    dataset.Name,
-			Schema:  dataset.Schema,
-			Params:  dataset.Params,
-			Type:    dataset.Type,
-			Public:  dataset.Public,
-			Managed: dataset.Managed,
+			Name:   dataset.Name,
+			Schema: dataset.Schema,
+			Params: dataset.Params,
+			Type:   dataset.Type,
+			Public: dataset.Public,
 		},
 	})
 
 	return &responses.UpdateDatasetResponse{
 		Dataset: dto.Dataset{
-			ID:      newDataset.ID,
-			Name:    newDataset.Name,
-			Schema:  newDataset.Schema,
-			Params:  newDataset.Params,
-			Type:    newDataset.Type,
-			Public:  newDataset.Public,
-			Managed: newDataset.Managed,
+			ID:     newDataset.ID,
+			Name:   newDataset.Name,
+			Schema: newDataset.Schema,
+			Params: newDataset.Params,
+			Type:   newDataset.Type,
+			Public: newDataset.Public,
 		},
 	}, nil
 }
@@ -319,7 +310,6 @@ func searchDatasetsPostHandler(ctx context.Context, svc *service.Service, l *log
 		Cluster:    r.Cluster,
 		Path:       r.Path,
 		Public:     r.Public,
-		Managed:    r.Managed,
 		OrderBy:    r.OrderBy,
 		Type:       r.Type,
 		ExactMatch: r.ExactMatch,
@@ -342,11 +332,10 @@ func searchDatasetsPostHandler(ctx context.Context, svc *service.Service, l *log
 		}
 
 		res.Datasets = append(res.Datasets, dto.DatasetInfo{
-			ID:      ds.ID,
-			Name:    ds.Name,
-			Type:    ds.Type,
-			Public:  ds.Public,
-			Managed: ds.Managed,
+			ID:     ds.ID,
+			Name:   ds.Name,
+			Type:   ds.Type,
+			Public: ds.Public,
 			NamespaceInfo: dto.Namespace{
 				ID:   ds.NamespaceID.Int32,
 				Name: ds.NamespaceName.String,
@@ -446,7 +435,6 @@ func getDatasetV2Handler(ctx context.Context, svc *service.Service, l *logger.Lo
 		Params:      dataset.Params,
 		Schema:      dataset.Schema,
 		Public:      dataset.Public,
-		Managed:     dataset.Managed,
 		ProjectName: projectName,
 		ProjectID:   projectID,
 		Rights:      rights,
@@ -519,12 +507,11 @@ func deleteDatasetHandler(ctx context.Context, svc *service.Service, l *logger.L
 	// Create update log
 	svc.LogDatasetChange(ctx, 0, dataset.ProjectID, dataset.ID, u.Username, "", update_log.ActionDelete, update_log.DatasetUpdateLog{
 		Old: update_log.Dataset{
-			Name:    dataset.Name,
-			Schema:  dataset.Schema,
-			Params:  dataset.Params,
-			Type:    dataset.Type,
-			Public:  dataset.Public,
-			Managed: dataset.Managed,
+			Name:   dataset.Name,
+			Schema: dataset.Schema,
+			Params: dataset.Params,
+			Type:   dataset.Type,
+			Public: dataset.Public,
 		},
 	})
 

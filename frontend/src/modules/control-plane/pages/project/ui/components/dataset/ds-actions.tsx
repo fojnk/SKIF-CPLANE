@@ -35,7 +35,6 @@ export const DsActions = ({ dataset, project }: Props) => {
         id: dataset.id!,
         name: dataset.name!,
         public: dataset.public ?? false,
-        managed: dataset.managed ?? false,
       });
     },
     text: 'Редактировать',

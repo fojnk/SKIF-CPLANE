@@ -485,20 +485,18 @@ func updateDatasetVersionHandler(ctx context.Context, svc *service.Service, l *l
 	// Log the change
 	svc.LogDatasetChange(ctx, 0, pgtype.Int4{Int32: dataset.ID, Valid: true}, dataset.ID, u.Username, "", update_log.ActionUpdateVariable, update_log.DatasetUpdateLog{
 		Old: update_log.Dataset{
-			Schema:  dataset.Schema,
-			Params:  dataset.Params,
-			Public:  dataset.Public,
-			Managed: dataset.Managed,
-			Name:    dataset.Name,
-			Type:    dataset.Type,
+			Schema: dataset.Schema,
+			Params: dataset.Params,
+			Public: dataset.Public,
+			Name:   dataset.Name,
+			Type:   dataset.Type,
 		},
 		New: update_log.Dataset{
-			Schema:  dataset.Schema,
-			Params:  dataset.Params,
-			Public:  dataset.Public,
-			Managed: dataset.Managed,
-			Name:    dataset.Name,
-			Type:    dataset.Type,
+			Schema: dataset.Schema,
+			Params: dataset.Params,
+			Public: dataset.Public,
+			Name:   dataset.Name,
+			Type:   dataset.Type,
 		},
 	})
 

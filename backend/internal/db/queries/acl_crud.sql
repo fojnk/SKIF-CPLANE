@@ -6,6 +6,13 @@ SELECT id FROM ins
 UNION ALL
 SELECT id FROM t_user WHERE name = $1;
 
+-- name: AddUserToGlobalReaderGroup :exec
+INSERT INTO t_user_group_match (user_id, user_group_id)
+SELECT $1, g.id
+FROM t_user_group g
+WHERE g.name = 'all_authenticated_users'
+ON CONFLICT (user_id, user_group_id) DO NOTHING;
+
 -- name: InsertUserGroup :one
 INSERT INTO t_user_group(name) VALUES($1) RETURNING id;
 
@@ -87,3 +94,33 @@ UNION ALL
 SELECT NULL as role_id, t_acl_match.rule_id as rule_id, NULL as role_name, t_rule.object_type as rule_object_type, t_rule.object_attribute as rule_object_attribute, t_rule.object_id as rule_object_id, t_rule.action as rule_action FROM t_acl_match
 LEFT JOIN t_rule ON t_acl_match.rule_id = t_rule.id
 WHERE t_acl_match.user_group_id IN (SELECT user_group_id FROM user_groups) AND t_acl_match.role_id IS NULL;
+
+-- name: SelectRuleIDByExactMatch :one
+SELECT id FROM t_rule
+WHERE object_type = $1 AND object_attribute = $2 AND object_id = $3 AND action = $4
+LIMIT 1;
+
+-- name: RegisterUserWithCredentials :one
+INSERT INTO t_user (name, email, display_name, password_hash)
+VALUES ($1, $2, $3, $4)
+RETURNING *;
+
+-- name: GetRegisteredUserByLogin :one
+SELECT id, name, email, password_hash
+FROM t_user
+WHERE
+    deleted = FALSE
+    AND password_hash IS NOT NULL
+    AND (
+        name = $1
+        OR (email IS NOT NULL AND LOWER(email) = LOWER($1))
+    )
+LIMIT 1;
+
+-- name: GetLocalRegisteredUserProfile :one
+SELECT
+    name,
+    email,
+    COALESCE(NULLIF(TRIM(display_name), ''), name)::varchar AS display_name
+FROM t_user
+WHERE name = $1 AND deleted = FALSE AND password_hash IS NOT NULL;

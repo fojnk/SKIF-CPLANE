@@ -1,8 +1,7 @@
 package requests
 
 type GetDatasetFormRequest struct {
-	Type    string `json:"type" validate:"required,oneof=Queue KeyValue StaticTableDir Kafka"`
-	Managed bool   `json:"managed"`
+	Type string `json:"type" validate:"required"`
 }
 
 type GetProjectFormRequest struct {

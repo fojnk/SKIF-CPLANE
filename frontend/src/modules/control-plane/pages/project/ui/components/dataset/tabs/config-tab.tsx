@@ -9,7 +9,7 @@ import {
   ConfigFormViewer,
 } from '@/modules/control-plane/shared/components';
 import { ErrorMessage } from '@/modules/control-plane/shared/components/sf-errors';
-import { DatasetType, ProjectInfoDC } from '@/modules/control-plane/shared/types';
+import { ProjectInfoDC } from '@/modules/control-plane/shared/types';
 import { GlobalLoader } from '@/shared/ui/loaders';
 
 interface Props {
@@ -41,23 +41,17 @@ export const ConfigTab = ({ dataset_id, project }: Props) => {
 
   // Получаем параметры формы из кэша или загружаем
   const formParams = useMemo(() => {
-    if (data?.type && data?.managed !== undefined) {
-      const cacheKey = dsFormModel.createCacheKey(
-        data.type as DatasetType,
-        data.managed,
-      );
+    if (data?.type) {
+      const cacheKey = dsFormModel.createCacheKey(data.type);
       return formCache[cacheKey] || null;
     }
     return null;
-  }, [data?.type, data?.managed, formCache]);
+  }, [data?.type, formCache]);
 
   // Загружаем параметры формы если их нет в кэше
   useEffect(() => {
-    if (data?.type && data?.managed !== undefined && !formParams) {
-      formLoad({
-        type: data.type as DatasetType,
-        managed: data.managed,
-      });
+    if (data?.type && !formParams) {
+      formLoad({ type: data.type });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);

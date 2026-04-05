@@ -2,7 +2,9 @@ import { Button, Text, TextInput } from '@gravity-ui/uikit';
 import { useUnit } from 'effector-react';
 import { useEffect, useState } from 'react';
 
+import { ControlPlaneModule } from '@/modules/control-plane/config';
 import { loginPageModel } from '@/modules/control-plane/pages/login';
+import { Link } from '@/shared/lib/routing';
 import { ControlPlaneLogo } from '@/shared/ui/service-icon';
 
 import { BackgroundImageIcon } from '../assets';
@@ -69,6 +71,11 @@ export const LoginPage = () => {
         <Button size="xl" view="action" onClick={handleClick} loading={loading}>
           {loading ? 'Подождите...' : 'Войти'}
         </Button>
+        <div className={css.footer}>
+          <Link to={ControlPlaneModule.routes.register} className={css.subLink}>
+            Создать аккаунт
+          </Link>
+        </div>
       </div>
     </div>
   );

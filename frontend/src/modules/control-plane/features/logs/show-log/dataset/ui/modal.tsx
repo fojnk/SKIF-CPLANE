@@ -87,11 +87,6 @@ export const Modal = ({
         }
         case LogAction.New: {
           if (data.details.new) {
-            const isManaged = data.details.new.managed ? (
-              <Label size="xs" theme="warning">
-                Управляемый
-              </Label>
-            ) : null;
             const isPublic = data.details.new.public ? (
               <Label size="xs" theme="success">
                 Публичный
@@ -101,12 +96,7 @@ export const Modal = ({
               <LogEntity
                 name={data.details.new?.name || 'без названия'}
                 label="Датасет"
-                afterLabel={
-                  <>
-                    {isManaged}
-                    {isPublic}
-                  </>
-                }
+                afterLabel={<>{isPublic}</>}
               />
             );
           }

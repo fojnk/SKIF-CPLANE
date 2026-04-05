@@ -197,9 +197,9 @@ SET
     active = CASE WHEN $4::bool IS NOT NULL THEN $4 ELSE active END,
     color = CASE WHEN $5::text != '' THEN $5::text ELSE color END,
     color_dark = CASE WHEN $6::text != '' THEN $6::text ELSE color_dark END,
-    type = CASE WHEN $7::text IS NOT NULL THEN $7::text ELSE type END,
-    starts = CASE WHEN $8::timestamp IS NOT NULL THEN $8 ELSE starts END,
-    ends = CASE WHEN $9::timestamp IS NOT NULL THEN $9 ELSE ends END,
+    type = COALESCE($7, type),
+    starts = COALESCE($8, starts),
+    ends = COALESCE($9, ends),
     updated_at = NOW()
 WHERE id = $1 RETURNING id, type, title, message, active, color, created_at, updated_at, color_dark, starts, ends
 `
@@ -211,15 +211,11 @@ type UpdateAppBannerParams struct {
 	Active    *bool
 	Color     string
 	ColorDark string
-	Type      *string
+	Type      pgtype.Text
 	Starts    pgtype.Timestamp
 	Ends      pgtype.Timestamp
 }
 
-// param: active *bool
-// param: type *text
-// param: starts *timestamp
-// param: ends *timestamp
 func (q *Queries) UpdateAppBanner(ctx context.Context, arg UpdateAppBannerParams) (TAppBanner, error) {
 	row := q.db.QueryRow(ctx, updateAppBanner,
 		arg.ID,

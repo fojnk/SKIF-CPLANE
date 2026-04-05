@@ -91,18 +91,6 @@ export const DatasetSelector = ({ data, onRowClick }: Props) => {
             ),
         },
         {
-          name: () => 'Управляемый',
-          id: 'Managed',
-          width: 60,
-          align: 'center' as const,
-          template: (item) =>
-            item.managed && (
-              <Text color="positive">
-                <Icon data={Check} size={20} />
-              </Text>
-            ),
-        },
-        {
           name: () => 'Публичный',
           id: 'Public',
           width: 60,

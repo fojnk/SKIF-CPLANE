@@ -76,7 +76,7 @@ func (q *Queries) DeleteUserRulesForDeletedRoles(ctx context.Context, arg Delete
 }
 
 const deleteUsersByLastSync = `-- name: DeleteUsersByLastSync :many
-UPDATE t_user SET deleted=TRUE WHERE now() - last_sync > interval '1 second' * $1 AND is_robot=FALSE RETURNING id, name, is_robot, last_sync, deleted
+UPDATE t_user SET deleted=TRUE WHERE now() - last_sync > interval '1 second' * $1 AND is_robot=FALSE RETURNING id, name, is_robot, last_sync, deleted, email, display_name, password_hash
 `
 
 func (q *Queries) DeleteUsersByLastSync(ctx context.Context, deletionInterval interface{}) ([]TUser, error) {
@@ -94,6 +94,9 @@ func (q *Queries) DeleteUsersByLastSync(ctx context.Context, deletionInterval in
 			&i.IsRobot,
 			&i.LastSync,
 			&i.Deleted,
+			&i.Email,
+			&i.DisplayName,
+			&i.PasswordHash,
 		); err != nil {
 			return nil, err
 		}
@@ -123,7 +126,7 @@ func (q *Queries) SelectRoleByIdmId(ctx context.Context, idmID string) (TRole, e
 }
 
 const selectUsersByRoleID = `-- name: SelectUsersByRoleID :many
-SELECT t_user.id, t_user.name, t_user.is_robot, t_user.last_sync, t_user.deleted FROM t_user
+SELECT t_user.id, t_user.name, t_user.is_robot, t_user.last_sync, t_user.deleted, t_user.email, t_user.display_name, t_user.password_hash FROM t_user
 JOIN t_acl_match ON t_user.id = t_acl_match.user_id
 WHERE t_acl_match.role_id = $1
 `
@@ -143,6 +146,9 @@ func (q *Queries) SelectUsersByRoleID(ctx context.Context, roleID pgtype.Int4) (
 			&i.IsRobot,
 			&i.LastSync,
 			&i.Deleted,
+			&i.Email,
+			&i.DisplayName,
+			&i.PasswordHash,
 		); err != nil {
 			return nil, err
 		}

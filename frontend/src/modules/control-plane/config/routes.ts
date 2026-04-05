@@ -20,6 +20,12 @@ export const login = createRoute({
   view: async () => (await import('../pages/login')).LoginPage,
 });
 
+export const register = createRoute({
+  type: 'page',
+  path: '/register',
+  view: async () => (await import('../pages/register')).RegisterPage,
+});
+
 export const dataSources = createRoute({
   type: 'page',
   path: '/datasets',
@@ -124,7 +130,7 @@ export const access = createRoute({
   path: '/access',
   private: true,
   requiredCapability: 'can_manage_acl',
-  view: async () => (await import('../pages/empty')).emptyPage,
+  view: async () => (await import('../pages/access')).SFAccessPage,
   layout: PageLayout,
   config: { aside: true } satisfies BaseTemplateConfig,
 });

@@ -35,6 +35,10 @@ func (s *UserService) CreateUser(ctx context.Context, name string) (int32, error
 		return 0, serviceerrors.NewInternalError("Не удалось создать пользователя", err)
 	}
 
+	if err := s.repo.DB.AddUserToGlobalReaderGroup(ctx, id); err != nil {
+		s.repo.Logger.Error("add user to global reader group", err)
+	}
+
 	return id, nil
 }
 

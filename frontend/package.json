@@ -7,7 +7,7 @@
     "dev:docker": "cross-env NODE_ENV=development PROXY=true CP_API_URL=http://localhost:8080/frontend-cplane vite --host 0.0.0.0",
     "dev:clean": "npm run clean && npm run dev",
     "clean": "rm -rf node_modules/.vite",
-    "build": "cross-env NODE_ENV=production vite build",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 NODE_ENV=production vite build",
     "build:preview": "cross-env NODE_ENV=production PROXY=true MODE=preview vite build",
     "build-analyze": "npx vite-bundle-visualizer",
     "preview": "cross-env NODE_ENV=production PROXY=true MODE=preview vite preview --host 0.0.0.0",

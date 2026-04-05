@@ -35,12 +35,15 @@ sample({
   target: initMyTrackerFx,
 });
 
-// Если успешно получили данные пользователя и находимся на странице login,
+// Если успешно получили данные пользователя и находимся на странице login или register,
 // переходим на страницу projects
 sample({
   clock: currentUserQuery.finished.success,
-  source: ControlPlaneModule.routes.login.$isOpened,
-  filter: (isLoginOpened) => isLoginOpened,
+  source: {
+    loginOpened: ControlPlaneModule.routes.login.$isOpened,
+    registerOpened: ControlPlaneModule.routes.register.$isOpened,
+  },
+  filter: ({ loginOpened, registerOpened }) => loginOpened || registerOpened,
   target: navigationModel.projects.navigate,
 });
 

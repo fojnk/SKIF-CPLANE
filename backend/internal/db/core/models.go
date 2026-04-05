@@ -8,6 +8,14 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type RobotToken struct {
+	ID        int32
+	RobotID   int32
+	Token     string
+	CreatedAt pgtype.Timestamp
+	ExpiresAt pgtype.Timestamp
+}
+
 type TAclMatch struct {
 	ID          int32
 	UserGroupID pgtype.Int4
@@ -235,6 +243,20 @@ type TNamespaceVariable struct {
 	CreatedAt   pgtype.Timestamp
 }
 
+type TPermissionRequest struct {
+	ID              int32
+	RequesterUserID int32
+	ObjectType      string
+	ObjectID        int32
+	ObjectAttribute string
+	Action          string
+	Message         string
+	Status          string
+	ReviewerUserID  pgtype.Int4
+	ReviewedAt      pgtype.Timestamp
+	CreatedAt       pgtype.Timestamp
+}
+
 type TProject struct {
 	ID               int32
 	NamespaceID      int32
@@ -310,11 +332,14 @@ type TRule struct {
 }
 
 type TUser struct {
-	ID       int32
-	Name     string
-	IsRobot  pgtype.Bool
-	LastSync pgtype.Timestamp
-	Deleted  bool
+	ID           int32
+	Name         string
+	IsRobot      pgtype.Bool
+	LastSync     pgtype.Timestamp
+	Deleted      bool
+	Email        pgtype.Text
+	DisplayName  pgtype.Text
+	PasswordHash pgtype.Text
 }
 
 type TUserGroup struct {

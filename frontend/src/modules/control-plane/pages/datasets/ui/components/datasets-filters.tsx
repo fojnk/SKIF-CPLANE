@@ -4,13 +4,7 @@ import React from 'react';
 import { DsCatalogFilter } from '@/modules/control-plane/shared/types';
 import { SearchInput } from '@/modules/control-plane/shared/ui';
 
-import {
-  ManagedFilter,
-  PublicFilter,
-  TypeFilter,
-  NamespaceFilter,
-  ClusterFilter,
-} from './filters';
+import { PublicFilter, TypeFilter, NamespaceFilter } from './filters';
 
 import './datasets-filters.scss';
 
@@ -38,10 +32,8 @@ export const DatasetsFilters = ({ filter, setFilter }: Props) => {
         />
       </div>
       <PublicFilter filter={filter} setFilter={setFilter} />
-      <ManagedFilter filter={filter} setFilter={setFilter} />
       <TypeFilter filter={filter} setFilter={setFilter} />
       <NamespaceFilter filter={filter} setFilter={setFilter} />
-      <ClusterFilter filter={filter} setFilter={setFilter} />
     </Flex>
   );
 };

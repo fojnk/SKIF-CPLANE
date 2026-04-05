@@ -17,8 +17,7 @@ import (
 //	@Tags		form
 //	@Accept		json
 //	@Produce	json
-//	@Param		type	query		string	true	"dataset type"
-//	@Param		managed	query		boolean	true	"dataset managed param"
+//	@Param		type	query		string	true	"dataset type (json, kafka; legacy: Queue, KeyValue, StaticTableDir, Kafka)"
 //	@Success	200		{object}	responses.GetFormResponse
 //	@Failure	400		{object}	responses.ErrorResponse	"Bad Request"
 //	@Failure	401		{object}	responses.ErrorResponse	"Unauthorized"
@@ -27,7 +26,7 @@ import (
 //	@Failure	500		{object}	responses.ErrorResponse	"Internal server error"
 //	@Router		/api/v2/forms/dataset [get]
 func getDatasetFormHandler(ctx context.Context, svc *service.Service, l *logger.Logger, r *requests.GetDatasetFormRequest, u *models.UserInfo) (any, *responses.ErrorResponse) {
-	formParams, err := svc.GetDatasetFormParams(ctx, r.Type, r.Managed)
+	formParams, err := svc.GetDatasetFormParams(ctx, r.Type)
 	if err != nil {
 		l.Error("failed to get dataset form", err)
 		return nil, shared.ConvertServiceError(err, shared.EntityForms)

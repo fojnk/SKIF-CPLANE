@@ -17,8 +17,8 @@ func NewFormService(repo *repository.Repository) *FormService {
 }
 
 // GetDatasetFormParams возвращает параметры формы для dataset
-func (s *FormService) GetDatasetFormParams(ctx context.Context, dsType string, managed bool) ([]params.Param, error) {
-	formParams, err := s.repo.FormsRepo.GetDatasetFormParams(ctx, dsType, managed)
+func (s *FormService) GetDatasetFormParams(ctx context.Context, dsType string) ([]params.Param, error) {
+	formParams, err := s.repo.FormsRepo.GetDatasetFormParams(ctx, dsType)
 	if err != nil {
 		s.repo.Logger.Error("failed to get dataset form", err)
 		return nil, serviceerrors.NewInternalError("Не удалось получить параметры формы dataset", err)

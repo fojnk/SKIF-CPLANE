@@ -5,6 +5,11 @@ import { ControlPlaneModule } from '@/modules/control-plane/config';
 export const navigate = createEvent();
 
 sample({
-  clock: ControlPlaneModule.routes.access.opened,
-  target: ControlPlaneModule.routes.root.navigate,
+  clock: navigate,
+  fn: () => ({
+    replace: false,
+    params: {},
+    query: {},
+  }),
+  target: ControlPlaneModule.routes.access.navigate,
 });

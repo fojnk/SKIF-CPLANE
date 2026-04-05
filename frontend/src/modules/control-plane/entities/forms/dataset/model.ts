@@ -2,20 +2,18 @@ import { createQuery } from '@farfetched/core';
 import { createEvent, createStore, sample } from 'effector';
 
 import { controlPlaneApi } from '@/modules/control-plane/shared/api';
-import { DatasetType, ParamsDC } from '@/modules/control-plane/shared/types';
+import { ParamsDC } from '@/modules/control-plane/shared/types';
 
 const Query = createQuery({
-  async handler(params: { managed: boolean; type: DatasetType }) {
+  async handler(params: { type: string }) {
     const response = await controlPlaneApi.form.v2FormsDatasetList(params);
     return response.data;
   },
 });
 
-// Создаем ключ для кэша
-const createCacheKey = (type: DatasetType, managed: boolean): string =>
-  `${type}-${managed}`;
+const createCacheKey = (type: string): string => type;
 
-const load = createEvent<{ managed: boolean; type: DatasetType }>();
+const load = createEvent<{ type: string }>();
 const reset = createEvent();
 
 // Кэш для хранения схем параметров
@@ -41,7 +39,7 @@ sample({
   clock: Query.finished.success,
   source: $cache,
   fn: (cache, { result, params }) => {
-    const cacheKey = createCacheKey(params.type, params.managed);
+    const cacheKey = createCacheKey(params.type);
     const newData = result && result.params ? result.params : null;
 
     if (newData) {
