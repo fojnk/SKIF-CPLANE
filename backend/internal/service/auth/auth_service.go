@@ -1,19 +1,27 @@
 package service
 
 import (
+	"context"
 	"errors"
-	"github.com/google/uuid"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/clients/oauth"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/dto"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/models/user"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/repository"
-	serviceerrors "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/errors"
 	"net/http"
 	"net/url"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgtype"
+	"golang.org/x/crypto/bcrypt"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/clients/oauth"
+	dbcore "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/db/core"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/dto"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/models/user"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/requests"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/repository"
+	serviceerrors "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/errors"
 )
 
 type AuthService struct {
@@ -106,7 +114,7 @@ func (s *AuthService) GetAuthorizationURL(redirectUrl string) (string, error) {
 	return oauthUrl, nil
 }
 
-func (s *AuthService) Login(username, password string) (*dto.OAuthAccessToken, error) {
+func (s *AuthService) Login(ctx context.Context, username, password string) (*dto.OAuthAccessToken, error) {
 	if !s.isLocalAuthEnabled() {
 		return nil, serviceerrors.NewBadRequestError("Локальная авторизация отключена", nil)
 	}
@@ -116,15 +124,75 @@ func (s *AuthService) Login(username, password string) (*dto.OAuthAccessToken, e
 	}
 
 	localUsername, _, localPassword, found := s.findLocalUser(username)
-	if !found || localPassword != password {
-		return nil, serviceerrors.NewUnauthorizedError("Неверный логин или пароль", nil)
+	if found && localPassword == password {
+		return s.createLocalAccessToken(localUsername)
 	}
 
-	return s.createLocalAccessToken(localUsername)
+	reg, err := s.repo.DB.GetRegisteredUserByLogin(ctx, strings.TrimSpace(username))
+	if err == nil && reg.PasswordHash.Valid {
+		if bcrypt.CompareHashAndPassword([]byte(reg.PasswordHash.String), []byte(password)) == nil {
+			return s.createLocalAccessToken(reg.Name)
+		}
+	} else if err != nil && !errors.Is(err, pgx.ErrNoRows) {
+		s.repo.Logger.Error("registered user lookup", err)
+		return nil, serviceerrors.NewInternalError("Не удалось выполнить вход", err)
+	}
+
+	return nil, serviceerrors.NewUnauthorizedError("Неверный логин или пароль", nil)
+}
+
+func (s *AuthService) Register(ctx context.Context, r *requests.RegisterRequest) (*dto.OAuthAccessToken, error) {
+	if !s.isLocalAuthEnabled() {
+		return nil, serviceerrors.NewBadRequestError("Регистрация доступна только при включённой локальной авторизации", nil)
+	}
+
+	name := strings.TrimSpace(r.Name)
+	email := strings.TrimSpace(r.Email)
+	if name == "" || email == "" || strings.TrimSpace(r.Password) == "" {
+		return nil, serviceerrors.NewBadRequestError("Имя пользователя, email и пароль обязательны", nil)
+	}
+
+	display := strings.TrimSpace(r.DisplayName)
+	var dn pgtype.Text
+	if display != "" {
+		dn = pgtype.Text{String: display, Valid: true}
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(r.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return nil, serviceerrors.NewInternalError("Не удалось подготовить пароль", err)
+	}
+
+	created, err := s.repo.DB.RegisterUserWithCredentials(ctx, dbcore.RegisterUserWithCredentialsParams{
+		Name:         name,
+		Email:        pgtype.Text{String: email, Valid: true},
+		DisplayName:  dn,
+		PasswordHash: pgtype.Text{String: string(hash), Valid: true},
+	})
+	if err != nil {
+		if serviceerrors.IsPostgresUniqueViolation(err) {
+			return nil, serviceerrors.NewConflictError("Пользователь с таким логином или email уже существует", err)
+		}
+		var pgErr *pgconn.PgError
+		if errors.As(err, &pgErr) && pgErr.Code == "42703" {
+			return nil, serviceerrors.NewServiceUnavailableError(
+				"В БД нет колонок для регистрации (email, password_hash). Примените миграцию 000004_registration_permission_requests.",
+				err,
+			)
+		}
+		s.repo.Logger.Error("register user", err)
+		return nil, serviceerrors.NewInternalError("Не удалось зарегистрировать пользователя", err)
+	}
+
+	if err := s.repo.DB.AddUserToGlobalReaderGroup(ctx, created.ID); err != nil {
+		s.repo.Logger.Error("add user to global reader group", err)
+	}
+
+	return s.createLocalAccessToken(name)
 }
 
 // GetUserInfo получает информацию о пользователе по токену
-func (s *AuthService) GetUserInfo(token string) (*dto.UserInfo, error) {
+func (s *AuthService) GetUserInfo(ctx context.Context, token string) (*dto.UserInfo, error) {
 	if token == "" {
 		return nil, serviceerrors.NewBadRequestError("Токен не указан", nil)
 	}
@@ -136,14 +204,30 @@ func (s *AuthService) GetUserInfo(token string) (*dto.UserInfo, error) {
 		}
 
 		username, email, found := s.getLocalUserByUsername(claims.Username)
-		if !found {
-			return nil, serviceerrors.NewUnauthorizedError("Пользователь не найден", nil)
+		if found {
+			return &dto.UserInfo{
+				Username: username,
+				Email:    email,
+			}, nil
 		}
 
-		return &dto.UserInfo{
-			Username: username,
-			Email:    email,
-		}, nil
+		prof, err := s.repo.DB.GetLocalRegisteredUserProfile(ctx, claims.Username)
+		if err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				return nil, serviceerrors.NewUnauthorizedError("Пользователь не найден", nil)
+			}
+			s.repo.Logger.Error("local registered profile", err)
+			return nil, serviceerrors.NewUnauthorizedError("Не удалось получить профиль", err)
+		}
+
+		ui := &dto.UserInfo{
+			Username:    prof.Name,
+			DisplayName: prof.DisplayName,
+		}
+		if prof.Email.Valid {
+			ui.Email = prof.Email.String
+		}
+		return ui, nil
 	}
 
 	userInfo, err := s.repo.Clients.OAuth.OAuthGetUserInfo(token)

@@ -546,7 +546,6 @@ func getExperimentAvailableDatasetsToLinkHandler(ctx context.Context, svc *servi
 		Cluster:         r.Filters.Cluster,
 		Path:            r.Filters.Path,
 		Public:          r.Filters.Public,
-		Managed:         r.Filters.Managed,
 		Experiment:        r.ExperimentID,
 		AvailableToLink: &availableToLink,
 	})

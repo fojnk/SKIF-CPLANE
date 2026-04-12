@@ -8115,15 +8115,8 @@
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "dataset type",
+                        "description": "dataset type (json, kafka; legacy: Queue, KeyValue, StaticTableDir, Kafka)",
                         "name": "type",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "boolean",
-                        "description": "dataset managed param",
-                        "name": "managed",
                         "in": "query",
                         "required": true
                     }
@@ -9524,9 +9517,6 @@
                 "id": {
                     "type": "integer"
                 },
-                "managed": {
-                    "type": "boolean"
-                },
                 "name": {
                     "type": "string"
                 },
@@ -9576,10 +9566,6 @@
                 "cluster": {
                     "type": "string"
                 },
-                "managed": {
-                    "type": "boolean",
-                    "x-nullable": true
-                },
                 "namespace_id": {
                     "type": "integer"
                 },
@@ -9609,9 +9595,6 @@
                 },
                 "linked_experiments_count": {
                     "type": "integer"
-                },
-                "managed": {
-                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"
@@ -9644,9 +9627,6 @@
             "properties": {
                 "id": {
                     "type": "integer"
-                },
-                "managed": {
-                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"
@@ -9725,9 +9705,6 @@
                 },
                 "id": {
                     "type": "integer"
-                },
-                "managed": {
-                    "type": "boolean"
                 },
                 "params": {
                     "type": "string"
@@ -11042,14 +11019,12 @@
             "type": "object",
             "required": [
                 "name",
-                "project_id"
+                "project_id",
+                "type"
             ],
             "properties": {
                 "comment": {
                     "type": "string"
-                },
-                "managed": {
-                    "type": "boolean"
                 },
                 "name": {
                     "type": "string",
@@ -11071,10 +11046,8 @@
                     "type": "string",
                     "maxLength": 64,
                     "enum": [
-                        "Queue",
-                        "KeyValue",
-                        "StaticTableDir",
-                        "Kafka"
+                        "json",
+                        "kafka"
                     ]
                 }
             }
@@ -11609,10 +11582,6 @@
                     "maximum": 100,
                     "minimum": 1
                 },
-                "managed": {
-                    "type": "boolean",
-                    "x-nullable": true
-                },
                 "namespace_id": {
                     "type": "integer"
                 },
@@ -11828,10 +11797,6 @@
                 "id": {
                     "type": "integer"
                 },
-                "managed": {
-                    "type": "boolean",
-                    "x-nullable": true
-                },
                 "name": {
                     "type": "string",
                     "maxLength": 128
@@ -11848,7 +11813,11 @@
                 },
                 "type": {
                     "type": "string",
-                    "maxLength": 64
+                    "maxLength": 64,
+                    "enum": [
+                        "json",
+                        "kafka"
+                    ]
                 }
             }
         },
@@ -12296,9 +12265,6 @@
                 "id": {
                     "type": "integer"
                 },
-                "managed": {
-                    "type": "boolean"
-                },
                 "name": {
                     "type": "string"
                 },
@@ -12622,9 +12588,6 @@
             "properties": {
                 "id": {
                     "type": "integer"
-                },
-                "managed": {
-                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"
@@ -13479,9 +13442,6 @@
             "properties": {
                 "job_id": {
                     "type": "integer"
-                },
-                "managed": {
-                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"

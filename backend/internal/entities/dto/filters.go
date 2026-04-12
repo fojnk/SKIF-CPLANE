@@ -6,7 +6,6 @@ type DatasetFilters struct {
 	Search      string `json:"search"`
 	ProjectID   int32  `json:"project_id"`
 	Public      *bool  `json:"public" extensions:"x-nullable"`
-	Managed     *bool  `json:"managed" extensions:"x-nullable"`
 	NamespaceID int32  `json:"namespace_id"`
 	Cluster     string `json:"cluster"`
 	Path        string `json:"path"`

@@ -26,13 +26,6 @@ export const UpdateDataset: React.FC<Props> = ({ oldData, newData, diff }) => {
             newValue={newData?.name ?? ''}
           />
         )}
-        {diff.managed && (
-          <DiffRow
-            title="Управляемый"
-            oldValue={oldData?.managed ? 'true' : 'false'}
-            newValue={newData?.managed ? 'true' : 'false'}
-          />
-        )}
         {diff.public && (
           <DiffRow
             title="Публичный"

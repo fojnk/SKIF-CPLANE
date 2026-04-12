@@ -214,19 +214,6 @@ export const DatasetsTable = ({
           ),
       },
       {
-        name: 'Управляемый',
-        id: 'managed',
-        width: 60,
-        align: 'center' as const,
-        meta: { sort: () => 0 },
-        template: (item: DSCatalog) =>
-          item.managed && (
-            <Text color="positive">
-              <Icon data={Check} size={20} />
-            </Text>
-          ),
-      },
-      {
         name: 'Публичный',
         id: 'public',
         width: 60,

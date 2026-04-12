@@ -1,0 +1,37 @@
+.wrap {
+  padding: 0 4px 24px;
+  max-width: 1200px;
+}
+
+.loader {
+  padding: 48px 0;
+}
+
+.tableWrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th,
+  td {
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--g-color-line-generic);
+  }
+
+  th {
+    font-weight: 500;
+    color: var(--g-color-text-secondary);
+  }
+}
+
+.message {
+  max-width: 280px;
+  word-break: break-word;
+}

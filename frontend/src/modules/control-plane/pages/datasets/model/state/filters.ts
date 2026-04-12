@@ -7,20 +7,17 @@ const load = createEvent();
 
 sample({
   clock: load,
-  target: [filter.cluster.load, filter.namespace.load],
+  target: filter.namespace.load,
 });
 
 sample({
   clock: reset,
-  target: [filter.cluster.reset, filter.namespace.reset],
+  target: filter.namespace.reset,
 });
 
 const $loading = combine(
-  {
-    clusters: filter.cluster.$loading,
-    namespaces: filter.namespace.$loading,
-  },
-  ({ clusters, namespaces }) => clusters || namespaces,
+  { namespaces: filter.namespace.$loading },
+  ({ namespaces }) => namespaces,
 );
 
 export { reset, load, $loading };

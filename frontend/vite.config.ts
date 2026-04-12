@@ -267,7 +267,7 @@ export default defineConfig(({ mode }) => {
         overlay: true,
         eslint: isProd
           ? {
-            lintCommand: 'eslint -c .eslintrc.js .',
+            lintCommand: 'eslint -c .eslintrc.js "src/**/*.{ts,tsx}"',
           }
           : false,
       }),

@@ -11,6 +11,7 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/dto"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/models"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/models/user"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/datasettype"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/orch"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/repository"
 	serviceerrors "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/errors"
@@ -70,8 +71,8 @@ func GetKafkaBrokersAndTopic(dsParams string) (string, string) {
 func (s *DatasetService) checkDatasetDuplicate(ctx context.Context, dataset *dto.Dataset) error {
 	var ids []int32
 	var err error
-	switch dataset.Type {
-	case "Queue", "KeyValue", "StaticTableDir":
+	switch {
+	case datasettype.UsesYTDeduplication(dataset.Type):
 		path, cluster := GetYTPathAndCluster(dataset.Params)
 		if path != "" && cluster != "" {
 			ids, err = s.repo.DB.CheckYTDatasetDuplicate(ctx, dbcore.CheckYTDatasetDuplicateParams{
@@ -80,7 +81,7 @@ func (s *DatasetService) checkDatasetDuplicate(ctx context.Context, dataset *dto
 			})
 
 		}
-	case "Kafka":
+	case datasettype.IsKafka(dataset.Type):
 		// TODO  нужно найти способ определять дубликаты по адреса брокера более правильно (сейчас по строке 1 к 1)
 		brokers, topic := GetKafkaBrokersAndTopic(dataset.Params)
 		if brokers != "" && topic != "" {
@@ -112,8 +113,8 @@ func (s *DatasetService) checkDatasetDuplicate(ctx context.Context, dataset *dto
 }
 
 func (s *DatasetService) CreateDataset(ctx context.Context, dataset *dto.Dataset, inputProjectID int32, comment string, u *user.UserInfo) (*dto.Dataset, error) {
-	if dataset.Type == "Kafka" && dataset.Managed {
-		return nil, serviceerrors.NewEntityBadRequestError(serviceerrors.EntityDataset, "Kafka источник не может быть managed", nil)
+	if !datasettype.IsAllowedOnCreate(dataset.Type) {
+		return nil, serviceerrors.NewEntityBadRequestError(serviceerrors.EntityDataset, "допустимые типы датасорса: json, kafka", nil)
 	}
 
 	if dataset.Params == "" {
@@ -149,7 +150,7 @@ func (s *DatasetService) CreateDataset(ctx context.Context, dataset *dto.Dataset
 		Type:         dataset.Type,
 		Schema:       schema,
 		Params:       dataset.Params,
-		Managed:      dataset.Managed,
+		Managed:      false,
 		Public:       dataset.Public,
 		Creator:      u.Username,
 		Comment:      comment,
@@ -180,7 +181,7 @@ func (s *DatasetService) CreateDataset(ctx context.Context, dataset *dto.Dataset
 	}, nil
 }
 
-func (s *DatasetService) UpdateDataset(ctx context.Context, updatedDataset *dto.Dataset, public, managed *bool, comment, username string) (*dto.Dataset, error) {
+func (s *DatasetService) UpdateDataset(ctx context.Context, updatedDataset *dto.Dataset, public *bool, comment, username string) (*dto.Dataset, error) {
 	dataset, err := s.repo.DB.SelectDataset(ctx, updatedDataset.ID)
 	if err != nil {
 		s.repo.Logger.Error("failed to get dataset", err)
@@ -189,10 +190,8 @@ func (s *DatasetService) UpdateDataset(ctx context.Context, updatedDataset *dto.
 
 	if updatedDataset.Type == "" {
 		updatedDataset.Type = dataset.Type
-	}
-
-	if updatedDataset.Type == "Kafka" && managed != nil && *managed {
-		return nil, serviceerrors.NewEntityBadRequestError(serviceerrors.EntityDataset, "Kafka источник не может быть managed", nil)
+	} else if !datasettype.IsAllowedOnCreate(updatedDataset.Type) {
+		return nil, serviceerrors.NewEntityBadRequestError(serviceerrors.EntityDataset, "допустимые типы датасорса: json, kafka", nil)
 	}
 
 	err = s.checkDatasetDuplicate(ctx, updatedDataset)
@@ -240,11 +239,6 @@ func (s *DatasetService) UpdateDataset(ctx context.Context, updatedDataset *dto.
 
 	if public != nil && *public != dataset.Public {
 		updateValues.Public = *public
-		shouldCreateVersion = true
-	}
-
-	if managed != nil && *managed != dataset.Managed {
-		updateValues.Managed = *managed
 		shouldCreateVersion = true
 	}
 

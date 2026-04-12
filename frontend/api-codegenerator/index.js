@@ -79,10 +79,11 @@ async function generateApi({
 }) {
   const templatesDir = resolve(__dirname, './templates');
 
+  const isRemoteUrl = url && /^https?:\/\//i.test(url);
   let { files: apiFiles } = await generateCodeGenApi({
     ...codeGenConfig,
     templates: templatesDir,
-    ...(url ? { url } : { input: path }),
+    ...(isRemoteUrl ? { url } : { input: path || url }),
     hooks: {
       ...codeGenConfig,
       onPrepareConfig: (config) => {

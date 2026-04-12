@@ -7,6 +7,8 @@ package core
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const selectAppAbout = `-- name: SelectAppAbout :one
@@ -28,19 +30,17 @@ func (q *Queries) SelectAppAbout(ctx context.Context) (TAppAbout, error) {
 const updateAppAbout = `-- name: UpdateAppAbout :one
 UPDATE t_app_about
 SET
-    content = CASE WHEN $1::text IS NOT NULL THEN $1::text ELSE content END,
-    links = CASE WHEN $2::text IS NOT NULL THEN $2::text ELSE links END,
+    content = COALESCE($1, content),
+    links = COALESCE($2, links),
     updated_at = CURRENT_TIMESTAMP
 WHERE id = 1 RETURNING id, content, links, updated_at
 `
 
 type UpdateAppAboutParams struct {
-	Content *string
-	Links   *string
+	Content pgtype.Text
+	Links   pgtype.Text
 }
 
-// param: content *string
-// param: links *string
 func (q *Queries) UpdateAppAbout(ctx context.Context, arg UpdateAppAboutParams) (TAppAbout, error) {
 	row := q.db.QueryRow(ctx, updateAppAbout, arg.Content, arg.Links)
 	var i TAppAbout

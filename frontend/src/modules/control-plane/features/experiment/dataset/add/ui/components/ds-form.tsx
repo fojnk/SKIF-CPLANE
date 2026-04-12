@@ -5,7 +5,6 @@ import { DatasetDC } from '@/modules/control-plane/shared/types';
 import {
   DatasetTypeLabel,
   FormFieldInput,
-  ManagedLabel,
   DataItemCard,
 } from '@/modules/control-plane/shared/ui';
 import { validators } from '@/shared/lib/final-form';
@@ -23,7 +22,6 @@ export const DsForm = ({ onResetSelected, selectedDS }: DsFormProps) => {
           name={selectedDS.name!}
           labelsAfter={
             <Flex direction="row" gap={1}>
-              {selectedDS.managed && <ManagedLabel size="xs" />}
               <DatasetTypeLabel type={selectedDS.type} showValue={false} />
             </Flex>
           }

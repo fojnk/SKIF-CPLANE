@@ -41,7 +41,7 @@ func (q *Queries) GetABCGroupRange(ctx context.Context, arg GetABCGroupRangePara
 }
 
 const selectUsersByGroupID = `-- name: SelectUsersByGroupID :many
-SELECT t_user.id, t_user.name, t_user.is_robot, t_user.last_sync, t_user.deleted FROM t_user
+SELECT t_user.id, t_user.name, t_user.is_robot, t_user.last_sync, t_user.deleted, t_user.email, t_user.display_name, t_user.password_hash FROM t_user
 JOIN t_user_group_match ON t_user.id = t_user_group_match.user_id
 WHERE t_user_group_match.user_group_id = $1
 `
@@ -61,6 +61,9 @@ func (q *Queries) SelectUsersByGroupID(ctx context.Context, userGroupID int32) (
 			&i.IsRobot,
 			&i.LastSync,
 			&i.Deleted,
+			&i.Email,
+			&i.DisplayName,
+			&i.PasswordHash,
 		); err != nil {
 			return nil, err
 		}

@@ -529,11 +529,10 @@ func (p *ExperimentService) GetExperimentAvailableDatasets(ctx context.Context, 
 		total = ds.Total
 
 		list[i] = dto.DatasetShort{
-			ID:      ds.ID,
-			Name:    ds.Name,
-			Type:    ds.Type,
-			Public:  ds.Public,
-			Managed: ds.Managed,
+			ID:     ds.ID,
+			Name:   ds.Name,
+			Type:   ds.Type,
+			Public: ds.Public,
 			NamespaceInfo: dto.Namespace{
 				ID:   ds.NamespaceID.Int32,
 				Name: ds.NamespaceName.String,

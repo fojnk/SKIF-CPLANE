@@ -13,6 +13,7 @@ import (
 type Querier interface {
 	AddRoleToBatchUsers(ctx context.Context, arg []AddRoleToBatchUsersParams) *AddRoleToBatchUsersBatchResults
 	AddRuleToRole(ctx context.Context, arg AddRuleToRoleParams) error
+	AddUserToGlobalReaderGroup(ctx context.Context, userID int32) error
 	AddUserToGroup(ctx context.Context, arg AddUserToGroupParams) error
 	BaseTemplateIDByExperimentID(ctx context.Context, id int32) (int32, error)
 	CheckExperimentLimit(ctx context.Context, id int32) (int32, error)
@@ -21,6 +22,7 @@ type Querier interface {
 	CheckYTDatasetDuplicate(ctx context.Context, arg CheckYTDatasetDuplicateParams) ([]int32, error)
 	CompleteExperimentInfo(ctx context.Context, id int32) (CompleteExperimentInfoRow, error)
 	CountAppUpdatesPaginated(ctx context.Context, dollar_1 *bool) (int64, error)
+	CountPermissionRequestsForAdmin(ctx context.Context, statusFilter pgtype.Text) (int64, error)
 	CreateUserRoles(ctx context.Context, arg CreateUserRolesParams) error
 	DatasetFromLink(ctx context.Context, id int32) (DatasetFromLinkRow, error)
 	DatasetFromLinkByAlias(ctx context.Context, arg DatasetFromLinkByAliasParams) (DatasetFromLinkByAliasRow, error)
@@ -72,10 +74,13 @@ type Querier interface {
 	GetExperimentsCount(ctx context.Context, projectID int32) (int64, error)
 	GetLinksCountByDatasetID(ctx context.Context, datasetID int32) (int64, error)
 	GetLinksCountByExperimentID(ctx context.Context, experimentID int32) (int64, error)
+	GetLocalRegisteredUserProfile(ctx context.Context, name string) (GetLocalRegisteredUserProfileRow, error)
 	GetNamespacesWithoutRole(ctx context.Context) ([]TNamespace, error)
+	GetPermissionRequestByID(ctx context.Context, id int32) (TPermissionRequest, error)
 	GetProjectNamespace(ctx context.Context, id int32) (GetProjectNamespaceRow, error)
 	GetProjectsCount(ctx context.Context, namespaceID int32) (int64, error)
 	GetProjectsWithoutRole(ctx context.Context) ([]TProject, error)
+	GetRegisteredUserByLogin(ctx context.Context, name string) (GetRegisteredUserByLoginRow, error)
 	GetRoleMatches(ctx context.Context, roleID int32) ([]TRoleObjectMatch, error)
 	GetRoleObjectMatchById(ctx context.Context, id int32) (TRoleObjectMatch, error)
 	GetRoleOwners(ctx context.Context, roleID int32) ([]TUser, error)
@@ -115,6 +120,7 @@ type Querier interface {
 	InsertNamespaceUpdateLog(ctx context.Context, arg InsertNamespaceUpdateLogParams) error
 	InsertNamespaceVariable(ctx context.Context, arg InsertNamespaceVariableParams) (int32, error)
 	InsertNewUsers(ctx context.Context, name []string) *InsertNewUsersBatchResults
+	InsertPermissionRequest(ctx context.Context, arg InsertPermissionRequestParams) (TPermissionRequest, error)
 	InsertPinnedProject(ctx context.Context, arg InsertPinnedProjectParams) (TUserPinnedProject, error)
 	InsertProject(ctx context.Context, arg InsertProjectParams) (TProject, error)
 	InsertProjectConfig(ctx context.Context, arg InsertProjectConfigParams) (int32, error)
@@ -127,10 +133,13 @@ type Querier interface {
 	InsertUser(ctx context.Context, name string) (int32, error)
 	InsertUserGroup(ctx context.Context, name string) (int32, error)
 	IsExistsActiveBlockBanners(ctx context.Context) (*bool, error)
+	ListMyPermissionRequests(ctx context.Context, requesterUserID int32) ([]TPermissionRequest, error)
+	ListPermissionRequestsForAdmin(ctx context.Context, arg ListPermissionRequestsForAdminParams) ([]ListPermissionRequestsForAdminRow, error)
 	LockABCSyncer(ctx context.Context) (bool, error)
 	NamespaceIDByExperimentID(ctx context.Context, id int32) (int32, error)
 	NamespaceIDByProjectID(ctx context.Context, id int32) (int32, error)
 	ProjectAbcGroupListing(ctx context.Context) ([]ProjectAbcGroupListingRow, error)
+	RegisterUserWithCredentials(ctx context.Context, arg RegisterUserWithCredentialsParams) (TUser, error)
 	RemoveRuleFromRole(ctx context.Context, arg RemoveRuleFromRoleParams) error
 	RemoveUserFromGroup(ctx context.Context, arg RemoveUserFromGroupParams) error
 	SelectACLMatchesForUser(ctx context.Context, userID int32) ([]SelectACLMatchesForUserRow, error)
@@ -211,6 +220,7 @@ type Querier interface {
 	SelectRole(ctx context.Context, roleID int32) ([]SelectRoleRow, error)
 	SelectRoleByIdmId(ctx context.Context, idmID string) (TRole, error)
 	SelectRoles(ctx context.Context) ([]TRole, error)
+	SelectRuleIDByExactMatch(ctx context.Context, arg SelectRuleIDByExactMatchParams) (int32, error)
 	SelectUserGrants(ctx context.Context, arg SelectUserGrantsParams) ([]SelectUserGrantsRow, error)
 	SelectUserGroup(ctx context.Context, userGroupID int32) ([]SelectUserGroupRow, error)
 	SelectUserGroups(ctx context.Context) ([]TUserGroup, error)
@@ -219,13 +229,7 @@ type Querier interface {
 	SelectUsersByRoleID(ctx context.Context, roleID pgtype.Int4) ([]TUser, error)
 	TemplateIDByExperimentID(ctx context.Context, id int32) (int32, error)
 	UnlockABCSyncer(ctx context.Context) (bool, error)
-	// param: content *string
-	// param: links *string
 	UpdateAppAbout(ctx context.Context, arg UpdateAppAboutParams) (TAppAbout, error)
-	// param: active *bool
-	// param: type *text
-	// param: starts *timestamp
-	// param: ends *timestamp
 	UpdateAppBanner(ctx context.Context, arg UpdateAppBannerParams) (TAppBanner, error)
 	// param: content string
 	UpdateAppUpcoming(ctx context.Context, content string) (TAppUpcoming, error)
@@ -258,6 +262,7 @@ type Querier interface {
 	UpdateNamespace(ctx context.Context, arg UpdateNamespaceParams) error
 	UpdateNamespaceLogComment(ctx context.Context, arg UpdateNamespaceLogCommentParams) error
 	UpdateNamespaceVariable(ctx context.Context, arg UpdateNamespaceVariableParams) error
+	UpdatePermissionRequestReviewed(ctx context.Context, arg UpdatePermissionRequestReviewedParams) (int32, error)
 	UpdateProject(ctx context.Context, arg UpdateProjectParams) (TProject, error)
 	UpdateProjectAbcGroup(ctx context.Context) error
 	UpdateProjectLogComment(ctx context.Context, arg UpdateProjectLogCommentParams) error

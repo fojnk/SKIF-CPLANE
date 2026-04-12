@@ -5,7 +5,11 @@ WORKDIR /frontend
 RUN apk add --no-cache python3 make g++
 
 COPY frontend/package*.json ./
-RUN npm ci
+# ECONNRESET / flaky registry: retry downloads with longer backoff (npm default is light).
+RUN npm config set fetch-retries 10 \
+  && npm config set fetch-retry-mintimeout 20000 \
+  && npm config set fetch-retry-maxtimeout 120000 \
+  && npm ci
 
 COPY frontend/ ./
 

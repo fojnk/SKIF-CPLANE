@@ -11,11 +11,37 @@ import (
 )
 
 func Login(ctx context.Context, svc *service.Service, req *http.Request, w *http.ResponseWriter, l *logger.Logger, r *requests.LoginRequest) (any, *responses.ErrorResponse) {
-	accessToken, err := svc.Login(r.Username, r.Password)
+	accessToken, err := svc.Login(ctx, r.Username, r.Password)
 	if err != nil {
 		return nil, &responses.ErrorResponse{
 			InternalError:   err,
 			ExternalMessage: "Не удалось выполнить вход",
+			HTTPStatusCode:  svc.GetErrorStatusCode(err),
+		}
+	}
+
+	cookies, err := svc.CreateAuthCookies(accessToken)
+	if err != nil {
+		return nil, &responses.ErrorResponse{
+			InternalError:   err,
+			ExternalMessage: "Failed to create auth cookies",
+			HTTPStatusCode:  http.StatusInternalServerError,
+		}
+	}
+
+	for _, cookie := range cookies {
+		http.SetCookie(*w, cookie)
+	}
+
+	return accessToken, nil
+}
+
+func Register(ctx context.Context, svc *service.Service, req *http.Request, w *http.ResponseWriter, l *logger.Logger, r *requests.RegisterRequest) (any, *responses.ErrorResponse) {
+	accessToken, err := svc.Register(ctx, r)
+	if err != nil {
+		return nil, &responses.ErrorResponse{
+			InternalError:   err,
+			ExternalMessage: "Не удалось зарегистрироваться",
 			HTTPStatusCode:  svc.GetErrorStatusCode(err),
 		}
 	}
@@ -82,7 +108,7 @@ func UserInfoV2Handler(ctx context.Context, svc *service.Service, req *http.Requ
 			HTTPStatusCode:  http.StatusUnauthorized,
 		}
 	}
-	userInfo, err := svc.GetUserInfo(token.Value)
+	userInfo, err := svc.GetUserInfo(ctx, token.Value)
 	if err != nil {
 		statusCode := svc.GetErrorStatusCode(err)
 		message := "Не удалось получить информацию о пользователе"

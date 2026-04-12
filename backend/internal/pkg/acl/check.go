@@ -49,6 +49,9 @@ func CheckPermission(
 		newUserID, err2 := db.InsertUser(ctx, userInfo.Username)
 		if err2 == nil {
 			userID = newUserID
+			if errG := db.AddUserToGlobalReaderGroup(ctx, newUserID); errG != nil {
+				l.Error("failed to add user to global reader group", errG)
+			}
 		} else {
 			permissionLogger.Info("failed to create new user")
 			return false, errors.Wrap(err, "failed to create user")

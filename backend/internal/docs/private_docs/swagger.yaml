@@ -245,8 +245,6 @@ definitions:
     properties:
       id:
         type: integer
-      managed:
-        type: boolean
       name:
         type: string
       params:
@@ -279,9 +277,6 @@ definitions:
     properties:
       cluster:
         type: string
-      managed:
-        type: boolean
-        x-nullable: true
       namespace_id:
         type: integer
       path:
@@ -302,8 +297,6 @@ definitions:
         type: integer
       linked_experiments_count:
         type: integer
-      managed:
-        type: boolean
       name:
         type: string
       namespace_info:
@@ -325,8 +318,6 @@ definitions:
     properties:
       id:
         type: integer
-      managed:
-        type: boolean
       name:
         type: string
       namespace_info:
@@ -378,8 +369,6 @@ definitions:
         type: string
       id:
         type: integer
-      managed:
-        type: boolean
       params:
         type: string
       public:
@@ -1267,8 +1256,6 @@ definitions:
     properties:
       comment:
         type: string
-      managed:
-        type: boolean
       name:
         maxLength: 128
         type: string
@@ -1282,15 +1269,14 @@ definitions:
         type: string
       type:
         enum:
-        - Queue
-        - KeyValue
-        - StaticTableDir
-        - Kafka
+        - json
+        - kafka
         maxLength: 64
         type: string
     required:
     - name
     - project_id
+    - type
     type: object
   requests.CreateExperimentVariableRequest:
     properties:
@@ -1649,9 +1635,6 @@ definitions:
         maximum: 100
         minimum: 1
         type: integer
-      managed:
-        type: boolean
-        x-nullable: true
       namespace_id:
         type: integer
       offset:
@@ -1800,9 +1783,6 @@ definitions:
         type: boolean
       id:
         type: integer
-      managed:
-        type: boolean
-        x-nullable: true
       name:
         maxLength: 128
         type: string
@@ -1814,6 +1794,9 @@ definitions:
       schema:
         type: string
       type:
+        enum:
+        - json
+        - kafka
         maxLength: 64
         type: string
     required:
@@ -2112,8 +2095,6 @@ definitions:
     properties:
       id:
         type: integer
-      managed:
-        type: boolean
       name:
         type: string
       params:
@@ -2322,8 +2303,6 @@ definitions:
     properties:
       id:
         type: integer
-      managed:
-        type: boolean
       name:
         type: string
       params:
@@ -2873,8 +2852,6 @@ definitions:
     properties:
       job_id:
         type: integer
-      managed:
-        type: boolean
       name:
         type: string
       params:
@@ -8281,16 +8258,12 @@ paths:
       consumes:
       - application/json
       parameters:
-      - description: dataset type
+      - description: 'dataset type (json, kafka; legacy: Queue, KeyValue, StaticTableDir,
+          Kafka)'
         in: query
         name: type
         required: true
         type: string
-      - description: dataset managed param
-        in: query
-        name: managed
-        required: true
-        type: boolean
       produces:
       - application/json
       responses:

@@ -17,20 +17,14 @@ export const DatasetTypeLabel = ({
     let theme: 'info' | 'utility' | 'warning' | 'danger' | 'normal' = 'danger';
 
     switch (type) {
-      case DatasetType.QUEUE:
+      case DatasetType.JSON:
         theme = 'info';
-        break;
-      case DatasetType.KEY_VALUE:
-        theme = 'utility';
-        break;
-      case DatasetType.STATIC_TABLE_DIR:
-        theme = 'warning';
         break;
       case DatasetType.KAFKA:
         theme = 'normal';
         break;
       default:
-        theme = 'danger';
+        theme = 'utility';
     }
     return showValue ? (
       <Label size={size} value={type} theme={theme}>

@@ -52,13 +52,6 @@ export const tabsConfig = [
     disabled: true,
   },
   {
-    id: 'world-map',
-    title: 'Карта мира',
-    path: ControlPlaneModule.routes.worldMap.path,
-    onItemClick: () => navigationModel.worldMap.navigate(),
-    disabled: true,
-  },
-  {
     id: 'monitoring',
     title: 'Мониторинг',
     path: ControlPlaneModule.routes.monitoring.path,
@@ -84,7 +77,8 @@ export const tabsConfig = [
     title: 'Доступ',
     path: ControlPlaneModule.routes.access.path,
     onItemClick: () => navigationModel.access.navigate(),
-    disabled: true,
+    isOpened: ControlPlaneModule.routes.access.$isOpened,
+    disabled: false,
   },
   {
     id: 'about-platform',

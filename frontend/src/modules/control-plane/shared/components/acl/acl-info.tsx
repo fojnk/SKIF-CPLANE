@@ -5,8 +5,10 @@ import { useEffect, useMemo } from 'react';
 import { AclInfoModel } from '@/modules/control-plane/entities/acl/info';
 import {
   AclMy,
+  AclRequestPermissionAction,
   AclUsersTable,
   ErrorMessage,
+  type PermissionRequestableEntity,
 } from '@/modules/control-plane/shared/components';
 import { EntityType } from '@/modules/control-plane/shared/types';
 import { SearchInput } from '@/modules/control-plane/shared/ui';
@@ -16,6 +18,12 @@ import { GlobalLoader } from '@/shared/ui/loaders';
 interface AclInfoProps {
   objectType: EntityType;
   objectId: number;
+}
+
+function isPermissionRequestableEntity(
+  t: EntityType,
+): t is PermissionRequestableEntity {
+  return t === 'namespace' || t === 'project' || t === 'experiment';
 }
 
 export const AclInfo = ({ objectType, objectId }: AclInfoProps) => {
@@ -63,7 +71,21 @@ export const AclInfo = ({ objectType, objectId }: AclInfoProps) => {
       style={{ maxWidth: '1000px', position: 'relative' }}
     >
       <Flex direction="column" gap={2}>
-        <Text variant="subheader-2">Ваши права</Text>
+        <Flex
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          gap={3}
+          style={{ flexWrap: 'wrap' }}
+        >
+          <Text variant="subheader-2">Ваши права</Text>
+          {isPermissionRequestableEntity(objectType) ? (
+            <AclRequestPermissionAction
+              objectType={objectType}
+              objectId={objectId}
+            />
+          ) : null}
+        </Flex>
         {acl.$failedMy ? (
           <ErrorMessage
             message="Не удалось загрузить права"
