@@ -36,7 +36,6 @@ export const Modal = ({
   const initialValues = {
     name: payload.name,
     public: payload.public,
-    managed: payload.managed,
   };
 
   return (
@@ -62,28 +61,16 @@ export const Modal = ({
                     required
                     hasClear
                   />
-                  <Flex direction="row" gap={4}>
-                    <Field name="managed" type="chechbox">
-                      {({ input }) => (
-                        <Switch
-                          content="Управляемый"
-                          checked={input.value}
-                          size="m"
-                          onChange={(e) => input.onChange(e.target.checked)}
-                        />
-                      )}
-                    </Field>
-                    <Field name="public" type="chechbox">
-                      {({ input }) => (
-                        <Switch
-                          content="Публичный"
-                          checked={input.value}
-                          size="m"
-                          onChange={(e) => input.onChange(e.target.checked)}
-                        />
-                      )}
-                    </Field>
-                  </Flex>
+                  <Field name="public" type="chechbox">
+                    {({ input }) => (
+                      <Switch
+                        content="Публичный"
+                        checked={input.value}
+                        size="m"
+                        onChange={(e) => input.onChange(e.target.checked)}
+                      />
+                    )}
+                  </Field>
                 </Flex>
               </Dialog.Body>
               <SfDialogFooter

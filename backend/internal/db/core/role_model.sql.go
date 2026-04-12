@@ -271,7 +271,7 @@ func (q *Queries) GetRoleObjectMatchById(ctx context.Context, id int32) (TRoleOb
 }
 
 const getRoleOwners = `-- name: GetRoleOwners :many
-SELECT tu.id, tu.name, tu.is_robot, tu.last_sync, tu.deleted from t_role_owner tr
+SELECT tu.id, tu.name, tu.is_robot, tu.last_sync, tu.deleted, tu.email, tu.display_name, tu.password_hash from t_role_owner tr
 JOIN t_user tu ON tu.id = tr.user_id
 WHERE t_user.deleted = FALSE AND tr.role_id = $1
 `
@@ -291,6 +291,9 @@ func (q *Queries) GetRoleOwners(ctx context.Context, roleID int32) ([]TUser, err
 			&i.IsRobot,
 			&i.LastSync,
 			&i.Deleted,
+			&i.Email,
+			&i.DisplayName,
+			&i.PasswordHash,
 		); err != nil {
 			return nil, err
 		}

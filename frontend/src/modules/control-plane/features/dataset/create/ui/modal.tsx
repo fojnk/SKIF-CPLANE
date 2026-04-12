@@ -23,7 +23,6 @@ export const Modal = ({
   reset,
   payload,
 }: ModalViewProps<DsCreatePayload>) => {
-  const isManaged = useValue<boolean>(false);
   const isPublic = useValue<boolean>(false);
   const [pending, createDataset] = useUnit([
     DsCreateModel.$pending,
@@ -33,7 +32,6 @@ export const Modal = ({
     const request = {
       name: form.name,
       type: form.type,
-      managed: isManaged.value,
       public: isPublic.value,
       project_id: payload.project_id,
     };
@@ -49,7 +47,7 @@ export const Modal = ({
       disableOutsideClick
       className="sf-dialog"
     >
-      <Form onSubmit={handleSubmit} initialValues={{ type: 'Queue' }}>
+      <Form onSubmit={handleSubmit} initialValues={{ type: 'json' }}>
         {({ handleSubmit, valid }) => {
           return (
             <form onSubmit={handleSubmit} name="sf-ds-create">
@@ -69,20 +67,12 @@ export const Modal = ({
                     validate={validators.required}
                     required
                   />
-                  <Flex direction="row" gap={4}>
-                    <Switch
-                      content="Управляемый"
-                      checked={isManaged.value}
-                      size="m"
-                      onChange={(e) => isManaged.set(e.target.checked)}
-                    />
-                    <Switch
-                      content="Публичный"
-                      checked={isPublic.value}
-                      size="m"
-                      onChange={(e) => isPublic.set(e.target.checked)}
-                    />
-                  </Flex>
+                  <Switch
+                    content="Публичный"
+                    checked={isPublic.value}
+                    size="m"
+                    onChange={(e) => isPublic.set(e.target.checked)}
+                  />
                 </Flex>
               </Dialog.Body>
               <SfDialogFooter

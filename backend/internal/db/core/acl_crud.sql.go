@@ -11,8 +11,75 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const addUserToGlobalReaderGroup = `-- name: AddUserToGlobalReaderGroup :exec
+INSERT INTO t_user_group_match (user_id, user_group_id)
+SELECT $1, g.id
+FROM t_user_group g
+WHERE g.name = 'all_authenticated_users'
+ON CONFLICT (user_id, user_group_id) DO NOTHING
+`
+
+func (q *Queries) AddUserToGlobalReaderGroup(ctx context.Context, userID int32) error {
+	_, err := q.db.Exec(ctx, addUserToGlobalReaderGroup, userID)
+	return err
+}
+
+const getLocalRegisteredUserProfile = `-- name: GetLocalRegisteredUserProfile :one
+SELECT
+    name,
+    email,
+    COALESCE(NULLIF(TRIM(display_name), ''), name)::varchar AS display_name
+FROM t_user
+WHERE name = $1 AND deleted = FALSE AND password_hash IS NOT NULL
+`
+
+type GetLocalRegisteredUserProfileRow struct {
+	Name        string
+	Email       pgtype.Text
+	DisplayName string
+}
+
+func (q *Queries) GetLocalRegisteredUserProfile(ctx context.Context, name string) (GetLocalRegisteredUserProfileRow, error) {
+	row := q.db.QueryRow(ctx, getLocalRegisteredUserProfile, name)
+	var i GetLocalRegisteredUserProfileRow
+	err := row.Scan(&i.Name, &i.Email, &i.DisplayName)
+	return i, err
+}
+
+const getRegisteredUserByLogin = `-- name: GetRegisteredUserByLogin :one
+SELECT id, name, email, password_hash
+FROM t_user
+WHERE
+    deleted = FALSE
+    AND password_hash IS NOT NULL
+    AND (
+        name = $1
+        OR (email IS NOT NULL AND LOWER(email) = LOWER($1))
+    )
+LIMIT 1
+`
+
+type GetRegisteredUserByLoginRow struct {
+	ID           int32
+	Name         string
+	Email        pgtype.Text
+	PasswordHash pgtype.Text
+}
+
+func (q *Queries) GetRegisteredUserByLogin(ctx context.Context, name string) (GetRegisteredUserByLoginRow, error) {
+	row := q.db.QueryRow(ctx, getRegisteredUserByLogin, name)
+	var i GetRegisteredUserByLoginRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.PasswordHash,
+	)
+	return i, err
+}
+
 const getUserById = `-- name: GetUserById :one
-SELECT id, name, is_robot, last_sync, deleted FROM t_user WHERE id = $1
+SELECT id, name, is_robot, last_sync, deleted, email, display_name, password_hash FROM t_user WHERE id = $1
 `
 
 func (q *Queries) GetUserById(ctx context.Context, id int32) (TUser, error) {
@@ -24,6 +91,9 @@ func (q *Queries) GetUserById(ctx context.Context, id int32) (TUser, error) {
 		&i.IsRobot,
 		&i.LastSync,
 		&i.Deleted,
+		&i.Email,
+		&i.DisplayName,
+		&i.PasswordHash,
 	)
 	return i, err
 }
@@ -40,7 +110,7 @@ func (q *Queries) GetUserByName(ctx context.Context, name string) (int32, error)
 }
 
 const getUserInfoByName = `-- name: GetUserInfoByName :one
-SELECT id, name, is_robot, last_sync, deleted FROM t_user WHERE name = $1
+SELECT id, name, is_robot, last_sync, deleted, email, display_name, password_hash FROM t_user WHERE name = $1
 `
 
 func (q *Queries) GetUserInfoByName(ctx context.Context, name string) (TUser, error) {
@@ -52,6 +122,9 @@ func (q *Queries) GetUserInfoByName(ctx context.Context, name string) (TUser, er
 		&i.IsRobot,
 		&i.LastSync,
 		&i.Deleted,
+		&i.Email,
+		&i.DisplayName,
+		&i.PasswordHash,
 	)
 	return i, err
 }
@@ -126,6 +199,40 @@ func (q *Queries) InsertUserGroup(ctx context.Context, name string) (int32, erro
 	var id int32
 	err := row.Scan(&id)
 	return id, err
+}
+
+const registerUserWithCredentials = `-- name: RegisterUserWithCredentials :one
+INSERT INTO t_user (name, email, display_name, password_hash)
+VALUES ($1, $2, $3, $4)
+RETURNING id, name, is_robot, last_sync, deleted, email, display_name, password_hash
+`
+
+type RegisterUserWithCredentialsParams struct {
+	Name         string
+	Email        pgtype.Text
+	DisplayName  pgtype.Text
+	PasswordHash pgtype.Text
+}
+
+func (q *Queries) RegisterUserWithCredentials(ctx context.Context, arg RegisterUserWithCredentialsParams) (TUser, error) {
+	row := q.db.QueryRow(ctx, registerUserWithCredentials,
+		arg.Name,
+		arg.Email,
+		arg.DisplayName,
+		arg.PasswordHash,
+	)
+	var i TUser
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.IsRobot,
+		&i.LastSync,
+		&i.Deleted,
+		&i.Email,
+		&i.DisplayName,
+		&i.PasswordHash,
+	)
+	return i, err
 }
 
 const selectACLMatchesForUser = `-- name: SelectACLMatchesForUser :many
@@ -308,6 +415,31 @@ func (q *Queries) SelectRoles(ctx context.Context) ([]TRole, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const selectRuleIDByExactMatch = `-- name: SelectRuleIDByExactMatch :one
+SELECT id FROM t_rule
+WHERE object_type = $1 AND object_attribute = $2 AND object_id = $3 AND action = $4
+LIMIT 1
+`
+
+type SelectRuleIDByExactMatchParams struct {
+	ObjectType      string
+	ObjectAttribute string
+	ObjectID        int32
+	Action          string
+}
+
+func (q *Queries) SelectRuleIDByExactMatch(ctx context.Context, arg SelectRuleIDByExactMatchParams) (int32, error) {
+	row := q.db.QueryRow(ctx, selectRuleIDByExactMatch,
+		arg.ObjectType,
+		arg.ObjectAttribute,
+		arg.ObjectID,
+		arg.Action,
+	)
+	var id int32
+	err := row.Scan(&id)
+	return id, err
 }
 
 const selectUserGroup = `-- name: SelectUserGroup :many

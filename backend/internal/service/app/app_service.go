@@ -67,7 +67,7 @@ func (s *AppService) UpdateAppBanner(ctx context.Context, bannerID int32, title,
 	updated, err := s.repo.DB.UpdateAppBanner(ctx, dbcore.UpdateAppBannerParams{
 		ID:        bannerID,
 		Title:     title,
-		Type:      bannerType,
+		Type:      pgtype.Text{String: stringOrEmpty(bannerType), Valid: bannerType != nil},
 		Message:   message,
 		Color:     color,
 		ColorDark: colorDark,
@@ -405,8 +405,8 @@ func (s *AppService) GetAppAbout(ctx context.Context) (*dto.AppAbout, error) {
 
 func (s *AppService) UpdateAppAbout(ctx context.Context, content, links *string) (*dto.AppAbout, error) {
 	updated, err := s.repo.DB.UpdateAppAbout(ctx, dbcore.UpdateAppAboutParams{
-		Content: content,
-		Links:   links,
+		Content: pgtype.Text{String: stringOrEmpty(content), Valid: content != nil},
+		Links:   pgtype.Text{String: stringOrEmpty(links), Valid: links != nil},
 	})
 	if err != nil {
 		return nil, serviceerrors.ConvertPostgresError(err, serviceerrors.EntityAppAbout)
@@ -422,4 +422,11 @@ func (s *AppService) UpdateAppAbout(ctx context.Context, content, links *string)
 		Links:     updated.Links,
 		UpdatedAt: updatedAt,
 	}, nil
+}
+
+func stringOrEmpty(p *string) string {
+	if p == nil {
+		return ""
+	}
+	return *p
 }

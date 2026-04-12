@@ -18,6 +18,11 @@ var AuthDefinitions = []shared.AuthDefinition{
 		Handler: shared.CreateAuthHandler(Login, setters.SetLoginRequestParams, validation.DefaultValidate[requests.LoginRequest]),
 	},
 	{
+		Path:    "/auth/register",
+		Method:  http.MethodPost,
+		Handler: shared.CreateAuthHandler(Register, setters.EmptySetParam[requests.RegisterRequest], validation.DefaultValidate[requests.RegisterRequest]),
+	},
+	{
 		Path:    "/auth/authorize",
 		Method:  http.MethodGet,
 		Handler: shared.CreateAuthHandler(AuthorizeUser, setters.SetAuthRequestParams, validation.DefaultValidate[requests.AuthUserRequest], "redirect_url"),
@@ -180,6 +185,31 @@ var Definitions = []shared.Definition{
 		Path:    "/api/v2/me/capabilities",
 		Handler: shared.CreateHandler(GetMyCapabilitiesHandler, setters.EmptySetParam[struct{}], validation.DefaultValidate[struct{}]),
 		Method:  http.MethodGet,
+	},
+	{
+		Path:    "/api/v2/permission-requests",
+		Handler: shared.CreateHandler(CreatePermissionRequestHandler, setters.EmptySetParam[requests.CreatePermissionRequest], validation.DefaultValidate[requests.CreatePermissionRequest]),
+		Method:  http.MethodPost,
+	},
+	{
+		Path:    "/api/v2/permission-requests/mine",
+		Handler: shared.CreateHandler(ListMyPermissionRequestsHandler, setters.EmptySetParam[struct{}], validation.DefaultValidate[struct{}]),
+		Method:  http.MethodGet,
+	},
+	{
+		Path:    "/api/v2/permission-requests",
+		Handler: shared.CreateHandler(ListPermissionRequestsAdminHandler, setters.SetListPermissionRequestsAdminParams, validation.DefaultValidate[requests.ListPermissionRequestsAdminRequest], "status", "limit", "offset"),
+		Method:  http.MethodGet,
+	},
+	{
+		Path:    "/api/v2/permission-requests/approve",
+		Handler: shared.CreateHandler(ApprovePermissionRequestHandler, setters.EmptySetParam[requests.ReviewPermissionRequest], validation.DefaultValidate[requests.ReviewPermissionRequest]),
+		Method:  http.MethodPost,
+	},
+	{
+		Path:    "/api/v2/permission-requests/reject",
+		Handler: shared.CreateHandler(RejectPermissionRequestHandler, setters.EmptySetParam[requests.ReviewPermissionRequest], validation.DefaultValidate[requests.ReviewPermissionRequest]),
+		Method:  http.MethodPost,
 	},
 	{
 		Path:    "/api/v1/permissions",
@@ -801,7 +831,7 @@ var Definitions = []shared.Definition{
 	// Forms
 	{
 		Path:    "/api/v2/forms/dataset",
-		Handler: shared.CreateHandler(getDatasetFormHandler, setters.SetGetDatasetFormRequestParams, validation.DefaultValidate[requests.GetDatasetFormRequest], "type", "managed"),
+		Handler: shared.CreateHandler(getDatasetFormHandler, setters.SetGetDatasetFormRequestParams, validation.DefaultValidate[requests.GetDatasetFormRequest], "type"),
 		Method:  http.MethodGet,
 	},
 	{

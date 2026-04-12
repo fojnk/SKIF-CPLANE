@@ -28,7 +28,7 @@ type Dataset struct {
 	Params    string      `json:"params"`
 	Schema    string      `json:"schema"`
 	Public    bool        `json:"public"`
-	Managed   bool        `json:"managed"`
+	Managed   bool        `json:"-"`
 	VersionID int32       `json:"version_id"`
 	ProjectID pgtype.Int4 `json:"-"`
 	Alias     string      `json:"-"`
@@ -39,7 +39,6 @@ type DatasetShort struct {
 	Name          string             `json:"name"`
 	Type          string             `json:"type"`
 	Public        bool               `json:"public"`
-	Managed       bool               `json:"managed"`
 	ProjectInfo   ProjectCatalogInfo `json:"project_info"`
 	NamespaceInfo Namespace          `json:"namespace_info"`
 }
@@ -49,7 +48,6 @@ type DatasetInfo struct {
 	Name                 string             `json:"name"`
 	Type                 string             `json:"type"`
 	Public               bool               `json:"public"`
-	Managed              bool               `json:"managed"`
 	ProjectInfo          ProjectCatalogInfo `json:"project_info"`
 	NamespaceInfo        Namespace          `json:"namespace_info"`
 	LinkedExperimentsCount int64              `json:"linked_experiments_count"`
@@ -65,7 +63,7 @@ type DatasetWithProject struct {
 	Params    string      `json:"params"`
 	Schema    string      `json:"schema"`
 	Public    bool        `json:"public"`
-	Managed   bool        `json:"managed"`
+	Managed   bool        `json:"-"`
 	VersionID int32       `json:"version_id"`
 	ProjectID pgtype.Int4 `json:"-"`
 }

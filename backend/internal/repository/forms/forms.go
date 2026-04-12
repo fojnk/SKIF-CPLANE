@@ -5,12 +5,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/models/params"
 )
 
 type Repo interface {
-	GetDatasetFormParams(ctx context.Context, dsType string, managed bool) ([]params.Param, error)
+	GetDatasetFormParams(ctx context.Context, dsType string) ([]params.Param, error)
 	GetProjectFormParams(ctx context.Context) ([]params.Param, error)
 	GetExperimentFileStoragesFormParams(ctx context.Context) ([]params.Param, error)
 	GetExperimentPlacementFormParams(ctx context.Context) ([]params.Param, error)
@@ -27,13 +28,13 @@ func NewFormsRepo() *FormsRepo {
 	return &FormsRepo{}
 }
 
-func (fr *FormsRepo) GetDatasetFormParams(ctx context.Context, dsType string, managed bool) ([]params.Param, error) {
+func (fr *FormsRepo) GetDatasetFormParams(ctx context.Context, dsType string) ([]params.Param, error) {
 	const formsPath = "/json/forms/dataset"
 
-	switch dsType {
-	case "Kafka":
+	switch strings.ToLower(dsType) {
+	case "kafka":
 		return getFormParamsFromFile(fmt.Sprintf("%s/%s", formsPath, "DatasetKafka.json"))
-	case "Queue":
+	case "queue":
 		return getFormParamsFromFile(fmt.Sprintf("%s/%s", formsPath, "DatasetQueue.json"))
 	}
 

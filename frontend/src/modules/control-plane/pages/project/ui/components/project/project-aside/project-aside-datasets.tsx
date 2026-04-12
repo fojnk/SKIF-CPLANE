@@ -95,18 +95,11 @@ export const ProjectAsideDatasets = () => {
           selected={selectedDatasetId === dataSource.id}
           onClick={() => handleDatasetClick(dataSource)}
           status={
-            (dataSource.public || dataSource.managed) && (
+            dataSource.public && (
               <Flex direction="row" gap={1} alignItems="center">
-                {dataSource.managed && (
-                  <Text variant="code-1" color="warning-heavy">
-                    M
-                  </Text>
-                )}
-                {dataSource.public && (
-                  <Text variant="code-1" color="positive-heavy">
-                    P
-                  </Text>
-                )}
+                <Text variant="code-1" color="positive-heavy">
+                  P
+                </Text>
               </Flex>
             )
           }

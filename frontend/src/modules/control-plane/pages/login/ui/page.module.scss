@@ -37,3 +37,20 @@
   flex-direction: column;
   gap: 12px;
 }
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.sub-link {
+  color: var(--g-color-text-light-secondary);
+  font-size: 14px;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--g-color-text-light-primary);
+  }
+}
