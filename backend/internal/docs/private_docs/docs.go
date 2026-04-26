@@ -13288,6 +13288,9 @@ const docTemplate = `{
         "responses.SupervisorModelJob": {
             "type": "object",
             "properties": {
+                "end_time": {
+                    "type": "string"
+                },
                 "error_message": {
                     "type": "string"
                 },
@@ -13295,6 +13298,9 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "model_name": {
+                    "type": "string"
+                },
+                "start_time": {
                     "type": "string"
                 },
                 "status": {

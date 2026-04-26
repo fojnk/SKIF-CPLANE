@@ -56,6 +56,69 @@ function stableModelHash(index: number, modelId: string): string {
   return `sv_${index}_${safe}`;
 }
 
+/** Вторая строка ноды графа: не CubeTypeID, а runtime / артефакт модели супервизора */
+function supervisorModelSubtitle(m: SupervisorModelRequest): string | undefined {
+  const parts = [m.language, m.modelPath, m.version]
+    .map((x) => (x == null ? '' : String(x).trim()))
+    .filter(Boolean);
+  if (parts.length === 0) {
+    return undefined;
+  }
+  return parts.join(' · ');
+}
+
+function readSupervisorModelDescription(
+  m: SupervisorModelRequest,
+): string | undefined {
+  const raw = m.description ?? m.Description;
+  if (typeof raw !== 'string') {
+    return undefined;
+  }
+  return raw.trim() === '' ? undefined : raw;
+}
+
+type ModelWithOrderId = {
+  order?: number;
+  modelId?: string;
+};
+
+/**
+ * Удаляет модель из массива по cubeHash ноды графа (как в buildSupervisorGraphParams),
+ * перенумеровывает order в 1..n.
+ */
+export function removeSupervisorModelByGraphCubeHash(
+  models: unknown[] | undefined | null,
+  cubeHash: string,
+): unknown[] {
+  if (!models || !Array.isArray(models)) {
+    return [];
+  }
+  const entries = models
+    .map((model, formIndex) => ({ model, formIndex }))
+    .filter(
+      (e): e is { model: ModelWithOrderId; formIndex: number } =>
+        e.model !== null &&
+        typeof e.model === 'object' &&
+        !Array.isArray(e.model),
+    )
+    .sort((a, b) => (a.model.order ?? 0) - (b.model.order ?? 0));
+  const sortedIdx = entries.findIndex(
+    (e, i) =>
+      stableModelHash(i, e.model.modelId || `idx${i}`) === cubeHash,
+  );
+  if (sortedIdx < 0) {
+    return [...models];
+  }
+  const formIndexToRemove = entries[sortedIdx]!.formIndex;
+  const filtered = models.filter((_, i) => i !== formIndexToRemove);
+  return filtered.map((m, i) => {
+    if (m !== null && typeof m === 'object' && !Array.isArray(m)) {
+      return { ...(m as Record<string, unknown>), order: i + 1 };
+    }
+    return m;
+  });
+}
+
 /**
  * Строит nodes/edges/validatedCubes для конфига супервизора.
  */
@@ -118,12 +181,15 @@ export function buildSupervisorGraphParams(
     inPortHashes.push(index === 0 ? '' : inputPorts[0]!.hash);
 
     const nodeId = `cube_${cubeHash}`;
+    const baseCubeName = supervisorModelSubtitle(m);
+    const modelDescription = readSupervisorModelDescription(m);
     nodes.push({
       id: nodeId,
       label: name,
       cubeHash,
       cubeId: undefined,
-      baseCubeName: undefined,
+      baseCubeName,
+      modelDescription,
       inputPorts,
       outputPorts,
       type: CubeType.CUBE,

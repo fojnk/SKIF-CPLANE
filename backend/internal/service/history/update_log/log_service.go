@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/db/core"
@@ -335,6 +336,60 @@ func (s *UpdateLogService) ListExperimentUpdateLogs(ctx context.Context, experim
 				JobID:     jobID,
 			})
 		}
+	}
+
+	return logItems, total, nil
+}
+
+// ListExperimentRunLogs возвращает логи запусков/остановок/применений конфига эксперимента (без jobd).
+func (s *UpdateLogService) ListExperimentRunLogs(ctx context.Context, experimentID int32, limit, offset int32) ([]dto.ExperimentUpdateLog, int64, error) {
+	acts := []string{
+		string(update_log.ActionStartExperiment),
+		string(update_log.ActionStopExperiment),
+		string(update_log.ActionApplyExperiment),
+	}
+	logs, err := s.repo.DB.SelectExperimentUpdateLogsByActs(ctx, core.SelectExperimentUpdateLogsByActsParams{
+		ExperimentID: experimentID,
+		Offset:       offset,
+		Limit:        limit,
+		Acts:         acts,
+	})
+	if err != nil {
+		s.repo.Logger.Error("failed to select experiment run logs", err)
+		return nil, 0, serviceerrors.NewInternalError("Не удалось получить запуски эксперимента", err)
+	}
+
+	var logItems []dto.ExperimentUpdateLog
+	var total int64
+	for _, log := range logs {
+		total = log.Total
+
+		var jobID *int64
+		if len(log.Details) > 0 {
+			var details update_log.ExperimentUpdateLog
+			if err := json.Unmarshal(log.Details, &details); err == nil {
+				if details.New.JobID != nil {
+					jobID = details.New.JobID
+				} else if details.Old.JobID != nil {
+					jobID = details.Old.JobID
+				}
+			}
+		}
+
+		createdAt := time.Time{}
+		if log.CreatedAt.Valid {
+			createdAt = log.CreatedAt.Time
+		}
+
+		logItems = append(logItems, dto.ExperimentUpdateLog{
+			ID:        log.ID,
+			CreatedAt: createdAt,
+			Name:      log.Name,
+			Act:       log.Act,
+			User:      log.Username,
+			Comment:   log.Comment,
+			JobID:     jobID,
+		})
 	}
 
 	return logItems, total, nil

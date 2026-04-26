@@ -26,6 +26,9 @@ import {
 } from './utils';
 import { WorkerEditConfigCubes } from './worker-edit-cubes';
 
+/** models[] только из маркетплейса — без ручного «Add Item» в форме */
+const EXPERIMENT_MODELS_ARRAY_NO_MANUAL_ADD: readonly string[] = ['models'];
+
 export type TabId = 'experiment' | 'worker' | 'cubes';
 
 interface Props {
@@ -66,8 +69,11 @@ export const ExperimentEditTabs = ({
     subscription: { values: true },
   }) as { values: ExperimentFormValues };
 
+  const experimentParams = getExperimentParams(formData);
+  const hasModelsParam = experimentParams.some((p) => p.name === 'models');
+
   useEffect(() => {
-    if (hasWorker) {
+    if (!hasModelsParam) {
       return undefined;
     }
     const unsubscribe = ShowCubesMarketModel.checkout.watch((cube) => {
@@ -93,7 +99,7 @@ export const ExperimentEditTabs = ({
       }
     });
     return () => unsubscribe();
-  }, [form, hasWorker]);
+  }, [form, hasModelsParam]);
 
   // Синхронизация с внешним activeTab
   useEffect(() => {
@@ -146,7 +152,6 @@ export const ExperimentEditTabs = ({
     }
   }, [focusedParam]);
 
-  const experimentParams = getExperimentParams(formData);
   const workerParam = getWorkerParam(formData);
   const sortedWorkerParams = getWorkerStructParams(formData);
 
@@ -238,7 +243,7 @@ export const ExperimentEditTabs = ({
             display: internalActiveTab === 'experiment' ? 'flex' : 'none',
           }}
         >
-          {!hasWorker ? (
+          {hasModelsParam ? (
             <Flex direction="row" style={{ padding: '0 0 12px' }}>
               <Button
                 view="outlined"
@@ -265,6 +270,9 @@ export const ExperimentEditTabs = ({
               addButtonVariant="normal"
               focusedParam={focusedParam}
               variableNames={variableNames}
+              arrayStructAddDisabledPaths={
+                hasModelsParam ? EXPERIMENT_MODELS_ARRAY_NO_MANUAL_ADD : undefined
+              }
             />
           )}
         </Flex>

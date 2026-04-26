@@ -2,21 +2,145 @@ package private
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/clients"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/dto"
 	models "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/models/user"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/requests"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/responses"
+	responses "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/responses"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/handlers/shared"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/logger"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/acl"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/update_log"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service"
 	serviceerrors "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/errors"
 )
 
 func ptr[T any](v T) *T {
 	return &v
+}
+
+func isExperimentRunLogAct(act string) bool {
+	switch act {
+	case string(update_log.ActionStartExperiment),
+		string(update_log.ActionStopExperiment),
+		string(update_log.ActionApplyExperiment):
+		return true
+	default:
+		return false
+	}
+}
+
+func experimentRunLogToJob(log *dto.ExperimentUpdateLog) *clients.Job {
+	id := int64(log.ID)
+	st := "completed"
+	created := log.CreatedAt.UTC().Format(time.RFC3339)
+	typ := log.Act
+	desc := log.Comment
+	if desc == "" {
+		desc = "Запись из истории эксперимента"
+	}
+	name := log.Name
+	job := &clients.Job{
+		Id:                &id,
+		Status:            &st,
+		Type:              &typ,
+		CreatedAt:         &created,
+		CreatedBy:         &log.User,
+		StatusDescription: &desc,
+		Name:              &name,
+	}
+	return job
+}
+
+func mapSupervisorRunToStages(run *responses.SupervisorExperimentRun) *[]clients.JobStage {
+	if run == nil || len(run.Jobs) == 0 {
+		return nil
+	}
+	out := make([]clients.JobStage, 0, len(run.Jobs))
+	for _, mj := range run.Jobs {
+		idx := int64(mj.Index)
+		n := mj.ModelName
+		ss := strings.ToLower(strings.TrimSpace(mj.Status))
+		var desc *string
+		if mj.ErrorMessage != "" {
+			s := mj.ErrorMessage
+			desc = &s
+		}
+		out = append(out, clients.JobStage{
+			StepID:      &idx,
+			Name:        &n,
+			StepStatus:  &ss,
+			Description: desc,
+		})
+	}
+	return &out
+}
+
+// applyLiveSupervisorAndQueue подмешивает в строку задачи актуальный статус супервизора и при необходимости — глубину очереди RabbitMQ.
+func applyLiveSupervisorAndQueue(ctx context.Context, svc *service.Service, l *logger.Logger, experimentID int32, job *clients.Job) {
+	if svc == nil || job == nil {
+		return
+	}
+	orchID, err := svc.GetSupervisorExperimentID(ctx, experimentID)
+	if err != nil {
+		return
+	}
+	st := svc.GetExperimentStatus(ctx, orchID)
+
+	statusStr := ""
+	if st.Supervisor != nil && strings.TrimSpace(st.Supervisor.Status) != "" {
+		statusStr = strings.ToLower(strings.TrimSpace(st.Supervisor.Status))
+	}
+	if statusStr == "" {
+		switch string(st.Status) {
+		case "PENDING":
+			statusStr = "pending"
+		case "OK":
+			statusStr = "completed"
+		case "ERROR":
+			statusStr = "failed"
+		case "WARNING":
+			statusStr = "cancelled"
+		default:
+			statusStr = "unknown"
+		}
+	}
+
+	desc := strings.TrimSpace(st.Message)
+	if st.Supervisor != nil {
+		if d := strings.TrimSpace(st.Supervisor.Detail); d != "" {
+			desc = d
+		}
+		if stages := mapSupervisorRunToStages(st.Supervisor); stages != nil {
+			job.Stages = stages
+		}
+	}
+
+	if svc.Repo != nil && svc.Repo.Clients != nil && svc.Repo.Clients.RabbitMQ != nil {
+		n, qerr := svc.Repo.Clients.RabbitMQ.SupervisorQueueMessagesReady(ctx)
+		if qerr != nil {
+			l.Info(fmt.Sprintf("rabbitmq supervisor queue inspect: %v", qerr))
+		} else if n > 0 {
+			qnote := fmt.Sprintf("Очередь RabbitMQ (супервизор): %d сообщ. ожидают обработки", n)
+			if desc != "" {
+				desc = desc + " · " + qnote
+			} else {
+				desc = qnote
+			}
+			if statusStr == "unknown" || statusStr == "" {
+				statusStr = "queued"
+			}
+		}
+	}
+
+	job.Status = &statusStr
+	job.StatusDescription = &desc
 }
 
 func jobQueueUnavailable(external string) *responses.ErrorResponse {
@@ -70,7 +194,7 @@ func cleanExperimentQueueHandler(ctx context.Context, svc *service.Service, l *l
 
 // listJobsHandler godoc
 //
-//	@Summary	search and list jobs with filters (job queue disabled — always empty)
+//	@Summary	search and list jobs with filters (без jobd: история start/stop/apply + живой статус супервизора и очереди RabbitMQ для последнего start/apply)
 //	@Tags		jobs
 //	@Accept		json
 //	@Produce	json
@@ -82,20 +206,74 @@ func cleanExperimentQueueHandler(ctx context.Context, svc *service.Service, l *l
 //	@Failure	503		{object}	responses.ErrorResponse	"Service Unavailable"
 //	@Router		/api/v1/jobs/search [post]
 func listJobsHandler(ctx context.Context, svc *service.Service, l *logger.Logger, r *requests.ListJobsRequest, u *models.UserInfo) (any, *responses.ErrorResponse) {
-	_ = svc
-	_ = r
-	_ = u
-	l.Info("list jobs: job queue removed, empty list")
-	return &responses.ListJobsResponse{
-		Jobs:  &[]clients.Job{},
-		Total: ptr(int32(0)),
-		Pages: 0,
-	}, nil
+	if r.EntityType == nil || r.EntityID == nil {
+		l.Info("list jobs: no entity filter, empty list")
+		empty := []clients.Job{}
+		z := int32(0)
+		return &responses.ListJobsResponse{Jobs: &empty, Total: &z, Pages: 0}, nil
+	}
+
+	limit := r.Limit
+	if limit <= 0 {
+		limit = 50
+	}
+	if limit > 100 {
+		limit = 100
+	}
+	offset := int32(0)
+	if r.Offset != nil {
+		offset = *r.Offset
+	}
+
+	et := strings.ToLower(strings.TrimSpace(*r.EntityType))
+	switch et {
+	case "experiment":
+		if err := shared.CheckPermission(ctx, l, svc, acl.Experiment, acl.NoAttribute, acl.Read, *r.EntityID, u); err != nil {
+			return nil, err
+		}
+		logs, total, err := svc.ListExperimentRunLogs(ctx, *r.EntityID, limit, offset)
+		if err != nil {
+			l.Error("list jobs from experiment logs", err)
+			return nil, shared.ConvertServiceError(err, shared.EntityExperiment)
+		}
+		var newestStartApplyID int32
+		for _, row := range logs {
+			if row.Act == string(update_log.ActionStartExperiment) || row.Act == string(update_log.ActionApplyExperiment) {
+				newestStartApplyID = row.ID
+				break
+			}
+		}
+		jobs := make([]clients.Job, 0, len(logs))
+		for i := range logs {
+			if r.CreatedBy != nil && *r.CreatedBy != "" && logs[i].User != *r.CreatedBy {
+				continue
+			}
+			j := experimentRunLogToJob(&logs[i])
+			if newestStartApplyID != 0 && logs[i].ID == newestStartApplyID {
+				applyLiveSupervisorAndQueue(ctx, svc, l, *r.EntityID, j)
+			}
+			jobs = append(jobs, *j)
+		}
+		t32 := int32(total)
+		if int64(t32) != total {
+			t32 = int32(2147483647)
+		}
+		return &responses.ListJobsResponse{
+			Jobs:  &jobs,
+			Total: &t32,
+			Pages: shared.GetPages(total, int64(limit)),
+		}, nil
+	default:
+		l.Info(fmt.Sprintf("list jobs: entity type not supported for log-backed listing: %s", et))
+		empty := []clients.Job{}
+		z := int32(0)
+		return &responses.ListJobsResponse{Jobs: &empty, Total: &z, Pages: 0}, nil
+	}
 }
 
 // getJobHandler godoc
 //
-//	@Summary	get job by ID (job queue disabled)
+//	@Summary	get job by ID (без jobd: job_id = id строки истории эксперимента из списка задач)
 //	@Tags		jobs
 //	@Accept		json
 //	@Produce	json
@@ -108,11 +286,27 @@ func listJobsHandler(ctx context.Context, svc *service.Service, l *logger.Logger
 //	@Failure	503		{object}	responses.ErrorResponse	"Service Unavailable"
 //	@Router		/api/v1/job [get]
 func getJobHandler(ctx context.Context, svc *service.Service, l *logger.Logger, r *requests.GetJobRequest, u *models.UserInfo) (any, *responses.ErrorResponse) {
-	_ = ctx
-	_ = svc
-	_ = u
-	l.Info("get job: job queue removed")
-	return nil, jobQueueUnavailable("Получение джобы недоступно (jobd отключён)")
+	if r.JobID <= 0 || r.JobID > int64(^uint32(0)>>1) {
+		return nil, shared.ConvertServiceError(serviceerrors.NewBadRequestError("некорректный job_id", nil), shared.EntityExperiment)
+	}
+	logRow, _, experimentID, projectID, err := svc.GetExperimentLog(ctx, int32(r.JobID))
+	if err != nil {
+		l.Info(fmt.Sprintf("get job: not an experiment log: %v", err))
+		return nil, jobQueueUnavailable("Получение джобы недоступно (jobd отключён)")
+	}
+	if !isExperimentRunLogAct(logRow.Act) {
+		return nil, jobQueueUnavailable("Получение джобы недоступно (jobd отключён)")
+	}
+	if err := shared.CheckPermission(ctx, l, svc, acl.Experiment, acl.NoAttribute, acl.Read, experimentID, u); err != nil {
+		if err := shared.CheckPermission(ctx, l, svc, acl.Project, acl.NoAttribute, acl.Read, projectID, u); err != nil {
+			return nil, err
+		}
+	}
+	j := experimentRunLogToJob(logRow)
+	if logRow.Act == string(update_log.ActionStartExperiment) || logRow.Act == string(update_log.ActionApplyExperiment) {
+		applyLiveSupervisorAndQueue(ctx, svc, l, experimentID, j)
+	}
+	return &clients.GetJobResponse{Job: j}, nil
 }
 
 // getJobEventsHandler godoc

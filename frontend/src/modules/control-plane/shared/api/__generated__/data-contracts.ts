@@ -42,10 +42,38 @@ export interface ClientsGetJobResponseDC {
   job?: ClientsJobDC;
 }
 
+export interface JobdStageDC {
+  step_id?: number;
+  name?: string;
+  description?: string;
+  step_status?: string;
+  logs?: string;
+}
+
+/** Статусы jobd; в ответах API часто приходят нижним регистром (например completed). */
+export enum JobdJobStatusDC {
+  JobStatusCompleted = "JobStatusCompleted",
+  JobStatusPaused = "JobStatusPaused",
+  JobStatusQueued = "JobStatusQueued",
+  JobStatusRunning = "JobStatusRunning",
+  JobStatusPending = "JobStatusPending",
+  JobStatusTimeout = "JobStatusTimeout",
+  JobStatusFailed = "JobStatusFailed",
+  JobStatusCancelled = "JobStatusCancelled",
+}
+
 export interface ClientsJobDC {
   id?: number;
   status?: string;
+  type?: string;
+  created_at?: string;
+  created_by?: string;
+  status_description?: string;
+  name?: string;
+  stages?: JobdStageDC[];
 }
+
+export type JobdJobDC = ClientsJobDC;
 
 export interface ClientsListAllEventsResponseDC {
   events?: ClientsEventWithJobDC[];
@@ -1282,9 +1310,11 @@ export interface ResponsesErrorResponseDC {
 }
 
 export interface ResponsesSupervisorModelJobDC {
+  end_time?: string;
   error_message?: string;
   index?: number;
   model_name?: string;
+  start_time?: string;
   status?: string;
 }
 

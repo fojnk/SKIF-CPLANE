@@ -1,5 +1,6 @@
 import { ArrowRotateRight } from '@gravity-ui/icons';
 import {
+  Dialog,
   Flex,
   Table,
   Text,
@@ -43,6 +44,25 @@ import { GlobalLoader } from '@/shared/ui/loaders';
 
 interface JobsTabProps {
   experiment_id: number;
+}
+
+function buildSupervisorModelDescription(
+  m: controlPlaneApi.dc.ResponsesSupervisorModelJobDC,
+): string {
+  const blocks: string[] = [];
+  if (m.error_message?.trim()) {
+    blocks.push(m.error_message.trim());
+  }
+  if (m.start_time?.trim()) {
+    blocks.push(`Время начала: ${m.start_time.trim()}`);
+  }
+  if (m.end_time?.trim()) {
+    blocks.push(`Время окончания: ${m.end_time.trim()}`);
+  }
+  if (blocks.length === 0) {
+    return 'Супервизор не передал отдельного описания для этой модели. При ошибке выполнения здесь появится текст ошибки.';
+  }
+  return blocks.join('\n\n');
 }
 
 const TableWithSettings = withTableSettings<JobsDC>({
@@ -97,6 +117,11 @@ export const JobsTab = ({ experiment_id }: JobsTabProps) => {
     page: 1,
     limit: getProjectExperimentJobsPageSize(),
   }));
+
+  const [supervisorModelDetail, setSupervisorModelDetail] =
+    React.useState<controlPlaneApi.dc.ResponsesSupervisorModelJobDC | null>(
+      null,
+    );
 
   const loadFx = (page: number, limit: number) => {
     load({
@@ -350,7 +375,8 @@ export const JobsTab = ({ experiment_id }: JobsTabProps) => {
               columns={supervisorJobColumns}
               data={supervisorRun.jobs ?? []}
               emptyMessage="Нет этапов"
-              className="table--full-width"
+              className="table--full-width sf-table--row-clickable"
+              onRowClick={(item) => setSupervisorModelDetail(item)}
             />
           ) : (
             <Text variant="body-2" color="secondary">
@@ -380,6 +406,43 @@ export const JobsTab = ({ experiment_id }: JobsTabProps) => {
           onUpdate={onUpdatePage}
         />
       </Flex>
+      <Dialog
+        open={supervisorModelDetail !== null}
+        onClose={() => setSupervisorModelDetail(null)}
+        size="m"
+        className="sf-dialog"
+      >
+        <Dialog.Header
+          caption={supervisorModelDetail?.model_name || 'Модель'}
+        />
+        <Dialog.Body>
+          {supervisorModelDetail ? (
+            <Flex direction="column" gap={3}>
+              <Flex direction="row" gap={2} alignItems="baseline">
+                <Text variant="body-2" color="secondary">
+                  №
+                </Text>
+                <Text variant="body-2">{supervisorModelDetail.index ?? '—'}</Text>
+              </Flex>
+              <Flex direction="row" gap={2} alignItems="baseline">
+                <Text variant="body-2" color="secondary">
+                  Статус
+                </Text>
+                <Text variant="body-2">
+                  {supervisorModelDetail.status || '—'}
+                </Text>
+              </Flex>
+              <Text variant="subheader-2">Описание</Text>
+              <Text
+                variant="body-2"
+                style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
+              >
+                {buildSupervisorModelDescription(supervisorModelDetail)}
+              </Text>
+            </Flex>
+          ) : null}
+        </Dialog.Body>
+      </Dialog>
     </div>
   );
 };

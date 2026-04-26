@@ -284,6 +284,7 @@ type IUpdateLogService interface {
 
 	// Experiment Logs
 	ListExperimentUpdateLogs(ctx context.Context, experimentID, projectID int32, limit, offset int32) ([]dto.ExperimentUpdateLog, int64, error)
+	ListExperimentRunLogs(ctx context.Context, experimentID int32, limit, offset int32) ([]dto.ExperimentUpdateLog, int64, error)
 	GetExperimentLog(ctx context.Context, logID int32) (*dto.ExperimentUpdateLog, update_log.ExperimentUpdateLog, int32, int32, error)
 	UpdateExperimentLogComment(ctx context.Context, logID int32, newComment, username string) error
 

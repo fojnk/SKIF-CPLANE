@@ -634,6 +634,74 @@ func (q *Queries) SelectExperimentUpdateLogs(ctx context.Context, arg SelectExpe
 	return items, nil
 }
 
+const selectExperimentUpdateLogsByActs = `-- name: SelectExperimentUpdateLogsByActs :many
+SELECT t_experiment_update_log.id, t_experiment_update_log.created_at, t_experiment_update_log.project_id, t_experiment_update_log.experiment_id, t_experiment_update_log.username, t_experiment_update_log.act, t_experiment_update_log.details, t_experiment_update_log.comment, COUNT(*) OVER() AS total, COALESCE(v_real_experiment_template.name, '[deleted]') AS name FROM t_experiment_update_log
+LEFT JOIN t_experiment ON t_experiment_update_log.experiment_id = t_experiment.id
+LEFT JOIN t_experiment_template_v ON t_experiment.template_v_id = t_experiment_template_v.id
+LEFT JOIN v_real_experiment_template ON t_experiment_template_v.parent_id = v_real_experiment_template.id
+WHERE t_experiment_update_log.experiment_id = $1
+  AND t_experiment_update_log.act = ANY($4::text[])
+ORDER BY t_experiment_update_log.created_at DESC
+OFFSET $2
+LIMIT $3
+`
+
+type SelectExperimentUpdateLogsByActsParams struct {
+	ExperimentID int32
+	Offset       int32
+	Limit        int32
+	Acts         []string
+}
+
+type SelectExperimentUpdateLogsByActsRow struct {
+	ID           int32
+	CreatedAt    pgtype.Timestamp
+	ProjectID    int32
+	ExperimentID int32
+	Username     string
+	Act          string
+	Details      []byte
+	Comment      string
+	Total        int64
+	Name         string
+}
+
+func (q *Queries) SelectExperimentUpdateLogsByActs(ctx context.Context, arg SelectExperimentUpdateLogsByActsParams) ([]SelectExperimentUpdateLogsByActsRow, error) {
+	rows, err := q.db.Query(ctx, selectExperimentUpdateLogsByActs,
+		arg.ExperimentID,
+		arg.Offset,
+		arg.Limit,
+		arg.Acts,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []SelectExperimentUpdateLogsByActsRow
+	for rows.Next() {
+		var i SelectExperimentUpdateLogsByActsRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.ProjectID,
+			&i.ExperimentID,
+			&i.Username,
+			&i.Act,
+			&i.Details,
+			&i.Comment,
+			&i.Total,
+			&i.Name,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const selectNamespaceLog = `-- name: SelectNamespaceLog :one
 SELECT t_namespace_update_log.id, t_namespace_update_log.created_at, t_namespace_update_log.namespace_id, t_namespace_update_log.username, t_namespace_update_log.act, t_namespace_update_log.details, t_namespace_update_log.comment, COALESCE(v_real_namespace.name, '[deleted]') AS name FROM t_namespace_update_log
 LEFT JOIN v_real_namespace ON t_namespace_update_log.namespace_id = v_real_namespace.id

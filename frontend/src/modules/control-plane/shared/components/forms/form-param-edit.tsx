@@ -59,6 +59,11 @@ interface FormParamEditContextValue {
   focusedParam?: string | null;
   /** Список доступных переменных (имена) для валидации ${variableName} */
   variableNames?: Set<string>;
+  /**
+   * Полные имена полей (например models, Worker.Foo.items), для которых
+   * у массива структур скрыта кнопка «Add Item» — элементы только программно / из маркетплейса.
+   */
+  arrayStructAddDisabledPaths?: ReadonlySet<string>;
 }
 
 const FormParamEditContext = createContext<FormParamEditContextValue>({
@@ -162,6 +167,10 @@ interface FormParamEditProps {
   focusedParam?: string | null;
   /** Список имён доступных переменных для валидации ${variableName} */
   variableNames?: Set<string>;
+  /**
+   * Имена полей-массивов структур без ручного «Add Item» (полный путь как в final-form: models, A.B.items).
+   */
+  arrayStructAddDisabledPaths?: readonly string[];
 }
 
 // ============================================================================
@@ -1476,7 +1485,9 @@ function ParamArrayStructEdit({
     addButtonVariant,
     defaultExpanded,
     maxExpandedLevel = 2,
+    arrayStructAddDisabledPaths,
   } = useFormParamEditContext();
+  const disableManualAdd = arrayStructAddDisabledPaths?.has(fieldName) ?? false;
   const field = useField(fieldName, {
     validate: validators.build({ required }),
   });
@@ -1609,9 +1620,11 @@ function ParamArrayStructEdit({
           labelField={labelField}
         />
       ))}
-      <AddButton onClick={handleAdd} variant={addButtonVariant}>
-        Add Item
-      </AddButton>
+      {!disableManualAdd ? (
+        <AddButton onClick={handleAdd} variant={addButtonVariant}>
+          Add Item
+        </AddButton>
+      ) : null}
     </Flex>
   );
 }
@@ -2392,7 +2405,15 @@ export const FormParamEdit: React.FC<FormParamEditProps> = ({
   maxExpandedLevel = 2,
   focusedParam = null,
   variableNames,
+  arrayStructAddDisabledPaths,
 }) => {
+  const addDisabledSet = useMemo(() => {
+    if (!arrayStructAddDisabledPaths?.length) {
+      return undefined;
+    }
+    return new Set(arrayStructAddDisabledPaths);
+  }, [arrayStructAddDisabledPaths]);
+
   const contextValue = useMemo(
     () => ({
       addButtonVariant,
@@ -2401,6 +2422,7 @@ export const FormParamEdit: React.FC<FormParamEditProps> = ({
       maxExpandedLevel,
       focusedParam,
       variableNames,
+      arrayStructAddDisabledPaths: addDisabledSet,
     }),
     [
       addButtonVariant,
@@ -2409,6 +2431,7 @@ export const FormParamEdit: React.FC<FormParamEditProps> = ({
       maxExpandedLevel,
       focusedParam,
       variableNames,
+      addDisabledSet,
     ],
   );
 

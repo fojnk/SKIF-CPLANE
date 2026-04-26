@@ -2,8 +2,6 @@ import {
   Databases,
   LayoutSplitRows,
   Briefcase,
-  File,
-  Bug,
   Cubes3,
   CurlyBrackets,
 } from '@gravity-ui/icons';
@@ -127,28 +125,7 @@ export const PageLayout = ({ children }: { children?: ReactNode }) => {
     <BaseLayout.Container
       className="sf-layout"
       menuItems={menuItems}
-      extraFooterItems={[
-        {
-          id: 'documentation-badge',
-          title: 'Документация',
-          icon: File,
-          onItemClick: () =>
-            window.open(
-              'https://docs.vk.team/control-plane/index.html',
-              '_blank',
-            ),
-        },
-        {
-          id: 'contact_us',
-          title: 'Сообщите нам о баге',
-          icon: Bug,
-          onItemClick: () =>
-            window.open(
-              'https://jira.vk.team/secure/CreateIssue.jspa?issuetype=1&pid=72973',
-              '_blank',
-            ),
-        },
-      ]}
+      omitAsideLogo
     >
       <BaseLayout.Header topAligned>
         <MyBreadcrumbs />

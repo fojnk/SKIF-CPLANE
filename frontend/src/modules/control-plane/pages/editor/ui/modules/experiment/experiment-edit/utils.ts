@@ -361,6 +361,11 @@ export const initExperimentEditorValues = (
       // Устанавливаем имя из конфига
       editCube.Name = cubeName || editCube.Name;
 
+      const descRaw = configCube.Description ?? configCube.description;
+      if (typeof descRaw === 'string' && descRaw.trim() !== '') {
+        editCube.Description = descRaw;
+      }
+
       // Загружаем Params из configCube по ключу ParamsName
       if (editCube.ParamsName && configCube[editCube.ParamsName]) {
         // Получаем схему параметров куба для преобразования custom полей
