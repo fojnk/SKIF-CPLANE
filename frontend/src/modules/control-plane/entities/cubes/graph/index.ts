@@ -45,7 +45,10 @@ export {
 // ============================================================================
 export { parseGraphConfig } from './parse-graph';
 
-export { buildSupervisorGraphParams } from './supervisor-graph';
+export {
+  buildSupervisorGraphParams,
+  removeSupervisorModelByGraphCubeHash,
+} from './supervisor-graph';
 
 // ============================================================================
 // Валидация портов

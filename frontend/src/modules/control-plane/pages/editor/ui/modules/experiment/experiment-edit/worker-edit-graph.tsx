@@ -202,6 +202,9 @@ export const WorkerEditGraph = ({
               outputPorts: newNodeData.outputPorts,
               hasError: newNodeData.hasError,
               errorCode: newNodeData.errorCode,
+              cubeId: newNodeData.cubeId,
+              baseCubeName: newNodeData.baseCubeName,
+              modelDescription: newNodeData.modelDescription,
             },
           };
         }
@@ -426,6 +429,7 @@ export const WorkerEditGraph = ({
         onConnectionCreate={handleConnectionCreate}
         onConnectionDelete={handleConnectionDelete}
         isEditable={!supervisorGraphMode}
+        allowKeyboardCubeDelete={supervisorGraphMode}
         experiment_id={experiment_id}
         experiment_name={experiment_name}
         variables={variables}

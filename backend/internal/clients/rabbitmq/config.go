@@ -13,4 +13,6 @@ type Config struct {
 	RoutingKeyStop  string `yaml:"routing_key_stop"`  // experiment.stop
 	RoutingKeyApply string `yaml:"routing_key_apply"` // experiment.apply
 	ExchangeKind    string `yaml:"exchange_kind"`     // topic | fanout | direct, по умолчанию topic
+	// SupervisorQueue имя очереди, на которую подписан супервизор (как в SUPERVISOR_QUEUE). По ней делается passive declare для отображения «сколько в очереди» в UI.
+	SupervisorQueue string `yaml:"supervisor_queue"`
 }

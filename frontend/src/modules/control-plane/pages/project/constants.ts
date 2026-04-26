@@ -6,7 +6,6 @@ import {
 
 export const NO_SCROLL_TABS: ProjectTabType[] = ['content', 'config'];
 export const NO_SCROLL_TABS_PIPE: ExperimentTabType[] = [
-  'grafana',
   'config',
   'monitoring',
 ];
@@ -49,8 +48,8 @@ export const ExperimentTabsOptions = [
     title: 'Переменные',
   },
   {
-    id: 'grafana',
-    title: 'Grafana',
+    id: 'jobs',
+    title: 'Запуски',
   },
   {
     id: 'links',

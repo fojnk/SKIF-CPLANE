@@ -13,13 +13,14 @@ import (
 
 // Client публикует события в RabbitMQ (одно соединение и канал на процесс).
 type Client struct {
-	log         *logger.Logger
-	conn        *amqp.Connection
-	ch          *amqp.Channel
-	exchange    string
-	keyStart    string
-	keyStop     string
-	keyApply    string
+	log              *logger.Logger
+	conn             *amqp.Connection
+	ch               *amqp.Channel
+	exchange         string
+	keyStart         string
+	keyStop          string
+	keyApply         string
+	supervisorQueue  string
 }
 
 func New(cfg *Config, log *logger.Logger) (*Client, error) {
@@ -62,13 +63,14 @@ func New(cfg *Config, log *logger.Logger) (*Client, error) {
 	}
 
 	return &Client{
-		log:      log,
-		conn:     conn,
-		ch:       ch,
-		exchange: exchange,
-		keyStart: keyStart,
-		keyStop:  keyStop,
-		keyApply: keyApply,
+		log:             log,
+		conn:            conn,
+		ch:              ch,
+		exchange:        exchange,
+		keyStart:        keyStart,
+		keyStop:         keyStop,
+		keyApply:        keyApply,
+		supervisorQueue: strings.TrimSpace(cfg.SupervisorQueue),
 	}, nil
 }
 
@@ -167,6 +169,30 @@ func (c *Client) PublishExperimentApply(ctx context.Context, body []byte) error 
 		return fmt.Errorf("rabbitmq: пустое тело experiment.apply")
 	}
 	return c.publish(ctx, c.keyApply, body)
+}
+
+// SupervisorQueueMessagesReady возвращает число сообщений в очереди супервизора (passive declare). Если supervisor_queue не задан — 0, nil.
+func (c *Client) SupervisorQueueMessagesReady(ctx context.Context) (int, error) {
+	if c == nil || c.ch == nil || c.supervisorQueue == "" {
+		return 0, nil
+	}
+	select {
+	case <-ctx.Done():
+		return 0, ctx.Err()
+	default:
+	}
+	q, err := c.ch.QueueDeclarePassive(
+		c.supervisorQueue,
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+	if err != nil {
+		return 0, fmt.Errorf("rabbitmq passive queue %q: %w", c.supervisorQueue, err)
+	}
+	return q.Messages, nil
 }
 
 // Close закрывает канал и соединение.

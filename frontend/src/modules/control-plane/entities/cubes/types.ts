@@ -117,6 +117,8 @@ export interface EditExperimentCube {
   CubeType: CubeType;
   InputType: CubeIOType;
   OutputType: CubeIOType;
+  /** Произвольное текстовое описание экземпляра куба в конфиге (ключ Description / description в JSON) */
+  Description?: string;
   InputNames?: PortInfo[];
   OutputNames?: PortInfo[];
   ParamsName?: string;
@@ -196,6 +198,8 @@ export interface GraphNode {
   cubeHash?: string; // Уникальный хеш куба для идентификации
   cubeId?: number; // ID базового куба
   baseCubeName?: string; // Имя базового куба (опционально)
+  /** Текст из конфига (Description у куба / description у модели супервизора) */
+  modelDescription?: string;
   outputPorts: PortInfo[]; // Список выходов с hash
   inputPorts: PortInfo[]; // Список входов с hash
   type: CubeType; // Тип ноды (CUBE, RESHARDER или RETRY)
@@ -278,6 +282,9 @@ export interface SupervisorModelRequest {
   version?: string;
   language: SupervisorModelLanguage | string;
   modelPath: string;
+  /** Текстовое описание модели в конфиге пайплайна (опционально) */
+  description?: string;
+  Description?: string;
   parameters?: Record<string, unknown>;
 }
 
@@ -393,6 +400,9 @@ export interface ConfigInputMapping {
 export interface MergedConfigCube {
   /** Имя куба */
   Name?: string;
+  /** Произвольное описание экземпляра куба в JSON конфига (если задано) */
+  Description?: string;
+  description?: string;
   /** ID базового куба (из cubeConfig) */
   CubeID?: number;
   /** Имена входных портов (из config - не используется для новой логики) */

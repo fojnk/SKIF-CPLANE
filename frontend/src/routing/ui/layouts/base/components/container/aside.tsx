@@ -32,6 +32,7 @@ export const Aside = ({
   subheaderMenuItems = [],
   extraFooterItems = [],
   customLogo,
+  omitAsideLogo = false,
 }: {
   onChangeCompact: (value: boolean) => void;
   settingsPanel?: ReactNode;
@@ -39,6 +40,7 @@ export const Aside = ({
   subheaderMenuItems?: AsideSubheaderMenuItem[];
   extraFooterItems?: MenuItem[];
   customLogo?: LogoProps;
+  omitAsideLogo?: boolean;
 }) => {
   const [activePanel, setActivePanel] = useState<Maybe<NavbarPanel>>(null);
   const user = useUnit(userModel.$user);
@@ -126,7 +128,7 @@ export const Aside = ({
           }
         },
       }))}
-      logo={logo}
+      logo={omitAsideLogo ? undefined : logo}
       onChangeCompact={onChangeCompact}
       renderFooter={({ compact }) => (
         <>

@@ -5,7 +5,8 @@ import {
   CircleQuestion,
   Clock,
 } from '@gravity-ui/icons';
-import { Icon, Tooltip } from '@gravity-ui/uikit';
+import { Flex, Icon, Popover, Text } from '@gravity-ui/uikit';
+import React from 'react';
 
 import { controlPlaneApi } from '@/modules/control-plane/shared/api';
 
@@ -13,100 +14,104 @@ interface JobsStageLabelProps {
   stage: controlPlaneApi.dc.JobdStageDC;
 }
 
+const stagePopoverContent = (stage: controlPlaneApi.dc.JobdStageDC) => (
+  <Flex direction="column" gap={2} style={{ maxWidth: 380, padding: 4 }}>
+    <Text variant="subheader-2">
+      {stage.name?.trim() || `Этап ${stage.step_id ?? '—'}`}
+    </Text>
+    <Text variant="body-2" color="secondary">
+      Статус: {stage.step_status?.trim() || '—'}
+    </Text>
+    <Text variant="body-2" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+      {stage.description?.trim()
+        ? stage.description
+        : 'Описание отсутствует'}
+    </Text>
+  </Flex>
+);
+
+const wrapWithStagePopover = (stage: controlPlaneApi.dc.JobdStageDC, icon: React.ReactNode) => (
+  <Popover
+    content={stagePopoverContent(stage)}
+    placement="top"
+    trigger="click"
+    hasArrow
+  >
+    <span
+      role="button"
+      tabIndex={0}
+      style={{ display: 'inline-flex', cursor: 'pointer' }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          (e.currentTarget as HTMLElement).click();
+        }
+      }}
+    >
+      {icon}
+    </span>
+  </Popover>
+);
+
 export const JobsStagesLabel = ({ stage }: JobsStageLabelProps) => {
-  const content = `${stage.step_status} • ${stage.name} ${stage.description ? `• ${stage.description}` : ''}`;
-  switch (stage.step_status) {
+  const stepStatus = (stage.step_status || '').toLowerCase();
+  switch (stepStatus) {
     case 'completed':
-      return (
-        <Tooltip
-          content={content}
-          placement="top"
-          openDelay={200}
-          key={stage.step_id}
-        >
-          <Icon
-            data={CircleCheck}
-            size={21}
-            style={{ color: 'var(--g-color-base-positive-heavy)' }}
-          />
-        </Tooltip>
+      return wrapWithStagePopover(
+        stage,
+        <Icon
+          data={CircleCheck}
+          size={21}
+          style={{ color: 'var(--g-color-base-positive-heavy)' }}
+        />,
       );
     case 'running':
-      return (
-        <Tooltip
-          content={content}
-          placement="top"
-          openDelay={100}
-          key={stage.step_id}
-        >
-          <Icon
-            data={Clock}
-            size={21}
-            style={{ color: 'var(--g-color-base-info-heavy-hover)' }}
-          />
-        </Tooltip>
+      return wrapWithStagePopover(
+        stage,
+        <Icon
+          data={Clock}
+          size={21}
+          style={{ color: 'var(--g-color-base-info-heavy-hover)' }}
+        />,
       );
     case 'waiting':
     case 'queued':
-      return (
-        <Tooltip
-          content={content}
-          placement="top"
-          openDelay={200}
-          key={stage.step_id}
-        >
-          <Icon
-            data={CircleExclamation}
-            size={21}
-            style={{ color: 'var(--g-color-base-info-heavy-hover)' }}
-          />
-        </Tooltip>
+      return wrapWithStagePopover(
+        stage,
+        <Icon
+          data={CircleExclamation}
+          size={21}
+          style={{ color: 'var(--g-color-base-info-heavy-hover)' }}
+        />,
       );
     case 'failed':
     case 'cancelled':
-      return (
-        <Tooltip
-          content={content}
-          placement="top"
-          openDelay={200}
-          key={stage.step_id}
-        >
-          <Icon
-            data={CircleXmark}
-            size={21}
-            style={{ color: 'var(--g-color-base-danger-heavy)' }}
-          />
-        </Tooltip>
+    case 'canceled':
+      return wrapWithStagePopover(
+        stage,
+        <Icon
+          data={CircleXmark}
+          size={21}
+          style={{ color: 'var(--g-color-base-danger-heavy)' }}
+        />,
       );
     case 'pending':
-      return (
-        <Tooltip
-          content={content}
-          placement="top"
-          openDelay={200}
-          key={stage.step_id}
-        >
-          <Icon
-            data={CircleExclamation}
-            size={21}
-            style={{ color: 'var(--g-color-base-misc-heavy)' }}
-          />
-        </Tooltip>
+      return wrapWithStagePopover(
+        stage,
+        <Icon
+          data={CircleExclamation}
+          size={21}
+          style={{ color: 'var(--g-color-base-misc-heavy)' }}
+        />,
       );
     default:
-      return (
-        <Tooltip
-          content={content}
-          placement="top"
-          openDelay={200}
-          key={stage.step_id}
-        >
-          <Icon
-            data={CircleQuestion}
-            size={21}
-            style={{ color: 'var(--g-color-base-misc-heavy)' }}
-          />
-        </Tooltip>
+      return wrapWithStagePopover(
+        stage,
+        <Icon
+          data={CircleQuestion}
+          size={21}
+          style={{ color: 'var(--g-color-base-misc-heavy)' }}
+        />,
       );
   }
 };

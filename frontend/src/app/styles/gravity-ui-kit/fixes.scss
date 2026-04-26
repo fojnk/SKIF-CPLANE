@@ -105,6 +105,10 @@
     }
   }
 
+  .sf-table--row-clickable tbody tr {
+    cursor: pointer;
+  }
+
   .table--fixed {
     table {
       table-layout: fixed;

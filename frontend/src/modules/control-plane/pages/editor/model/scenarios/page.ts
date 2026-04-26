@@ -3,7 +3,6 @@ import { sample } from 'effector';
 import { ControlPlaneModule } from '@/modules/control-plane/config';
 import { experimentFormModel } from '@/modules/control-plane/entities/forms/experiment';
 import { projectFormModel } from '@/modules/control-plane/entities/forms/project';
-import { ExperimentDebugModel } from '@/modules/control-plane/features/experiment/debug';
 
 import * as state from '../state';
 
@@ -73,6 +72,5 @@ sample({
     state.breadcrumbs.reset,
     state.cubes.reset,
     state.variables.reset,
-    ExperimentDebugModel.reset,
   ],
 });
