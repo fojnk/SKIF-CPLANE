@@ -12,6 +12,8 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/logger"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/acl"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/orch"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/supervisor"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/supervisorenrich"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service"
 )
 
@@ -46,17 +48,36 @@ func saveAppliedVersionForExperiments(ctx context.Context, svc *service.Service,
 			continue
 		}
 
-		cfg, err := orch.ExperimentInfoToOrchestratorConfig(l, &experimentData)
-		if err != nil {
-			l.Error("failed to convert experiment info to orchestrator config", err)
-			continue
-		}
-		l.Info(fmt.Sprintf("check orch conf, %v", cfg))
+		var cfgJSON []byte
+		if experimentData.ExperimentConfig.Valid &&
+			supervisor.IsSupervisorExperimentLayout([]byte(experimentData.ExperimentConfig.String)) {
+			req, err := supervisor.RequestFromCompleteInfo(l, &experimentData)
+			if err != nil {
+				l.Error("failed to build skif supervisor experiment request", err)
+				continue
+			}
+			if err := supervisorenrich.ApplyExperimentVariables(req, experimentData.Variables); err != nil {
+				l.Error("failed to enrich supervisor request", err)
+				continue
+			}
+			cfgJSON, err = json.Marshal(req)
+			if err != nil {
+				l.Error("failed to marshal supervisor experiment request", err)
+				continue
+			}
+		} else {
+			cfg, err := orch.ExperimentInfoToSupervisorPipelineConfig(l, &experimentData)
+			if err != nil {
+				l.Error("failed to convert experiment info to orchestrator config", err)
+				continue
+			}
+			l.Info(fmt.Sprintf("check orch conf, %v", cfg))
 
-		cfgJSON, err := json.Marshal(cfg)
-		if err != nil {
-			l.Error("failed to marshal orchestrator config to JSON", err)
-			continue
+			cfgJSON, err = json.Marshal(cfg)
+			if err != nil {
+				l.Error("failed to marshal orchestrator config to JSON", err)
+				continue
+			}
 		}
 
 		templateID, err := svc.Repo.DB.BaseTemplateIDByExperimentID(ctx, experimentID)

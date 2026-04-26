@@ -27,7 +27,7 @@ import {
 } from '@/modules/control-plane/shared/types';
 
 import { ExperimentEditTabs, TabId } from './experiment-edit-tabs';
-import { ExperimentFormValues } from './utils';
+import { ExperimentFormValues, hasWorkerParam } from './utils';
 import { WorkerEditGraph } from './worker-edit-graph';
 
 interface Props {
@@ -59,6 +59,8 @@ export const ExperimentEditForm = ({
   const [centerOnCubeHash, setCenterOnCubeHash] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabId>('experiment');
   const [focusedParam, setFocusedParam] = useState<string | null>(null);
+
+  const isStreamflowPipeline = hasWorkerParam(formData);
 
   // Создаём Set с именами переменных для валидации ${variableName}
   const variableNames = useMemo(() => {
@@ -130,6 +132,9 @@ export const ExperimentEditForm = ({
 
   // Подписываемся на подтверждение удаления куба (для горячих клавиш с графа)
   useEffect(() => {
+    if (!isStreamflowPipeline) {
+      return undefined;
+    }
     const unsubscribe = ActionConfirmModel.confirmed.watch((payload) => {
       if (payload.mode === 'delete' && payload.meta?.cubeHash) {
         const cubeHash = payload.meta.cubeHash as string;
@@ -137,7 +142,7 @@ export const ExperimentEditForm = ({
       }
     });
     return () => unsubscribe();
-  }, [removeCubeFromForm]);
+  }, [isStreamflowPipeline, removeCubeFromForm]);
 
   // Получаем текущие порты Resharder
   // Важно: порт остается в списке, даже если имя пустое (пока есть portHash)
@@ -169,6 +174,9 @@ export const ExperimentEditForm = ({
   // Отслеживаем удаление портов Resharder и очищаем связанные маппинги
   const prevResharderPortHashes = useRef<Set<string>>(new Set());
   useEffect(() => {
+    if (!isStreamflowPipeline) {
+      return;
+    }
     const currentHashes = new Set(resharderInputSources.map((p) => p.hash));
     const prevHashes = prevResharderPortHashes.current;
 
@@ -213,7 +221,12 @@ export const ExperimentEditForm = ({
 
     // Обновляем ref
     prevResharderPortHashes.current = currentHashes;
-  }, [resharderInputSources, values?.Worker?.GraphConfig?.Cubes, form]);
+  }, [
+    isStreamflowPipeline,
+    resharderInputSources,
+    values?.Worker?.GraphConfig?.Cubes,
+    form,
+  ]);
 
   // Обработчик клика по Resharder — открываем модалку редактирования
   const handleResharderClick = useCallback(() => {
@@ -236,18 +249,16 @@ export const ExperimentEditForm = ({
   const handleCubeClick = useCallback(
     (cubeHash: string | null) => {
       setSelectedCubeHash(cubeHash);
-      // Не вызываем setCenterOnCubeHash — центрирование не нужно
-
-      // Получаем имя куба и передаем в debug model для обработки
-      if (cubeHash) {
-        const cubes = values?.Worker?.GraphConfig?.Cubes;
-        const cubeName = cubes?.[cubeHash]?.Name;
-        if (cubeName) {
-          ExperimentDebugModel.handleCubeClick(cubeName);
-        }
+      if (!isStreamflowPipeline || !cubeHash) {
+        return;
+      }
+      const cubes = values?.Worker?.GraphConfig?.Cubes;
+      const cubeName = cubes?.[cubeHash]?.Name;
+      if (cubeName) {
+        ExperimentDebugModel.handleCubeClick(cubeName);
       }
     },
-    [values?.Worker?.GraphConfig?.Cubes],
+    [isStreamflowPipeline, values?.Worker?.GraphConfig?.Cubes],
   );
 
   // Обработчик удаления куба по горячей клавише — показываем диалог подтверждения
@@ -296,6 +307,7 @@ export const ExperimentEditForm = ({
             experiment_name={experiment_name}
             variables={variables}
             cubesList={cubesList ?? []}
+            supervisorGraphMode={!isStreamflowPipeline}
           />
           {debugMode && (
             <ExperimentDebug

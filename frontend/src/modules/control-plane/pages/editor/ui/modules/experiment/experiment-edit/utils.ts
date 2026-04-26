@@ -108,9 +108,12 @@ export interface FormResharder {
 /**
  * Интерфейс для GraphConfig в форме
  * Cubes хранятся как Record по hash для стабильной работы с формой
+ * OutputNames/StateNames — поля уровня GraphConfig (см. Worker.json / Cplane GraphConfig)
  */
 export interface FormGraphConfig {
   Name?: string;
+  OutputNames?: string[];
+  StateNames?: string[];
   Cubes?: Record<string, EditExperimentCube>;
   /** Кубы, которые не удалось распознать (без CubeID или не найдены в списке) */
   DroppedCubes?: DroppedCube[];
@@ -131,14 +134,23 @@ export interface FormWorker {
 
 /**
  * Интерфейс для значений формы experiment
+ * Схема API: только Meta, experimentName, models[]. Worker/Resharder — для старых streamflow-конфигов.
  */
 export interface ExperimentFormValues {
-  Resharder?: FormResharder;
-  Worker?: FormWorker;
+  Meta?: Record<string, unknown>;
+  experimentName?: string;
+  models?: unknown[];
+  Placement?: Record<string, unknown>;
   Resources?: {
     Resharder?: Record<string, unknown>;
     Worker?: Record<string, unknown>;
   };
+  PublicSources?: Record<string, unknown>;
+  Resharder?: FormResharder;
+  Worker?: FormWorker;
+  States?: unknown[];
+  InternalSources?: Record<string, unknown>;
+  FileStorages?: unknown;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
@@ -161,6 +173,22 @@ export const initExperimentEditorValues = (
 ): ExperimentFormValues => {
   if (!formData) {
     return {};
+  }
+
+  if (!hasWorkerParam(formData)) {
+    try {
+      const initialValues = getFormInitialValues(
+        config || '',
+        formData,
+      ) as ExperimentFormValues;
+      if (!Array.isArray(initialValues.models)) {
+        initialValues.models = [];
+      }
+      return initialValues;
+    } catch (error) {
+      console.error('Failed to init experiment editor values:', error);
+      return {};
+    }
   }
 
   try {

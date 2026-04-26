@@ -9,14 +9,9 @@
  * ---------------------------------------------------------------
  */
 
-import { RequestParams } from '@/shared/api/common/http-client';
-import { apiUrl, http } from '@/shared/api/http';
-import {
-  V1PingListDataDC,
-  V1PingListErrorDC,
-  V1VersionListDataDC,
-  V1VersionListErrorDC,
-} from './data-contracts';
+import { RequestParams } from "@/shared/api/common/http-client";
+import { apiUrl, http } from "@/shared/api/http";
+import { V1PingListDataDC, V1PingListErrorDC, V1VersionListDataDC, V1VersionListErrorDC } from "./data-contracts";
 export const metaApi = new (class MetaApi {
   /**
    * @description As if to say even louder to the world: here is the best ping handler in the world
@@ -33,8 +28,8 @@ export const metaApi = new (class MetaApi {
    */
   v1PingList = (params: RequestParams = {}) =>
     http.request<V1PingListDataDC, V1PingListErrorDC>({
-      path: `${buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl}/api/v1/ping`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/ping`,
+      method: "GET",
       ...params,
     });
   /**
@@ -53,10 +48,8 @@ export const metaApi = new (class MetaApi {
    */
   v1VersionList = (params: RequestParams = {}) =>
     http.request<V1VersionListDataDC, V1VersionListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/version`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/version`,
+      method: "GET",
       ...params,
     });
 })();

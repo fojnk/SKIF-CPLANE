@@ -1,8 +1,18 @@
 import { TriangleExclamation } from '@gravity-ui/icons';
-import { Flex, Icon, Tab, TabList, TabProvider, Text } from '@gravity-ui/uikit';
+import {
+  Button,
+  Flex,
+  Icon,
+  Tab,
+  TabList,
+  TabProvider,
+  Text,
+} from '@gravity-ui/uikit';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useFormState } from 'react-final-form';
+import { useForm, useFormState } from 'react-final-form';
 
+import { supervisorModelFromBaseCube } from '@/modules/control-plane/entities/cubes';
+import { ShowCubesMarketModel } from '@/modules/control-plane/features/cubes/market';
 import { FormParamEdit } from '@/modules/control-plane/shared/components/forms';
 import { ParamsDC } from '@/modules/control-plane/shared/types';
 import { ResizablePanel } from '@/modules/control-plane/shared/ui/resizer';
@@ -11,6 +21,7 @@ import {
   getExperimentParams,
   getWorkerParam,
   getWorkerStructParams,
+  hasWorkerParam,
   ExperimentFormValues,
 } from './utils';
 import { WorkerEditConfigCubes } from './worker-edit-cubes';
@@ -47,6 +58,43 @@ export const ExperimentEditTabs = ({
 
   const togglePanel = () => setShowPanel((prev) => !prev);
 
+  const hasWorker = hasWorkerParam(formData);
+
+  const form = useForm();
+
+  const { values } = useFormState({
+    subscription: { values: true },
+  }) as { values: ExperimentFormValues };
+
+  useEffect(() => {
+    if (hasWorker) {
+      return undefined;
+    }
+    const unsubscribe = ShowCubesMarketModel.checkout.watch((cube) => {
+      const state = form.getState();
+      const current = state.values as ExperimentFormValues;
+      const models = Array.isArray(current.models) ? [...current.models] : [];
+      const nextOrder =
+        models.length > 0
+          ? Math.max(
+              ...models.map((m) => {
+                if (!m || typeof m !== 'object' || !('order' in m)) {
+                  return 0;
+                }
+                const raw = (m as { order?: unknown }).order;
+                const n = typeof raw === 'number' ? raw : Number(raw);
+                return Number.isFinite(n) ? n : 0;
+              }),
+            ) + 1
+          : 1;
+      const row = supervisorModelFromBaseCube(cube, nextOrder);
+      if (row) {
+        form.change('models', [...models, row]);
+      }
+    });
+    return () => unsubscribe();
+  }, [form, hasWorker]);
+
   // Синхронизация с внешним activeTab
   useEffect(() => {
     if (externalActiveTab && externalActiveTab !== internalActiveTab) {
@@ -68,6 +116,9 @@ export const ExperimentEditTabs = ({
 
   // При изменении selectedCubeHash переключаемся на таб cubes и открываем панель
   useEffect(() => {
+    if (!hasWorker) {
+      return;
+    }
     if (selectedCubeHash) {
       setInternalActiveTab('cubes');
       setShowPanel(true);
@@ -75,7 +126,18 @@ export const ExperimentEditTabs = ({
         onTabChange('cubes');
       }
     }
-  }, [selectedCubeHash, onTabChange]);
+  }, [hasWorker, selectedCubeHash, onTabChange]);
+
+  // Режим только Meta/models: не оставляем открытыми табы Worker/Cubes
+  useEffect(() => {
+    if (
+      !hasWorker &&
+      (internalActiveTab === 'worker' || internalActiveTab === 'cubes')
+    ) {
+      setInternalActiveTab('experiment');
+      onTabChange?.('experiment');
+    }
+  }, [hasWorker, internalActiveTab, onTabChange]);
 
   // При изменении focusedParam — открываем панель
   useEffect(() => {
@@ -83,10 +145,6 @@ export const ExperimentEditTabs = ({
       setShowPanel(true);
     }
   }, [focusedParam]);
-
-  const { values } = useFormState({
-    subscription: { values: true },
-  }) as { values: ExperimentFormValues };
 
   const experimentParams = getExperimentParams(formData);
   const workerParam = getWorkerParam(formData);
@@ -131,15 +189,27 @@ export const ExperimentEditTabs = ({
     <Icon data={TriangleExclamation} size={14} />
   ) : undefined;
 
-  const tabs = [
-    { id: 'experiment' as TabId, title: 'Experiment Config', icon: undefined },
-    { id: 'worker' as TabId, title: 'Worker', icon: undefined },
-    {
-      id: 'cubes' as TabId,
-      title: `Models (${cubesCount})`,
-      icon: cubesTabIcon,
-    },
-  ];
+  const tabs = hasWorker
+    ? [
+        {
+          id: 'experiment' as TabId,
+          title: 'Experiment Config',
+          icon: undefined,
+        },
+        { id: 'worker' as TabId, title: 'Worker', icon: undefined },
+        {
+          id: 'cubes' as TabId,
+          title: `Models (${cubesCount})`,
+          icon: cubesTabIcon,
+        },
+      ]
+    : [
+        {
+          id: 'experiment' as TabId,
+          title: 'Experiment Config',
+          icon: undefined,
+        },
+      ];
 
   return (
     <TabProvider
@@ -168,6 +238,21 @@ export const ExperimentEditTabs = ({
             display: internalActiveTab === 'experiment' ? 'flex' : 'none',
           }}
         >
+          {!hasWorker ? (
+            <Flex direction="row" style={{ padding: '0 0 12px' }}>
+              <Button
+                view="outlined"
+                size="m"
+                onClick={() =>
+                  ShowCubesMarketModel.start({
+                    canAdd: true,
+                  })
+                }
+              >
+                Добавить модель из маркетплейса
+              </Button>
+            </Flex>
+          ) : null}
           {isExperimentEmpty ? (
             <Text variant="subheader-1" color="secondary">
               Empty config
@@ -184,38 +269,46 @@ export const ExperimentEditTabs = ({
           )}
         </Flex>
 
-        <Flex
-          direction="column"
-          style={{ display: internalActiveTab === 'worker' ? 'flex' : 'none' }}
-        >
-          {isWorkerEmpty ? (
-            <Text variant="subheader-1" color="secondary">
-              Empty config
-            </Text>
-          ) : (
-            <FormParamEdit
-              params={sortedWorkerParams}
-              fieldNamePrefix="Worker"
-              size="m"
-              disclosure
-              defaultOpen
-              defaultExpanded
-              addButtonVariant="normal"
-              variableNames={variableNames}
-            />
-          )}
-        </Flex>
+        {hasWorker ? (
+          <>
+            <Flex
+              direction="column"
+              style={{
+                display: internalActiveTab === 'worker' ? 'flex' : 'none',
+              }}
+            >
+              {isWorkerEmpty ? (
+                <Text variant="subheader-1" color="secondary">
+                  Empty config
+                </Text>
+              ) : (
+                <FormParamEdit
+                  params={sortedWorkerParams}
+                  fieldNamePrefix="Worker"
+                  size="m"
+                  disclosure
+                  defaultOpen
+                  defaultExpanded
+                  addButtonVariant="normal"
+                  variableNames={variableNames}
+                />
+              )}
+            </Flex>
 
-        <Flex
-          direction="column"
-          style={{ display: internalActiveTab === 'cubes' ? 'flex' : 'none' }}
-        >
-          <WorkerEditConfigCubes
-            selectedCubeHash={selectedCubeHash}
-            onCubeSelect={onCubeSelect}
-            variableNames={variableNames}
-          />
-        </Flex>
+            <Flex
+              direction="column"
+              style={{
+                display: internalActiveTab === 'cubes' ? 'flex' : 'none',
+              }}
+            >
+              <WorkerEditConfigCubes
+                selectedCubeHash={selectedCubeHash}
+                onCubeSelect={onCubeSelect}
+                variableNames={variableNames}
+              />
+            </Flex>
+          </>
+        ) : null}
       </ResizablePanel>
     </TabProvider>
   );

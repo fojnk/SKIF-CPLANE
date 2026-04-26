@@ -9,13 +9,13 @@
  * ---------------------------------------------------------------
  */
 
-import { RequestParams } from '@/shared/api/common/http-client';
-import { apiUrl, http } from '@/shared/api/http';
+import { RequestParams } from "@/shared/api/common/http-client";
+import { apiUrl, http } from "@/shared/api/http";
 import {
   V1UserGroupMatchesListDataDC,
   V1UserGroupMatchesListErrorDC,
   V1UserGroupMatchesListParamsDC,
-} from './data-contracts';
+} from "./data-contracts";
 export const userGroupMatchApi = new (class UserGroupMatchApi {
   /**
    * No description
@@ -31,15 +31,10 @@ export const userGroupMatchApi = new (class UserGroupMatchApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1UserGroupMatchesList = (
-    query: V1UserGroupMatchesListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1UserGroupMatchesList = (query: V1UserGroupMatchesListParamsDC, params: RequestParams = {}) =>
     http.request<V1UserGroupMatchesListDataDC, V1UserGroupMatchesListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/user_group_matches`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/user_group_matches`,
+      method: "GET",
       query: query,
       ...params,
     });

@@ -10,57 +10,23 @@
  */
 
 export enum AclRightDC {
-  RightEditConfig = 'edit_config',
-  RightEditName = 'edit_name',
-  RightEditSchema = 'edit_schema',
-  RightCreateProject = 'create_project',
-  RightCreateDataset = 'create_dataset',
-  RightCreateExperiment = 'create_experiment',
-  RightCreateNamespace = 'create_namespace',
-  RightDeleteExperiment = 'delete_experiment',
-  RightDeleteDataset = 'delete_dataset',
-  RightDeleteProject = 'delete_project',
-  RightDeleteNamespace = 'delete_namespace',
-  RightStartExperiment = 'start_experiment',
-  RightStopExperiment = 'stop_experiment',
-  RightApplyExperiment = 'apply_experiment',
-  RightCreateVariable = 'create_variable',
-  RightEditVariable = 'edit_variable',
-  RightDeleteVariable = 'delete_variable',
-}
-
-export interface AlertsAlertDC {
-  alert_description: string;
-  alert_template_id: number;
-  delay_firing?: string;
-  delay_resolving?: string;
-  graphic_name: string;
-  has_limit: boolean;
-  limit: string;
-  rule_id: number;
-  severity: string;
-  severity_is_active: boolean;
-  type_limit: string;
-}
-
-export interface AlertsAlertRuleInputDC {
-  alert_template_id: number;
-  delay_firing?: string;
-  delay_resolving?: string;
-  limit: string;
-  severity: string;
-  severity_is_active: boolean;
-}
-
-export interface AlertsAlertsDC {
-  alert_description: string;
-  alert_name: string;
-  alerts: AlertsAlertDC[];
-}
-
-export interface AlertsTypeLimitsDC {
-  description: string;
-  types: string[];
+  RightEditConfig = "edit_config",
+  RightEditName = "edit_name",
+  RightEditSchema = "edit_schema",
+  RightCreateProject = "create_project",
+  RightCreateDataset = "create_dataset",
+  RightCreateExperiment = "create_experiment",
+  RightCreateNamespace = "create_namespace",
+  RightDeleteExperiment = "delete_experiment",
+  RightDeleteDataset = "delete_dataset",
+  RightDeleteProject = "delete_project",
+  RightDeleteNamespace = "delete_namespace",
+  RightStartExperiment = "start_experiment",
+  RightStopExperiment = "stop_experiment",
+  RightApplyExperiment = "apply_experiment",
+  RightCreateVariable = "create_variable",
+  RightEditVariable = "edit_variable",
+  RightDeleteVariable = "delete_variable",
 }
 
 export interface AuthorizeListParamsDC {
@@ -68,81 +34,39 @@ export interface AuthorizeListParamsDC {
   redirect_url?: string;
 }
 
+export type ClientsEventDC = {};
+
+export type ClientsEventWithJobDC = {};
+
 export interface ClientsGetJobResponseDC {
-  job?: JobdJobDC;
+  job?: ClientsJobDC;
 }
 
 export interface ClientsJobDC {
-  /** Config Конфигурация джобы */
-  config?: Record<string, any>;
-  /** CreatedAt Время создания */
-  created_at?: string;
-  /** CreatedBy Кто создал джобу */
-  created_by?: string;
-  /** Description Описание джобы */
-  description?: string;
-  /** EntityId ID связанной сущности */
-  entity_id?: number;
-  /** EntityType Тип связанной сущности */
-  entity_type?: JobdJobEntityTypeDC;
-  /** ErrorMessage Сообщение об ошибке */
-  error_message?: string;
-  /** FinishedAt Время завершения */
-  finished_at?: string;
-  /** Id ID джобы */
   id?: number;
-  /** MaxRetries Максимальное количество повторов */
-  max_retries?: number;
-  /** Name Название джобы */
-  name?: string;
-  /** Parameters Параметры джобы */
-  parameters?: Record<string, any>;
-  /** Priority Приоритет выполнения */
-  priority?: number;
-  /** Progress Прогресс выполнения (0-100) */
-  progress?: number;
-  /** Result Результат выполнения */
-  result?: Record<string, any>;
-  /** RetryCount Текущее количество повторов */
-  retry_count?: number;
-  /** Stages Стейджи джобы */
-  stages?: JobdStageDC[];
-  /** StartedAt Время начала выполнения */
-  started_at?: string;
-  /** Status Текущий статус джобы */
-  status?: JobdJobStatusDC;
-  /** StatusDescription Описание статуса джобы */
-  status_description?: string;
-  /** Tags Теги джобы */
-  tags?: string[];
-  /** Type Тип джобы */
-  type?: string;
-  /** UpdatedAt Время последнего обновления */
-  updated_at?: string;
+  status?: string;
 }
 
 export interface ClientsListAllEventsResponseDC {
-  events?: JobdEventWithJobDC[];
-  /** Limit Лимит записей на странице */
-  limit?: number;
-  /** Offset Смещение */
-  offset?: number;
-  /** Total Общее количество событий */
+  events?: ClientsEventWithJobDC[];
   total?: number;
 }
 
 export interface ClientsListEventsResponseDC {
-  events?: JobdEventDC[];
-  /** Limit Лимит записей на странице */
-  limit?: number;
-  /** Offset Смещение */
-  offset?: number;
-  /** Total Общее количество событий */
+  events?: ClientsEventDC[];
   total?: number;
 }
 
 export interface ClientsListTasksResponseDC {
-  tasks?: JobdTaskDC[];
+  tasks?: ClientsTaskDC[];
+}
+
+export type ClientsTaskDC = {};
+
+export interface DtoAppAboutDC {
+  content?: string;
+  links?: string;
+  updated_at?: string;
 }
 
 export interface DtoAppBannerDC {
@@ -178,9 +102,9 @@ export interface DtoAppUpdateDC {
 }
 
 export enum DtoBannerTypeDC {
-  BannerTypeReleaseBlock = 'release_block',
-  BannerTypeWarning = 'warning',
-  BannerTypeInfo = 'info',
+  BannerTypeReleaseBlock = "release_block",
+  BannerTypeWarning = "warning",
+  BannerTypeInfo = "info",
 }
 
 export interface DtoBatchRunResultDC {
@@ -188,15 +112,15 @@ export interface DtoBatchRunResultDC {
 }
 
 export enum DtoClusterDC {
-  Miranda = 'miranda',
-  MercuryKC = 'mercury-kc',
-  MercuryRC = 'mercury-rc',
-  MercuryPC = 'mercury-pc',
-  MercuryHC = 'mercury-hc',
-  MercuryUC = 'mercury-uc',
-  Jupiter = 'jupiter',
-  Moon = 'moon',
-  Saturn = 'saturn',
+  Miranda = "miranda",
+  MercuryKC = "mercury-kc",
+  MercuryRC = "mercury-rc",
+  MercuryPC = "mercury-pc",
+  MercuryHC = "mercury-hc",
+  MercuryUC = "mercury-uc",
+  Jupiter = "jupiter",
+  Moon = "moon",
+  Saturn = "saturn",
 }
 
 export interface DtoCompleteExperimentListDC {
@@ -225,9 +149,9 @@ export interface DtoCubeRunResultDC {
 }
 
 export enum DtoCubeTypeDC {
-  Resharder = 'CIT_RESHARDER',
-  CubeT = 'CIT_CUBE',
-  Retry = 'CIT_RETRY',
+  Resharder = "CIT_RESHARDER",
+  CubeT = "CIT_CUBE",
+  Retry = "CIT_RETRY",
 }
 
 export interface DtoDatasetDC {
@@ -238,6 +162,15 @@ export interface DtoDatasetDC {
   schema?: string;
   type?: string;
   version_id?: number;
+}
+
+export interface DtoDatasetExperimentLinkDC {
+  alias?: string;
+  alias_id?: number;
+  experiment_id?: number;
+  experiment_name?: string;
+  project_id?: number;
+  project_name?: string;
 }
 
 export interface DtoDatasetFiltersDC {
@@ -260,15 +193,6 @@ export interface DtoDatasetInfoDC {
   rights?: AclRightDC[];
   type?: string;
   updated_at?: string;
-}
-
-export interface DtoDatasetExperimentLinkDC {
-  alias?: string;
-  alias_id?: number;
-  experiment_id?: number;
-  experiment_name?: string;
-  project_id?: number;
-  project_name?: string;
 }
 
 export interface DtoDatasetShortDC {
@@ -307,6 +231,101 @@ export interface DtoDatasetVersionTemplateDC {
   public?: boolean;
   schema?: string;
   type?: string;
+  version_id?: number;
+}
+
+export interface DtoExperimentDatasetDC {
+  alias?: string;
+  dataset_id?: number;
+  link_id?: number;
+  name?: string;
+  project_id?: number;
+  project_name?: string;
+}
+
+export interface DtoExperimentTemplateDC {
+  comment?: string;
+  config?: string;
+  created_at?: string;
+  creator?: string;
+  id?: number;
+  parent_version_id?: number;
+  version_id?: number;
+}
+
+export interface DtoExperimentURLDC {
+  name?: string;
+  url?: string;
+}
+
+export interface DtoExperimentUpdateLogDC {
+  act?: string;
+  comment?: string;
+  created_at?: string;
+  id?: number;
+  job_id?: number;
+  name?: string;
+  user?: string;
+}
+
+export interface DtoExperimentVariableDC {
+  id: number;
+  name: string;
+  type: "string" | "int" | "json" | "yql" | "python";
+  value: string;
+  version_id?: number;
+  version_id_name?: number;
+}
+
+export interface DtoExperimentVariableForCreateDC {
+  name: string;
+  type: "string" | "int" | "json" | "yql" | "python";
+  value: string;
+}
+
+export interface DtoExperimentVariableForUpdateDC {
+  id: number;
+  name: string;
+  type: "string" | "int" | "json" | "yql" | "python";
+  value: string;
+}
+
+export interface DtoExperimentVariableShortDC {
+  id: number;
+  name: string;
+  type: "string" | "int" | "json" | "yql" | "python";
+  updated_at?: string;
+  version_id?: number;
+  version_id_name?: number;
+}
+
+export interface DtoExperimentVariableVersionDC {
+  comment?: string;
+  created_at?: string;
+  creator?: string;
+  head?: boolean;
+  id?: number;
+  variable_id?: number;
+  variable_name?: string;
+  variable_type?: string;
+  version_id?: number;
+}
+
+export interface DtoExperimentVariableVersionTemplateDC {
+  comment?: string;
+  created_at?: string;
+  creator?: string;
+  id?: number;
+  type?: string;
+  value?: string;
+  version_id?: number;
+}
+
+export interface DtoExperimentVersionDC {
+  comment?: string;
+  created_at?: string;
+  creator?: string;
+  id?: number;
   version_id?: number;
 }
 
@@ -378,101 +397,6 @@ export interface DtoPinnedProjectDC {
   project_name?: string;
 }
 
-export interface DtoExperimentDatasetDC {
-  alias?: string;
-  dataset_id?: number;
-  link_id?: number;
-  name?: string;
-  project_id?: number;
-  project_name?: string;
-}
-
-export interface DtoExperimentTemplateDC {
-  comment?: string;
-  config?: string;
-  created_at?: string;
-  creator?: string;
-  id?: number;
-  parent_version_id?: number;
-  version_id?: number;
-}
-
-export interface DtoExperimentURLDC {
-  name?: string;
-  url?: string;
-}
-
-export interface DtoExperimentUpdateLogDC {
-  act?: string;
-  comment?: string;
-  created_at?: string;
-  id?: number;
-  job_id?: number;
-  name?: string;
-  user?: string;
-}
-
-export interface DtoExperimentVariableDC {
-  id: number;
-  name: string;
-  type: 'string' | 'int' | 'json' | 'yql' | 'python';
-  value: string;
-  version_id?: number;
-  version_id_name?: number;
-}
-
-export interface DtoExperimentVariableForCreateDC {
-  name: string;
-  type: 'string' | 'int' | 'json' | 'yql' | 'python';
-  value: string;
-}
-
-export interface DtoExperimentVariableForUpdateDC {
-  id: number;
-  name: string;
-  type: 'string' | 'int' | 'json' | 'yql' | 'python';
-  value: string;
-}
-
-export interface DtoExperimentVariableShortDC {
-  id: number;
-  name: string;
-  type: 'string' | 'int' | 'json' | 'yql' | 'python';
-  updated_at?: string;
-  version_id?: number;
-  version_id_name?: number;
-}
-
-export interface DtoExperimentVariableVersionDC {
-  comment?: string;
-  created_at?: string;
-  creator?: string;
-  head?: boolean;
-  id?: number;
-  variable_id?: number;
-  variable_name?: string;
-  variable_type?: string;
-  version_id?: number;
-}
-
-export interface DtoExperimentVariableVersionTemplateDC {
-  comment?: string;
-  created_at?: string;
-  creator?: string;
-  id?: number;
-  type?: string;
-  value?: string;
-  version_id?: number;
-}
-
-export interface DtoExperimentVersionDC {
-  comment?: string;
-  created_at?: string;
-  creator?: string;
-  id?: number;
-  version_id?: number;
-}
-
 export interface DtoProjectCatalogInfoDC {
   description?: string;
   id?: number;
@@ -493,7 +417,6 @@ export interface DtoProjectConfigVersionDC {
 }
 
 export interface DtoProjectDC {
-  abc_product_id?: string;
   config?: string;
   description?: string;
   id?: number;
@@ -504,16 +427,15 @@ export interface DtoProjectDC {
 }
 
 export interface DtoProjectInfoDC {
-  abc_product_id?: string;
   created_at?: string;
   dataset_count?: number;
   description?: string;
+  experiment_count?: number;
   id?: number;
   is_pinned?: boolean;
   name?: string;
   namespace_id?: number;
   namespace_name?: string;
-  experiment_count?: number;
   rights?: AclRightDC[];
   updated_at?: string;
 }
@@ -562,6 +484,7 @@ export interface DtoUserGroupDC {
 
 export interface DtoUserInfoDC {
   avatar?: string;
+  display_name?: string;
   email: string;
   first_name?: string;
   first_name_en?: string;
@@ -580,12 +503,6 @@ export interface DtoUserRightsDC {
   rights?: AclRightDC[];
 }
 
-export interface ResponsesUserCapabilitiesDC {
-  can_create_namespace?: boolean;
-  can_manage_acl?: boolean;
-  is_root?: boolean;
-}
-
 export interface DtoValidationErrorDC {
   config_pos?: number;
   entity_name?: string;
@@ -602,202 +519,20 @@ export interface DtoValidationErrorResponseDC {
 
 export interface DtoValidationResponseDC {
   errors?: DtoValidationErrorDC[];
-  logs?: DtoLogRecordDC[];
   experiment_is_valid?: boolean;
+  logs?: DtoLogRecordDC[];
   summary?: string;
 }
 
 export interface DtoValidationResponseWithRunDC {
+  /** @example ["error1"] */
   errors?: string[];
-  input_data?: {}[];
-  logs?: string[];
-  output_data?: {}[];
   /** @example true */
   experiment_is_valid?: boolean;
+  logs?: string[];
   run_result?: DtoRunResultsDC;
   /** @example "debug-run completed" */
   summary?: string;
-}
-
-export interface JobdEventDC {
-  /** Details Детали события */
-  details?: Record<string, any>;
-  /** EventType Тип события */
-  event_type?: JobdEventEventTypeDC;
-  /** Id ID события */
-  id?: number;
-  /** JobId ID джобы */
-  job_id?: number;
-  /** Timestamp Время события */
-  timestamp?: string;
-  /** UserId ID пользователя, инициировавшего событие */
-  user_id?: string;
-}
-
-export enum JobdEventEventTypeDC {
-  EventEventTypeCancelled = 'cancelled',
-  EventEventTypeCompleted = 'completed',
-  EventEventTypeCreated = 'created',
-  EventEventTypeFailed = 'failed',
-  EventEventTypePaused = 'paused',
-  EventEventTypeResumed = 'resumed',
-  EventEventTypeStarted = 'started',
-  EventEventTypeTimeout = 'timeout',
-}
-
-export interface JobdEventWithJobDC {
-  /** Details Детали события */
-  details?: Record<string, any>;
-  /** EventType Тип события */
-  event_type?: JobdEventWithJobEventTypeDC;
-  /** Id ID события */
-  id?: number;
-  job?: JobdJobDC;
-  /** JobId ID джобы */
-  job_id?: number;
-  /** Timestamp Время события */
-  timestamp?: string;
-  /** UserId ID пользователя, инициировавшего событие */
-  user_id?: string;
-}
-
-export enum JobdEventWithJobEventTypeDC {
-  EventWithJobEventTypeCancelled = 'cancelled',
-  EventWithJobEventTypeCompleted = 'completed',
-  EventWithJobEventTypeCreated = 'created',
-  EventWithJobEventTypeFailed = 'failed',
-  EventWithJobEventTypePaused = 'paused',
-  EventWithJobEventTypeResumed = 'resumed',
-  EventWithJobEventTypeStarted = 'started',
-  EventWithJobEventTypeTimeout = 'timeout',
-}
-
-export interface JobdJobDC {
-  /** Config Конфигурация джобы */
-  config?: Record<string, any>;
-  /** CreatedAt Время создания */
-  created_at?: string;
-  /** CreatedBy Кто создал джобу */
-  created_by?: string;
-  /** Description Описание джобы */
-  description?: string;
-  /** EntityId ID связанной сущности */
-  entity_id?: number;
-  /** EntityType Тип связанной сущности */
-  entity_type?: JobdJobEntityTypeDC;
-  /** ErrorMessage Сообщение об ошибке */
-  error_message?: string;
-  /** FinishedAt Время завершения */
-  finished_at?: string;
-  /** Id ID джобы */
-  id?: number;
-  /** MaxRetries Максимальное количество повторов */
-  max_retries?: number;
-  /** Name Название джобы */
-  name?: string;
-  /** Parameters Параметры джобы */
-  parameters?: Record<string, any>;
-  /** Priority Приоритет выполнения */
-  priority?: number;
-  /** Progress Прогресс выполнения (0-100) */
-  progress?: number;
-  /** Result Результат выполнения */
-  result?: Record<string, any>;
-  /** RetryCount Текущее количество повторов */
-  retry_count?: number;
-  /** Stages Стейджи джобы */
-  stages?: JobdStageDC[];
-  /** StartedAt Время начала выполнения */
-  started_at?: string;
-  /** Status Текущий статус джобы */
-  status?: JobdJobStatusDC;
-  /** StatusDescription Описание статуса джобы */
-  status_description?: string;
-  /** Tags Теги джобы */
-  tags?: string[];
-  /** Type Тип джобы */
-  type?: string;
-  /** UpdatedAt Время последнего обновления */
-  updated_at?: string;
-}
-
-export enum JobdJobEntityTypeDC {
-  JobEntityTypeDataset = 'dataset',
-  JobEntityTypeNamespace = 'namespace',
-  JobEntityTypeExperiment = 'experiment',
-  JobEntityTypeProject = 'project',
-}
-
-export enum JobdJobStatusDC {
-  JobStatusCancelled = 'cancelled',
-  JobStatusCompleted = 'completed',
-  JobStatusFailed = 'failed',
-  JobStatusPaused = 'paused',
-  JobStatusPending = 'pending',
-  JobStatusQueued = 'queued',
-  JobStatusRunning = 'running',
-  JobStatusTimeout = 'timeout',
-}
-
-export interface JobdStageDC {
-  /** Actions Доступные действия для стейджа */
-  actions?: string[];
-  /** Description Описание стейджа */
-  description?: string;
-  /** Logs Логи стейджа в виде текста */
-  logs?: string;
-  /** Name Название стейджа */
-  name?: string;
-  /** Order Порядок выполнения стейджа */
-  order?: number;
-  /** Required Обязательный ли стейдж */
-  required?: boolean;
-  /** StepId ID соответствующего шага (если существует) */
-  step_id?: number;
-  /** StepStatus Статус соответствующего шага (если существует) */
-  step_status?: string;
-}
-
-export interface JobdTaskDC {
-  /** Config Конфигурация таски */
-  config?: Record<string, any>;
-  /** CreatedAt Время создания */
-  created_at?: string;
-  /** Description Описание таски */
-  description?: string;
-  /** ErrorMessage Сообщение об ошибке */
-  error_message?: string;
-  /** FinishedAt Время завершения */
-  finished_at?: string;
-  /** Id ID таски */
-  id?: number;
-  /** JobId ID джобы */
-  job_id?: number;
-  /** Name Название таски */
-  name?: string;
-  /** OrchTaskId ID таски в оркестраторе */
-  orch_task_id?: string;
-  /** Order Порядок выполнения */
-  order?: number;
-  /** Result Результат выполнения */
-  result?: Record<string, any>;
-  /** StartedAt Время начала выполнения */
-  started_at?: string;
-  /** Status Статус таски */
-  status?: JobdTaskStatusDC;
-}
-
-export enum JobdTaskStatusDC {
-  TaskStatusCancelled = 'cancelled',
-  TaskStatusCompleted = 'completed',
-  TaskStatusFailed = 'failed',
-  TaskStatusPending = 'pending',
-  TaskStatusRunning = 'running',
-}
-
-export interface JwtClientTokenInfoDC {
-  expires_in?: string;
-  token?: string;
 }
 
 export type LogoutListDataDC = any;
@@ -805,11 +540,11 @@ export type LogoutListDataDC = any;
 export type LogoutListErrorDC = ResponsesErrorResponseDC;
 
 export enum OrchExperimentVariableTypeDC {
-  ExperimentVariableTypeString = 'string',
-  ExperimentVariableTypeInt = 'int',
-  ExperimentVariableTypeJSON = 'json',
-  ExperimentVariableTypeYQL = 'yql',
-  ExperimentVariableTypePython = 'python',
+  ExperimentVariableTypeString = "string",
+  ExperimentVariableTypeInt = "int",
+  ExperimentVariableTypeJSON = "json",
+  ExperimentVariableTypeYQL = "yql",
+  ExperimentVariableTypePython = "python",
 }
 
 export interface ParamsParamDC {
@@ -829,10 +564,10 @@ export interface ParamsParamTypeDC {
 }
 
 export enum ParamsStringTypeDC {
-  Text = 'text',
-  Json = 'json',
-  Python = 'python',
-  YQL = 'yql',
+  Text = "text",
+  Json = "json",
+  Python = "python",
+  YQL = "yql",
 }
 
 export interface ParamsTypeConstraintDC {
@@ -847,14 +582,14 @@ export interface ParamsTypeConstraintDC {
 }
 
 export enum ParamsTypeDC {
-  String = 'string',
-  Integer = 'integer',
-  Double = 'double',
-  Boolean = 'boolean',
-  Array = 'array',
-  KV = 'kv',
-  Struct = 'struct',
-  Custom = 'custom',
+  String = "string",
+  Integer = "integer",
+  Double = "double",
+  Boolean = "boolean",
+  Array = "array",
+  KV = "kv",
+  Struct = "struct",
+  Custom = "custom",
 }
 
 export interface PrivateGetProjectGraphResponseDC {
@@ -874,8 +609,8 @@ export interface PrivateGraphNodeDC {
 }
 
 export enum PrivateNodeTypeDC {
-  NodeTypeDataset = 'ds',
-  NodeTypeExperiment = 'experiment',
+  NodeTypeDataset = "ds",
+  NodeTypeExperiment = "experiment",
 }
 
 export interface PrivatePingResponseDC {
@@ -914,8 +649,6 @@ export interface RequestsAddUserToGroupRequestDC {
 export interface RequestsApplyDatasetRequestDC {
   comment?: string;
   dataset_id: number;
-  dry_run?: boolean;
-  scenario?: string;
 }
 
 export interface RequestsApplyExperimentConfigRequestDC {
@@ -924,28 +657,8 @@ export interface RequestsApplyExperimentConfigRequestDC {
   single_stage?: boolean;
 }
 
-export interface RequestsApplyProjectConfigRequestDC {
-  comment?: string;
-  project_id: number;
-}
-
-export interface RequestsChangeAlertBodyDC {
-  alert_template_id: number;
-  delay_firing?: string;
-  delay_resolving?: string;
-  limit: string;
-  rule_id: number;
-  severity: string;
-  severity_is_active: boolean;
-}
-
-export interface RequestsChangeAlertSeveritiesBodyDC {
-  alert_rules: AlertsAlertRuleInputDC[];
-}
-
 export interface RequestsCompleteExperimentValidateRequestDC {
   experimentConfig: string;
-  /** @format int32 */
   experimentID?: number;
 }
 
@@ -969,10 +682,6 @@ export interface RequestsCopyDatasetRequestV2DC {
   name: string;
   project_id?: number;
   src_dataset_id: number;
-}
-
-export interface RequestsCreateAlertGroupBodyDC {
-  alert_rules: AlertsAlertRuleInputDC[];
 }
 
 export interface RequestsCreateAppBannerRequestDC {
@@ -1038,7 +747,13 @@ export interface RequestsCreateDatasetRequestV2DC {
   public?: boolean;
   schema?: string;
   /** @maxLength 64 */
-  type: 'json' | 'kafka';
+  type: "json" | "kafka";
+}
+
+export interface RequestsCreateExperimentVariableRequestDC {
+  comment?: string;
+  experiment_id: number;
+  variable: DtoExperimentVariableForCreateDC;
 }
 
 export interface RequestsCreateNamespaceRequestDC {
@@ -1050,16 +765,7 @@ export interface RequestsCreateNamespaceRequestDC {
   name: string;
 }
 
-export type RequestsCreateNamespaceRolesRequestDC = {};
-
-export interface RequestsCreateExperimentVariableRequestDC {
-  comment?: string;
-  experiment_id: number;
-  variable: DtoExperimentVariableForCreateDC;
-}
-
 export interface RequestsCreateProjectRequestDC {
-  abc_product_id?: string;
   comment?: string;
   description?: string;
   /** @maxLength 128 */
@@ -1067,16 +773,10 @@ export interface RequestsCreateProjectRequestDC {
   namespace_id: number;
 }
 
-export type RequestsCreateProjectRolesRequestDC = {};
-
-export interface RequestsCreateRobotRequestDC {
-  /** @maxLength 128 */
-  name: string;
-}
-
 export interface RequestsCreateRoleRequestDC {
   description?: string;
-  idm_id: string;
+  /** IdmID is an optional stable external key stored in t_role.idm_id; when empty, a value is generated. */
+  idm_id?: string;
   /**
    * @minLength 1
    * @maxLength 128
@@ -1085,16 +785,10 @@ export interface RequestsCreateRoleRequestDC {
 }
 
 export interface RequestsCreateRuleRequestDC {
-  action: '00R' | '01E' | '02C' | '03D';
+  action: "00R" | "01E" | "02C" | "03D";
   object_attribute: string;
   object_id: number;
-  object_type:
-    | 'root'
-    | 'namespace'
-    | 'project'
-    | 'experiment'
-    | 'dataset'
-    | 'cube';
+  object_type: "root" | "namespace" | "project" | "experiment" | "dataset" | "cube" | "workspace" | "model";
 }
 
 export interface RequestsCreateUserGroupRequestDC {
@@ -1117,16 +811,6 @@ export interface RequestsDatasetValidateRequestDC {
   datasetConfig: string;
 }
 
-export interface RequestsDeleteAlertsBodyDC {
-  alert_group_id: number;
-  deleting_rules: number[];
-}
-
-export interface RequestsDeleteAllTokenForRobotRequestDC {
-  /** @maxLength 128 */
-  name: string;
-}
-
 export interface RequestsDeleteAppBannerRequestDC {
   id?: number;
 }
@@ -1143,16 +827,16 @@ export interface RequestsDeleteDatasetRequestDC {
   id: number;
 }
 
+export interface RequestsDeleteExperimentVariableRequestDC {
+  variable_id: number;
+}
+
 export interface RequestsDeleteNamespaceRequestDC {
   id: number;
 }
 
 export interface RequestsDeletePinnedProjectRequestDC {
   project_id: number;
-}
-
-export interface RequestsDeleteExperimentVariableRequestDC {
-  variable_id: number;
 }
 
 export interface RequestsDeleteProjectRequestDC {
@@ -1166,12 +850,42 @@ export interface RequestsDisclaimRequestDC {
   user_id?: number;
 }
 
-export interface RequestsGenerateTokenForRobotRequestDC {
-  /** @maxLength 128 */
-  name: string;
+export interface RequestsExperimentStartRequestDC {
+  comment?: string;
+  experiment_id: number;
+}
+
+export interface RequestsExperimentStopRequestDC {
+  comment?: string;
+  experiment_id: number;
+}
+
+export interface RequestsExperimentValidateDataItemDC {
+  /** @example "[{"id"=1};{"id"=2}]" */
+  data?: string;
+  /** @example "output_queue" */
+  output_name?: string;
+  /** @example "input_queue" */
+  source_name?: string;
+}
+
+export interface RequestsExperimentValidateFastRequestDC {
+  config: string;
+  experiment_id?: number;
+}
+
+export interface RequestsExperimentValidateRunRequestDC {
+  /** @example "{"Meta":{"ExperimentId":"1","ProjectId":"1","Namespace":"test","AbcProductId":"1","YT":{"Token":"test","WorkDir":"//test","Cluster":"test","ProxyRole":"test"}},"Placement":{"OnecloudDatacenters":["kc"]},"Resources":{"Worker":{"ReplicasInDc":1,"CpuCores":1,"RamMB":512,"NetworkInMbit":256,"NetworkOutMbit":20},"Resharder":{"ReplicasInDc":1,"CpuCores":1,"RamMB":512,"NetworkInMbit":256,"NetworkOutMbit":20}},"Worker":{"GraphConfig":{"Name":"Test","Cubes":[]}},"Resharder":{"InputSources":[],"IntermediateQueueOptions":{"ShardsCount":1}},"PublicSources":{},"InternalSources":{}}" */
+  config: string;
+  data_sets?: RequestsExperimentValidateDataItemDC[][];
+  /** @example 1 */
+  experiment_id?: number;
+  /** @example false */
+  should_read_yt_sample?: boolean;
 }
 
 export interface RequestsGetExperimentAvailableDatasetsToLinkRequestDC {
+  experiment_id: number;
   filters?: DtoDatasetFiltersDC;
   /**
    * @min 1
@@ -1179,7 +893,6 @@ export interface RequestsGetExperimentAvailableDatasetsToLinkRequestDC {
    */
   limit: number;
   offset: number;
-  experiment_id: number;
 }
 
 export interface RequestsGrantRequestDC {
@@ -1217,47 +930,13 @@ export interface RequestsListProjectsRequestV2DC {
   search?: string;
 }
 
-export interface RequestsExperimentStartRequestDC {
-  comment?: string;
-  experiment_id: number;
-}
-
-export interface RequestsExperimentStopRequestDC {
-  comment?: string;
-  experiment_id: number;
-}
-
-export interface RequestsExperimentValidateDataItemDC {
-  /** @example "[{"id"=1};{"id"=2}]" */
-  data?: string;
-  /** @example "output_queue" */
-  output_name?: string;
-  /** @example "input_queue" */
-  source_name?: string;
-}
-
-export interface RequestsExperimentValidateFastRequestDC {
-  config: string;
-  experiment_id?: number;
-}
-
-export interface RequestsExperimentValidateRunRequestDC {
-  /** @example "{"Meta":{"ExperimentId":"1","ProjectId":"1","Namespace":"test","AbcProductId":"1","YT":{"Token":"test","WorkDir":"//test","Cluster":"test","ProxyRole":"test"}},"Placement":{"OnecloudDatacenters":["kc"]},"Resources":{"Worker":{"ReplicasInDc":1,"CpuCores":1,"RamMB":512,"NetworkInMbit":256,"NetworkOutMbit":20},"Resharder":{"ReplicasInDc":1,"CpuCores":1,"RamMB":512,"NetworkInMbit":256,"NetworkOutMbit":20}},"Worker":{"GraphConfig":{"Name":"Test","Cubes":[]}},"Resharder":{"InputSources":[],"IntermediateQueueOptions":{"ShardsCount":1}},"PublicSources":{},"InternalSources":{}}" */
-  config: string;
-  data_sets?: RequestsExperimentValidateDataItemDC[][];
-  /** @example 1 */
-  experiment_id?: number;
-  /** @example false */
-  should_read_yt_sample?: boolean;
-}
-
 export interface RequestsProjectValidateRequestDC {
   projectConfig: string;
 }
 
 export interface RequestsRemoveDatasetFromExperimentRequestDC {
-  link_id: number;
   experiment_id: number;
+  link_id: number;
 }
 
 export interface RequestsRemoveRuleFromRoleRequestDC {
@@ -1294,9 +973,10 @@ export interface RequestsSearchDatasetsRequestDC {
   type?: string;
 }
 
-export type RequestsSyncNamespaceRolesRequestDC = {};
-
-export type RequestsSyncProjectRolesRequestDC = {};
+export interface RequestsUpdateAppAboutRequestDC {
+  content?: string;
+  links?: string;
+}
 
 export interface RequestsUpdateAppBannerRequestDC {
   active?: boolean | null;
@@ -1341,9 +1021,9 @@ export interface RequestsUpdateCompleteExperimentRequestDC {
    */
   description?: string;
   disable_validation?: boolean;
+  experiment_id: number;
   /** @maxLength 128 */
   name?: string;
-  experiment_id: number;
 }
 
 export interface RequestsUpdateCubeRequestDC {
@@ -1370,7 +1050,7 @@ export interface RequestsUpdateDatasetRequestV2DC {
   public?: boolean | null;
   schema?: string;
   /** @maxLength 64 */
-  type?: 'json' | 'kafka';
+  type?: "json" | "kafka";
 }
 
 export interface RequestsUpdateDatasetVersionCommentRequestDC {
@@ -1384,19 +1064,6 @@ export interface RequestsUpdateDatasetVersionRequestDC {
   version_id: number;
 }
 
-export interface RequestsUpdateNamespaceLogCommentRequestDC {
-  log_id: number;
-  new_comment: string;
-}
-
-export interface RequestsUpdateNamespaceRequestDC {
-  comment?: string;
-  config?: string;
-  id: number;
-  /** @maxLength 10 */
-  name?: string;
-}
-
 export interface RequestsUpdateExperimentConfigVersionRequestDC {
   comment?: string;
   experiment_id: number;
@@ -1406,8 +1073,8 @@ export interface RequestsUpdateExperimentConfigVersionRequestDC {
 export interface RequestsUpdateExperimentDatasetRequestDC {
   alias: string;
   comment?: string;
-  link_id: number;
   experiment_id: number;
+  link_id: number;
 }
 
 export interface RequestsUpdateExperimentLogCommentRequestDC {
@@ -1436,13 +1103,25 @@ export interface RequestsUpdateExperimentVersionCommentRequestDC {
   id: number;
 }
 
+export interface RequestsUpdateNamespaceLogCommentRequestDC {
+  log_id: number;
+  new_comment: string;
+}
+
+export interface RequestsUpdateNamespaceRequestDC {
+  comment?: string;
+  config?: string;
+  id: number;
+  /** @maxLength 10 */
+  name?: string;
+}
+
 export interface RequestsUpdateProjectLogCommentRequestDC {
   log_id: number;
   new_comment: string;
 }
 
 export interface RequestsUpdateProjectRequestDC {
-  abc_product_id?: string;
   comment?: string;
   config?: string;
   description?: string;
@@ -1455,7 +1134,6 @@ export interface RequestsUpdateProjectRequestDC {
 export interface RequestsUpdateRoleRequestDC {
   description?: string;
   id: number;
-  idm_id: string;
   /**
    * @minLength 1
    * @maxLength 128
@@ -1487,31 +1165,18 @@ export interface ResponsesAddPinnedProjectResponseDC {
   project_name?: string;
 }
 
-export interface ResponsesAlertTemplateResponseDC {
-  alert_description: string;
-  alert_name: string;
-  alert_template_id: number;
-  graphic_name: string;
-  has_limit: boolean;
-  type_limit: string;
-}
-
-export interface ResponsesApplyDatasetResponseDC {
-  job_id?: string;
-}
-
 export interface ResponsesCheckACLResponseDC {
   rights?: AclRightDC[];
-}
-
-export interface ResponsesCheckPermissionsResponseDC {
-  permissions?: DtoPermissionDC[];
 }
 
 export interface ResponsesCheckExperimentUpdateResponseDC {
   applied_config?: string;
   has_not_applied_changes?: boolean;
   saved_config?: string;
+}
+
+export interface ResponsesCheckPermissionsResponseDC {
+  permissions?: DtoPermissionDC[];
 }
 
 export interface ResponsesCopyCompleteExperimentResponseDC {
@@ -1564,31 +1229,16 @@ export interface ResponsesCreateDatasetResponseDC {
   type?: string;
 }
 
-export interface ResponsesCreateNamespaceResponseDC {
-  id?: number;
-}
-
-export interface ResponsesCreateNamespaceRolesResponseDC {
-  roles_created?: number;
-}
-
 export interface ResponsesCreateExperimentVariableResponseDC {
   variable?: DtoExperimentVariableDC;
 }
 
-export interface ResponsesCreateProjectResponseDC {
-  abc_product_id?: string;
-  description?: string;
+export interface ResponsesCreateNamespaceResponseDC {
   id?: number;
-  name?: string;
 }
 
-export interface ResponsesCreateProjectRolesResponseDC {
-  roles_created?: number;
-}
-
-export interface ResponsesCreateRobotResponseDC {
-  access_token?: JwtClientTokenInfoDC;
+export interface ResponsesCreateProjectResponseDC {
+  description?: string;
   id?: number;
   name?: string;
 }
@@ -1631,18 +1281,35 @@ export interface ResponsesErrorResponseDC {
   internal_error?: any;
 }
 
-export interface ResponsesGetAlertGroupResponseDC {
-  alert_group_id: number;
-  alerts: AlertsAlertsDC[];
-  notification_product_id: number;
-  experiment_id: number;
+export interface ResponsesSupervisorModelJobDC {
+  error_message?: string;
+  index?: number;
+  model_name?: string;
+  status?: string;
 }
 
-export interface ResponsesGetAlertOptionsResponseDC {
-  alert_templates: ResponsesAlertTemplateResponseDC[];
-  delay_firing: AlertsTypeLimitsDC;
-  delay_resolving: AlertsTypeLimitsDC;
-  type_limits: Record<string, AlertsTypeLimitsDC>;
+export interface ResponsesSupervisorExperimentRunDC {
+  cancellation_requested?: boolean;
+  current_model?: string;
+  current_order?: number;
+  detail?: string;
+  experiment_id?: number;
+  jobs?: ResponsesSupervisorModelJobDC[];
+  progress?: string;
+  status?: string;
+  total_models?: number;
+}
+
+export interface ResponsesExperimentStatusResponseDC {
+  debug?: string;
+  message?: string;
+  status?: string;
+  summary?: string;
+  supervisor?: ResponsesSupervisorExperimentRunDC;
+}
+
+export interface ResponsesGetAppAboutResponseDC {
+  app_about?: DtoAppAboutDC;
 }
 
 export interface ResponsesGetAppBannerResponseDC {
@@ -1663,10 +1330,6 @@ export interface ResponsesGetAppUpdateResponseDC {
 
 export interface ResponsesGetAvailableBannerTypesResponseDC {
   types?: DtoBannerTypeDC[];
-}
-
-export interface ResponsesGetAvailableDatasetApplyScenariosResponseDC {
-  scenarios?: ResponsesScenarioInfoDC[];
 }
 
 export interface ResponsesGetAvailableDatasetClustersResponseDC {
@@ -1727,35 +1390,6 @@ export interface ResponsesGetDatasetV2ResponseDC {
   type?: string;
 }
 
-export interface ResponsesGetFormResponseDC {
-  params?: ParamsParamDC[];
-}
-
-export interface ResponsesGetNamespaceConfigResponseDC {
-  config?: DtoNamespaceConfigDC;
-}
-
-export interface ResponsesGetNamespaceLogResponseDC {
-  act?: string;
-  comment?: string;
-  created_at?: string;
-  details?: UpdateLogNamespaceUpdateLogDC;
-  id?: number;
-  name?: string;
-  user?: string;
-}
-
-export interface ResponsesGetNamespaceResponseDC {
-  config?: string;
-  id?: number;
-  name?: string;
-  rights?: AclRightDC[];
-}
-
-export interface ResponsesGetOrchestratorConfigResponseDC {
-  config?: string;
-}
-
 export interface ResponsesGetExperimentAvailableDatasetsToLinkResponseDC {
   datasets?: DtoDatasetShortDC[];
   pages?: number;
@@ -1789,6 +1423,31 @@ export interface ResponsesGetExperimentVariablesResponseDC {
   variables?: DtoExperimentVariableShortDC[];
 }
 
+export interface ResponsesGetFormResponseDC {
+  params?: ParamsParamDC[];
+}
+
+export interface ResponsesGetNamespaceConfigResponseDC {
+  config?: DtoNamespaceConfigDC;
+}
+
+export interface ResponsesGetNamespaceLogResponseDC {
+  act?: string;
+  comment?: string;
+  created_at?: string;
+  details?: UpdateLogNamespaceUpdateLogDC;
+  id?: number;
+  name?: string;
+  user?: string;
+}
+
+export interface ResponsesGetNamespaceResponseDC {
+  config?: string;
+  id?: number;
+  name?: string;
+  rights?: AclRightDC[];
+}
+
 export interface ResponsesGetProjectConfigResponseDC {
   config?: DtoProjectConfigDC;
 }
@@ -1804,7 +1463,6 @@ export interface ResponsesGetProjectLogResponseDC {
 }
 
 export interface ResponsesGetProjectV2ResponseDC {
-  abc_product_id?: string;
   config?: string;
   description?: string;
   id?: number;
@@ -1821,6 +1479,10 @@ export interface ResponsesGetProjectsURLSResponseDC {
 
 export interface ResponsesGetSchemaResponseDC {
   config_schema?: string;
+}
+
+export interface ResponsesGetSupervisorConfigResponseDC {
+  config?: string;
 }
 
 export interface ResponsesListAppBannersResponseDC {
@@ -1857,6 +1519,24 @@ export interface ResponsesListDatasetsResponseDC {
   datasets?: DtoDatasetDC[];
 }
 
+export interface ResponsesListExperimentUpdateLogsResponseDC {
+  logs?: DtoExperimentUpdateLogDC[];
+  pages?: number;
+  total?: number;
+}
+
+export interface ResponsesListExperimentVariableVersionsResponseDC {
+  pages?: number;
+  total?: number;
+  versions?: DtoExperimentVariableVersionDC[];
+}
+
+export interface ResponsesListExperimentVersionsResponseDC {
+  pages?: number;
+  total?: number;
+  versions?: DtoExperimentVersionDC[];
+}
+
 export interface ResponsesListJobsResponseDC {
   jobs?: ClientsJobDC[];
   pages?: number;
@@ -1884,24 +1564,6 @@ export interface ResponsesListNamespacesV2ResponseDC {
 
 export interface ResponsesListPinnedProjectsResponseDC {
   pinned_projects?: DtoPinnedProjectDC[];
-}
-
-export interface ResponsesListExperimentUpdateLogsResponseDC {
-  logs?: DtoExperimentUpdateLogDC[];
-  pages?: number;
-  total?: number;
-}
-
-export interface ResponsesListExperimentVariableVersionsResponseDC {
-  pages?: number;
-  total?: number;
-  versions?: DtoExperimentVariableVersionDC[];
-}
-
-export interface ResponsesListExperimentVersionsResponseDC {
-  pages?: number;
-  total?: number;
-  versions?: DtoExperimentVersionDC[];
 }
 
 export interface ResponsesListProjectConfigsResponseDC {
@@ -1948,24 +1610,8 @@ export interface ResponsesListUsersResponseDC {
   users?: DtoUserDC[];
 }
 
-export interface ResponsesUserCapabilitiesResponseDC {
-  capabilities?: ResponsesUserCapabilitiesDC;
-}
-
-export interface ResponsesExperimentStatusResponseDC {
-  debug?: string;
-  message?: string;
-  status?: string;
-  summary?: string;
-}
-
 export interface ResponsesSaveAppliedConfigResponseDC {
   saved?: number;
-}
-
-export interface ResponsesScenarioInfoDC {
-  description?: string;
-  name?: string;
 }
 
 export interface ResponsesSearchDatasetsResponseDC {
@@ -1974,16 +1620,8 @@ export interface ResponsesSearchDatasetsResponseDC {
   total?: number;
 }
 
-export interface ResponsesSyncNamespaceRolesResponseDC {
-  roles_errors?: number;
-  roles_synced?: number;
-  summary?: string;
-}
-
-export interface ResponsesSyncProjectRolesResponseDC {
-  roles_errors?: number;
-  roles_synced?: number;
-  summary?: string;
+export interface ResponsesUpdateAppAboutResponseDC {
+  app_about?: DtoAppAboutDC;
 }
 
 export interface ResponsesUpdateAppBannerResponseDC {
@@ -2024,12 +1662,6 @@ export interface ResponsesUpdateDatasetResponseDC {
   dataset?: DtoDatasetDC;
 }
 
-export interface ResponsesUpdateNamespaceResponseDC {
-  config?: string;
-  id?: number;
-  name?: string;
-}
-
 export interface ResponsesUpdateExperimentDatasetResponseDC {
   alias?: string;
   link_id?: number;
@@ -2039,6 +1671,12 @@ export interface ResponsesUpdateExperimentVariableResponseDC {
   variable?: DtoExperimentVariableDC;
 }
 
+export interface ResponsesUpdateNamespaceResponseDC {
+  config?: string;
+  id?: number;
+  name?: string;
+}
+
 export interface ResponsesUpdateProjectResponseDC {
   project?: DtoProjectDC;
 }
@@ -2046,6 +1684,16 @@ export interface ResponsesUpdateProjectResponseDC {
 export interface ResponsesUserByNameResponseDC {
   id?: number;
   name?: string;
+}
+
+export interface ResponsesUserCapabilitiesDC {
+  can_create_namespace?: boolean;
+  can_manage_acl?: boolean;
+  is_root?: boolean;
+}
+
+export interface ResponsesUserCapabilitiesResponseDC {
+  capabilities?: ResponsesUserCapabilitiesDC;
 }
 
 export interface ResponsesUsersACLResponseDC {
@@ -2084,20 +1732,6 @@ export interface UpdateLogDatasetUpdateLogDC {
   old?: UpdateLogDatasetDC;
 }
 
-export interface UpdateLogNamespaceDC {
-  config?: string;
-  config_version_id?: number;
-  name?: string;
-  variable_name?: string;
-  variable_type?: string;
-  variable_value?: string;
-}
-
-export interface UpdateLogNamespaceUpdateLogDC {
-  new?: UpdateLogNamespaceDC;
-  old?: UpdateLogNamespaceDC;
-}
-
 export interface UpdateLogExperimentDC {
   config?: string;
   dataset_alias?: string;
@@ -2115,6 +1749,20 @@ export interface UpdateLogExperimentUpdateLogDC {
   old?: UpdateLogExperimentDC;
 }
 
+export interface UpdateLogNamespaceDC {
+  config?: string;
+  config_version_id?: number;
+  name?: string;
+  variable_name?: string;
+  variable_type?: string;
+  variable_value?: string;
+}
+
+export interface UpdateLogNamespaceUpdateLogDC {
+  new?: UpdateLogNamespaceDC;
+  old?: UpdateLogNamespaceDC;
+}
+
 export interface UpdateLogProjectDC {
   config?: string;
   config_version_id?: number;
@@ -2129,6 +1777,14 @@ export interface UpdateLogProjectUpdateLogDC {
   new?: UpdateLogProjectDC;
   old?: UpdateLogProjectDC;
 }
+
+export type V1AppAboutListDataDC = ResponsesGetAppAboutResponseDC;
+
+export type V1AppAboutListErrorDC = ResponsesErrorResponseDC;
+
+export type V1AppAboutUpdateDataDC = ResponsesUpdateAppAboutResponseDC;
+
+export type V1AppAboutUpdateErrorDC = ResponsesErrorResponseDC;
 
 export type V1AppBannerCreateDataDC = ResponsesCreateAppBannerResponseDC;
 
@@ -2147,8 +1803,7 @@ export interface V1AppBannerListParamsDC {
   banner_id: number;
 }
 
-export type V1AppBannerTypesListDataDC =
-  ResponsesGetAvailableBannerTypesResponseDC;
+export type V1AppBannerTypesListDataDC = ResponsesGetAvailableBannerTypesResponseDC;
 
 export type V1AppBannerTypesListErrorDC = ResponsesErrorResponseDC;
 
@@ -2156,8 +1811,7 @@ export type V1AppBannerUpdateDataDC = ResponsesUpdateAppBannerResponseDC;
 
 export type V1AppBannerUpdateErrorDC = ResponsesErrorResponseDC;
 
-export type V1AppBannersCurrentListDataDC =
-  ResponsesGetCurrentAppBannerResponseDC;
+export type V1AppBannersCurrentListDataDC = ResponsesGetCurrentAppBannerResponseDC;
 
 export type V1AppBannersCurrentListErrorDC = ResponsesErrorResponseDC;
 
@@ -2238,7 +1892,7 @@ export interface V1CubesByIdsListParamsDC {
 
 export type V1CubesListDataDC = ResponsesListCubesResponseDC;
 
-export type V1DatasetApplyCreateDataDC = ResponsesApplyDatasetResponseDC;
+export type V1DatasetApplyCreateDataDC = ResponsesEmptyResponseDC;
 
 export type V1DatasetApplyCreateErrorDC = ResponsesErrorResponseDC;
 
@@ -2257,8 +1911,7 @@ export interface V1DatasetLogListParamsDC {
 
 export type V1DatasetLogUpdateDataDC = any;
 
-export type V1DatasetLogsListDataDC =
-  ResponsesListDatasetUpdateLogsResponseDC;
+export type V1DatasetLogsListDataDC = ResponsesListDatasetUpdateLogsResponseDC;
 
 export type V1DatasetLogsListErrorDC = ResponsesErrorResponseDC;
 
@@ -2300,6 +1953,229 @@ export interface V1EventsListParamsDC {
   order?: string;
   /** Sort field (timestamp, event_type, job_id) */
   sort?: string;
+}
+
+export type V1ExperimentConfigApplySaveCreateDataDC = ResponsesSaveAppliedConfigResponseDC;
+
+export type V1ExperimentConfigApplySaveCreateErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentConfigApplyUpdateDataDC = ResponsesEmptyResponseDC;
+
+export type V1ExperimentConfigApplyUpdateErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentCopyCreateDataDC = ResponsesCopyCompleteExperimentResponseDC;
+
+export type V1ExperimentCopyCreateErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentCreateDataDC = ResponsesCreateCompleteExperimentResponseDC;
+
+export type V1ExperimentCreateErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentDatasetCreateDataDC = ResponsesAddDatasetToExperimentResponseDC;
+
+export type V1ExperimentDatasetCreateErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentDatasetDeleteDataDC = ResponsesEmptyResponseDC;
+
+export type V1ExperimentDatasetDeleteErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentDatasetUpdateDataDC = ResponsesUpdateExperimentDatasetResponseDC;
+
+export type V1ExperimentDatasetUpdateErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentDatasetsListDataDC = ResponsesGetExperimentDatasetsResponseDC;
+
+export type V1ExperimentDatasetsListErrorDC = ResponsesErrorResponseDC | ResponsesCreateAppBannerResponseDC;
+
+export interface V1ExperimentDatasetsListParamsDC {
+  /** experiment id */
+  experiment_id: number;
+}
+
+export type V1ExperimentDeleteDataDC = any;
+
+export type V1ExperimentDeleteErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentGrafanaUrlListDataDC = DtoExperimentURLDC;
+
+export type V1ExperimentGrafanaUrlListErrorDC = ResponsesErrorResponseDC | ResponsesCreateAppBannerResponseDC;
+
+export interface V1ExperimentGrafanaUrlListParamsDC {
+  /** experiment id */
+  experiment_id: number;
+}
+
+export type V1ExperimentListDataDC = ResponsesGetCompleteExperimentsResponseDC;
+
+export type V1ExperimentListErrorDC = ResponsesErrorResponseDC;
+
+export interface V1ExperimentListParamsDC {
+  /** experiment_id */
+  experiment_id: number;
+}
+
+export type V1ExperimentLogListDataDC = ResponsesGetExperimentLogResponseDC;
+
+export type V1ExperimentLogListErrorDC = ResponsesErrorResponseDC;
+
+export interface V1ExperimentLogListParamsDC {
+  /** log id */
+  log_id: number;
+}
+
+export type V1ExperimentLogUpdateDataDC = any;
+
+export type V1ExperimentLogUpdateErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentLogsListDataDC = ResponsesListExperimentUpdateLogsResponseDC;
+
+export type V1ExperimentLogsListErrorDC = ResponsesErrorResponseDC;
+
+export interface V1ExperimentLogsListParamsDC {
+  /** experiment id */
+  experiment_id?: number;
+  /** from */
+  from: number;
+  /** limit */
+  limit: number;
+  /** project id */
+  project_id?: number;
+}
+
+export type V1ExperimentStartUpdateDataDC = ResponsesEmptyResponseDC;
+
+export type V1ExperimentStartUpdateErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentStatusListDataDC = ResponsesExperimentStatusResponseDC;
+
+export type V1ExperimentStatusListErrorDC = ResponsesErrorResponseDC | ResponsesCreateAppBannerResponseDC;
+
+export interface V1ExperimentStatusListParamsDC {
+  /** experiment id */
+  experiment_id: number;
+}
+
+export type V1ExperimentStopUpdateDataDC = ResponsesEmptyResponseDC;
+
+export type V1ExperimentStopUpdateErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentSupervisorListDataDC = ResponsesGetSupervisorConfigResponseDC;
+
+export type V1ExperimentSupervisorListErrorDC = ResponsesErrorResponseDC | ResponsesCreateAppBannerResponseDC;
+
+export interface V1ExperimentSupervisorListParamsDC {
+  /** experiment id */
+  experiment_id: number;
+}
+
+export type V1ExperimentUpdateDataDC = ResponsesUpdateCompleteExperimentResponseDC;
+
+export type V1ExperimentUpdateErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentUpdatesListDataDC = ResponsesCheckExperimentUpdateResponseDC;
+
+export type V1ExperimentUpdatesListErrorDC = ResponsesErrorResponseDC | ResponsesCreateAppBannerResponseDC;
+
+export interface V1ExperimentUpdatesListParamsDC {
+  /** experiment id */
+  experiment_id: number;
+}
+
+export type V1ExperimentUrlsListDataDC = ResponsesGetExperimentURLsResponseDC;
+
+export type V1ExperimentUrlsListErrorDC = ResponsesErrorResponseDC | ResponsesCreateAppBannerResponseDC;
+
+export interface V1ExperimentUrlsListParamsDC {
+  /** experiment id */
+  experiment_id: number;
+}
+
+export type V1ExperimentValidationsFastCreateDataDC = DtoValidationResponseDC;
+
+export type V1ExperimentValidationsFastCreateErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentValidationsRunCreateDataDC = DtoValidationResponseWithRunDC;
+
+export type V1ExperimentValidationsRunCreateErrorDC = DtoValidationErrorResponseDC;
+
+export type V1ExperimentVariableCreateDataDC = ResponsesCreateExperimentVariableResponseDC;
+
+export type V1ExperimentVariableCreateErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentVariableDeleteDataDC = ResponsesEmptyResponseDC;
+
+export type V1ExperimentVariableDeleteErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentVariableListDataDC = ResponsesGetExperimentVariableResponseDC;
+
+export type V1ExperimentVariableListErrorDC = ResponsesErrorResponseDC | ResponsesCreateAppBannerResponseDC;
+
+export interface V1ExperimentVariableListParamsDC {
+  /** variable id */
+  variable_id: number;
+}
+
+export type V1ExperimentVariableUpdateDataDC = ResponsesUpdateExperimentVariableResponseDC;
+
+export type V1ExperimentVariableUpdateErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentVariablesListDataDC = ResponsesGetExperimentVariablesResponseDC;
+
+export type V1ExperimentVariablesListErrorDC = ResponsesErrorResponseDC | ResponsesCreateAppBannerResponseDC;
+
+export interface V1ExperimentVariablesListParamsDC {
+  /** experiment id */
+  experiment_id: number;
+}
+
+export type V1ExperimentVariablesTypesListDataDC = ResponsesGetAvailableExperimentVariableTypesResponseDC;
+
+export type V1ExperimentVariablesTypesListErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentVersionCurrentListDataDC = ResponsesCurrentExperimentVersionResponseDC;
+
+export type V1ExperimentVersionCurrentListErrorDC = ResponsesErrorResponseDC;
+
+export interface V1ExperimentVersionCurrentListParamsDC {
+  /** experiment id */
+  experiment_id: number;
+}
+
+export type V1ExperimentVersionCurrentUpdateDataDC = ResponsesCurrentExperimentVersionResponseDC;
+
+export type V1ExperimentVersionCurrentUpdateErrorDC = ResponsesErrorResponseDC;
+
+export type V1ExperimentVersionListDataDC = DtoExperimentTemplateDC;
+
+export type V1ExperimentVersionListErrorDC = ResponsesErrorResponseDC;
+
+export interface V1ExperimentVersionListParamsDC {
+  /** experiment id */
+  experiment_id: number;
+  /** config version id */
+  version_id: number;
+}
+
+export type V1ExperimentVersionsListDataDC = ResponsesListExperimentVersionsResponseDC;
+
+export type V1ExperimentVersionsListErrorDC = ResponsesErrorResponseDC;
+
+export interface V1ExperimentVersionsListParamsDC {
+  /** experiment id */
+  experiment_id: number;
+  /** from */
+  from: number;
+  /** limit */
+  limit: number;
+}
+
+export type V1ExperimentsListDataDC = ResponsesListCompleteExperimentsResponseDC;
+
+export type V1ExperimentsListErrorDC = ResponsesErrorResponseDC;
+
+export interface V1ExperimentsListParamsDC {
+  /** project id */
+  project_id: number;
 }
 
 export type V1GrantCreateDataDC = ResponsesEmptyResponseDC;
@@ -2363,8 +2239,7 @@ export interface V1NamespaceConfigListParamsDC {
   config_id: number;
 }
 
-export type V1NamespaceConfigsListDataDC =
-  ResponsesListNamespaceConfigsResponseDC;
+export type V1NamespaceConfigsListDataDC = ResponsesListNamespaceConfigsResponseDC;
 
 export type V1NamespaceConfigsListErrorDC = ResponsesErrorResponseDC;
 
@@ -2403,8 +2278,7 @@ export type V1NamespaceLogUpdateDataDC = any;
 
 export type V1NamespaceLogUpdateErrorDC = ResponsesErrorResponseDC;
 
-export type V1NamespaceLogsListDataDC =
-  ResponsesListNamespaceUpdateLogsResponseDC;
+export type V1NamespaceLogsListDataDC = ResponsesListNamespaceUpdateLogsResponseDC;
 
 export type V1NamespaceLogsListErrorDC = ResponsesErrorResponseDC;
 
@@ -2438,270 +2312,7 @@ export interface V1PermissionsListParamsDC {
 
 export type V1PingListDataDC = PrivatePingResponseDC;
 
-export type V1PingListErrorDC =
-  | ResponsesErrorResponseDC
-  | ResponsesCreateAppBannerResponseDC;
-
-export type V1ExperimentConfigApplySaveCreateDataDC =
-  ResponsesSaveAppliedConfigResponseDC;
-
-export type V1ExperimentConfigApplySaveCreateErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentConfigApplyUpdateDataDC = ResponsesEmptyResponseDC;
-
-export type V1ExperimentConfigApplyUpdateErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentCopyCreateDataDC =
-  ResponsesCopyCompleteExperimentResponseDC;
-
-export type V1ExperimentCopyCreateErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentCreateDataDC = ResponsesCreateCompleteExperimentResponseDC;
-
-export type V1ExperimentCreateErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentDatasetCreateDataDC =
-  ResponsesAddDatasetToExperimentResponseDC;
-
-export type V1ExperimentDatasetCreateErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentDatasetDeleteDataDC = ResponsesEmptyResponseDC;
-
-export type V1ExperimentDatasetDeleteErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentDatasetUpdateDataDC =
-  ResponsesUpdateExperimentDatasetResponseDC;
-
-export type V1ExperimentDatasetUpdateErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentDatasetsListDataDC =
-  ResponsesGetExperimentDatasetsResponseDC;
-
-export type V1ExperimentDatasetsListErrorDC =
-  | ResponsesErrorResponseDC
-  | ResponsesCreateAppBannerResponseDC;
-
-export interface V1ExperimentDatasetsListParamsDC {
-  /** experiment id */
-  experiment_id: number;
-}
-
-export type V1ExperimentDeleteDataDC = any;
-
-export type V1ExperimentDeleteErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentGrafanaUrlListDataDC = DtoExperimentURLDC;
-
-export type V1ExperimentGrafanaUrlListErrorDC =
-  | ResponsesErrorResponseDC
-  | ResponsesCreateAppBannerResponseDC;
-
-export interface V1ExperimentGrafanaUrlListParamsDC {
-  /** experiment id */
-  experiment_id: number;
-}
-
-export type V1ExperimentListDataDC = ResponsesGetCompleteExperimentsResponseDC;
-
-export type V1ExperimentListErrorDC = ResponsesErrorResponseDC;
-
-export interface V1ExperimentListParamsDC {
-  /** experiment_id */
-  experiment_id: number;
-}
-
-export type V1ExperimentLogListDataDC = ResponsesGetExperimentLogResponseDC;
-
-export type V1ExperimentLogListErrorDC = ResponsesErrorResponseDC;
-
-export interface V1ExperimentLogListParamsDC {
-  /** log id */
-  log_id: number;
-}
-
-export type V1ExperimentLogUpdateDataDC = any;
-
-export type V1ExperimentLogUpdateErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentLogsListDataDC =
-  ResponsesListExperimentUpdateLogsResponseDC;
-
-export type V1ExperimentLogsListErrorDC = ResponsesErrorResponseDC;
-
-export interface V1ExperimentLogsListParamsDC {
-  /** from */
-  from: number;
-  /** limit */
-  limit: number;
-  /** experiment id */
-  experiment_id?: number;
-  /** project id */
-  project_id?: number;
-}
-
-export type V1ExperimentOrchestratorListDataDC =
-  ResponsesGetOrchestratorConfigResponseDC;
-
-export type V1ExperimentOrchestratorListErrorDC =
-  | ResponsesErrorResponseDC
-  | ResponsesCreateAppBannerResponseDC;
-
-export interface V1ExperimentOrchestratorListParamsDC {
-  /** experiment id */
-  experiment_id: number;
-}
-
-export type V1ExperimentStartUpdateDataDC = ResponsesEmptyResponseDC;
-
-export type V1ExperimentStartUpdateErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentStatusListDataDC = ResponsesExperimentStatusResponseDC;
-
-export type V1ExperimentStatusListErrorDC =
-  | ResponsesErrorResponseDC
-  | ResponsesCreateAppBannerResponseDC;
-
-export interface V1ExperimentStatusListParamsDC {
-  /** experiment id */
-  experiment_id: number;
-}
-
-export type V1ExperimentStopUpdateDataDC = ResponsesEmptyResponseDC;
-
-export type V1ExperimentStopUpdateErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentUpdateDataDC = ResponsesUpdateCompleteExperimentResponseDC;
-
-export type V1ExperimentUpdateErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentUpdatesListDataDC =
-  ResponsesCheckExperimentUpdateResponseDC;
-
-export type V1ExperimentUpdatesListErrorDC =
-  | ResponsesErrorResponseDC
-  | ResponsesCreateAppBannerResponseDC;
-
-export interface V1ExperimentUpdatesListParamsDC {
-  /** experiment id */
-  experiment_id: number;
-}
-
-export type V1ExperimentUrlsListDataDC = ResponsesGetExperimentURLsResponseDC;
-
-export type V1ExperimentUrlsListErrorDC =
-  | ResponsesErrorResponseDC
-  | ResponsesCreateAppBannerResponseDC;
-
-export interface V1ExperimentUrlsListParamsDC {
-  /** experiment id */
-  experiment_id: number;
-}
-
-export type V1ExperimentValidationsFastCreateDataDC = DtoValidationResponseDC;
-
-export type V1ExperimentValidationsFastCreateErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentValidationsRunCreateDataDC =
-  DtoValidationResponseWithRunDC;
-
-export type V1ExperimentValidationsRunCreateErrorDC =
-  DtoValidationErrorResponseDC;
-
-export type V1ExperimentVariableCreateDataDC =
-  ResponsesCreateExperimentVariableResponseDC;
-
-export type V1ExperimentVariableCreateErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentVariableDeleteDataDC = ResponsesEmptyResponseDC;
-
-export type V1ExperimentVariableDeleteErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentVariableListDataDC =
-  ResponsesGetExperimentVariableResponseDC;
-
-export type V1ExperimentVariableListErrorDC =
-  | ResponsesErrorResponseDC
-  | ResponsesCreateAppBannerResponseDC;
-
-export interface V1ExperimentVariableListParamsDC {
-  /** variable id */
-  variable_id: number;
-}
-
-export type V1ExperimentVariableUpdateDataDC =
-  ResponsesUpdateExperimentVariableResponseDC;
-
-export type V1ExperimentVariableUpdateErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentVariablesListDataDC =
-  ResponsesGetExperimentVariablesResponseDC;
-
-export type V1ExperimentVariablesListErrorDC =
-  | ResponsesErrorResponseDC
-  | ResponsesCreateAppBannerResponseDC;
-
-export interface V1ExperimentVariablesListParamsDC {
-  /** experiment id */
-  experiment_id: number;
-}
-
-export type V1ExperimentVariablesTypesListDataDC =
-  ResponsesGetAvailableExperimentVariableTypesResponseDC;
-
-export type V1ExperimentVariablesTypesListErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentVersionCurrentListDataDC =
-  ResponsesCurrentExperimentVersionResponseDC;
-
-export type V1ExperimentVersionCurrentListErrorDC = ResponsesErrorResponseDC;
-
-export interface V1ExperimentVersionCurrentListParamsDC {
-  /** experiment id */
-  experiment_id: number;
-}
-
-export type V1ExperimentVersionCurrentUpdateDataDC =
-  ResponsesCurrentExperimentVersionResponseDC;
-
-export type V1ExperimentVersionCurrentUpdateErrorDC = ResponsesErrorResponseDC;
-
-export type V1ExperimentVersionListDataDC = DtoExperimentTemplateDC;
-
-export type V1ExperimentVersionListErrorDC = ResponsesErrorResponseDC;
-
-export interface V1ExperimentVersionListParamsDC {
-  /** experiment id */
-  experiment_id: number;
-  /** config version id */
-  version_id: number;
-}
-
-export type V1ExperimentVersionsListDataDC =
-  ResponsesListExperimentVersionsResponseDC;
-
-export type V1ExperimentVersionsListErrorDC = ResponsesErrorResponseDC;
-
-export interface V1ExperimentVersionsListParamsDC {
-  /** from */
-  from: number;
-  /** limit */
-  limit: number;
-  /** experiment id */
-  experiment_id: number;
-}
-
-export type V1ExperimentsListDataDC = ResponsesListCompleteExperimentsResponseDC;
-
-export type V1ExperimentsListErrorDC = ResponsesErrorResponseDC;
-
-export interface V1ExperimentsListParamsDC {
-  /** project id */
-  project_id: number;
-}
-
-export type V1ProjectConfigApplyUpdateDataDC = ResponsesEmptyResponseDC;
-
-export type V1ProjectConfigApplyUpdateErrorDC = ResponsesErrorResponseDC;
+export type V1PingListErrorDC = ResponsesErrorResponseDC | ResponsesCreateAppBannerResponseDC;
 
 export type V1ProjectConfigListDataDC = ResponsesGetProjectConfigResponseDC;
 
@@ -2768,18 +2379,6 @@ export interface V1ProjectsListParamsDC {
   namespace_id: number;
 }
 
-export type V1RobotCreateDataDC = ResponsesCreateRobotResponseDC;
-
-export type V1RobotCreateErrorDC = ResponsesErrorResponseDC;
-
-export type V1RobotTokenCreateDataDC = ResponsesCreateRobotResponseDC;
-
-export type V1RobotTokenCreateErrorDC = ResponsesErrorResponseDC;
-
-export type V1RobotTokensDeleteDataDC = ResponsesEmptyResponseDC;
-
-export type V1RobotTokensDeleteErrorDC = ResponsesErrorResponseDC;
-
 export type V1RoleCreateDataDC = ResponsesCreateRoleResponseDC;
 
 export type V1RoleCreateErrorDC = ResponsesErrorResponseDC;
@@ -2817,8 +2416,7 @@ export type V1UserCreateDataDC = ResponsesCreateUserResponseDC;
 
 export type V1UserCreateErrorDC = ResponsesErrorResponseDC;
 
-export type V1UserGroupMatchesListDataDC =
-  ResponsesListUserGroupMatchesResponseDC;
+export type V1UserGroupMatchesListDataDC = ResponsesListUserGroupMatchesResponseDC;
 
 export type V1UserGroupMatchesListErrorDC = ResponsesErrorResponseDC;
 
@@ -2910,12 +2508,7 @@ export interface V2AclUsersListParamsDC {
   search?: string;
 }
 
-export type V2MeCapabilitiesListDataDC = ResponsesUserCapabilitiesResponseDC;
-
-export type V2MeCapabilitiesListErrorDC = ResponsesErrorResponseDC;
-
-export type V2DatasetConfigValidateCreateDataDC =
-  ResponsesValidationResponseDC;
+export type V2DatasetConfigValidateCreateDataDC = ResponsesValidationResponseDC;
 
 export type V2DatasetConfigValidateCreateErrorDC = ResponsesErrorResponseDC;
 
@@ -2927,8 +2520,7 @@ export type V2DatasetCreateDataDC = ResponsesCreateDatasetResponseDC;
 
 export type V2DatasetCreateErrorDC = ResponsesErrorResponseDC;
 
-export type V2DatasetLinksListDataDC =
-  ResponsesDatasetExperimentLinksResponseDC;
+export type V2DatasetLinksListDataDC = ResponsesDatasetExperimentLinksResponseDC;
 
 export type V2DatasetLinksListErrorDC = ResponsesErrorResponseDC;
 
@@ -2950,8 +2542,7 @@ export interface V2DatasetListParamsDC {
   dataset_id: number;
 }
 
-export type V2DatasetLogsListDataDC =
-  ResponsesListDatasetUpdateLogsResponseDC;
+export type V2DatasetLogsListDataDC = ResponsesListDatasetUpdateLogsResponseDC;
 
 export type V2DatasetLogsListErrorDC = ResponsesErrorResponseDC;
 
@@ -2970,8 +2561,7 @@ export type V2DatasetUpdateDataDC = ResponsesUpdateDatasetResponseDC;
 
 export type V2DatasetUpdateErrorDC = ResponsesErrorResponseDC;
 
-export type V2DatasetVersionCurrentListDataDC =
-  ResponsesCurrentDatasetVersionResponseDC;
+export type V2DatasetVersionCurrentListDataDC = ResponsesCurrentDatasetVersionResponseDC;
 
 export type V2DatasetVersionCurrentListErrorDC = ResponsesErrorResponseDC;
 
@@ -2980,8 +2570,7 @@ export interface V2DatasetVersionCurrentListParamsDC {
   dataset_id: number;
 }
 
-export type V2DatasetVersionCurrentUpdateDataDC =
-  ResponsesUpdateDatasetResponseDC;
+export type V2DatasetVersionCurrentUpdateDataDC = ResponsesUpdateDatasetResponseDC;
 
 export type V2DatasetVersionCurrentUpdateErrorDC = ResponsesErrorResponseDC;
 
@@ -2998,8 +2587,7 @@ export type V2DatasetVersionUpdateDataDC = DtoDatasetVersionTemplateDC;
 
 export type V2DatasetVersionUpdateErrorDC = ResponsesErrorResponseDC;
 
-export type V2DatasetVersionsListDataDC =
-  ResponsesListDatasetVersionsResponseDC;
+export type V2DatasetVersionsListDataDC = ResponsesListDatasetVersionsResponseDC;
 
 export type V2DatasetVersionsListErrorDC = ResponsesErrorResponseDC;
 
@@ -3019,38 +2607,84 @@ export interface V2DatasetYtListParamsDC {
   dataset_id: number;
 }
 
-export type V2DatasetsApplyScenariosListDataDC =
-  ResponsesGetAvailableDatasetApplyScenariosResponseDC;
-
-export type V2DatasetsApplyScenariosListErrorDC = ResponsesErrorResponseDC;
-
-export type V2DatasetsClustersListDataDC =
-  ResponsesGetAvailableDatasetClustersResponseDC;
+export type V2DatasetsClustersListDataDC = ResponsesGetAvailableDatasetClustersResponseDC;
 
 export type V2DatasetsClustersListErrorDC = ResponsesErrorResponseDC;
 
 export type V2DatasetsListDataDC = ResponsesListDatasetsResponseDC;
 
-export type V2DatasetsListErrorDC =
-  | ResponsesErrorResponseDC
-  | ResponsesCreateAppBannerResponseDC;
+export type V2DatasetsListErrorDC = ResponsesErrorResponseDC | ResponsesCreateAppBannerResponseDC;
 
 export interface V2DatasetsListParamsDC {
   /** project id */
   project_id: number;
 }
 
-export type V2DatasetsSearchCreateDataDC =
-  ResponsesSearchDatasetsResponseDC;
+export type V2DatasetsSearchCreateDataDC = ResponsesSearchDatasetsResponseDC;
 
 export type V2DatasetsSearchCreateErrorDC = ResponsesErrorResponseDC;
+
+export type V2ExperimentConfigApplyUpdateDataDC = ResponsesEmptyResponseDC;
+
+export type V2ExperimentConfigApplyUpdateErrorDC = ResponsesErrorResponseDC;
+
+export type V2ExperimentConfigValidateCreateDataDC = ResponsesValidationResponseDC;
+
+export type V2ExperimentConfigValidateCreateErrorDC = ResponsesErrorResponseDC;
+
+export type V2ExperimentSearchDatasetsCreateDataDC = ResponsesGetExperimentAvailableDatasetsToLinkResponseDC;
+
+export type V2ExperimentSearchDatasetsCreateErrorDC = ResponsesErrorResponseDC;
+
+export type V2ExperimentVariableVersionCurrentListDataDC = ResponsesCurrentExperimentVersionResponseDC;
+
+export type V2ExperimentVariableVersionCurrentListErrorDC = ResponsesErrorResponseDC;
+
+export interface V2ExperimentVariableVersionCurrentListParamsDC {
+  /** variable id */
+  variable_id: number;
+}
+
+export type V2ExperimentVariableVersionCurrentUpdateDataDC = ResponsesCurrentExperimentVersionResponseDC;
+
+export type V2ExperimentVariableVersionCurrentUpdateErrorDC = ResponsesErrorResponseDC;
+
+export type V2ExperimentVariableVersionListDataDC = DtoExperimentVariableVersionTemplateDC;
+
+export interface V2ExperimentVariableVersionListParamsDC {
+  /** version id */
+  version_id: number;
+}
+
+export type V2ExperimentVariableVersionUpdateDataDC = DtoExperimentVariableVersionTemplateDC;
+
+export type V2ExperimentVariableVersionUpdateErrorDC = ResponsesErrorResponseDC;
+
+export type V2ExperimentVariableVersionsListDataDC = ResponsesListExperimentVariableVersionsResponseDC;
+
+export type V2ExperimentVariableVersionsListErrorDC = ResponsesErrorResponseDC;
+
+export interface V2ExperimentVariableVersionsListParamsDC {
+  /** experiment id */
+  experiment_id: number;
+  /** from */
+  from: number;
+  /** limit */
+  limit: number;
+  /** variable id */
+  variable_id?: number;
+}
+
+export type V2ExperimentVersionUpdateDataDC = DtoExperimentTemplateDC;
+
+export type V2ExperimentVersionUpdateErrorDC = ResponsesErrorResponseDC;
 
 export type V2FormsDatasetListDataDC = ResponsesGetFormResponseDC;
 
 export type V2FormsDatasetListErrorDC = ResponsesErrorResponseDC;
 
 export interface V2FormsDatasetListParamsDC {
-  /** dataset type (json, kafka; legacy types for existing rows) */
+  /** dataset type (json, kafka; legacy: Queue, KeyValue, StaticTableDir, Kafka) */
   type: string;
 }
 
@@ -3062,163 +2696,13 @@ export type V2FormsProjectListDataDC = ResponsesGetFormResponseDC;
 
 export type V2FormsProjectListErrorDC = ResponsesErrorResponseDC;
 
-export type V2IdmNamespaceRolesCreateDataDC =
-  ResponsesCreateNamespaceRolesResponseDC;
+export type V2MeCapabilitiesListDataDC = ResponsesUserCapabilitiesResponseDC;
 
-export type V2IdmNamespaceRolesCreateErrorDC = ResponsesErrorResponseDC;
-
-export type V2IdmNamespaceRolesSyncCreateDataDC =
-  ResponsesSyncNamespaceRolesResponseDC;
-
-export type V2IdmNamespaceRolesSyncCreateErrorDC = ResponsesErrorResponseDC;
-
-export type V2IdmProjectRolesCreateDataDC =
-  ResponsesCreateProjectRolesResponseDC;
-
-export type V2IdmProjectRolesCreateErrorDC = ResponsesErrorResponseDC;
-
-export type V2IdmProjectRolesSyncCreateDataDC =
-  ResponsesSyncProjectRolesResponseDC;
-
-export type V2IdmProjectRolesSyncCreateErrorDC = ResponsesErrorResponseDC;
+export type V2MeCapabilitiesListErrorDC = ResponsesErrorResponseDC;
 
 export type V2NamespacesListDataDC = ResponsesListNamespacesV2ResponseDC;
 
 export type V2NamespacesListErrorDC = ResponsesErrorResponseDC;
-
-export type V2ExperimentAlertsCreateDataDC = ResponsesGetAlertGroupResponseDC;
-
-export type V2ExperimentAlertsCreateErrorDC = ResponsesErrorResponseDC;
-
-export interface V2ExperimentAlertsCreateParamsDC {
-  /** experiment id */
-  experiment_id: number;
-  /** notification product id */
-  product_id: number;
-}
-
-export type V2ExperimentAlertsDeleteDataDC = ResponsesGetAlertGroupResponseDC;
-
-export type V2ExperimentAlertsDeleteErrorDC = ResponsesErrorResponseDC;
-
-export interface V2ExperimentAlertsDeleteParamsDC {
-  /** experiment id */
-  experiment_id: number;
-  /** notification product id */
-  product_id: number;
-}
-
-export type V2ExperimentAlertsListDataDC = ResponsesGetAlertGroupResponseDC;
-
-export type V2ExperimentAlertsListErrorDC = ResponsesErrorResponseDC;
-
-export interface V2ExperimentAlertsListParamsDC {
-  /** experiment id */
-  experiment_id: number;
-  /** notification product id */
-  product_id: number;
-}
-
-export type V2ExperimentAlertsOptionsListDataDC =
-  ResponsesGetAlertOptionsResponseDC;
-
-export type V2ExperimentAlertsOptionsListErrorDC = ResponsesErrorResponseDC;
-
-export type V2ExperimentAlertsProductsListDataDC = number[];
-
-export type V2ExperimentAlertsProductsListErrorDC = ResponsesErrorResponseDC;
-
-export interface V2ExperimentAlertsProductsListParamsDC {
-  /** experiment id */
-  experiment_id: number;
-}
-
-export type V2ExperimentAlertsRuleUpdateDataDC = any;
-
-export type V2ExperimentAlertsRuleUpdateErrorDC = ResponsesErrorResponseDC;
-
-export interface V2ExperimentAlertsRuleUpdateParamsDC {
-  /** experiment id */
-  experiment_id: number;
-  /** notification product id */
-  product_id: number;
-}
-
-export type V2ExperimentAlertsTemplateUpdateDataDC =
-  ResponsesGetAlertGroupResponseDC;
-
-export type V2ExperimentAlertsTemplateUpdateErrorDC = ResponsesErrorResponseDC;
-
-export interface V2ExperimentAlertsTemplateUpdateParamsDC {
-  /** experiment id */
-  experiment_id: number;
-  /** notification product id */
-  product_id: number;
-}
-
-export type V2ExperimentConfigApplyUpdateDataDC = ResponsesEmptyResponseDC;
-
-export type V2ExperimentConfigApplyUpdateErrorDC = ResponsesErrorResponseDC;
-
-export type V2ExperimentConfigValidateCreateDataDC =
-  ResponsesValidationResponseDC;
-
-export type V2ExperimentConfigValidateCreateErrorDC = ResponsesErrorResponseDC;
-
-export type V2ExperimentSearchDatasetsCreateDataDC =
-  ResponsesGetExperimentAvailableDatasetsToLinkResponseDC;
-
-export type V2ExperimentSearchDatasetsCreateErrorDC = ResponsesErrorResponseDC;
-
-export type V2ExperimentVariableVersionCurrentListDataDC =
-  ResponsesCurrentExperimentVersionResponseDC;
-
-export type V2ExperimentVariableVersionCurrentListErrorDC =
-  ResponsesErrorResponseDC;
-
-export interface V2ExperimentVariableVersionCurrentListParamsDC {
-  /** variable id */
-  variable_id: number;
-}
-
-export type V2ExperimentVariableVersionCurrentUpdateDataDC =
-  ResponsesCurrentExperimentVersionResponseDC;
-
-export type V2ExperimentVariableVersionCurrentUpdateErrorDC =
-  ResponsesErrorResponseDC;
-
-export type V2ExperimentVariableVersionListDataDC =
-  DtoExperimentVariableVersionTemplateDC;
-
-export interface V2ExperimentVariableVersionListParamsDC {
-  /** version id */
-  version_id: number;
-}
-
-export type V2ExperimentVariableVersionUpdateDataDC =
-  DtoExperimentVariableVersionTemplateDC;
-
-export type V2ExperimentVariableVersionUpdateErrorDC = ResponsesErrorResponseDC;
-
-export type V2ExperimentVariableVersionsListDataDC =
-  ResponsesListExperimentVariableVersionsResponseDC;
-
-export type V2ExperimentVariableVersionsListErrorDC = ResponsesErrorResponseDC;
-
-export interface V2ExperimentVariableVersionsListParamsDC {
-  /** from */
-  from: number;
-  /** limit */
-  limit: number;
-  /** experiment id */
-  experiment_id: number;
-  /** variable id */
-  variable_id?: number;
-}
-
-export type V2ExperimentVersionUpdateDataDC = DtoExperimentTemplateDC;
-
-export type V2ExperimentVersionUpdateErrorDC = ResponsesErrorResponseDC;
 
 export type V2ProjectConfigValidateCreateDataDC = ResponsesValidationResponseDC;
 
@@ -3243,9 +2727,7 @@ export type V2ProjectPinnedDeleteErrorDC = ResponsesErrorResponseDC;
 
 export type V2ProjectUrlsListDataDC = ResponsesGetProjectsURLSResponseDC;
 
-export type V2ProjectUrlsListErrorDC =
-  | ResponsesErrorResponseDC
-  | ResponsesCreateAppBannerResponseDC;
+export type V2ProjectUrlsListErrorDC = ResponsesErrorResponseDC | ResponsesCreateAppBannerResponseDC;
 
 export interface V2ProjectUrlsListParamsDC {
   /** project id */

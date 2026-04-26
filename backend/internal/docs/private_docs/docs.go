@@ -2549,67 +2549,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/experiment/orchestrator": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "experiment"
-                ],
-                "summary": "get orchestrator config",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "experiment id",
-                        "name": "experiment_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.GetOrchestratorConfigResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.CreateAppBannerResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/experiment/start": {
             "put": {
                 "consumes": [
@@ -2786,6 +2725,67 @@ const docTemplate = `{
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/experiment/supervisor": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "experiment"
+                ],
+                "summary": "Pipeline config for supervisor (JSON)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "experiment id",
+                        "name": "experiment_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/responses.GetSupervisorConfigResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/responses.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/responses.CreateAppBannerResponse"
                         }
                     },
                     "500": {
@@ -10418,6 +10418,9 @@ const docTemplate = `{
                 "avatar": {
                     "type": "string"
                 },
+                "display_name": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
@@ -10859,8 +10862,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "experimentID": {
-                    "type": "integer",
-                    "format": "int32"
+                    "type": "integer"
                 }
             }
         },
@@ -12414,6 +12416,9 @@ const docTemplate = `{
                 },
                 "summary": {
                     "type": "string"
+                },
+                "supervisor": {
+                    "$ref": "#/definitions/responses.SupervisorExperimentRun"
                 }
             }
         },
@@ -12778,14 +12783,6 @@ const docTemplate = `{
                 }
             }
         },
-        "responses.GetOrchestratorConfigResponse": {
-            "type": "object",
-            "properties": {
-                "config": {
-                    "type": "string"
-                }
-            }
-        },
         "responses.GetProjectConfigResponse": {
             "type": "object",
             "properties": {
@@ -12867,6 +12864,14 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "config_schema": {
+                    "type": "string"
+                }
+            }
+        },
+        "responses.GetSupervisorConfigResponse": {
+            "type": "object",
+            "properties": {
+                "config": {
                     "type": "string"
                 }
             }
@@ -13242,6 +13247,58 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "responses.SupervisorExperimentRun": {
+            "type": "object",
+            "properties": {
+                "cancellation_requested": {
+                    "type": "boolean"
+                },
+                "current_model": {
+                    "type": "string"
+                },
+                "current_order": {
+                    "type": "integer"
+                },
+                "detail": {
+                    "type": "string"
+                },
+                "experiment_id": {
+                    "type": "integer"
+                },
+                "jobs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/responses.SupervisorModelJob"
+                    }
+                },
+                "progress": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "total_models": {
+                    "type": "integer"
+                }
+            }
+        },
+        "responses.SupervisorModelJob": {
+            "type": "object",
+            "properties": {
+                "error_message": {
+                    "type": "string"
+                },
+                "index": {
+                    "type": "integer"
+                },
+                "model_name": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         },

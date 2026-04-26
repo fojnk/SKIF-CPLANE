@@ -259,6 +259,38 @@ export interface ValidatedInputMapping {
 }
 
 /**
+ * Язык модели в конфиге Java-супервизора (как ModelLanguage в skif_platform_supervisor)
+ */
+export type SupervisorModelLanguage =
+  | 'JAVA'
+  | 'PYTHON'
+  | 'CSHARP'
+  | 'CPP'
+  | 'C';
+
+/**
+ * Элемент models[] в конфиге супервизора (см. backend/json/supervisor_experiment.example.json)
+ */
+export interface SupervisorModelRequest {
+  modelId: string;
+  name?: string;
+  order: number;
+  version?: string;
+  language: SupervisorModelLanguage | string;
+  modelPath: string;
+  parameters?: Record<string, unknown>;
+}
+
+/**
+ * Корень JSON конфига пайплайна для супервизора (experiment.start / experiment.apply)
+ */
+export interface SupervisorExperimentConfig {
+  experimentId?: number;
+  experimentName?: string;
+  models: SupervisorModelRequest[];
+}
+
+/**
  * Валидированные данные куба для отображения
  */
 export interface ValidatedCubeData {
@@ -277,6 +309,8 @@ export interface ValidatedCubeData {
   paramsName?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   paramsValues?: Record<string, any>;
+  /** Узел построен из models[] конфига супервизора, а не из Worker.GraphConfig.Cubes */
+  supervisorModel?: SupervisorModelRequest;
 }
 
 // ============================================================================
@@ -414,6 +448,27 @@ export interface ConfigResources {
 }
 
 /**
+ * Meta.YT и Meta — как в libs/models/experiment (Cplane)
+ */
+export interface ConfigMetaYT {
+  Token?: string;
+  WorkDir?: string;
+  Cluster?: string;
+  ProxyRole?: string;
+  TabletCellBundle?: string;
+  [key: string]: unknown;
+}
+
+export interface ConfigExperimentMeta {
+  ExperimentId?: string;
+  ProjectId?: string;
+  Namespace?: string;
+  AbcProductId?: string;
+  YT?: ConfigMetaYT;
+  [key: string]: unknown;
+}
+
+/**
  * Куб из основного config (без CubeID)
  */
 export interface ConfigCube {
@@ -425,19 +480,41 @@ export interface ConfigCube {
 }
 
 /**
- * Структура основного config пайплайна
+ * GraphConfig воркера — как в internal/entities/models experiment_config (Cplane)
+ */
+export interface ParsedGraphConfig {
+  Name?: string;
+  /** В JSON часто string[]; бэкенд десериализует как []any */
+  OutputNames?: unknown[];
+  StateNames?: unknown[];
+  Cubes?: ConfigCube[];
+  [key: string]: unknown;
+}
+
+/**
+ * Worker-секция конфига (GraphConfig + прочие поля вроде MaxEpochSize)
+ */
+export interface ParsedWorkerConfig {
+  GraphConfig?: ParsedGraphConfig;
+  [key: string]: unknown;
+}
+
+/**
+ * Конфиг эксперимента в UI: только Meta, experimentName, models[].
+ * Прочие ключи — устаревшие/ручной JSON ([key]).
  */
 export interface ParsedExperimentConfig {
-  Worker?: {
-    GraphConfig?: {
-      Name?: string;
-      Cubes?: ConfigCube[];
-      [key: string]: unknown;
-    };
-    [key: string]: unknown;
-  };
-  Resharder?: ConfigResharder;
+  Meta?: ConfigExperimentMeta;
+  experimentName?: string;
+  models?: unknown[];
+  Placement?: Record<string, unknown>;
   Resources?: ConfigResources;
+  PublicSources?: Record<string, unknown>;
+  Resharder?: ConfigResharder;
+  Worker?: ParsedWorkerConfig;
+  States?: unknown[];
+  InternalSources?: Record<string, unknown>;
+  FileStorages?: unknown;
   [key: string]: unknown;
 }
 

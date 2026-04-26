@@ -1,7 +1,0 @@
-package: client
-output: ./internal/clients/orchestrator/client/client.gen.go
-generate:
-  models: true
-  client: true
-output-options:
-  skip-prune: true

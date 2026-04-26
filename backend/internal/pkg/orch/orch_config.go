@@ -68,7 +68,8 @@ type Meta struct {
 	NamespaceConfig `json:"-"`
 }
 
-type OrchestratorConfig struct {
+// SupervisorPipelineConfig — JSON-конфиг пайплайна для супервизора (ранее «оркестратор»).
+type SupervisorPipelineConfig struct {
 	Meta           Meta `json:"Meta"`
 	ExperimentConfig `json:"-"`
 	PublicSources  map[string]PublicSource `json:"PublicSources"`
@@ -108,7 +109,7 @@ func (m Meta) MarshalJSON() ([]byte, error) {
 	return json.Marshal(result)
 }
 
-func (c OrchestratorConfig) MarshalJSON() ([]byte, error) {
+func (c SupervisorPipelineConfig) MarshalJSON() ([]byte, error) {
 	result := make(map[string]any)
 
 	result["PublicSources"] = c.PublicSources
@@ -118,7 +119,7 @@ func (c OrchestratorConfig) MarshalJSON() ([]byte, error) {
 
 	marshalled, err := json.Marshal(result)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to marshal orchestrator config")
+		return nil, errors.Wrap(err, "failed to marshal supervisor pipeline config")
 	}
 
 	variablesMap := make(map[string]ExperimentVariable)
@@ -128,7 +129,7 @@ func (c OrchestratorConfig) MarshalJSON() ([]byte, error) {
 
 	var config map[string]any
 	if err := json.Unmarshal(marshalled, &config); err != nil {
-		return nil, errors.Wrap(err, "failed to unmarshal orchestrator config")
+		return nil, errors.Wrap(err, "failed to unmarshal supervisor pipeline config")
 	}
 
 	enriched, err := enrichValue(config, variablesMap)
@@ -139,7 +140,7 @@ func (c OrchestratorConfig) MarshalJSON() ([]byte, error) {
 	return json.Marshal(enriched)
 }
 
-func ExperimentInfoToOrchestratorConfig(l *logger.Logger, experimentInfo *dbcore.CompleteExperimentInfoRow) (*OrchestratorConfig, error) {
+func ExperimentInfoToSupervisorPipelineConfig(l *logger.Logger, experimentInfo *dbcore.CompleteExperimentInfoRow) (*SupervisorPipelineConfig, error) {
 	var (
 		projectConfig   ProjectConfig
 		namespaceConfig NamespaceConfig
@@ -225,7 +226,7 @@ func ExperimentInfoToOrchestratorConfig(l *logger.Logger, experimentInfo *dbcore
 		projectConfig["AbcProductId"] = experimentInfo.AbcProductID
 	}
 
-	cfg := OrchestratorConfig{
+	cfg := SupervisorPipelineConfig{
 		Meta: Meta{
 			ExperimentID:      experimentInfo.ExperimentOrchID.String,
 			ExperimentName:    experimentInfo.ExperimentName,

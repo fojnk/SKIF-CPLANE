@@ -2,6 +2,7 @@ import { ArrowRotateRight } from '@gravity-ui/icons';
 import {
   Flex,
   Table,
+  Text,
   withTableActions,
   withTableSettings,
   WithTableSettingsProps,
@@ -28,6 +29,7 @@ import {
   FullDate,
   VkUser,
 } from '@/modules/control-plane/shared/ui';
+import { getPipeStatusColor } from '@/modules/control-plane/shared/utils/getStatusColor';
 import {
   getProjectExperimentJobsPageSize,
   pageSizeOptions,
@@ -60,6 +62,14 @@ export const JobsTab = ({ experiment_id }: JobsTabProps) => {
     projectPageModel.project.jobs.reset,
     projectPageModel.project.jobs.$total,
   ]);
+
+  const [pipeStatusLoad, pipeStatusLoading, pipeStatusData, pipeStatusReset] =
+    useUnit([
+      projectPageModel.experiment.status.load,
+      projectPageModel.experiment.status.$loading,
+      projectPageModel.experiment.status.$data,
+      projectPageModel.experiment.status.reset,
+    ]);
   useEffect(() => {
     configure({ lang: Lang.En });
   }, []);
@@ -99,8 +109,10 @@ export const JobsTab = ({ experiment_id }: JobsTabProps) => {
 
   useEffect(() => {
     loadFx(1, getProjectExperimentJobsPageSize());
+    pipeStatusLoad(experiment_id);
     return () => {
       reset();
+      pipeStatusReset();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [experiment_id]);
@@ -117,6 +129,7 @@ export const JobsTab = ({ experiment_id }: JobsTabProps) => {
     if (loading) return;
 
     loadFx(pageData.page, pageData.limit);
+    pipeStatusLoad(experiment_id);
   };
 
   const onRowClick = (row: controlPlaneApi.dc.JobdJobDC) => {
@@ -227,6 +240,59 @@ export const JobsTab = ({ experiment_id }: JobsTabProps) => {
     },
   ];
 
+  const supervisorRun = pipeStatusData?.supervisor;
+  const supervisorJobColumns = [
+    {
+      id: 'idx',
+      name: '#',
+      width: 56,
+      align: 'center' as const,
+      template: (item: controlPlaneApi.dc.ResponsesSupervisorModelJobDC) => (
+        <Flex alignItems="center" justifyContent="center">
+          {item.index ?? '—'}
+        </Flex>
+      ),
+    },
+    {
+      id: 'model',
+      name: 'Модель',
+      width: 220,
+      template: (item: controlPlaneApi.dc.ResponsesSupervisorModelJobDC) => (
+        <Text variant="body-2">{item.model_name || '—'}</Text>
+      ),
+    },
+    {
+      id: 'st',
+      name: 'Статус',
+      width: 140,
+      template: (item: controlPlaneApi.dc.ResponsesSupervisorModelJobDC) => {
+        const st = (item.status || 'UNKNOWN').toUpperCase();
+        const color =
+          st === 'COMPLETED'
+            ? getPipeStatusColor('OK')
+            : st === 'FAILED'
+              ? getPipeStatusColor('ERROR')
+              : st === 'RUNNING' || st === 'QUEUED'
+                ? getPipeStatusColor('PENDING')
+                : getPipeStatusColor('UNKNOWN');
+        return (
+          <Text variant="body-2" color={color}>
+            {item.status || '—'}
+          </Text>
+        );
+      },
+    },
+    {
+      id: 'err',
+      name: 'Ошибка',
+      template: (item: controlPlaneApi.dc.ResponsesSupervisorModelJobDC) => (
+        <Text variant="body-2" color={item.error_message ? 'danger' : undefined}>
+          {item.error_message || '—'}
+        </Text>
+      ),
+    },
+  ];
+
   return (
     <div>
       <Flex
@@ -240,7 +306,7 @@ export const JobsTab = ({ experiment_id }: JobsTabProps) => {
         <ButtonWithProgress
           view="normal"
           size="m"
-          loading={loading}
+          loading={loading || pipeStatusLoading}
           onClick={onRefresh}
           intervalMs={10000}
           style={{
@@ -253,6 +319,47 @@ export const JobsTab = ({ experiment_id }: JobsTabProps) => {
           Обновить
         </ButtonWithProgress>
       </Flex>
+      {supervisorRun ? (
+        <Flex direction="column" gap={3} style={{ marginBottom: 16 }}>
+          <Text variant="subheader-2">Этапы пайплайна (супервизор)</Text>
+          <Flex direction="row" gap={4} style={{ flexWrap: 'wrap' }}>
+            <Flex direction="row" gap={1} alignItems="center">
+              <Text variant="body-2" color="secondary">
+                Состояние:
+              </Text>
+              <Text
+                variant="body-2"
+                color={getPipeStatusColor(pipeStatusData?.status || 'UNKNOWN')}
+              >
+                {supervisorRun.status || pipeStatusData?.status || '—'}
+              </Text>
+            </Flex>
+            {supervisorRun.progress ? (
+              <Text variant="body-2" color="secondary">
+                Прогресс этапов: {supervisorRun.progress}
+              </Text>
+            ) : null}
+            {supervisorRun.current_model ? (
+              <Text variant="body-2" color="secondary">
+                Текущая модель: {supervisorRun.current_model}
+              </Text>
+            ) : null}
+          </Flex>
+          {(supervisorRun.jobs?.length ?? 0) > 0 ? (
+            <Table
+              columns={supervisorJobColumns}
+              data={supervisorRun.jobs ?? []}
+              emptyMessage="Нет этапов"
+              className="table--full-width"
+            />
+          ) : (
+            <Text variant="body-2" color="secondary">
+              Список этапов пуст (ожидайте данные от супервизора или проверьте
+              orch_id).
+            </Text>
+          )}
+        </Flex>
+      ) : null}
       <TableRender
         columns={columns}
         settings={settings}

@@ -66,7 +66,7 @@ const useMonitoringTab = (
     $data: requestData,
     load: requestLoad,
     reset: requestReset,
-  } = useUnit(projectPageModel.experiment.orchestrator);
+  } = useUnit(projectPageModel.experiment.supervisor);
 
   // Мемоизация состояния
   const state = useMemo<MonitoringTabState>(

@@ -9,11 +9,10 @@
  * ---------------------------------------------------------------
  */
 
-import { ContentType, RequestParams } from '@/shared/api/common/http-client';
-import { apiUrl, http } from '@/shared/api/http';
+import { ContentType, RequestParams } from "@/shared/api/common/http-client";
+import { apiUrl, http } from "@/shared/api/http";
 import {
   RequestsAddPinnedRequestDC,
-  RequestsApplyProjectConfigRequestDC,
   RequestsCreateProjectRequestDC,
   RequestsDeletePinnedProjectRequestDC,
   RequestsDeleteProjectRequestDC,
@@ -21,8 +20,6 @@ import {
   RequestsProjectValidateRequestDC,
   RequestsUpdateProjectLogCommentRequestDC,
   RequestsUpdateProjectRequestDC,
-  V1ProjectConfigApplyUpdateDataDC,
-  V1ProjectConfigApplyUpdateErrorDC,
   V1ProjectConfigListDataDC,
   V1ProjectConfigListParamsDC,
   V1ProjectConfigsListDataDC,
@@ -61,38 +58,8 @@ import {
   V2ProjectsCreateErrorDC,
   V2ProjectsPinnedListDataDC,
   V2ProjectsPinnedListErrorDC,
-} from './data-contracts';
+} from "./data-contracts";
 export const projectApi = new (class ProjectApi {
-  /**
-   * No description
-   *
-   * @tags project
-   * @summary apply project config
-   * @request PUT:/api/v1/project/config/apply
-   * @responses <br/>
-   *  **200** V1ProjectConfigApplyUpdateDataDC OK <br/>
-   *  **400** ResponsesErrorResponseDC Bad Request <br/>
-   *  **401** ResponsesErrorResponseDC Unauthorized <br/>
-   *  **403** ResponsesErrorResponseDC Forbidden <br/>
-   *  **404** ResponsesErrorResponseDC Not Found <br/>
-   *  **500** ResponsesErrorResponseDC Internal server error <br/>
-   */
-  v1ProjectConfigApplyUpdate = (
-    request: RequestsApplyProjectConfigRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V1ProjectConfigApplyUpdateDataDC,
-      V1ProjectConfigApplyUpdateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/project/config/apply`,
-      method: 'PUT',
-      body: request,
-      type: ContentType.Json,
-      ...params,
-    });
   /**
    * No description
    *
@@ -102,15 +69,10 @@ export const projectApi = new (class ProjectApi {
    * @responses <br/>
    *  **200** V1ProjectConfigListDataDC OK <br/>
    */
-  v1ProjectConfigList = (
-    query: V1ProjectConfigListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1ProjectConfigList = (query: V1ProjectConfigListParamsDC, params: RequestParams = {}) =>
     http.request<V1ProjectConfigListDataDC, any>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/project/config`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/project/config`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -128,15 +90,10 @@ export const projectApi = new (class ProjectApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ProjectConfigsList = (
-    query: V1ProjectConfigsListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1ProjectConfigsList = (query: V1ProjectConfigsListParamsDC, params: RequestParams = {}) =>
     http.request<V1ProjectConfigsListDataDC, V1ProjectConfigsListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/project/configs`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/project/configs`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -155,15 +112,10 @@ export const projectApi = new (class ProjectApi {
    *  **409** ResponsesErrorResponseDC Conflict - resource already exists <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ProjectCreate = (
-    request: RequestsCreateProjectRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1ProjectCreate = (request: RequestsCreateProjectRequestDC, params: RequestParams = {}) =>
     http.request<V1ProjectCreateDataDC, V1ProjectCreateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/project`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/project`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -182,15 +134,10 @@ export const projectApi = new (class ProjectApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ProjectDelete = (
-    request: RequestsDeleteProjectRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1ProjectDelete = (request: RequestsDeleteProjectRequestDC, params: RequestParams = {}) =>
     http.request<V1ProjectDeleteDataDC, V1ProjectDeleteErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/project`,
-      method: 'DELETE',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/project`,
+      method: "DELETE",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -209,15 +156,10 @@ export const projectApi = new (class ProjectApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ProjectLogList = (
-    query: V1ProjectLogListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1ProjectLogList = (query: V1ProjectLogListParamsDC, params: RequestParams = {}) =>
     http.request<V1ProjectLogListDataDC, V1ProjectLogListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/project/log`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/project/log`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -235,15 +177,10 @@ export const projectApi = new (class ProjectApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ProjectLogsList = (
-    query: V1ProjectLogsListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1ProjectLogsList = (query: V1ProjectLogsListParamsDC, params: RequestParams = {}) =>
     http.request<V1ProjectLogsListDataDC, V1ProjectLogsListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/project/logs`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/project/logs`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -261,15 +198,10 @@ export const projectApi = new (class ProjectApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ProjectLogUpdate = (
-    request: RequestsUpdateProjectLogCommentRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1ProjectLogUpdate = (request: RequestsUpdateProjectLogCommentRequestDC, params: RequestParams = {}) =>
     http.request<V1ProjectLogUpdateDataDC, V1ProjectLogUpdateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/project/log`,
-      method: 'PUT',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/project/log`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -288,15 +220,10 @@ export const projectApi = new (class ProjectApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ProjectsList = (
-    query: V1ProjectsListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1ProjectsList = (query: V1ProjectsListParamsDC, params: RequestParams = {}) =>
     http.request<V1ProjectsListDataDC, V1ProjectsListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/projects`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/projects`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -314,15 +241,10 @@ export const projectApi = new (class ProjectApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ProjectUpdate = (
-    request: RequestsUpdateProjectRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1ProjectUpdate = (request: RequestsUpdateProjectRequestDC, params: RequestParams = {}) =>
     http.request<V1ProjectUpdateDataDC, V1ProjectUpdateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/project`,
-      method: 'PUT',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/project`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -341,18 +263,10 @@ export const projectApi = new (class ProjectApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2ProjectConfigValidateCreate = (
-    request: RequestsProjectValidateRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V2ProjectConfigValidateCreateDataDC,
-      V2ProjectConfigValidateCreateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/project/config/validate`,
-      method: 'POST',
+  v2ProjectConfigValidateCreate = (request: RequestsProjectValidateRequestDC, params: RequestParams = {}) =>
+    http.request<V2ProjectConfigValidateCreateDataDC, V2ProjectConfigValidateCreateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/project/config/validate`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -373,10 +287,8 @@ export const projectApi = new (class ProjectApi {
    */
   v2ProjectList = (query: V2ProjectListParamsDC, params: RequestParams = {}) =>
     http.request<V2ProjectListDataDC, V2ProjectListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/project`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/project`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -394,15 +306,10 @@ export const projectApi = new (class ProjectApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2ProjectPinnedCreate = (
-    request: RequestsAddPinnedRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v2ProjectPinnedCreate = (request: RequestsAddPinnedRequestDC, params: RequestParams = {}) =>
     http.request<V2ProjectPinnedCreateDataDC, V2ProjectPinnedCreateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/project/pinned`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/project/pinned`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -421,15 +328,10 @@ export const projectApi = new (class ProjectApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2ProjectPinnedDelete = (
-    request: RequestsDeletePinnedProjectRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v2ProjectPinnedDelete = (request: RequestsDeletePinnedProjectRequestDC, params: RequestParams = {}) =>
     http.request<V2ProjectPinnedDeleteDataDC, V2ProjectPinnedDeleteErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/project/pinned`,
-      method: 'DELETE',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/project/pinned`,
+      method: "DELETE",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -448,15 +350,10 @@ export const projectApi = new (class ProjectApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2ProjectsCreate = (
-    request: RequestsListProjectsRequestV2DC,
-    params: RequestParams = {},
-  ) =>
+  v2ProjectsCreate = (request: RequestsListProjectsRequestV2DC, params: RequestParams = {}) =>
     http.request<V2ProjectsCreateDataDC, V2ProjectsCreateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/projects`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/projects`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -477,10 +374,8 @@ export const projectApi = new (class ProjectApi {
    */
   v2ProjectsPinnedList = (params: RequestParams = {}) =>
     http.request<V2ProjectsPinnedListDataDC, V2ProjectsPinnedListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/projects/pinned`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/projects/pinned`,
+      method: "GET",
       ...params,
     });
   /**
@@ -497,15 +392,10 @@ export const projectApi = new (class ProjectApi {
    *  **404** ResponsesCreateAppBannerResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2ProjectUrlsList = (
-    query: V2ProjectUrlsListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v2ProjectUrlsList = (query: V2ProjectUrlsListParamsDC, params: RequestParams = {}) =>
     http.request<V2ProjectUrlsListDataDC, V2ProjectUrlsListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/project/urls`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/project/urls`,
+      method: "GET",
       query: query,
       type: ContentType.Json,
       ...params,

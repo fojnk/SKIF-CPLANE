@@ -1,0 +1,69 @@
+[
+    {
+        "name": "ExperimentId",
+        "description": "Идентификатор эксперимента",
+        "type": {
+            "type": "string"
+        }
+    },
+    {
+        "name": "ProjectId",
+        "description": "Идентификатор проекта",
+        "type": {
+            "type": "string"
+        }
+    },
+    {
+        "name": "Namespace",
+        "description": "Namespace",
+        "type": {
+            "type": "string"
+        }
+    },
+    {
+        "name": "AbcProductId",
+        "description": "AbcProductId",
+        "type": {
+            "type": "string"
+        }
+    },
+    {
+        "name": "YT",
+        "description": "Настройки YT",
+        "type": {
+            "type": "struct",
+            "struct_params": [
+                {
+                    "name": "Token",
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "WorkDir",
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "Cluster",
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "ProxyRole",
+                    "type": {
+                        "type": "string"
+                    }
+                },
+                {
+                    "name": "TabletCellBundle",
+                    "type": {
+                        "type": "string"
+                    }
+                }
+            ]
+        }
+    }
+]

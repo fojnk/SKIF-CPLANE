@@ -9,8 +9,8 @@
  * ---------------------------------------------------------------
  */
 
-import { ContentType, RequestParams } from '@/shared/api/common/http-client';
-import { apiUrl, http } from '@/shared/api/http';
+import { ContentType, RequestParams } from "@/shared/api/common/http-client";
+import { apiUrl, http } from "@/shared/api/http";
 import {
   RequestsCreateUserGroupRequestDC,
   RequestsUpdateUserGroupRequestDC,
@@ -20,7 +20,7 @@ import {
   V1UsergroupUpdateErrorDC,
   V1UsergroupsListDataDC,
   V1UsergroupsListErrorDC,
-} from './data-contracts';
+} from "./data-contracts";
 export const userGroupApi = new (class UserGroupApi {
   /**
    * No description
@@ -37,15 +37,10 @@ export const userGroupApi = new (class UserGroupApi {
    *  **409** ResponsesErrorResponseDC Conflict - resource already exists <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1UsergroupCreate = (
-    request: RequestsCreateUserGroupRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1UsergroupCreate = (request: RequestsCreateUserGroupRequestDC, params: RequestParams = {}) =>
     http.request<V1UsergroupCreateDataDC, V1UsergroupCreateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/usergroup`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/usergroup`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -66,10 +61,8 @@ export const userGroupApi = new (class UserGroupApi {
    */
   v1UsergroupsList = (params: RequestParams = {}) =>
     http.request<V1UsergroupsListDataDC, V1UsergroupsListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/usergroups`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/usergroups`,
+      method: "GET",
       ...params,
     });
   /**
@@ -86,15 +79,10 @@ export const userGroupApi = new (class UserGroupApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1UsergroupUpdate = (
-    request: RequestsUpdateUserGroupRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1UsergroupUpdate = (request: RequestsUpdateUserGroupRequestDC, params: RequestParams = {}) =>
     http.request<V1UsergroupUpdateDataDC, V1UsergroupUpdateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/usergroup`,
-      method: 'PUT',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/usergroup`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,

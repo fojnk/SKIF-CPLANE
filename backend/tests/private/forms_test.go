@@ -58,22 +58,14 @@ func (s *StreamflowTestSuite) TestGetFormExperiment() {
 	s.Require().NotEmpty(formData.Payload.Params)
 
 	s.Require().True(slices.ContainsFunc(formData.Payload.Params, func(el *models.ParamsParam) bool {
-		return el.Name == "FileStorages" && el.Type.Type == models.ParamsTypeArray && el.Type.StructParams != nil
+		return el.Name == "Meta" && el.Type.Type == models.ParamsTypeStruct && el.Type.StructParams != nil
+	}))
+	s.Require().True(slices.ContainsFunc(formData.Payload.Params, func(el *models.ParamsParam) bool {
+		return el.Name == "experimentName" && el.Type.Type == models.ParamsTypeString
+	}))
+	s.Require().True(slices.ContainsFunc(formData.Payload.Params, func(el *models.ParamsParam) bool {
+		return el.Name == "models" && el.Type.Type == models.ParamsTypeArray && el.Type.StructParams != nil
 	}))
 
-	s.Require().True(slices.ContainsFunc(formData.Payload.Params, func(el *models.ParamsParam) bool {
-		return el.Name == "Placement" && el.Type.Type == models.ParamsTypeStruct && el.Type.StructParams != nil
-	}))
-	s.Require().True(slices.ContainsFunc(formData.Payload.Params, func(el *models.ParamsParam) bool {
-		return el.Name == "Resources" && el.Type.Type == models.ParamsTypeStruct && el.Type.StructParams != nil
-	}))
-	s.Require().True(slices.ContainsFunc(formData.Payload.Params, func(el *models.ParamsParam) bool {
-		return el.Name == "Resharder" && el.Type.Type == models.ParamsTypeStruct && el.Type.StructParams != nil
-	}))
-	s.Require().True(slices.ContainsFunc(formData.Payload.Params, func(el *models.ParamsParam) bool {
-		return el.Name == "States" && el.Type.Type == models.ParamsTypeArray && el.Type.StructParams != nil
-	}))
-	s.Require().True(slices.ContainsFunc(formData.Payload.Params, func(el *models.ParamsParam) bool {
-		return el.Name == "Worker" && el.Type.Type == models.ParamsTypeStruct && el.Type.StructParams != nil
-	}))
+	s.Require().Len(formData.Payload.Params, 3)
 }

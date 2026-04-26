@@ -466,8 +466,8 @@ var Definitions = []shared.Definition{
 		Method:  http.MethodPut,
 	},
 	{
-		Path:    "/api/v1/experiment/orchestrator",
-		Handler: shared.CreateHandler(getOrchestratorConfigHandler, setters.SetGetOrchestratorConfigRequestParams, validation.DefaultValidate[requests.GetOrchestratorConfigRequest], "experiment_id"),
+		Path:    "/api/v1/experiment/supervisor",
+		Handler: shared.CreateHandler(getSupervisorConfigHandler, setters.SetGetSupervisorConfigRequestParams, validation.DefaultValidate[requests.GetSupervisorConfigRequest], "experiment_id"),
 		Method:  http.MethodGet,
 	},
 	{

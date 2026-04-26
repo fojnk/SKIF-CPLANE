@@ -9,8 +9,8 @@
  * ---------------------------------------------------------------
  */
 
-import { ContentType, RequestParams } from '@/shared/api/common/http-client';
-import { apiUrl, http } from '@/shared/api/http';
+import { ContentType, RequestParams } from "@/shared/api/common/http-client";
+import { apiUrl, http } from "@/shared/api/http";
 import {
   RequestsCreateNamespaceRequestDC,
   RequestsDeleteNamespaceRequestDC,
@@ -43,7 +43,7 @@ import {
   V1NamespacesListErrorDC,
   V2NamespacesListDataDC,
   V2NamespacesListErrorDC,
-} from './data-contracts';
+} from "./data-contracts";
 export const namespaceApi = new (class NamespaceApi {
   /**
    * No description
@@ -59,15 +59,10 @@ export const namespaceApi = new (class NamespaceApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1NamespaceConfigList = (
-    query: V1NamespaceConfigListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1NamespaceConfigList = (query: V1NamespaceConfigListParamsDC, params: RequestParams = {}) =>
     http.request<V1NamespaceConfigListDataDC, V1NamespaceConfigListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/namespace/config`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/namespace/config`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -85,15 +80,10 @@ export const namespaceApi = new (class NamespaceApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1NamespaceConfigsList = (
-    query: V1NamespaceConfigsListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1NamespaceConfigsList = (query: V1NamespaceConfigsListParamsDC, params: RequestParams = {}) =>
     http.request<V1NamespaceConfigsListDataDC, V1NamespaceConfigsListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/namespace/configs`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/namespace/configs`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -112,15 +102,10 @@ export const namespaceApi = new (class NamespaceApi {
    *  **409** ResponsesErrorResponseDC Conflict - resource already exists <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1NamespaceCreate = (
-    request: RequestsCreateNamespaceRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1NamespaceCreate = (request: RequestsCreateNamespaceRequestDC, params: RequestParams = {}) =>
     http.request<V1NamespaceCreateDataDC, V1NamespaceCreateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/namespace`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/namespace`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -139,15 +124,10 @@ export const namespaceApi = new (class NamespaceApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1NamespaceDelete = (
-    request: RequestsDeleteNamespaceRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1NamespaceDelete = (request: RequestsDeleteNamespaceRequestDC, params: RequestParams = {}) =>
     http.request<V1NamespaceDeleteDataDC, V1NamespaceDeleteErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/namespace`,
-      method: 'DELETE',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/namespace`,
+      method: "DELETE",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -166,15 +146,10 @@ export const namespaceApi = new (class NamespaceApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1NamespaceList = (
-    query: V1NamespaceListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1NamespaceList = (query: V1NamespaceListParamsDC, params: RequestParams = {}) =>
     http.request<V1NamespaceListDataDC, V1NamespaceListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/namespace`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/namespace`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -192,15 +167,10 @@ export const namespaceApi = new (class NamespaceApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1NamespaceLogList = (
-    query: V1NamespaceLogListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1NamespaceLogList = (query: V1NamespaceLogListParamsDC, params: RequestParams = {}) =>
     http.request<V1NamespaceLogListDataDC, V1NamespaceLogListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/namespace/log`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/namespace/log`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -218,15 +188,10 @@ export const namespaceApi = new (class NamespaceApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1NamespaceLogsList = (
-    query: V1NamespaceLogsListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1NamespaceLogsList = (query: V1NamespaceLogsListParamsDC, params: RequestParams = {}) =>
     http.request<V1NamespaceLogsListDataDC, V1NamespaceLogsListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/namespace/logs`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/namespace/logs`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -244,15 +209,10 @@ export const namespaceApi = new (class NamespaceApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1NamespaceLogUpdate = (
-    request: RequestsUpdateNamespaceLogCommentRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1NamespaceLogUpdate = (request: RequestsUpdateNamespaceLogCommentRequestDC, params: RequestParams = {}) =>
     http.request<V1NamespaceLogUpdateDataDC, V1NamespaceLogUpdateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/namespace/log`,
-      method: 'PUT',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/namespace/log`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -273,10 +233,8 @@ export const namespaceApi = new (class NamespaceApi {
    */
   v1NamespacesList = (params: RequestParams = {}) =>
     http.request<V1NamespacesListDataDC, V1NamespacesListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/namespaces`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/namespaces`,
+      method: "GET",
       ...params,
     });
   /**
@@ -293,15 +251,10 @@ export const namespaceApi = new (class NamespaceApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1NamespaceUpdate = (
-    request: RequestsUpdateNamespaceRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1NamespaceUpdate = (request: RequestsUpdateNamespaceRequestDC, params: RequestParams = {}) =>
     http.request<V1NamespaceUpdateDataDC, V1NamespaceUpdateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/namespace`,
-      method: 'PUT',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/namespace`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -322,10 +275,8 @@ export const namespaceApi = new (class NamespaceApi {
    */
   v2NamespacesList = (params: RequestParams = {}) =>
     http.request<V2NamespacesListDataDC, V2NamespacesListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/namespaces`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/namespaces`,
+      method: "GET",
       ...params,
     });
 })();

@@ -2,8 +2,10 @@ import { createMutation } from '@farfetched/core';
 import { createEvent, createStore, createEffect, sample } from 'effector';
 
 import { experimentVersionsModel } from '@/modules/control-plane/entities/experiment-versions';
+import { LogsListModel } from '@/modules/control-plane/entities/logs/list';
 import { ApplyExperimentPayload } from '@/modules/control-plane/features/experiment/apply';
 import { controlPlaneApi } from '@/modules/control-plane/shared/api';
+import { getLogsInitialPageSize } from '@/modules/control-plane/shared/utils/pageDataHelpers';
 import { HttpResponse, httpRequestFailed } from '@/shared/api';
 import { modalsModel } from '@/shared/ui/modals';
 import { notifications } from '@/shared/ui/notifications';
@@ -63,6 +65,17 @@ sample({
 sample({
   clock: success,
   target: modal.close,
+});
+
+sample({
+  clock: success,
+  fn: ({ params }) => ({
+    id: params as number,
+    from: 0,
+    limit: getLogsInitialPageSize(),
+    type: 'experiment' as const,
+  }),
+  target: LogsListModel.load,
 });
 
 sample({

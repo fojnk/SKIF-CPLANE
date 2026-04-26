@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestOrchestratorConfig_MarshalJSON(t *testing.T) {
-	cfg := OrchestratorConfig{
+func TestSupervisorPipelineConfig_MarshalJSON(t *testing.T) {
+	cfg := SupervisorPipelineConfig{
 		ExperimentConfig: map[string]any{
 			"InternalSources": map[string]any{
 				"resharder_queue": map[string]any{
@@ -133,8 +133,8 @@ func TestOrchestratorConfig_MarshalJSON(t *testing.T) {
 	require.JSONEq(t, string(expectedConfig), string(cfgJSON))
 }
 
-func TestOrchestratorConfigDatasetSchemaV2_MarshalJSON(t *testing.T) {
-	cfg := OrchestratorConfig{
+func TestSupervisorPipelineConfigDatasetSchemaV2_MarshalJSON(t *testing.T) {
+	cfg := SupervisorPipelineConfig{
 		ExperimentConfig: map[string]any{
 			"InternalSources": map[string]any{
 				"resharder_queue": map[string]any{

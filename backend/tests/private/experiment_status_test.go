@@ -65,7 +65,8 @@ func (s *StreamflowTestSuite) TestExperimentStatus() {
 	s.Require().NoError(err)
 	s.Require().NotNil(statusResp)
 	s.Require().NotNil(statusResp.Payload)
-	s.Require().Equal("OK", statusResp.Payload.Status)
+	s.Require().Equal("UNKNOWN", statusResp.Payload.Status)
+	s.Require().Equal("supervisor", statusResp.Payload.Summary)
 
 	// stop experiment
 	stopResp, err := s.c.Experiment.PutAPIV1ExperimentStop(&experiment2.PutAPIV1ExperimentStopParams{
@@ -86,9 +87,8 @@ func (s *StreamflowTestSuite) TestExperimentStatus() {
 	s.Require().NoError(err)
 	s.Require().NotNil(statusResp)
 	s.Require().NotNil(statusResp.Payload)
-	s.Require().Equal("OK", statusResp.Payload.Status)
-	s.Require().Equal("", statusResp.Payload.Message)
-	s.Require().Equal("running", statusResp.Payload.Summary)
+	s.Require().Equal("UNKNOWN", statusResp.Payload.Status)
+	s.Require().Equal("supervisor", statusResp.Payload.Summary)
 
 	listLogsRes, err := s.c.Experiment.GetAPIV1ExperimentLogs(&experiment2.GetAPIV1ExperimentLogsParams{
 		ExperimentID: &cpResp.Payload.ID,

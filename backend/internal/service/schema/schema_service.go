@@ -19,9 +19,9 @@ func NewSchemaService(repo *repository.Repository) *SchemaService {
 	return &SchemaService{
 		repo: repo,
 		schemaConfig: map[string]string{
-			"experiment":          "/json/TExperimentConfig.json",
+			"experiment":     "/json/TExperimentConfig.json",
 			"dataset":        "/json/TDataset.json",
-			"project":           "/json/TProjectConfig.json",
+			"project":        "/json/TProjectConfig.json",
 			"dataset_schema": "/json/TDataSchema.json",
 		},
 	}

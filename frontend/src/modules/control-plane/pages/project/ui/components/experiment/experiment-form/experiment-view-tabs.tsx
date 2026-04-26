@@ -9,6 +9,8 @@ import {
 import { ParamsDC } from '@/modules/control-plane/shared/types';
 import { ResizablePanel } from '@/modules/control-plane/shared/ui/resizer';
 
+import { hasWorkerParam } from '@/modules/control-plane/pages/editor/ui/modules/experiment/experiment-edit/utils';
+
 import { WorkerViewCubes } from './worker-view-cubes';
 
 export type TabId = 'experiment' | 'worker' | 'cubes';
@@ -61,14 +63,28 @@ export const ExperimentViewTabs = ({
 
   const togglePanel = () => setShowPanel((prev) => !prev);
 
+  const hasWorker = hasWorkerParam(formData);
+
   // При клике на кубе в графе — переключаемся на таб Cubes
   useEffect(() => {
+    if (!hasWorker) {
+      return;
+    }
     if (selectedCubeHash) {
       setActiveTab('cubes');
       // Также открываем панель если она скрыта
       setShowPanel(true);
     }
-  }, [selectedCubeHash, setActiveTab]);
+  }, [hasWorker, selectedCubeHash, setActiveTab]);
+
+  useEffect(() => {
+    if (
+      !hasWorker &&
+      (activeTab === 'worker' || activeTab === 'cubes')
+    ) {
+      setActiveTab('experiment');
+    }
+  }, [hasWorker, activeTab, setActiveTab]);
 
   // При изменении focusedParam — открываем панель
   useEffect(() => {
@@ -103,14 +119,21 @@ export const ExperimentViewTabs = ({
   // Количество кубов для отображения в табе
   const cubesCount = graphData?.validatedCubes?.length ?? 0;
 
-  const tabs = [
-    {
-      id: 'experiment' as TabId,
-      title: 'Experiment Config',
-    },
-    { id: 'worker' as TabId, title: 'Worker' },
-    { id: 'cubes' as TabId, title: `Models (${cubesCount})` },
-  ];
+  const tabs = hasWorker
+    ? [
+        {
+          id: 'experiment' as TabId,
+          title: 'Experiment Config',
+        },
+        { id: 'worker' as TabId, title: 'Worker' },
+        { id: 'cubes' as TabId, title: `Models (${cubesCount})` },
+      ]
+    : [
+        {
+          id: 'experiment' as TabId,
+          title: 'Experiment Config',
+        },
+      ];
 
   return (
     <TabProvider
@@ -154,44 +177,48 @@ export const ExperimentViewTabs = ({
           )}
         </Flex>
 
-        <Flex
-          direction="column"
-          style={{ display: activeTab === 'worker' ? 'flex' : 'none' }}
-        >
-          {isWorkerEmpty ? (
-            <Text variant="subheader-1" color="secondary">
-              Empty config
-            </Text>
-          ) : (
-            <FormParamView
-              params={sortedWorkerParams}
-              values={
-                workerInitValue && typeof workerInitValue === 'object'
-                  ? (workerInitValue as Record<string, unknown>)
-                  : {}
-              }
-              disclosure
-              defaultOpen
-              variableNames={variableNames}
-              onVariableClick={onVariableClick}
-            />
-          )}
-        </Flex>
+        {hasWorker ? (
+          <>
+            <Flex
+              direction="column"
+              style={{ display: activeTab === 'worker' ? 'flex' : 'none' }}
+            >
+              {isWorkerEmpty ? (
+                <Text variant="subheader-1" color="secondary">
+                  Empty config
+                </Text>
+              ) : (
+                <FormParamView
+                  params={sortedWorkerParams}
+                  values={
+                    workerInitValue && typeof workerInitValue === 'object'
+                      ? (workerInitValue as Record<string, unknown>)
+                      : {}
+                  }
+                  disclosure
+                  defaultOpen
+                  variableNames={variableNames}
+                  onVariableClick={onVariableClick}
+                />
+              )}
+            </Flex>
 
-        <Flex
-          direction="column"
-          style={{ display: activeTab === 'cubes' ? 'flex' : 'none' }}
-        >
-          <WorkerViewCubes
-            selectedCubeHash={selectedCubeHash}
-            graphData={graphData}
-            config={config}
-            cubeConfig={cubeConfig}
-            onCubeSelect={onCubeSelect}
-            variableNames={variableNames}
-            onVariableClick={onVariableClick}
-          />
-        </Flex>
+            <Flex
+              direction="column"
+              style={{ display: activeTab === 'cubes' ? 'flex' : 'none' }}
+            >
+              <WorkerViewCubes
+                selectedCubeHash={selectedCubeHash}
+                graphData={graphData}
+                config={config}
+                cubeConfig={cubeConfig}
+                onCubeSelect={onCubeSelect}
+                variableNames={variableNames}
+                onVariableClick={onVariableClick}
+              />
+            </Flex>
+          </>
+        ) : null}
       </ResizablePanel>
     </TabProvider>
   );

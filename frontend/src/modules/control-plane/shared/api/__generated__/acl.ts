@@ -9,8 +9,8 @@
  * ---------------------------------------------------------------
  */
 
-import { ContentType, RequestParams } from '@/shared/api/common/http-client';
-import { apiUrl, http } from '@/shared/api/http';
+import { ContentType, RequestParams } from "@/shared/api/common/http-client";
+import { apiUrl, http } from "@/shared/api/http";
 import {
   RequestsAddRuleToRoleRequestDC,
   RequestsAddUserToGroupRequestDC,
@@ -41,7 +41,7 @@ import {
   V2AclUsersListParamsDC,
   V2MeCapabilitiesListDataDC,
   V2MeCapabilitiesListErrorDC,
-} from './data-contracts';
+} from "./data-contracts";
 export const aclApi = new (class AclApi {
   /**
    * No description
@@ -57,15 +57,10 @@ export const aclApi = new (class AclApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1DisclaimCreate = (
-    request: RequestsDisclaimRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1DisclaimCreate = (request: RequestsDisclaimRequestDC, params: RequestParams = {}) =>
     http.request<V1DisclaimCreateDataDC, V1DisclaimCreateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/disclaim`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/disclaim`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -84,15 +79,10 @@ export const aclApi = new (class AclApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1GrantCreate = (
-    request: RequestsGrantRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1GrantCreate = (request: RequestsGrantRequestDC, params: RequestParams = {}) =>
     http.request<V1GrantCreateDataDC, V1GrantCreateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/grant`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/grant`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -111,15 +101,10 @@ export const aclApi = new (class AclApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1PermissionsList = (
-    query: V1PermissionsListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1PermissionsList = (query: V1PermissionsListParamsDC, params: RequestParams = {}) =>
     http.request<V1PermissionsListDataDC, V1PermissionsListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/permissions`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/permissions`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -137,15 +122,10 @@ export const aclApi = new (class AclApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1RoleRuleCreate = (
-    request: RequestsAddRuleToRoleRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1RoleRuleCreate = (request: RequestsAddRuleToRoleRequestDC, params: RequestParams = {}) =>
     http.request<V1RoleRuleCreateDataDC, V1RoleRuleCreateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/role/rule`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/role/rule`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -164,15 +144,10 @@ export const aclApi = new (class AclApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1RoleRuleDelete = (
-    request: RequestsRemoveRuleFromRoleRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1RoleRuleDelete = (request: RequestsRemoveRuleFromRoleRequestDC, params: RequestParams = {}) =>
     http.request<V1RoleRuleDeleteDataDC, V1RoleRuleDeleteErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/role/rule`,
-      method: 'DELETE',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/role/rule`,
+      method: "DELETE",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -191,15 +166,10 @@ export const aclApi = new (class AclApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1UsergroupUserCreate = (
-    request: RequestsAddUserToGroupRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1UsergroupUserCreate = (request: RequestsAddUserToGroupRequestDC, params: RequestParams = {}) =>
     http.request<V1UsergroupUserCreateDataDC, V1UsergroupUserCreateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/usergroup/user`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/usergroup/user`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -218,15 +188,10 @@ export const aclApi = new (class AclApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1UsergroupUserDelete = (
-    request: RequestsRemoveUserFromGroupRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1UsergroupUserDelete = (request: RequestsRemoveUserFromGroupRequestDC, params: RequestParams = {}) =>
     http.request<V1UsergroupUserDeleteDataDC, V1UsergroupUserDeleteErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/usergroup/user`,
-      method: 'DELETE',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/usergroup/user`,
+      method: "DELETE",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -241,15 +206,10 @@ export const aclApi = new (class AclApi {
    *  **200** V2AclCheckListDataDC OK <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2AclCheckList = (
-    query: V2AclCheckListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v2AclCheckList = (query: V2AclCheckListParamsDC, params: RequestParams = {}) =>
     http.request<V2AclCheckListDataDC, V2AclCheckListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/acl/check`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/acl/check`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -263,15 +223,10 @@ export const aclApi = new (class AclApi {
    *  **200** V2AclUsersListDataDC OK <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2AclUsersList = (
-    query: V2AclUsersListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v2AclUsersList = (query: V2AclUsersListParamsDC, params: RequestParams = {}) =>
     http.request<V2AclUsersListDataDC, V2AclUsersListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/acl/users`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/acl/users`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -288,10 +243,8 @@ export const aclApi = new (class AclApi {
    */
   v2MeCapabilitiesList = (params: RequestParams = {}) =>
     http.request<V2MeCapabilitiesListDataDC, V2MeCapabilitiesListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/me/capabilities`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/me/capabilities`,
+      method: "GET",
       ...params,
     });
 })();

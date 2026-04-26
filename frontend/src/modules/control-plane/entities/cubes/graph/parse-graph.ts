@@ -27,8 +27,10 @@ import { createDebugCollector } from './debug-collector';
 import {
   getResharderInputSources,
   hasResharderResources,
+  isSupervisorExperimentLayout,
   mergeConfigs,
 } from './merge-config';
+import { buildSupervisorGraphParams } from './supervisor-graph';
 import { createPortsWithHash, generateHash } from './utils';
 import { validateInputNames, validateOutputNames } from './validate-ports';
 
@@ -90,6 +92,11 @@ export function parseGraphConfig(
   cubeConfig: string,
   baseCubes: CubeListDC[],
 ): CubesGraphParamsWithDebug | null {
+  // Конфиг Java-супервизора: { experimentName?, models: [...] } — без Worker.GraphConfig
+  if (isSupervisorExperimentLayout(config)) {
+    return buildSupervisorGraphParams(config);
+  }
+
   // Создаём коллектор debug информации
   const debug = createDebugCollector();
 

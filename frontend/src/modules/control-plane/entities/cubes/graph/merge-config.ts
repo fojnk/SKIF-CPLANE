@@ -11,10 +11,51 @@ import type {
   MergedConfig,
   MergedConfigCube,
   ParsedExperimentConfig,
+  SupervisorExperimentConfig,
 } from '../types';
 
 import type { DebugCollector } from './debug-collector';
 import { getCubeConfigItems, parseCubeConfig } from './parse-cube-config';
+
+/**
+ * Конфиг пайплайна супервизора: ключ models — массив (в т.ч. пустой).
+ * Streamflow с непустым Worker.GraphConfig.Cubes обрабатывается отдельно.
+ */
+export function isSupervisorExperimentLayout(configJson: string): boolean {
+  const t = configJson?.trim() ?? '';
+  if (!t) {
+    return false;
+  }
+  try {
+    const probe = JSON.parse(t) as {
+      models?: unknown;
+      Worker?: { GraphConfig?: { Cubes?: unknown[] } };
+    };
+    const cubes = probe.Worker?.GraphConfig?.Cubes;
+    if (Array.isArray(cubes) && cubes.length > 0) {
+      return false;
+    }
+    return Array.isArray(probe.models);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Разбор JSON конфига супервизора (без валидации полей модели).
+ */
+export function parseSupervisorExperimentConfig(
+  configJson: string,
+): SupervisorExperimentConfig | null {
+  if (!isSupervisorExperimentLayout(configJson)) {
+    return null;
+  }
+  try {
+    return JSON.parse(configJson) as SupervisorExperimentConfig;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * Парсит основной config пайплайна
@@ -34,11 +75,21 @@ export function parseExperimentConfig(
 
   try {
     const parsed = JSON.parse(configJson) as ParsedExperimentConfig;
-    const cubesCount = parsed?.Worker?.GraphConfig?.Cubes?.length ?? 0;
+    const graphConfig = parsed?.Worker?.GraphConfig;
+    const cubesCount = Array.isArray(graphConfig?.Cubes)
+      ? graphConfig.Cubes.length
+      : 0;
     debug?.info('parse_config', 'Successfully parsed experiment config', {
       cubesCount,
       hasResharder: !!parsed?.Resharder,
       hasResources: !!parsed?.Resources,
+      hasMeta: !!parsed?.Meta,
+      graphOutputNames: Array.isArray(graphConfig?.OutputNames)
+        ? graphConfig.OutputNames.length
+        : 0,
+      graphStateNames: Array.isArray(graphConfig?.StateNames)
+        ? graphConfig.StateNames.length
+        : 0,
     });
     return parsed;
   } catch (error) {

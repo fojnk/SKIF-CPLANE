@@ -219,3 +219,8 @@ func enrichValue(v any, vars map[string]ExperimentVariable) (any, error) {
 		return v, nil
 	}
 }
+
+// EnrichAnyWithVariables подставляет значения переменных пайплайна в произвольный JSON-совместимый объект (как в SupervisorPipelineConfig).
+func EnrichAnyWithVariables(v any, vars map[string]ExperimentVariable) (any, error) {
+	return enrichValue(v, vars)
+}

@@ -8,12 +8,20 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/clients"
 	jwt_client "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/clients/jwt"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/clients/oauth"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/clients/rabbitmq"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/db"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/logger"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/acl"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/repository/cache"
 	"gopkg.in/yaml.v3"
 )
+
+// SupervisorClientConfig опциональный HTTP-доступ к Java-супервизору (статус пайплайна).
+type SupervisorClientConfig struct {
+	BaseURL string `yaml:"base_url"`
+	// TimeoutMs таймаут HTTP-запроса в миллисекундах. 0 — 5000 мс.
+	TimeoutMs int64 `yaml:"timeout_ms"`
+}
 
 type Config struct {
 	Log           logger.LoggerConfig `yaml:"log"`
@@ -26,10 +34,11 @@ type Config struct {
 	UseCors       bool                `yaml:"use_cors"`
 	IsTestEnv     bool                `yaml:"is_test_env"`
 	Clients       struct {
-		Auth         clients.AuthClientConfig         `yaml:"auth"`
-		Orchestrator clients.OrchestratorClientConfig `yaml:"orchestrator"`
-		OAuth        oauth.OAuthConfig                `yaml:"oauth"`
-		JWT          jwt_client.JWTConfig             `yaml:"jwt"`
+		Auth     clients.AuthClientConfig `yaml:"auth"`
+		OAuth    oauth.OAuthConfig        `yaml:"oauth"`
+		JWT      jwt_client.JWTConfig     `yaml:"jwt"`
+		RabbitMQ   rabbitmq.Config          `yaml:"rabbitmq"`
+		Supervisor SupervisorClientConfig   `yaml:"supervisor"`
 	} `yaml:"clients"`
 	SessionCache   cache.SessionCacheConfig `yaml:"session_cache"`
 	ExperimentURLs map[string]struct {
@@ -93,6 +102,10 @@ func (c *Config) ValidateRuntime() error {
 
 	if c.LocalAuth.Enabled && len(c.LocalAuth.Users) == 0 {
 		return fmt.Errorf("local_auth.enabled=true requires at least one configured user")
+	}
+
+	if c.Clients.RabbitMQ.Enabled && strings.TrimSpace(c.Clients.RabbitMQ.Host) == "" {
+		return fmt.Errorf("clients.rabbitmq.host is required when rabbitmq is enabled")
 	}
 
 	return nil

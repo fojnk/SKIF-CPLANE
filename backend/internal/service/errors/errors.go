@@ -54,7 +54,7 @@ const (
 	EntityAppUpcoming      EntityType = "app_upcoming"
 	EntityAppAbout         EntityType = "app_about"
 	EntityACL              EntityType = "acl"
-	EntityOrchestrator     EntityType = "orchestrator"
+	EntitySupervisor       EntityType = "supervisor"
 	EntityGeneric          EntityType = "generic"
 	EntityCube EntityType = "cube"
 )
@@ -439,13 +439,13 @@ var EntityMessages = map[EntityType]EntityErrorMessages{
 		Internal:    "Внутренняя ошибка при работе с правами доступа",
 		Unavailable: "Сервис прав доступа временно недоступен",
 	},
-	EntityOrchestrator: {
-		NotFound:    "Ресурс оркестратора не найден",
-		Exists:      "Ресурс уже существует в оркестраторе",
-		Forbidden:   "Доступ к оркестратору запрещен",
-		BadRequest:  "Некорректный запрос к оркестратору",
-		Internal:    "Внутренняя ошибка оркестратора",
-		Unavailable: "Оркестратор временно недоступен",
+	EntitySupervisor: {
+		NotFound:    "Ресурс супервизора не найден",
+		Exists:      "Ресурс уже существует у супервизора",
+		Forbidden:   "Доступ к супервизору запрещён",
+		BadRequest:  "Некорректный запрос к супервизору",
+		Internal:    "Внутренняя ошибка супервизора",
+		Unavailable: "Супервизор временно недоступен",
 	},
 	EntityGeneric: {
 		NotFound:    "Ресурс не найден",

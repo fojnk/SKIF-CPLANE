@@ -38,86 +38,42 @@ func (s *FormService) GetProjectFormParams(ctx context.Context) ([]params.Param,
 	return formParams, nil
 }
 
-// GetProjectFormParams возвращает параметры формы для project
+// GetPipelintFormsParams возвращает параметры формы experiment: только Meta, experimentName и models[] (супервизор).
 func (s *FormService) GetPipelintFormsParams(ctx context.Context) ([]params.Param, error) {
 	paramsSl := make([]params.Param, 0)
-	fileStoragesParams, err := s.repo.FormsRepo.GetExperimentFileStoragesFormParams(ctx)
+
+	metaParams, err := s.repo.FormsRepo.GetExperimentMetaFormParams(ctx)
 	if err != nil {
-		s.repo.Logger.Error("failed to get experiment placement form", err)
-		return nil, serviceerrors.NewInternalError("Не удалось получить параметры формы experiment раздела placement", err)
+		s.repo.Logger.Error("failed to get experiment meta form", err)
+		return nil, serviceerrors.NewInternalError("Не удалось получить параметры формы Meta эксперимента", err)
 	}
 	paramsSl = append(paramsSl, params.Param{
-		Name: "FileStorages",
+		Name:        "Meta",
+		Description: "Метаданные эксперимента",
+		Type: &params.ParamType{
+			Type:         params.Struct,
+			StructParams: &metaParams,
+		},
+	})
+
+	paramsSl = append(paramsSl, params.Param{
+		Name:        "experimentName",
+		Description: "Имя пайплайна для супервизора",
+		Type:        &params.ParamType{Type: params.String},
+	})
+
+	modelsItemParams, err := s.repo.FormsRepo.GetExperimentModelsFormParams(ctx)
+	if err != nil {
+		s.repo.Logger.Error("failed to get experiment models form", err)
+		return nil, serviceerrors.NewInternalError("Не удалось получить параметры формы models эксперимента", err)
+	}
+	paramsSl = append(paramsSl, params.Param{
+		Name:        "models",
+		Description: "Модели пайплайна (очерёдность по order)",
 		Type: &params.ParamType{
 			Type:         params.Array,
 			NestedType:   params.Struct,
-			StructParams: &fileStoragesParams,
-		},
-	})
-
-	placementParams, err := s.repo.FormsRepo.GetExperimentPlacementFormParams(ctx)
-	if err != nil {
-		s.repo.Logger.Error("failed to get experiment placement form", err)
-		return nil, serviceerrors.NewInternalError("Не удалось получить параметры формы experiment раздела placement", err)
-	}
-	paramsSl = append(paramsSl, params.Param{
-		Name: "Placement",
-		Type: &params.ParamType{
-			Type:         params.Struct,
-			StructParams: &placementParams,
-		},
-	})
-
-	resourcesParams, err := s.repo.FormsRepo.GetExperimentResourcesFormParams(ctx)
-	if err != nil {
-		s.repo.Logger.Error("failed to get experiment resources form", err)
-		return nil, serviceerrors.NewInternalError("Не удалось получить параметры формы experiment раздела resources", err)
-	}
-	paramsSl = append(paramsSl, params.Param{
-		Name: "Resources",
-		Type: &params.ParamType{
-			Type:         params.Struct,
-			StructParams: &resourcesParams,
-		},
-	})
-
-	resharderParams, err := s.repo.FormsRepo.GetExperimentResharderFormParams(ctx)
-	if err != nil {
-		s.repo.Logger.Error("failed to get experiment resharder form", err)
-		return nil, serviceerrors.NewInternalError("Не удалось получить параметры формы experiment раздела resharder", err)
-	}
-	paramsSl = append(paramsSl, params.Param{
-		Name: "Resharder",
-		Type: &params.ParamType{
-			Type:         params.Struct,
-			StructParams: &resharderParams,
-		},
-	})
-
-	statesParams, err := s.repo.FormsRepo.GetExperimentStatesFormParams(ctx)
-	if err != nil {
-		s.repo.Logger.Error("failed to get experiment states form", err)
-		return nil, serviceerrors.NewInternalError("Не удалось получить параметры формы experiment раздела states", err)
-	}
-	paramsSl = append(paramsSl, params.Param{
-		Name: "States",
-		Type: &params.ParamType{
-			Type:         params.Array,
-			NestedType:   params.Struct,
-			StructParams: &statesParams,
-		},
-	})
-
-	workerParams, err := s.repo.FormsRepo.GetExperimentWorkerFormParams(ctx)
-	if err != nil {
-		s.repo.Logger.Error("failed to get experiment states form", err)
-		return nil, serviceerrors.NewInternalError("Не удалось получить параметры формы experiment раздела states", err)
-	}
-	paramsSl = append(paramsSl, params.Param{
-		Name: "Worker",
-		Type: &params.ParamType{
-			Type:         params.Struct,
-			StructParams: &workerParams,
+			StructParams: &modelsItemParams,
 		},
 	})
 

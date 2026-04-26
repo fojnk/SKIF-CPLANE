@@ -9,8 +9,8 @@
  * ---------------------------------------------------------------
  */
 
-import { ContentType, RequestParams } from '@/shared/api/common/http-client';
-import { apiUrl, http } from '@/shared/api/http';
+import { ContentType, RequestParams } from "@/shared/api/common/http-client";
+import { apiUrl, http } from "@/shared/api/http";
 import {
   RequestsAddDatasetToExperimentRequestDC,
   RequestsApplyExperimentConfigRequestDC,
@@ -20,11 +20,11 @@ import {
   RequestsCreateExperimentVariableRequestDC,
   RequestsDeleteCompleteExperimentRequestDC,
   RequestsDeleteExperimentVariableRequestDC,
-  RequestsGetExperimentAvailableDatasetsToLinkRequestDC,
   RequestsExperimentStartRequestDC,
   RequestsExperimentStopRequestDC,
   RequestsExperimentValidateFastRequestDC,
   RequestsExperimentValidateRunRequestDC,
+  RequestsGetExperimentAvailableDatasetsToLinkRequestDC,
   RequestsRemoveDatasetFromExperimentRequestDC,
   RequestsSaveAppliedVersionForExperimentsRequestDC,
   RequestsUpdateCompleteExperimentRequestDC,
@@ -35,9 +35,6 @@ import {
   RequestsUpdateExperimentVariableVersionCommentRequestDC,
   RequestsUpdateExperimentVariableVersionRequestDC,
   RequestsUpdateExperimentVersionCommentRequestDC,
-  V1GraphListDataDC,
-  V1GraphListErrorDC,
-  V1GraphListParamsDC,
   V1ExperimentConfigApplySaveCreateDataDC,
   V1ExperimentConfigApplySaveCreateErrorDC,
   V1ExperimentConfigApplyUpdateDataDC,
@@ -71,9 +68,6 @@ import {
   V1ExperimentLogsListDataDC,
   V1ExperimentLogsListErrorDC,
   V1ExperimentLogsListParamsDC,
-  V1ExperimentOrchestratorListDataDC,
-  V1ExperimentOrchestratorListErrorDC,
-  V1ExperimentOrchestratorListParamsDC,
   V1ExperimentStartUpdateDataDC,
   V1ExperimentStartUpdateErrorDC,
   V1ExperimentStatusListDataDC,
@@ -81,6 +75,9 @@ import {
   V1ExperimentStatusListParamsDC,
   V1ExperimentStopUpdateDataDC,
   V1ExperimentStopUpdateErrorDC,
+  V1ExperimentSupervisorListDataDC,
+  V1ExperimentSupervisorListErrorDC,
+  V1ExperimentSupervisorListParamsDC,
   V1ExperimentUpdateDataDC,
   V1ExperimentUpdateErrorDC,
   V1ExperimentUpdatesListDataDC,
@@ -121,6 +118,9 @@ import {
   V1ExperimentsListDataDC,
   V1ExperimentsListErrorDC,
   V1ExperimentsListParamsDC,
+  V1GraphListDataDC,
+  V1GraphListErrorDC,
+  V1GraphListParamsDC,
   V2ExperimentConfigApplyUpdateDataDC,
   V2ExperimentConfigApplyUpdateErrorDC,
   V2ExperimentConfigValidateCreateDataDC,
@@ -143,31 +143,8 @@ import {
   V2ExperimentVersionUpdateErrorDC,
   V3ExperimentConfigApplyUpdateDataDC,
   V3ExperimentConfigApplyUpdateErrorDC,
-} from './data-contracts';
+} from "./data-contracts";
 export const experimentApi = new (class ExperimentApi {
-  /**
-   * No description
-   *
-   * @tags experiment
-   * @summary get project graph
-   * @request GET:/api/v1/graph
-   * @responses <br/>
-   *  **200** V1GraphListDataDC OK <br/>
-   *  **400** ResponsesErrorResponseDC Bad Request <br/>
-   *  **401** ResponsesErrorResponseDC Unauthorized <br/>
-   *  **403** ResponsesErrorResponseDC Forbidden <br/>
-   *  **404** ResponsesErrorResponseDC Not Found <br/>
-   *  **500** ResponsesErrorResponseDC Internal server error <br/>
-   */
-  v1GraphList = (query: V1GraphListParamsDC, params: RequestParams = {}) =>
-    http.request<V1GraphListDataDC, V1GraphListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/graph`,
-      method: 'GET',
-      query: query,
-      ...params,
-    });
   /**
    * No description
    *
@@ -186,14 +163,9 @@ export const experimentApi = new (class ExperimentApi {
     request: RequestsSaveAppliedVersionForExperimentsRequestDC,
     params: RequestParams = {},
   ) =>
-    http.request<
-      V1ExperimentConfigApplySaveCreateDataDC,
-      V1ExperimentConfigApplySaveCreateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/config/apply/save`,
-      method: 'POST',
+    http.request<V1ExperimentConfigApplySaveCreateDataDC, V1ExperimentConfigApplySaveCreateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/config/apply/save`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -212,18 +184,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentConfigApplyUpdate = (
-    request: RequestsApplyExperimentConfigRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V1ExperimentConfigApplyUpdateDataDC,
-      V1ExperimentConfigApplyUpdateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/config/apply`,
-      method: 'PUT',
+  v1ExperimentConfigApplyUpdate = (request: RequestsApplyExperimentConfigRequestDC, params: RequestParams = {}) =>
+    http.request<V1ExperimentConfigApplyUpdateDataDC, V1ExperimentConfigApplyUpdateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/config/apply`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -242,15 +206,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentCopyCreate = (
-    request: RequestsCopyCompleteExperimentRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentCopyCreate = (request: RequestsCopyCompleteExperimentRequestDC, params: RequestParams = {}) =>
     http.request<V1ExperimentCopyCreateDataDC, V1ExperimentCopyCreateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/copy`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/copy`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -269,15 +228,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentCreate = (
-    request: RequestsCreateCompleteExperimentRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentCreate = (request: RequestsCreateCompleteExperimentRequestDC, params: RequestParams = {}) =>
     http.request<V1ExperimentCreateDataDC, V1ExperimentCreateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -296,18 +250,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentDatasetCreate = (
-    request: RequestsAddDatasetToExperimentRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V1ExperimentDatasetCreateDataDC,
-      V1ExperimentDatasetCreateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/dataset`,
-      method: 'POST',
+  v1ExperimentDatasetCreate = (request: RequestsAddDatasetToExperimentRequestDC, params: RequestParams = {}) =>
+    http.request<V1ExperimentDatasetCreateDataDC, V1ExperimentDatasetCreateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/dataset`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -326,18 +272,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentDatasetDelete = (
-    request: RequestsRemoveDatasetFromExperimentRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V1ExperimentDatasetDeleteDataDC,
-      V1ExperimentDatasetDeleteErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/dataset`,
-      method: 'DELETE',
+  v1ExperimentDatasetDelete = (request: RequestsRemoveDatasetFromExperimentRequestDC, params: RequestParams = {}) =>
+    http.request<V1ExperimentDatasetDeleteDataDC, V1ExperimentDatasetDeleteErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/dataset`,
+      method: "DELETE",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -356,18 +294,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesCreateAppBannerResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentDatasetsList = (
-    query: V1ExperimentDatasetsListParamsDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V1ExperimentDatasetsListDataDC,
-      V1ExperimentDatasetsListErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/datasets`,
-      method: 'GET',
+  v1ExperimentDatasetsList = (query: V1ExperimentDatasetsListParamsDC, params: RequestParams = {}) =>
+    http.request<V1ExperimentDatasetsListDataDC, V1ExperimentDatasetsListErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/datasets`,
+      method: "GET",
       query: query,
       type: ContentType.Json,
       ...params,
@@ -386,18 +316,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentDatasetUpdate = (
-    request: RequestsUpdateExperimentDatasetRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V1ExperimentDatasetUpdateDataDC,
-      V1ExperimentDatasetUpdateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/dataset`,
-      method: 'PUT',
+  v1ExperimentDatasetUpdate = (request: RequestsUpdateExperimentDatasetRequestDC, params: RequestParams = {}) =>
+    http.request<V1ExperimentDatasetUpdateDataDC, V1ExperimentDatasetUpdateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/dataset`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -416,15 +338,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentDelete = (
-    request: RequestsDeleteCompleteExperimentRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentDelete = (request: RequestsDeleteCompleteExperimentRequestDC, params: RequestParams = {}) =>
     http.request<V1ExperimentDeleteDataDC, V1ExperimentDeleteErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment`,
-      method: 'DELETE',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment`,
+      method: "DELETE",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -443,18 +360,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesCreateAppBannerResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentGrafanaUrlList = (
-    query: V1ExperimentGrafanaUrlListParamsDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V1ExperimentGrafanaUrlListDataDC,
-      V1ExperimentGrafanaUrlListErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/grafana_url`,
-      method: 'GET',
+  v1ExperimentGrafanaUrlList = (query: V1ExperimentGrafanaUrlListParamsDC, params: RequestParams = {}) =>
+    http.request<V1ExperimentGrafanaUrlListDataDC, V1ExperimentGrafanaUrlListErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/grafana_url`,
+      method: "GET",
       query: query,
       type: ContentType.Json,
       ...params,
@@ -473,15 +382,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentList = (
-    query: V1ExperimentListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentList = (query: V1ExperimentListParamsDC, params: RequestParams = {}) =>
     http.request<V1ExperimentListDataDC, V1ExperimentListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -499,15 +403,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentLogList = (
-    query: V1ExperimentLogListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentLogList = (query: V1ExperimentLogListParamsDC, params: RequestParams = {}) =>
     http.request<V1ExperimentLogListDataDC, V1ExperimentLogListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/log`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/log`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -525,15 +424,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentLogsList = (
-    query: V1ExperimentLogsListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentLogsList = (query: V1ExperimentLogsListParamsDC, params: RequestParams = {}) =>
     http.request<V1ExperimentLogsListDataDC, V1ExperimentLogsListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/logs`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/logs`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -551,46 +445,11 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentLogUpdate = (
-    request: RequestsUpdateExperimentLogCommentRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentLogUpdate = (request: RequestsUpdateExperimentLogCommentRequestDC, params: RequestParams = {}) =>
     http.request<V1ExperimentLogUpdateDataDC, V1ExperimentLogUpdateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/log`,
-      method: 'PUT',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/log`,
+      method: "PUT",
       body: request,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags experiment
-   * @summary get orchestrator config
-   * @request GET:/api/v1/experiment/orchestrator
-   * @responses <br/>
-   *  **200** V1ExperimentOrchestratorListDataDC OK <br/>
-   *  **400** ResponsesErrorResponseDC Bad Request <br/>
-   *  **401** ResponsesErrorResponseDC Unauthorized <br/>
-   *  **403** ResponsesErrorResponseDC Forbidden <br/>
-   *  **404** ResponsesCreateAppBannerResponseDC Not Found <br/>
-   *  **500** ResponsesErrorResponseDC Internal server error <br/>
-   */
-  v1ExperimentOrchestratorList = (
-    query: V1ExperimentOrchestratorListParamsDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V1ExperimentOrchestratorListDataDC,
-      V1ExperimentOrchestratorListErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/orchestrator`,
-      method: 'GET',
-      query: query,
       type: ContentType.Json,
       ...params,
     });
@@ -608,15 +467,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentsList = (
-    query: V1ExperimentsListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentsList = (query: V1ExperimentsListParamsDC, params: RequestParams = {}) =>
     http.request<V1ExperimentsListDataDC, V1ExperimentsListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiments`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiments`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -634,15 +488,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentStartUpdate = (
-    request: RequestsExperimentStartRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentStartUpdate = (request: RequestsExperimentStartRequestDC, params: RequestParams = {}) =>
     http.request<V1ExperimentStartUpdateDataDC, V1ExperimentStartUpdateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/start`,
-      method: 'PUT',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/start`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -661,15 +510,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesCreateAppBannerResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentStatusList = (
-    query: V1ExperimentStatusListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentStatusList = (query: V1ExperimentStatusListParamsDC, params: RequestParams = {}) =>
     http.request<V1ExperimentStatusListDataDC, V1ExperimentStatusListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/status`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/status`,
+      method: "GET",
       query: query,
       type: ContentType.Json,
       ...params,
@@ -688,16 +532,33 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentStopUpdate = (
-    request: RequestsExperimentStopRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentStopUpdate = (request: RequestsExperimentStopRequestDC, params: RequestParams = {}) =>
     http.request<V1ExperimentStopUpdateDataDC, V1ExperimentStopUpdateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/stop`,
-      method: 'PUT',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/stop`,
+      method: "PUT",
       body: request,
+      type: ContentType.Json,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags experiment
+   * @summary Pipeline config for supervisor (JSON)
+   * @request GET:/api/v1/experiment/supervisor
+   * @responses <br/>
+   *  **200** V1ExperimentSupervisorListDataDC OK <br/>
+   *  **400** ResponsesErrorResponseDC Bad Request <br/>
+   *  **401** ResponsesErrorResponseDC Unauthorized <br/>
+   *  **403** ResponsesErrorResponseDC Forbidden <br/>
+   *  **404** ResponsesCreateAppBannerResponseDC Not Found <br/>
+   *  **500** ResponsesErrorResponseDC Internal server error <br/>
+   */
+  v1ExperimentSupervisorList = (query: V1ExperimentSupervisorListParamsDC, params: RequestParams = {}) =>
+    http.request<V1ExperimentSupervisorListDataDC, V1ExperimentSupervisorListErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/supervisor`,
+      method: "GET",
+      query: query,
       type: ContentType.Json,
       ...params,
     });
@@ -715,15 +576,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentUpdate = (
-    request: RequestsUpdateCompleteExperimentRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentUpdate = (request: RequestsUpdateCompleteExperimentRequestDC, params: RequestParams = {}) =>
     http.request<V1ExperimentUpdateDataDC, V1ExperimentUpdateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment`,
-      method: 'PUT',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -741,15 +597,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesCreateAppBannerResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentUpdatesList = (
-    query: V1ExperimentUpdatesListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentUpdatesList = (query: V1ExperimentUpdatesListParamsDC, params: RequestParams = {}) =>
     http.request<V1ExperimentUpdatesListDataDC, V1ExperimentUpdatesListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/updates`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/updates`,
+      method: "GET",
       query: query,
       type: ContentType.Json,
       ...params,
@@ -768,15 +619,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesCreateAppBannerResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentUrlsList = (
-    query: V1ExperimentUrlsListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentUrlsList = (query: V1ExperimentUrlsListParamsDC, params: RequestParams = {}) =>
     http.request<V1ExperimentUrlsListDataDC, V1ExperimentUrlsListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/urls`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/urls`,
+      method: "GET",
       query: query,
       type: ContentType.Json,
       ...params,
@@ -795,18 +641,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentValidationsFastCreate = (
-    request: RequestsExperimentValidateFastRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V1ExperimentValidationsFastCreateDataDC,
-      V1ExperimentValidationsFastCreateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/validations/fast`,
-      method: 'POST',
+  v1ExperimentValidationsFastCreate = (request: RequestsExperimentValidateFastRequestDC, params: RequestParams = {}) =>
+    http.request<V1ExperimentValidationsFastCreateDataDC, V1ExperimentValidationsFastCreateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/validations/fast`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -825,18 +663,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** DtoValidationErrorResponseDC Not Found <br/>
    *  **500** DtoValidationErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentValidationsRunCreate = (
-    request: RequestsExperimentValidateRunRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V1ExperimentValidationsRunCreateDataDC,
-      V1ExperimentValidationsRunCreateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/validations/run`,
-      method: 'POST',
+  v1ExperimentValidationsRunCreate = (request: RequestsExperimentValidateRunRequestDC, params: RequestParams = {}) =>
+    http.request<V1ExperimentValidationsRunCreateDataDC, V1ExperimentValidationsRunCreateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/validations/run`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -855,18 +685,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentVariableCreate = (
-    request: RequestsCreateExperimentVariableRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V1ExperimentVariableCreateDataDC,
-      V1ExperimentVariableCreateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/variable`,
-      method: 'POST',
+  v1ExperimentVariableCreate = (request: RequestsCreateExperimentVariableRequestDC, params: RequestParams = {}) =>
+    http.request<V1ExperimentVariableCreateDataDC, V1ExperimentVariableCreateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/variable`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -885,18 +707,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentVariableDelete = (
-    request: RequestsDeleteExperimentVariableRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V1ExperimentVariableDeleteDataDC,
-      V1ExperimentVariableDeleteErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/variable`,
-      method: 'DELETE',
+  v1ExperimentVariableDelete = (request: RequestsDeleteExperimentVariableRequestDC, params: RequestParams = {}) =>
+    http.request<V1ExperimentVariableDeleteDataDC, V1ExperimentVariableDeleteErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/variable`,
+      method: "DELETE",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -915,15 +729,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesCreateAppBannerResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentVariableList = (
-    query: V1ExperimentVariableListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentVariableList = (query: V1ExperimentVariableListParamsDC, params: RequestParams = {}) =>
     http.request<V1ExperimentVariableListDataDC, V1ExperimentVariableListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/variable`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/variable`,
+      method: "GET",
       query: query,
       type: ContentType.Json,
       ...params,
@@ -942,21 +751,14 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesCreateAppBannerResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentVariablesList = (
-    query: V1ExperimentVariablesListParamsDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<V1ExperimentVariablesListDataDC, V1ExperimentVariablesListErrorDC>(
-      {
-        path: `${
-          buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-        }/api/v1/experiment/variables`,
-        method: 'GET',
-        query: query,
-        type: ContentType.Json,
-        ...params,
-      },
-    );
+  v1ExperimentVariablesList = (query: V1ExperimentVariablesListParamsDC, params: RequestParams = {}) =>
+    http.request<V1ExperimentVariablesListDataDC, V1ExperimentVariablesListErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/variables`,
+      method: "GET",
+      query: query,
+      type: ContentType.Json,
+      ...params,
+    });
   /**
    * No description
    *
@@ -972,14 +774,9 @@ export const experimentApi = new (class ExperimentApi {
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
   v1ExperimentVariablesTypesList = (params: RequestParams = {}) =>
-    http.request<
-      V1ExperimentVariablesTypesListDataDC,
-      V1ExperimentVariablesTypesListErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/variables/types`,
-      method: 'GET',
+    http.request<V1ExperimentVariablesTypesListDataDC, V1ExperimentVariablesTypesListErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/variables/types`,
+      method: "GET",
       type: ContentType.Json,
       ...params,
     });
@@ -997,18 +794,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentVariableUpdate = (
-    request: RequestsUpdateExperimentVariableRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V1ExperimentVariableUpdateDataDC,
-      V1ExperimentVariableUpdateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/variable`,
-      method: 'PUT',
+  v1ExperimentVariableUpdate = (request: RequestsUpdateExperimentVariableRequestDC, params: RequestParams = {}) =>
+    http.request<V1ExperimentVariableUpdateDataDC, V1ExperimentVariableUpdateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/variable`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -1027,18 +816,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentVersionCurrentList = (
-    query: V1ExperimentVersionCurrentListParamsDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V1ExperimentVersionCurrentListDataDC,
-      V1ExperimentVersionCurrentListErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/version/current`,
-      method: 'GET',
+  v1ExperimentVersionCurrentList = (query: V1ExperimentVersionCurrentListParamsDC, params: RequestParams = {}) =>
+    http.request<V1ExperimentVersionCurrentListDataDC, V1ExperimentVersionCurrentListErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/version/current`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -1060,14 +841,9 @@ export const experimentApi = new (class ExperimentApi {
     request: RequestsUpdateExperimentConfigVersionRequestDC,
     params: RequestParams = {},
   ) =>
-    http.request<
-      V1ExperimentVersionCurrentUpdateDataDC,
-      V1ExperimentVersionCurrentUpdateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/version/current`,
-      method: 'PUT',
+    http.request<V1ExperimentVersionCurrentUpdateDataDC, V1ExperimentVersionCurrentUpdateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/version/current`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -1086,15 +862,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentVersionList = (
-    query: V1ExperimentVersionListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentVersionList = (query: V1ExperimentVersionListParamsDC, params: RequestParams = {}) =>
     http.request<V1ExperimentVersionListDataDC, V1ExperimentVersionListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/version`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/version`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -1112,15 +883,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1ExperimentVersionsList = (
-    query: V1ExperimentVersionsListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1ExperimentVersionsList = (query: V1ExperimentVersionsListParamsDC, params: RequestParams = {}) =>
     http.request<V1ExperimentVersionsListDataDC, V1ExperimentVersionsListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/experiment/versions`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/experiment/versions`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -1128,7 +894,28 @@ export const experimentApi = new (class ExperimentApi {
    * No description
    *
    * @tags experiment
-   * @summary apply experiment config (v2 - uses jobd)
+   * @summary get project graph
+   * @request GET:/api/v1/graph
+   * @responses <br/>
+   *  **200** V1GraphListDataDC OK <br/>
+   *  **400** ResponsesErrorResponseDC Bad Request <br/>
+   *  **401** ResponsesErrorResponseDC Unauthorized <br/>
+   *  **403** ResponsesErrorResponseDC Forbidden <br/>
+   *  **404** ResponsesErrorResponseDC Not Found <br/>
+   *  **500** ResponsesErrorResponseDC Internal server error <br/>
+   */
+  v1GraphList = (query: V1GraphListParamsDC, params: RequestParams = {}) =>
+    http.request<V1GraphListDataDC, V1GraphListErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/graph`,
+      method: "GET",
+      query: query,
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags experiment
+   * @summary apply experiment config (v2 — напрямую через оркестратор)
    * @request PUT:/api/v2/experiment/config/apply
    * @responses <br/>
    *  **200** V2ExperimentConfigApplyUpdateDataDC OK <br/>
@@ -1138,18 +925,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2ExperimentConfigApplyUpdate = (
-    request: RequestsApplyExperimentConfigRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V2ExperimentConfigApplyUpdateDataDC,
-      V2ExperimentConfigApplyUpdateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/experiment/config/apply`,
-      method: 'PUT',
+  v2ExperimentConfigApplyUpdate = (request: RequestsApplyExperimentConfigRequestDC, params: RequestParams = {}) =>
+    http.request<V2ExperimentConfigApplyUpdateDataDC, V2ExperimentConfigApplyUpdateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/experiment/config/apply`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -1172,14 +951,9 @@ export const experimentApi = new (class ExperimentApi {
     request: RequestsCompleteExperimentValidateRequestDC,
     params: RequestParams = {},
   ) =>
-    http.request<
-      V2ExperimentConfigValidateCreateDataDC,
-      V2ExperimentConfigValidateCreateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/experiment/config/validate`,
-      method: 'POST',
+    http.request<V2ExperimentConfigValidateCreateDataDC, V2ExperimentConfigValidateCreateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/experiment/config/validate`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -1202,14 +976,9 @@ export const experimentApi = new (class ExperimentApi {
     request: RequestsGetExperimentAvailableDatasetsToLinkRequestDC,
     params: RequestParams = {},
   ) =>
-    http.request<
-      V2ExperimentSearchDatasetsCreateDataDC,
-      V2ExperimentSearchDatasetsCreateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/experiment/search/datasets`,
-      method: 'POST',
+    http.request<V2ExperimentSearchDatasetsCreateDataDC, V2ExperimentSearchDatasetsCreateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/experiment/search/datasets`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -1232,14 +1001,9 @@ export const experimentApi = new (class ExperimentApi {
     query: V2ExperimentVariableVersionCurrentListParamsDC,
     params: RequestParams = {},
   ) =>
-    http.request<
-      V2ExperimentVariableVersionCurrentListDataDC,
-      V2ExperimentVariableVersionCurrentListErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/experiment/variable/version/current`,
-      method: 'GET',
+    http.request<V2ExperimentVariableVersionCurrentListDataDC, V2ExperimentVariableVersionCurrentListErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/experiment/variable/version/current`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -1261,14 +1025,9 @@ export const experimentApi = new (class ExperimentApi {
     request: RequestsUpdateExperimentVariableVersionRequestDC,
     params: RequestParams = {},
   ) =>
-    http.request<
-      V2ExperimentVariableVersionCurrentUpdateDataDC,
-      V2ExperimentVariableVersionCurrentUpdateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/experiment/variable/version/current`,
-      method: 'PUT',
+    http.request<V2ExperimentVariableVersionCurrentUpdateDataDC, V2ExperimentVariableVersionCurrentUpdateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/experiment/variable/version/current`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -1282,15 +1041,10 @@ export const experimentApi = new (class ExperimentApi {
    * @responses <br/>
    *  **200** V2ExperimentVariableVersionListDataDC OK <br/>
    */
-  v2ExperimentVariableVersionList = (
-    query: V2ExperimentVariableVersionListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v2ExperimentVariableVersionList = (query: V2ExperimentVariableVersionListParamsDC, params: RequestParams = {}) =>
     http.request<V2ExperimentVariableVersionListDataDC, any>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/experiment/variable/version`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/experiment/variable/version`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -1308,18 +1062,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2ExperimentVariableVersionsList = (
-    query: V2ExperimentVariableVersionsListParamsDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V2ExperimentVariableVersionsListDataDC,
-      V2ExperimentVariableVersionsListErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/experiment/variable/versions`,
-      method: 'GET',
+  v2ExperimentVariableVersionsList = (query: V2ExperimentVariableVersionsListParamsDC, params: RequestParams = {}) =>
+    http.request<V2ExperimentVariableVersionsListDataDC, V2ExperimentVariableVersionsListErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/experiment/variable/versions`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -1341,14 +1087,9 @@ export const experimentApi = new (class ExperimentApi {
     request: RequestsUpdateExperimentVariableVersionCommentRequestDC,
     params: RequestParams = {},
   ) =>
-    http.request<
-      V2ExperimentVariableVersionUpdateDataDC,
-      V2ExperimentVariableVersionUpdateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/experiment/variable/version`,
-      method: 'PUT',
+    http.request<V2ExperimentVariableVersionUpdateDataDC, V2ExperimentVariableVersionUpdateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/experiment/variable/version`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -1367,26 +1108,19 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2ExperimentVersionUpdate = (
-    request: RequestsUpdateExperimentVersionCommentRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<V2ExperimentVersionUpdateDataDC, V2ExperimentVersionUpdateErrorDC>(
-      {
-        path: `${
-          buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-        }/api/v2/experiment/version`,
-        method: 'PUT',
-        body: request,
-        type: ContentType.Json,
-        ...params,
-      },
-    );
+  v2ExperimentVersionUpdate = (request: RequestsUpdateExperimentVersionCommentRequestDC, params: RequestParams = {}) =>
+    http.request<V2ExperimentVersionUpdateDataDC, V2ExperimentVersionUpdateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/experiment/version`,
+      method: "PUT",
+      body: request,
+      type: ContentType.Json,
+      ...params,
+    });
   /**
    * No description
    *
    * @tags experiment
-   * @summary apply experiment config (v3 - supports both single stage and phased apply via jobd)
+   * @summary apply experiment config (v3 — напрямую через оркестратор; single_stage игнорируется)
    * @request PUT:/api/v3/experiment/config/apply
    * @responses <br/>
    *  **200** V3ExperimentConfigApplyUpdateDataDC OK <br/>
@@ -1396,18 +1130,10 @@ export const experimentApi = new (class ExperimentApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v3ExperimentConfigApplyUpdate = (
-    request: RequestsApplyExperimentConfigRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V3ExperimentConfigApplyUpdateDataDC,
-      V3ExperimentConfigApplyUpdateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v3/experiment/config/apply`,
-      method: 'PUT',
+  v3ExperimentConfigApplyUpdate = (request: RequestsApplyExperimentConfigRequestDC, params: RequestParams = {}) =>
+    http.request<V3ExperimentConfigApplyUpdateDataDC, V3ExperimentConfigApplyUpdateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v3/experiment/config/apply`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
