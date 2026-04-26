@@ -1,0 +1,473 @@
+// CPlane PostgreSQL schema (migrations 000001–000006)
+// Paste into https://dbdiagram.io or: Database > Import > DBML
+
+Project cplane {
+  database_type: "PostgreSQL"
+  Note: '''
+    Control plane DB. Views: v_real_namespace, v_real_project, v_real_dataset,
+    v_real_experiment, v_real_experiment_template (deleted = false).
+    Audit tables t_*_update_log have no FKs to entities in SQL.
+  '''
+}
+
+Table t_user {
+  id int [pk, increment, not null]
+  name varchar(50) [not null, unique, note: 'login']
+  is_robot boolean [default: false]
+  last_sync timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  deleted boolean [not null, default: false]
+  email varchar(255)
+  display_name varchar(255)
+  password_hash text
+
+  indexes {
+    name [name: 'idx_user_name']
+  }
+
+  Note: 'Partial unique index: LOWER(email) WHERE email IS NOT NULL AND deleted = FALSE'
+}
+
+Table t_user_group {
+  id int [pk, increment, not null]
+  name varchar(50) [not null]
+
+  indexes {
+    name [name: 'idx_user_group_name']
+  }
+}
+
+Table t_user_group_match {
+  user_id int [not null, ref: > t_user.id]
+  user_group_id int [not null, ref: > t_user_group.id]
+
+  indexes {
+    (user_id, user_group_id) [unique]
+  }
+}
+
+Table t_role {
+  id int [pk, increment, not null]
+  name varchar(255) [not null, unique]
+  description varchar(255) [not null]
+  idm_id varchar(255) [not null, default: 'unknown']
+
+  indexes {
+    idm_id [name: 'idx_idm_id']
+  }
+}
+
+Table t_rule {
+  id int [pk, increment, not null]
+  object_type varchar(63) [not null, default: '']
+  object_id int [not null]
+  action varchar(5) [not null]
+  object_attribute varchar(63) [not null, default: '']
+
+  indexes {
+    (object_type, object_attribute, object_id, action) [unique]
+  }
+}
+
+Table t_role_match {
+  rule_id int [not null, ref: > t_rule.id]
+  role_id int [not null, ref: > t_role.id]
+
+  indexes {
+    (rule_id, role_id) [unique]
+  }
+}
+
+Table t_acl_match {
+  id int [pk, increment, not null]
+  user_group_id int [ref: > t_user_group.id, note: 'xor user_id']
+  user_id int [ref: > t_user.id, note: 'ON DELETE CASCADE']
+  rule_id int [ref: > t_rule.id]
+  role_id int [ref: > t_role.id, note: 'CHECK: exactly one of user vs group; one of rule vs role']
+
+  indexes {
+    (user_group_id, rule_id) [unique]
+    (user_group_id, role_id) [unique]
+    (user_id, rule_id) [unique]
+    (user_id, role_id) [unique]
+  }
+}
+
+Table t_user_rule {
+  user_id int [not null, ref: > t_user.id, note: 'ON DELETE CASCADE']
+  rule_id int [not null, ref: > t_rule.id]
+  acl_match_id int [not null, ref: > t_acl_match.id, note: 'ON DELETE CASCADE']
+}
+
+Table t_namespace {
+  id int [pk, increment, not null]
+  name varchar(128) [not null]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  deleted boolean [not null, default: false]
+  namespace_version_id int [ref: > t_namespace_config_v.id, note: 'current config version']
+  unlimited boolean [not null, default: false]
+}
+
+Table t_namespace_config_v {
+  id int [pk, increment, not null]
+  namespace_id int [not null, ref: > t_namespace.id, note: 'ON DELETE CASCADE']
+  version_id int [not null]
+  config jsonb [not null]
+  created_at timestamp [not null, default: `timezone('utc', now())`]
+
+  indexes {
+    (namespace_id, version_id) [name: 'idx_namespace_config_v_namespace_id_version_id']
+  }
+}
+
+Table t_project {
+  id int [pk, increment, not null]
+  namespace_id int [not null, ref: > t_namespace.id]
+  name varchar(128) [not null]
+  description text [not null, default: '']
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  deleted boolean [not null, default: false]
+  project_version_id int [ref: > t_project_config_v.id, note: 'current config version']
+  unlimited boolean [not null, default: false]
+  updated_at timestamp [default: `now()`]
+  abc_product_id varchar(255) [not null, default: '']
+}
+
+Table t_project_config_v {
+  id int [pk, increment, not null]
+  project_id int [not null, ref: > t_project.id, note: 'ON DELETE CASCADE']
+  version_id int [not null]
+  config jsonb [not null]
+  created_at timestamp [not null, default: `timezone('utc', now())`]
+
+  indexes {
+    (project_id, version_id) [name: 'idx_project_config_v_project_id_version_id']
+  }
+}
+
+Table t_experiment_template {
+  id int [pk, increment, not null]
+  namespace_id int [not null, ref: > t_namespace.id]
+  name varchar(128) [not null]
+  deleted boolean [not null, default: false]
+  description text [not null, default: '']
+}
+
+Table t_experiment_template_v {
+  id int [pk, increment, not null]
+  parent_id int [not null, ref: > t_experiment_template.id]
+  version_id int [not null]
+  YQL text [not null]
+  config text
+  config_patch text
+  created_at timestamp [not null, default: `timezone('utc', now())`]
+  comment text [not null, default: '']
+  creator text [not null, default: 'unknown']
+  additional_information jsonb [not null, default: '{}']
+}
+
+Table t_dataset {
+  id int [pk, increment, not null]
+  name varchar(128) [not null]
+  type varchar(64) [not null, default: 'Queue']
+  params text [not null, default: '']
+  schema text [not null, default: '']
+  namespace_id int [ref: > t_namespace.id]
+  is_external boolean [default: false]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  deleted boolean [not null, default: false]
+  public boolean [not null, default: false]
+  managed boolean [not null, default: false]
+  project_id int [ref: > t_project.id, default: null]
+  updated_at timestamp [default: `now()`]
+  version_id int [not null, default: 0]
+}
+
+Table t_dataset_v {
+  id int [pk, increment, not null]
+  dataset_id int [ref: > t_dataset.id, note: 'ON DELETE CASCADE']
+  version int [not null]
+  params text [not null, default: '']
+  schema text [not null, default: '']
+  public boolean [not null, default: false]
+  managed boolean [not null, default: false]
+  type varchar(64) [not null, default: 'Queue']
+  comment varchar(255) [not null, default: '']
+  creator varchar(255) [not null, default: 'unknown']
+  created_at timestamp [not null, default: `timezone('utc', now())`]
+}
+
+Table t_experiment {
+  id int [pk, increment, not null]
+  template_v_id int [not null, ref: > t_experiment_template_v.id]
+  project_id int [not null, ref: > t_project.id]
+  status text [not null, default: 'idle']
+  orch_id varchar(32) [unique]
+  deleted boolean [not null, default: false]
+  unlimited boolean [not null, default: false]
+  updated_at timestamp [default: `now()`]
+}
+
+Table t_experiment_io {
+  id int [pk, increment, not null]
+  experiment_id int [not null, ref: > t_experiment.id]
+  ds_type varchar(3) [not null]
+  ds_id int [not null, ref: > t_dataset.id]
+}
+
+Table t_experiment_dataset {
+  id int [pk, increment, not null]
+  experiment_id int [not null, ref: > t_experiment.id]
+  dataset_id int [not null, ref: > t_dataset.id]
+  alias text [not null]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    (alias, experiment_id) [unique]
+  }
+}
+
+Table t_experiment_variable {
+  id int [pk, increment, not null]
+  experiment_id int [not null, ref: > t_experiment.id]
+  name varchar(255) [not null]
+  value text [not null, default: '']
+  type varchar(255) [not null, default: 'string']
+  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  version_id int [not null, default: 0]
+
+  indexes {
+    (experiment_id, name) [unique]
+    experiment_id [name: 'idx_experiment_variable_experiment_id']
+  }
+}
+
+Table t_experiment_variable_v {
+  id int [pk, increment, not null]
+  variable_id int [ref: > t_experiment_variable.id, note: 'ON DELETE CASCADE']
+  version int [not null]
+  value text [not null, default: '']
+  type varchar(255) [not null, default: 'string']
+  comment varchar(255) [not null, default: '']
+  creator varchar(255) [not null, default: 'unknown']
+  created_at timestamp [not null, default: `timezone('utc', now())`]
+}
+
+Table t_experiment_status {
+  id int [pk, increment, not null]
+  experiment_id int [not null, ref: > t_experiment.id, note: 'ON DELETE CASCADE']
+  current_version int [not null]
+  last_updated timestamp [default: `CURRENT_TIMESTAMP`]
+  orch_config text [not null, default: '']
+
+  indexes {
+    experiment_id [unique]
+  }
+}
+
+Table t_project_variable {
+  id int [pk, increment, not null]
+  project_id int [not null, ref: > t_project.id]
+  name varchar(255) [not null]
+  value text [not null]
+  type varchar(255) [not null]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    (project_id, name) [unique]
+    project_id [name: 'idx_project_variable_project_id']
+  }
+}
+
+Table t_namespace_variable {
+  id int [pk, increment, not null]
+  namespace_id int [not null, ref: > t_namespace.id]
+  name varchar(255) [not null]
+  value text [not null]
+  type varchar(255) [not null]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    (namespace_id, name) [unique]
+    namespace_id [name: 'idx_namespace_variable_namespace_id']
+  }
+}
+
+Table t_namespace_update_log {
+  id int [pk, increment, not null]
+  created_at timestamp [not null, default: `timezone('utc', now())`]
+  namespace_id int [not null, note: 'no FK in migrations']
+  username varchar(255) [not null]
+  act varchar(255) [not null]
+  details jsonb
+  comment text [not null, default: '']
+
+  indexes {
+    namespace_id [name: 'idx_namespace_update_log_namespace_id']
+    created_at [name: 'idx_namespace_update_log_created_at']
+  }
+}
+
+Table t_project_update_log {
+  id int [pk, increment, not null]
+  created_at timestamp [not null, default: `timezone('utc', now())`]
+  namespace_id int [not null]
+  project_id int [not null]
+  username varchar(255) [not null]
+  act varchar(255) [not null]
+  details jsonb
+  comment text [not null, default: '']
+
+  indexes {
+    namespace_id [name: 'idx_project_update_log_namespace_id']
+    project_id [name: 'idx_project_update_log_project_id']
+    created_at [name: 'idx_project_update_log_created_at']
+  }
+}
+
+Table t_dataset_update_log {
+  id int [pk, increment, not null]
+  created_at timestamp [not null, default: `timezone('utc', now())`]
+  namespace_id int [not null]
+  dataset_id int [not null]
+  username varchar(255) [not null]
+  act varchar(255) [not null]
+  details jsonb
+  project_id int [ref: > t_project.id, default: null]
+  comment text [not null, default: '']
+
+  indexes {
+    namespace_id [name: 'idx_dataset_update_log_namespace_id']
+    dataset_id [name: 'idx_dataset_update_log_dataset_id']
+    created_at [name: 'idx_dataset_update_log_created_at']
+  }
+}
+
+Table t_experiment_update_log {
+  id int [pk, increment, not null]
+  created_at timestamp [not null, default: `timezone('utc', now())`]
+  project_id int [not null]
+  experiment_id int [not null]
+  username varchar(255) [not null]
+  act varchar(255) [not null]
+  details jsonb
+  comment text [not null, default: '']
+
+  indexes {
+    project_id [name: 'idx_experiment_update_log_project_id']
+    experiment_id [name: 'idx_experiment_update_log_experiment_id']
+    created_at [name: 'idx_experiment_update_log_created_at']
+  }
+}
+
+Table t_user_pinned_projects {
+  id int [pk, increment, not null]
+  user_id int [not null, ref: > t_user.id, note: 'ON DELETE CASCADE']
+  project_id int [not null, ref: > t_project.id, note: 'ON DELETE CASCADE']
+  pinned_at timestamp [not null, default: `NOW()`]
+
+  indexes {
+    (user_id, project_id) [unique]
+  }
+}
+
+Table t_role_owner {
+  role_id int [pk, ref: > t_role.id, note: 'ON DELETE CASCADE']
+  user_id int [pk, ref: > t_user.id, note: 'ON DELETE CASCADE']
+}
+
+Table t_role_object_match {
+  id int [pk, increment, not null]
+  role_id int [not null, ref: > t_role.id, note: 'ON DELETE CASCADE']
+  role_type varchar(50) [not null]
+  object_type varchar(50) [not null]
+  object_id int [not null]
+
+  indexes {
+    (role_id, object_type, object_id, role_type) [unique]
+  }
+}
+
+Table t_permission_request {
+  id int [pk, increment, not null]
+  requester_user_id int [not null, ref: > t_user.id, note: 'ON DELETE CASCADE']
+  object_type varchar(63) [not null]
+  object_id int [not null]
+  object_attribute varchar(63) [not null, default: 'meta']
+  action varchar(5) [not null]
+  message text [not null, default: '']
+  status varchar(20) [not null, default: 'pending', note: "CHECK IN ('pending','approved','rejected')"]
+  reviewer_user_id int [ref: > t_user.id]
+  reviewed_at timestamp
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    status [name: 'idx_permission_request_status']
+    requester_user_id [name: 'idx_permission_request_requester']
+  }
+}
+
+Table robot_tokens {
+  id int [pk, increment, not null]
+  robot_id int [not null]
+  token varchar(255) [not null, unique]
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  expires_at timestamp
+}
+
+Table t_app_banner {
+  id int [pk, increment, not null]
+  type varchar(50) [not null, default: 'info']
+  title varchar(255) [not null, default: '']
+  message text [not null, default: '']
+  active boolean [not null, default: false]
+  color varchar(20) [not null, default: '#FF0000']
+  created_at timestamp [default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [default: `CURRENT_TIMESTAMP`]
+  color_dark varchar(20) [not null, default: '']
+  starts timestamp
+  ends timestamp
+}
+
+Table t_app_updates {
+  id int [pk, increment, not null]
+  title varchar(255) [not null]
+  description text [not null, default: '']
+  content text [not null, default: '']
+  video_url text
+  image_url text
+  release_date timestamp [not null]
+  is_published boolean [not null, default: false]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    release_date [name: 'idx_app_updates_release_date']
+    is_published [name: 'idx_app_updates_is_published']
+  }
+}
+
+Table t_app_about {
+  id int [pk, increment, not null]
+  content text [not null, default: '']
+  links text [not null, default: '']
+  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+}
+
+Table t_app_upcoming {
+  id int [pk, increment, not null]
+  content text [not null, default: '']
+  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+}
+
+Table t_cubes {
+  id int [pk, increment, not null]
+  name varchar(255) [not null, unique]
+  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
+  author varchar(255) [not null]
+  description text [not null, default: '']
+  base_id int [ref: > t_cubes.id, note: 'ON DELETE CASCADE, self']
+  params_name varchar(255) [not null]
+  params jsonb [not null]
+  type varchar(128) [not null, default: 'CIT_CUBE']
+}

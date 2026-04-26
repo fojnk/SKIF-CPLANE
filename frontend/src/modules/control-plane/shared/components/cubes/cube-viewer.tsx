@@ -198,13 +198,24 @@ export const CubeViewerValidated: React.FC<CubeViewerValidatedProps> = ({
 
   // Собираем ошибки куба
   const errors: string[] = [];
-  if (!cube.name || cube.name.trim() === '') errors.push('Empty CubeName');
-  if (cube.cubeId === 0) {
-    errors.push('Missing CubeTypeID');
-  } else if (!baseCube) {
-    errors.push(`Cube not found`);
+  if (!cube.name || cube.name.trim() === '') {
+    errors.push(
+      cube.supervisorModel ? 'Empty model name' : 'Empty CubeName',
+    );
+  }
+  if (!cube.supervisorModel) {
+    if (cube.cubeId === 0) {
+      errors.push('Missing CubeTypeID');
+    } else if (!baseCube) {
+      errors.push(`Cube not found`);
+    }
   }
   if (cube.hasDuplicateName) errors.push('Duplicate CubeName');
+  if (cube.supervisorModel && cube.hasError) {
+    errors.push(
+      'Поля модели не проходят проверку (modelId, order, language, modelPath)',
+    );
+  }
 
   // Собираем ошибки маппингов
   cube.validatedMappings.forEach((mapping) => {
@@ -225,12 +236,17 @@ export const CubeViewerValidated: React.FC<CubeViewerValidatedProps> = ({
     (m) => m.isValid,
   ).length;
 
-  // Определяем, есть ли параметры у куба
-  // Параметры доступны, если есть схема и значения из конфига
-  const hasParams =
-    cubeParamsSchema.length > 0 &&
+  const hasSupervisorParams =
+    !!cube.supervisorModel &&
     cube.paramsValues &&
     Object.keys(cube.paramsValues).length > 0;
+
+  // Параметры: схема streamflow-куба или parameters модели супервизора
+  const hasParams =
+    hasSupervisorParams ||
+    (cubeParamsSchema.length > 0 &&
+      cube.paramsValues &&
+      Object.keys(cube.paramsValues).length > 0);
 
   return (
     <Flex direction="column" gap={3} style={{ paddingBottom: '12px' }}>
@@ -276,33 +292,89 @@ export const CubeViewerValidated: React.FC<CubeViewerValidatedProps> = ({
       {/* Tab: General */}
       {activeTab === 'general' && (
         <Flex direction="column" gap={3}>
-          {/* Информация о базовом кубе */}
-          <CubeBaseInfo baseCube={baseCube ?? null} paramsKey={paramsKey} />
-
-          {/* Input Names (валидированные) */}
-          <NamesFieldView
-            label="InputNames"
-            type={cube.inputType}
-            names={cube.inputNames}
-          />
-
-          {/* Output Names (валидированные) */}
-          <NamesFieldView
-            label="OutputNames"
-            type={cube.outputType}
-            names={cube.outputNames}
-          />
+          {cube.supervisorModel ? (
+            <>
+              <Text variant="subheader-2">Supervisor model</Text>
+              <Flex direction="column" gap={1}>
+                <Text variant="body-1">
+                  <Text color="secondary" as="span">
+                    modelId:{' '}
+                  </Text>
+                  {cube.supervisorModel.modelId}
+                </Text>
+                <Text variant="body-1">
+                  <Text color="secondary" as="span">
+                    order:{' '}
+                  </Text>
+                  {cube.supervisorModel.order}
+                </Text>
+                <Text variant="body-1">
+                  <Text color="secondary" as="span">
+                    language:{' '}
+                  </Text>
+                  {cube.supervisorModel.language}
+                </Text>
+                <Text variant="body-1">
+                  <Text color="secondary" as="span">
+                    modelPath:{' '}
+                  </Text>
+                  {cube.supervisorModel.modelPath}
+                </Text>
+                {cube.supervisorModel.version ? (
+                  <Text variant="body-1">
+                    <Text color="secondary" as="span">
+                      version:{' '}
+                    </Text>
+                    {cube.supervisorModel.version}
+                  </Text>
+                ) : null}
+              </Flex>
+              <Text variant="body-2" color="secondary">
+                Порты графа: synthetic in/out для линейного пайплайна models[]
+              </Text>
+            </>
+          ) : (
+            <>
+              <CubeBaseInfo baseCube={baseCube ?? null} paramsKey={paramsKey} />
+              <NamesFieldView
+                label="InputNames"
+                type={cube.inputType}
+                names={cube.inputNames}
+              />
+              <NamesFieldView
+                label="OutputNames"
+                type={cube.outputType}
+                names={cube.outputNames}
+              />
+            </>
+          )}
         </Flex>
       )}
 
       {/* Tab: Params */}
       {activeTab === 'params' && hasParams && (
-        <FormParamView
-          params={cubeParamsSchema}
-          values={cube.paramsValues || {}}
-          variableNames={variableNames}
-          onVariableClick={onVariableClick}
-        />
+        <>
+          {cube.supervisorModel ? (
+            <pre
+              style={{
+                fontSize: 12,
+                margin: 0,
+                overflow: 'auto',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+              }}
+            >
+              {JSON.stringify(cube.paramsValues ?? {}, null, 2)}
+            </pre>
+          ) : (
+            <FormParamView
+              params={cubeParamsSchema}
+              values={cube.paramsValues || {}}
+              variableNames={variableNames}
+              onVariableClick={onVariableClick}
+            />
+          )}
+        </>
       )}
 
       {/* Tab: Mappings (валидированные) */}

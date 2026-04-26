@@ -1,0 +1,23 @@
+{
+  "experimentName": "demo-two-step-pipeline",
+  "models": [
+    {
+      "modelId": "m1",
+      "name": "python-preprocess",
+      "order": 1,
+      "version": "1.0",
+      "language": "PYTHON",
+      "modelPath": "model_01",
+      "parameters": {}
+    },
+    {
+      "modelId": "m2",
+      "name": "c-simulation",
+      "order": 2,
+      "version": "1.0",
+      "language": "C",
+      "modelPath": "model_02",
+      "parameters": {}
+    }
+  ]
+}

@@ -13,6 +13,7 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/handlers/shared"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/logger"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service"
+	experimentSvc "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/experiment"
 	serviceerrors "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/errors"
 )
 
@@ -136,13 +137,13 @@ func ExperimentStatusHandler(ctx context.Context, svc *service.Service, l *logge
 		return nil, shared.ConvertServiceError(err, shared.EntityExperiment)
 	}
 
-	orchID, err := svc.GetExperimentOrchID(ctx, experiment.ID)
+	supervisorExperimentID, err := svc.GetSupervisorExperimentID(ctx, experiment.ID)
 	if err != nil {
-		l.Error("failed to get experiment orchestrator ID", err)
+		l.Error("failed to get supervisor experiment ID", err)
 		return nil, shared.ConvertServiceError(err, shared.EntityExperiment)
 	}
 
-	return svc.GetExperimentStatus(ctx, orchID), nil
+	return svc.GetExperimentStatus(ctx, supervisorExperimentID), nil
 }
 
 // applyExperimentConfigHandler godoc
@@ -186,14 +187,16 @@ func applyExperimentConfigHandler(ctx context.Context, svc *service.Service, l *
 		return nil, errResp
 	}
 
-	if _, err := svc.ApplyExperimentConfig(ctx, r.ExperimentID); err != nil {
+	appliedJSON, err := svc.ApplyExperimentConfig(ctx, r.ExperimentID)
+	if err != nil {
 		l.Error("failed to apply experiment config", err)
 		return nil, shared.ConvertServiceError(err, shared.EntityExperiment)
 	}
 
 	svc.LogExperimentChange(ctx, experiment.ProjectID, r.ExperimentID, u.Username, r.Comment, service.UpdateLogActionApplyExperiment, service.ExperimentUpdateLog{
 		New: service.ExperimentUpdateLogEntity{
-			JobID: nil,
+			Description: "Применена конфигурация супервизора (experiment.apply)",
+			Config:      experimentSvc.TruncateForExperimentLog(appliedJSON, experimentSvc.MaxExperimentApplyLogConfigBytes),
 		},
 	})
 

@@ -16,6 +16,7 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/logger"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/acl"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/orch"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/supervisor"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/update_log"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service"
 	serviceerrors "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/errors"
@@ -204,37 +205,48 @@ func updateCompleteExperimentHandler(ctx context.Context, svc *service.Service, 
 
 		experimentData.ExperimentConfig = pgtype.Text{String: r.Config, Valid: true}
 
-		cfg, err := orch.ExperimentInfoToOrchestratorConfig(l, &experimentData)
-		if err != nil {
-			l.Error("failed to convert experiment info to orchestrator config", err)
-			return nil, &responses.ErrorResponse{
-				InternalError:   err,
-				ExternalMessage: "Не удалось преобразовать в конфиг оркестратора: " + err.Error(),
-				HTTPStatusCode:  http.StatusInternalServerError,
-			}
-		}
-
-		configJSON, err := json.Marshal(cfg)
-		if err != nil {
-			l.Error("failed to marshal orchestrator config", err)
-			return nil, &responses.ErrorResponse{
-				InternalError:   err,
-				ExternalMessage: fmt.Sprintf("Не удалось собрать конфиг оркестратора: %s", err.Error()),
-				HTTPStatusCode:  http.StatusInternalServerError,
-			}
-		}
-
 		errResp := shared.VariableExperimentValidation(ctx, svc, l, r.Config, r.ExperimentID)
 		if errResp != nil {
 			return nil, errResp
 		}
 
-		err = validation.ExperimentSyntaxConfigValidation(string(configJSON))
-		if err != nil {
-			return nil, &responses.ErrorResponse{
-				ExternalMessage: "Ошибка во время синтаксической валидации: " + err.Error(),
-				HTTPStatusCode:  http.StatusBadRequest,
-				InternalError:   err,
+		if supervisor.IsSupervisorExperimentLayout([]byte(r.Config)) {
+			err := validation.ExperimentSyntaxConfigValidation(r.Config)
+			if err != nil {
+				return nil, &responses.ErrorResponse{
+					ExternalMessage: "Ошибка во время синтаксической валидации: " + err.Error(),
+					HTTPStatusCode:  http.StatusBadRequest,
+					InternalError:   err,
+				}
+			}
+		} else {
+			cfg, err := orch.ExperimentInfoToSupervisorPipelineConfig(l, &experimentData)
+			if err != nil {
+				l.Error("failed to convert experiment info to orchestrator config", err)
+				return nil, &responses.ErrorResponse{
+					InternalError:   err,
+					ExternalMessage: "Не удалось преобразовать в конфиг оркестратора: " + err.Error(),
+					HTTPStatusCode:  http.StatusInternalServerError,
+				}
+			}
+
+			configJSON, err := json.Marshal(cfg)
+			if err != nil {
+				l.Error("failed to marshal orchestrator config", err)
+				return nil, &responses.ErrorResponse{
+					InternalError:   err,
+					ExternalMessage: fmt.Sprintf("Не удалось собрать конфиг оркестратора: %s", err.Error()),
+					HTTPStatusCode:  http.StatusInternalServerError,
+				}
+			}
+
+			err = validation.ExperimentSyntaxConfigValidation(string(configJSON))
+			if err != nil {
+				return nil, &responses.ErrorResponse{
+					ExternalMessage: "Ошибка во время синтаксической валидации: " + err.Error(),
+					HTTPStatusCode:  http.StatusBadRequest,
+					InternalError:   err,
+				}
 			}
 		}
 	}

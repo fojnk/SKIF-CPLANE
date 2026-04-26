@@ -26,8 +26,6 @@ swagger-private-client:
 	rm -rf tests/private/models
 	swagger generate client --target=./tests/private --spec=./internal/docs/private_docs/swagger.json
 
-orchestrator-client:
-	go tool oapi-codegen --config=./internal/clients/orchestrator/client/config.yaml  ./internal/clients/orchestrator.openapi.yaml
 docker-build:
 	docker build -t cplane:$(VERSION) -f ./tests/Dockerfile .
 docker-build-test:

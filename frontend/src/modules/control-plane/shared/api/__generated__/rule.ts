@@ -9,8 +9,8 @@
  * ---------------------------------------------------------------
  */
 
-import { ContentType, RequestParams } from '@/shared/api/common/http-client';
-import { apiUrl, http } from '@/shared/api/http';
+import { ContentType, RequestParams } from "@/shared/api/common/http-client";
+import { apiUrl, http } from "@/shared/api/http";
 import {
   RequestsCreateRuleRequestDC,
   V1RuleCreateDataDC,
@@ -18,7 +18,7 @@ import {
   V1RulesListDataDC,
   V1RulesListErrorDC,
   V1RulesListParamsDC,
-} from './data-contracts';
+} from "./data-contracts";
 export const ruleApi = new (class RuleApi {
   /**
    * No description
@@ -34,13 +34,10 @@ export const ruleApi = new (class RuleApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1RuleCreate = (
-    request: RequestsCreateRuleRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1RuleCreate = (request: RequestsCreateRuleRequestDC, params: RequestParams = {}) =>
     http.request<V1RuleCreateDataDC, V1RuleCreateErrorDC>({
-      path: `${buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl}/api/v1/rule`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/rule`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -61,10 +58,8 @@ export const ruleApi = new (class RuleApi {
    */
   v1RulesList = (query: V1RulesListParamsDC, params: RequestParams = {}) =>
     http.request<V1RulesListDataDC, V1RulesListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/rules`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/rules`,
+      method: "GET",
       query: query,
       ...params,
     });

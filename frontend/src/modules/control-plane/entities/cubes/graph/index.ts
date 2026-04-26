@@ -11,6 +11,7 @@ export {
   createPortsWithHash,
   cleanParams,
   createExperimentCube,
+  supervisorModelFromBaseCube,
   convertCubesToFormFormat,
 } from './utils';
 
@@ -35,12 +36,16 @@ export {
   mergeConfigs,
   hasResharderResources,
   getResharderInputSources,
+  isSupervisorExperimentLayout,
+  parseSupervisorExperimentConfig,
 } from './merge-config';
 
 // ============================================================================
 // Парсинг графа (для режима просмотра)
 // ============================================================================
 export { parseGraphConfig } from './parse-graph';
+
+export { buildSupervisorGraphParams } from './supervisor-graph';
 
 // ============================================================================
 // Валидация портов

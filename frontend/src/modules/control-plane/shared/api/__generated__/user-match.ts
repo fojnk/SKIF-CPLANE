@@ -9,13 +9,9 @@
  * ---------------------------------------------------------------
  */
 
-import { RequestParams } from '@/shared/api/common/http-client';
-import { apiUrl, http } from '@/shared/api/http';
-import {
-  V1UserMatchesListDataDC,
-  V1UserMatchesListErrorDC,
-  V1UserMatchesListParamsDC,
-} from './data-contracts';
+import { RequestParams } from "@/shared/api/common/http-client";
+import { apiUrl, http } from "@/shared/api/http";
+import { V1UserMatchesListDataDC, V1UserMatchesListErrorDC, V1UserMatchesListParamsDC } from "./data-contracts";
 export const userMatchApi = new (class UserMatchApi {
   /**
    * No description
@@ -31,15 +27,10 @@ export const userMatchApi = new (class UserMatchApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1UserMatchesList = (
-    query: V1UserMatchesListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1UserMatchesList = (query: V1UserMatchesListParamsDC, params: RequestParams = {}) =>
     http.request<V1UserMatchesListDataDC, V1UserMatchesListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/user_matches`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/user_matches`,
+      method: "GET",
       query: query,
       ...params,
     });

@@ -9,8 +9,8 @@
  * ---------------------------------------------------------------
  */
 
-import { ContentType, RequestParams } from '@/shared/api/common/http-client';
-import { apiUrl, http } from '@/shared/api/http';
+import { ContentType, RequestParams } from "@/shared/api/common/http-client";
+import { apiUrl, http } from "@/shared/api/http";
 import {
   RequestsApplyDatasetRequestDC,
   RequestsCopyDatasetRequestV2DC,
@@ -65,8 +65,6 @@ import {
   V2DatasetVersionsListParamsDC,
   V2DatasetYtListErrorDC,
   V2DatasetYtListParamsDC,
-  V2DatasetsApplyScenariosListDataDC,
-  V2DatasetsApplyScenariosListErrorDC,
   V2DatasetsClustersListDataDC,
   V2DatasetsClustersListErrorDC,
   V2DatasetsListDataDC,
@@ -74,13 +72,13 @@ import {
   V2DatasetsListParamsDC,
   V2DatasetsSearchCreateDataDC,
   V2DatasetsSearchCreateErrorDC,
-} from './data-contracts';
+} from "./data-contracts";
 export const datasetApi = new (class DatasetApi {
   /**
    * No description
    *
    * @tags dataset
-   * @summary apply dataset (uses orchestrator)
+   * @summary apply dataset (job queue disabled)
    * @request POST:/api/v1/dataset/apply
    * @responses <br/>
    *  **200** V1DatasetApplyCreateDataDC OK <br/>
@@ -91,21 +89,14 @@ export const datasetApi = new (class DatasetApi {
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    *  **503** ResponsesErrorResponseDC Service Unavailable <br/>
    */
-  v1DatasetApplyCreate = (
-    request: RequestsApplyDatasetRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<V1DatasetApplyCreateDataDC, V1DatasetApplyCreateErrorDC>(
-      {
-        path: `${
-          buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-        }/api/v1/dataset/apply`,
-        method: 'POST',
-        body: request,
-        type: ContentType.Json,
-        ...params,
-      },
-    );
+  v1DatasetApplyCreate = (request: RequestsApplyDatasetRequestDC, params: RequestParams = {}) =>
+    http.request<V1DatasetApplyCreateDataDC, V1DatasetApplyCreateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/dataset/apply`,
+      method: "POST",
+      body: request,
+      type: ContentType.Json,
+      ...params,
+    });
   /**
    * No description
    *
@@ -120,15 +111,10 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1DatasetDelete = (
-    request: RequestsDeleteDatasetRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1DatasetDelete = (request: RequestsDeleteDatasetRequestDC, params: RequestParams = {}) =>
     http.request<V1DatasetDeleteDataDC, V1DatasetDeleteErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/dataset`,
-      method: 'DELETE',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/dataset`,
+      method: "DELETE",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -147,15 +133,10 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1DatasetLogList = (
-    query: V1DatasetLogListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1DatasetLogList = (query: V1DatasetLogListParamsDC, params: RequestParams = {}) =>
     http.request<V1DatasetLogListDataDC, V1DatasetLogListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/dataset/log`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/dataset/log`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -173,15 +154,10 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1DatasetLogsList = (
-    query: V1DatasetLogsListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1DatasetLogsList = (query: V1DatasetLogsListParamsDC, params: RequestParams = {}) =>
     http.request<V1DatasetLogsListDataDC, V1DatasetLogsListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/dataset/logs`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/dataset/logs`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -194,15 +170,10 @@ export const datasetApi = new (class DatasetApi {
    * @responses <br/>
    *  **200** V1DatasetLogUpdateDataDC OK <br/>
    */
-  v1DatasetLogUpdate = (
-    request: RequestsUpdateDatasetLogCommentRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1DatasetLogUpdate = (request: RequestsUpdateDatasetLogCommentRequestDC, params: RequestParams = {}) =>
     http.request<V1DatasetLogUpdateDataDC, any>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/dataset/log`,
-      method: 'PUT',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/dataset/log`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -219,18 +190,10 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2DatasetConfigValidateCreate = (
-    request: RequestsDatasetValidateRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V2DatasetConfigValidateCreateDataDC,
-      V2DatasetConfigValidateCreateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/dataset/config/validate`,
-      method: 'POST',
+  v2DatasetConfigValidateCreate = (request: RequestsDatasetValidateRequestDC, params: RequestParams = {}) =>
+    http.request<V2DatasetConfigValidateCreateDataDC, V2DatasetConfigValidateCreateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/dataset/config/validate`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -247,15 +210,10 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2DatasetCopyCreate = (
-    request: RequestsCopyDatasetRequestV2DC,
-    params: RequestParams = {},
-  ) =>
+  v2DatasetCopyCreate = (request: RequestsCopyDatasetRequestV2DC, params: RequestParams = {}) =>
     http.request<V2DatasetCopyCreateDataDC, V2DatasetCopyCreateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/dataset/copy`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/dataset/copy`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -274,15 +232,10 @@ export const datasetApi = new (class DatasetApi {
    *  **409** ResponsesErrorResponseDC Conflict - resource already exists <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2DatasetCreate = (
-    request: RequestsCreateDatasetRequestV2DC,
-    params: RequestParams = {},
-  ) =>
+  v2DatasetCreate = (request: RequestsCreateDatasetRequestV2DC, params: RequestParams = {}) =>
     http.request<V2DatasetCreateDataDC, V2DatasetCreateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/dataset`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/dataset`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -301,15 +254,10 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2DatasetLinksList = (
-    query: V2DatasetLinksListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v2DatasetLinksList = (query: V2DatasetLinksListParamsDC, params: RequestParams = {}) =>
     http.request<V2DatasetLinksListDataDC, V2DatasetLinksListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/dataset/links`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/dataset/links`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -327,15 +275,10 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2DatasetList = (
-    query: V2DatasetListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v2DatasetList = (query: V2DatasetListParamsDC, params: RequestParams = {}) =>
     http.request<V2DatasetListDataDC, V2DatasetListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/dataset`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/dataset`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -353,39 +296,11 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2DatasetLogsList = (
-    query: V2DatasetLogsListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v2DatasetLogsList = (query: V2DatasetLogsListParamsDC, params: RequestParams = {}) =>
     http.request<V2DatasetLogsListDataDC, V2DatasetLogsListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/dataset/logs`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/dataset/logs`,
+      method: "GET",
       query: query,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags dataset
-   * @summary get available scenarios for dataset apply
-   * @request GET:/api/v2/datasets/apply/scenarios
-   * @responses <br/>
-   *  **200** V2DatasetsApplyScenariosListDataDC OK <br/>
-   *  **403** ResponsesErrorResponseDC Forbidden <br/>
-   *  **500** ResponsesErrorResponseDC Internal server error <br/>
-   */
-  v2DatasetsApplyScenariosList = (params: RequestParams = {}) =>
-    http.request<
-      V2DatasetsApplyScenariosListDataDC,
-      V2DatasetsApplyScenariosListErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/datasets/apply/scenarios`,
-      method: 'GET',
-      type: ContentType.Json,
       ...params,
     });
   /**
@@ -401,14 +316,9 @@ export const datasetApi = new (class DatasetApi {
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
   v2DatasetsClustersList = (params: RequestParams = {}) =>
-    http.request<
-      V2DatasetsClustersListDataDC,
-      V2DatasetsClustersListErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/datasets/clusters`,
-      method: 'GET',
+    http.request<V2DatasetsClustersListDataDC, V2DatasetsClustersListErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/datasets/clusters`,
+      method: "GET",
       type: ContentType.Json,
       ...params,
     });
@@ -424,15 +334,10 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesCreateAppBannerResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2DatasetsList = (
-    query: V2DatasetsListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v2DatasetsList = (query: V2DatasetsListParamsDC, params: RequestParams = {}) =>
     http.request<V2DatasetsListDataDC, V2DatasetsListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/datasets`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/datasets`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -450,18 +355,10 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2DatasetsSearchCreate = (
-    request: RequestsSearchDatasetsRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V2DatasetsSearchCreateDataDC,
-      V2DatasetsSearchCreateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/datasets/search`,
-      method: 'POST',
+  v2DatasetsSearchCreate = (request: RequestsSearchDatasetsRequestDC, params: RequestParams = {}) =>
+    http.request<V2DatasetsSearchCreateDataDC, V2DatasetsSearchCreateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/datasets/search`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -480,15 +377,10 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2DatasetUpdate = (
-    request: RequestsUpdateDatasetRequestV2DC,
-    params: RequestParams = {},
-  ) =>
+  v2DatasetUpdate = (request: RequestsUpdateDatasetRequestV2DC, params: RequestParams = {}) =>
     http.request<V2DatasetUpdateDataDC, V2DatasetUpdateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/dataset`,
-      method: 'PUT',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/dataset`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -507,18 +399,10 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2DatasetVersionCurrentList = (
-    query: V2DatasetVersionCurrentListParamsDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V2DatasetVersionCurrentListDataDC,
-      V2DatasetVersionCurrentListErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/dataset/version/current`,
-      method: 'GET',
+  v2DatasetVersionCurrentList = (query: V2DatasetVersionCurrentListParamsDC, params: RequestParams = {}) =>
+    http.request<V2DatasetVersionCurrentListDataDC, V2DatasetVersionCurrentListErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/dataset/version/current`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -536,18 +420,10 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2DatasetVersionCurrentUpdate = (
-    request: RequestsUpdateDatasetVersionRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V2DatasetVersionCurrentUpdateDataDC,
-      V2DatasetVersionCurrentUpdateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/dataset/version/current`,
-      method: 'PUT',
+  v2DatasetVersionCurrentUpdate = (request: RequestsUpdateDatasetVersionRequestDC, params: RequestParams = {}) =>
+    http.request<V2DatasetVersionCurrentUpdateDataDC, V2DatasetVersionCurrentUpdateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/dataset/version/current`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -566,20 +442,13 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2DatasetVersionList = (
-    query: V2DatasetVersionListParamsDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<V2DatasetVersionListDataDC, V2DatasetVersionListErrorDC>(
-      {
-        path: `${
-          buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-        }/api/v2/dataset/version`,
-        method: 'GET',
-        query: query,
-        ...params,
-      },
-    );
+  v2DatasetVersionList = (query: V2DatasetVersionListParamsDC, params: RequestParams = {}) =>
+    http.request<V2DatasetVersionListDataDC, V2DatasetVersionListErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/dataset/version`,
+      method: "GET",
+      query: query,
+      ...params,
+    });
   /**
    * No description
    *
@@ -594,18 +463,10 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2DatasetVersionsList = (
-    query: V2DatasetVersionsListParamsDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V2DatasetVersionsListDataDC,
-      V2DatasetVersionsListErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/dataset/versions`,
-      method: 'GET',
+  v2DatasetVersionsList = (query: V2DatasetVersionsListParamsDC, params: RequestParams = {}) =>
+    http.request<V2DatasetVersionsListDataDC, V2DatasetVersionsListErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/dataset/versions`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -623,18 +484,10 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2DatasetVersionUpdate = (
-    request: RequestsUpdateDatasetVersionCommentRequestDC,
-    params: RequestParams = {},
-  ) =>
-    http.request<
-      V2DatasetVersionUpdateDataDC,
-      V2DatasetVersionUpdateErrorDC
-    >({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/dataset/version`,
-      method: 'PUT',
+  v2DatasetVersionUpdate = (request: RequestsUpdateDatasetVersionCommentRequestDC, params: RequestParams = {}) =>
+    http.request<V2DatasetVersionUpdateDataDC, V2DatasetVersionUpdateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/dataset/version`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -652,15 +505,10 @@ export const datasetApi = new (class DatasetApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2DatasetYtList = (
-    query: V2DatasetYtListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v2DatasetYtList = (query: V2DatasetYtListParamsDC, params: RequestParams = {}) =>
     http.request<any, V2DatasetYtListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/dataset/yt`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/dataset/yt`,
+      method: "GET",
       query: query,
       type: ContentType.Json,
       ...params,

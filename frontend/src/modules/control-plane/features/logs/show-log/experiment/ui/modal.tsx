@@ -45,12 +45,17 @@ export const Modal = ({
 
   const isBig = useMemo(() => {
     const updated = !!(payload.act === LogAction.Update && diff.config);
+    const applyCfg = !!(
+      payload.act === LogAction.ApplyExperiment && diff.config
+    );
     const variables = [
       LogAction.NewVariable,
       LogAction.UpdateVariable,
       LogAction.DeleteVariable,
     ];
-    return updated || variables.includes(payload.act as LogAction);
+    return (
+      updated || applyCfg || variables.includes(payload.act as LogAction)
+    );
   }, [payload, diff]);
 
   const renderContent = () => {
@@ -132,6 +137,26 @@ export const Modal = ({
             <LogEntity
               name={data.details.new?.name || 'без названия'}
               label="Эксперимент"
+            />
+          );
+        }
+        case LogAction.ApplyExperiment: {
+          if (diff.config) {
+            return (
+              <LogDiff
+                name="Применённый конфиг супервизора"
+                oldValue={data.details.old?.config ?? ''}
+                newValue={data.details.new?.config ?? ''}
+              />
+            );
+          }
+          return (
+            <LogEntity
+              name={
+                data.details.new?.description ||
+                'Применение конфигурации супервизора'
+              }
+              label="Пайплайн"
             />
           );
         }

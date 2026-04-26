@@ -14,6 +14,7 @@ import { experimentFormModel } from '@/modules/control-plane/entities/forms/expe
 import { editorPageModel } from '@/modules/control-plane/pages/editor';
 import { convertFormValuesToJson } from '@/modules/control-plane/shared/components/forms';
 import { formatData } from '@/modules/control-plane/shared/utils/formatData';
+import type { ParamsDC } from '@/modules/control-plane/shared/types';
 
 import { EditorJson } from '../../components/editor-json';
 import { EditorLayout } from '../../components/editor-layout';
@@ -21,6 +22,7 @@ import { EditorLayout } from '../../components/editor-layout';
 import {
   initExperimentEditorValues,
   ExperimentEditForm,
+  hasWorkerParam,
   type ExperimentFormValues,
 } from './experiment-edit';
 
@@ -43,18 +45,72 @@ const FormValuesObserver = ({
   const prevValuesRef = useRef<string>('');
 
   useEffect(() => {
-    // Получаем кубы и resharder inputSources из формы
-    // Cubes теперь Record<string, EditExperimentCube>
+    const schema = formParams as ParamsDC[];
+    const hasWorker = hasWorkerParam(schema);
+
+    if (!hasWorker) {
+      const currentValuesStr = JSON.stringify(values);
+      if (currentValuesStr === prevValuesRef.current) {
+        return;
+      }
+      prevValuesRef.current = currentValuesStr;
+
+      try {
+        const typedValues = convertFormValuesToJson(
+          values as Record<string, unknown>,
+          schema,
+          originalConfig,
+        ) as Record<string, unknown>;
+
+        if (!Array.isArray(typedValues.models)) {
+          typedValues.models = [];
+        }
+
+        let finalValues: Record<string, unknown> = typedValues;
+        if (originalConfig) {
+          try {
+            const originalObj =
+              typeof originalConfig === 'string'
+                ? JSON.parse(originalConfig)
+                : originalConfig;
+            if (originalObj && typeof originalObj === 'object') {
+              const orderedValues: Record<string, unknown> = {};
+              const originalKeys = Object.keys(originalObj);
+              const resultKeys = new Set(Object.keys(typedValues));
+
+              originalKeys.forEach((key: string) => {
+                if (resultKeys.has(key)) {
+                  orderedValues[key] = typedValues[key];
+                  resultKeys.delete(key);
+                }
+              });
+
+              resultKeys.forEach((key) => {
+                orderedValues[key] = typedValues[key];
+              });
+
+              finalValues = orderedValues;
+            }
+          } catch {
+            // ignore
+          }
+        }
+
+        setForm(formatData(JSON.stringify(finalValues)));
+      } catch (error) {
+        console.error('Failed to stringify form values:', error);
+      }
+      return;
+    }
+
+    // Streamflow: кубы в Worker.GraphConfig + Resharder
     const formCubes = values?.Worker?.GraphConfig?.Cubes || {};
     const resharderInputSources: PortInfo[] = [];
 
-    // Извлекаем PortInfo из формы
-    // Приоритет имени: OutputName > SourceName
     const inputSources = values?.Resharder?.InputSources;
     if (Array.isArray(inputSources)) {
       inputSources.forEach((source) => {
         if (source?.portHash) {
-          // Используем OutputName если есть, иначе SourceName
           const displayName =
             source.OutputName && source.OutputName.trim() !== ''
               ? source.OutputName
@@ -69,13 +125,11 @@ const FormValuesObserver = ({
       });
     }
 
-    // Конвертируем кубы в формат для JSON (без CubeID - он теперь в cubeConfig)
     const jsonCubes = convertCubesToFormFormat(
       formCubes,
       resharderInputSources,
     );
 
-    // Создаем полный объект values с кубами для сравнения
     const valuesWithCubes = {
       ...values,
       Worker: {
@@ -101,18 +155,17 @@ const FormValuesObserver = ({
         originalConfig,
       ) as any;
 
-      // Добавляем Cubes в JSON
-      if (jsonCubes.length > 0) {
-        if (!typedValues.Worker) {
-          typedValues.Worker = {};
-        }
-        if (!typedValues.Worker.GraphConfig) {
-          typedValues.Worker.GraphConfig = {};
-        }
-        typedValues.Worker.GraphConfig.Cubes = jsonCubes;
+      if (!typedValues.Worker) {
+        typedValues.Worker = {};
       }
+      if (!typedValues.Worker.GraphConfig) {
+        typedValues.Worker.GraphConfig = {};
+      }
+      typedValues.Worker.GraphConfig = {
+        ...typedValues.Worker.GraphConfig,
+        Cubes: jsonCubes,
+      };
 
-      // Если Resharder отсутствует или пустой, добавляем как пустой объект
       if (!typedValues.Resharder) {
         typedValues.Resharder = {};
       }
@@ -168,14 +221,19 @@ const CubeConfigObserver = ({
   values,
   setCubeConfig,
   graphNodePositions,
+  enabled,
 }: {
   values: ExperimentFormValues;
   setCubeConfig: (value: string) => void;
   graphNodePositions: GraphNodePosition[];
+  enabled: boolean;
 }) => {
   const prevCubeConfigRef = useRef<string>('');
 
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
     // Получаем кубы из формы
     const formCubes = values?.Worker?.GraphConfig?.Cubes || {};
     const cubesArray = Object.values(formCubes) as EditFormCube[];
@@ -193,7 +251,12 @@ const CubeConfigObserver = ({
     prevCubeConfigRef.current = cubeConfigJson;
 
     setCubeConfig(cubeConfigJson);
-  }, [values?.Worker?.GraphConfig?.Cubes, setCubeConfig, graphNodePositions]);
+  }, [
+    enabled,
+    values?.Worker?.GraphConfig?.Cubes,
+    setCubeConfig,
+    graphNodePositions,
+  ]);
 
   return null;
 };
@@ -273,6 +336,10 @@ export const Experiment = () => {
     [data?.config, data?.additional_information, experimentFormData, cubesList],
   );
   const hasFormParams = experimentFormData && experimentFormData.length > 0;
+  const hasWorkerPipeline = useMemo(
+    () => hasWorkerParam(experimentFormData ?? undefined),
+    [experimentFormData],
+  );
 
   // Компонент для headerAfterButtons (показываем только в режиме form)
   const debugControls =
@@ -307,6 +374,7 @@ export const Experiment = () => {
                 values={values as ExperimentFormValues}
                 setCubeConfig={setCurrentCubeConfig}
                 graphNodePositions={graphNodePositions}
+                enabled={hasWorkerPipeline}
               />
               {data && (
                 <ExperimentEditForm

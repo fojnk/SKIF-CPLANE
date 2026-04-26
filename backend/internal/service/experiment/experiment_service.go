@@ -146,18 +146,10 @@ func (p *ExperimentService) GetExperimentsInProject(ctx context.Context, project
 
 	list := make([]dto.CompleteExperiment, len(completeExperiments))
 	for i, experiment := range completeExperiments {
-		status := dto.ExperimentStatus("UNKNOWN")
-
-		// Get experiment status from orchestrator
-		if experiment.OrchID.Valid && experiment.OrchID.String != "" {
-			statusResp := p.GetExperimentStatus(ctx, experiment.OrchID.String)
-			status = statusResp.Status
-		}
-
 		list[i] = dto.CompleteExperiment{
 			ID:     experiment.ID,
 			Name:   experiment.Name,
-			Status: status,
+			Status: dto.ExperimentStatus("UNKNOWN"),
 		}
 	}
 
@@ -269,7 +261,7 @@ func (p *ExperimentService) CopyExperiment(ctx context.Context, srcExperimentID,
 		for i := range variables {
 			variable, err := p.repo.DB.InsertExperimentVariable(ctx, dbcore.InsertExperimentVariableParams{
 				ExperimentID: experimentInsertedID,
-				Name:       variables[i].Name,
+				Name:         variables[i].Name,
 			})
 			if err != nil {
 				p.repo.Logger.Error("failed to insert variable", err)
@@ -442,18 +434,11 @@ func (p *ExperimentService) GetCompleteExperiment(ctx context.Context, experimen
 		return nil, "", serviceerrors.ConvertPostgresError(err, serviceerrors.EntityProject)
 	}
 
-	// Get experiment status from orchestrator
-	status := dto.ExperimentStatus("UNKNOWN")
-	if completeExperiment.OrchID.Valid && completeExperiment.OrchID.String != "" {
-		statusResp := p.GetExperimentStatus(ctx, completeExperiment.OrchID.String)
-		status = statusResp.Status
-	}
-
 	return &dto.CompleteExperiment{
 		ID:                    completeExperiment.ID,
 		Name:                  completeExperiment.Name,
 		Description:           completeExperiment.Description,
-		Status:                status,
+		Status:                dto.ExperimentStatus("UNKNOWN"),
 		Config:                completeExperiment.Config.String,
 		ProjectID:             completeExperiment.ProjectID,
 		ProjectName:           project.Name,

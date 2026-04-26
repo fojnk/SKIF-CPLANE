@@ -21,8 +21,6 @@ clients:
   auth:
     url: https://auth.vk.team
     timeout: 2s
-  orchestrator:
-    base_url: http://localhost:8081
   oauth:
     oauth-proxy: ""
     OAuthUrl: "http://localhost:9100/oauth"

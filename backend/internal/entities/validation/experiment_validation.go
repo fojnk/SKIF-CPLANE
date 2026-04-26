@@ -10,6 +10,7 @@ import (
 	"github.com/santhosh-tekuri/jsonschema/v6"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/models"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/requests"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/supervisor"
 )
 
 func ValidateUpdateExperimentRequest(r *requests.UpdateCompleteExperimentRequest) error {
@@ -27,6 +28,10 @@ func ValidateUpdateExperimentRequest(r *requests.UpdateCompleteExperimentRequest
 }
 
 func ExperimentSyntaxConfigValidation(experimentConfigString string) error {
+	if supervisor.IsSupervisorExperimentLayout([]byte(experimentConfigString)) {
+		return supervisor.ValidateStoredTemplateJSON(experimentConfigString)
+	}
+
 	var experimentConfig models.ExperimentConfig
 
 	err := json.Unmarshal([]byte(experimentConfigString), &experimentConfig)

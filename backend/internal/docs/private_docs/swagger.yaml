@@ -833,6 +833,8 @@ definitions:
     properties:
       avatar:
         type: string
+      display_name:
+        type: string
       email:
         type: string
       first_name:
@@ -1135,7 +1137,6 @@ definitions:
       experimentConfig:
         type: string
       experimentID:
-        format: int32
         type: integer
     required:
     - experimentConfig
@@ -2186,6 +2187,8 @@ definitions:
         type: string
       summary:
         type: string
+      supervisor:
+        $ref: '#/definitions/responses.SupervisorExperimentRun'
     type: object
   responses.GetAppAboutResponse:
     properties:
@@ -2420,11 +2423,6 @@ definitions:
           $ref: '#/definitions/acl.Right'
         type: array
     type: object
-  responses.GetOrchestratorConfigResponse:
-    properties:
-      config:
-        type: string
-    type: object
   responses.GetProjectConfigResponse:
     properties:
       config:
@@ -2478,6 +2476,11 @@ definitions:
   responses.GetSchemaResponse:
     properties:
       config_schema:
+        type: string
+    type: object
+  responses.GetSupervisorConfigResponse:
+    properties:
+      config:
         type: string
     type: object
   responses.ListAppBannersResponse:
@@ -2719,6 +2722,40 @@ definitions:
         type: integer
       total:
         type: integer
+    type: object
+  responses.SupervisorExperimentRun:
+    properties:
+      cancellation_requested:
+        type: boolean
+      current_model:
+        type: string
+      current_order:
+        type: integer
+      detail:
+        type: string
+      experiment_id:
+        type: integer
+      jobs:
+        items:
+          $ref: '#/definitions/responses.SupervisorModelJob'
+        type: array
+      progress:
+        type: string
+      status:
+        type: string
+      total_models:
+        type: integer
+    type: object
+  responses.SupervisorModelJob:
+    properties:
+      error_message:
+        type: string
+      index:
+        type: integer
+      model_name:
+        type: string
+      status:
+        type: string
     type: object
   responses.UpdateAppAboutResponse:
     properties:
@@ -4606,46 +4643,6 @@ paths:
       summary: list experiment update logs
       tags:
       - experiment
-  /api/v1/experiment/orchestrator:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: experiment id
-        in: query
-        name: experiment_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.GetOrchestratorConfigResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.CreateAppBannerResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: get orchestrator config
-      tags:
-      - experiment
   /api/v1/experiment/start:
     put:
       consumes:
@@ -4766,6 +4763,46 @@ paths:
           schema:
             $ref: '#/definitions/responses.ErrorResponse'
       summary: stop experiment
+      tags:
+      - experiment
+  /api/v1/experiment/supervisor:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: experiment id
+        in: query
+        name: experiment_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.GetSupervisorConfigResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/responses.CreateAppBannerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      summary: Pipeline config for supervisor (JSON)
       tags:
       - experiment
   /api/v1/experiment/updates:

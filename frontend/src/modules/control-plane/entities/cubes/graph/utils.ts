@@ -324,6 +324,59 @@ export const createExperimentCube = (
   return cube;
 };
 
+/**
+ * Строка models[] для конфига супервизора из куба маркетплейса (CubeInfoDC).
+ * language/modelPath задаются разумными умолчаниями — пользователь может править в форме.
+ */
+export const supervisorModelFromBaseCube = (
+  baseCube: CubeInfoDC,
+  order: number,
+): Record<string, unknown> | null => {
+  if (baseCube.id === undefined || baseCube.id === null) {
+    return null;
+  }
+  if (
+    baseCube.type === DtoCubeTypeDC.Resharder ||
+    baseCube.type === DtoCubeTypeDC.Retry
+  ) {
+    return null;
+  }
+
+  let parameters: Record<string, unknown> = {};
+  try {
+    if (baseCube.cube_params) {
+      const parsed = JSON.parse(baseCube.cube_params) as {
+        args?: ParamsDC[];
+      };
+      const args = parsed?.args;
+      if (args && args.length > 0) {
+        parameters = getFormInitialValues('', args, true) as Record<
+          string,
+          unknown
+        >;
+      }
+    }
+  } catch {
+    parameters = {};
+  }
+
+  const modelId = `m_${baseCube.id}_${generateHash(4)}`;
+  const name =
+    (baseCube.name && baseCube.name.trim()) || modelId;
+  const modelPath =
+    (baseCube.name && baseCube.name.trim()) || `model_${baseCube.id}`;
+
+  return {
+    modelId,
+    name,
+    order,
+    version: '1.0',
+    language: 'PYTHON',
+    modelPath,
+    parameters,
+  };
+};
+
 // ============================================================================
 // Конвертация кубов для сохранения в JSON
 // ============================================================================

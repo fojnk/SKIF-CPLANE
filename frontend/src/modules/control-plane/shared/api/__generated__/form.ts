@@ -9,8 +9,8 @@
  * ---------------------------------------------------------------
  */
 
-import { ContentType, RequestParams } from '@/shared/api/common/http-client';
-import { apiUrl, http } from '@/shared/api/http';
+import { ContentType, RequestParams } from "@/shared/api/common/http-client";
+import { apiUrl, http } from "@/shared/api/http";
 import {
   V2FormsDatasetListDataDC,
   V2FormsDatasetListErrorDC,
@@ -19,7 +19,7 @@ import {
   V2FormsExperimentListErrorDC,
   V2FormsProjectListDataDC,
   V2FormsProjectListErrorDC,
-} from './data-contracts';
+} from "./data-contracts";
 export const formApi = new (class FormApi {
   /**
    * No description
@@ -35,15 +35,10 @@ export const formApi = new (class FormApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2FormsDatasetList = (
-    query: V2FormsDatasetListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v2FormsDatasetList = (query: V2FormsDatasetListParamsDC, params: RequestParams = {}) =>
     http.request<V2FormsDatasetListDataDC, V2FormsDatasetListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/forms/dataset`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/forms/dataset`,
+      method: "GET",
       query: query,
       type: ContentType.Json,
       ...params,
@@ -63,10 +58,8 @@ export const formApi = new (class FormApi {
    */
   v2FormsExperimentList = (params: RequestParams = {}) =>
     http.request<V2FormsExperimentListDataDC, V2FormsExperimentListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/forms/experiment`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/forms/experiment`,
+      method: "GET",
       type: ContentType.Json,
       ...params,
     });
@@ -86,10 +79,8 @@ export const formApi = new (class FormApi {
    */
   v2FormsProjectList = (params: RequestParams = {}) =>
     http.request<V2FormsProjectListDataDC, V2FormsProjectListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/forms/project`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/forms/project`,
+      method: "GET",
       type: ContentType.Json,
       ...params,
     });

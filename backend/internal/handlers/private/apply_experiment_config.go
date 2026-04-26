@@ -10,6 +10,7 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/handlers/shared"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/logger"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service"
+	experimentSvc "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/experiment"
 	serviceerrors "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/errors"
 )
 
@@ -23,14 +24,16 @@ func handleApplyExperimentConfigFallback(
 	username string,
 	comment string,
 ) (any, *responses.ErrorResponse) {
-	if _, err := svc.ApplyExperimentConfig(ctx, experimentID); err != nil {
+	appliedJSON, err := svc.ApplyExperimentConfig(ctx, experimentID)
+	if err != nil {
 		l.Error("failed to apply experiment config", err)
 		return nil, shared.ConvertServiceError(err, shared.EntityExperiment)
 	}
 
 	svc.LogExperimentChange(ctx, projectID, experimentID, username, comment, service.UpdateLogActionApplyExperiment, service.ExperimentUpdateLog{
 		New: service.ExperimentUpdateLogEntity{
-			JobID: nil,
+			Description: "Применена конфигурация супервизора (experiment.apply)",
+			Config:      experimentSvc.TruncateForExperimentLog(appliedJSON, experimentSvc.MaxExperimentApplyLogConfigBytes),
 		},
 	})
 

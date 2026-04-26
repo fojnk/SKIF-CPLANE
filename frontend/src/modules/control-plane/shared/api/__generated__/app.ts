@@ -9,16 +9,21 @@
  * ---------------------------------------------------------------
  */
 
-import { ContentType, RequestParams } from '@/shared/api/common/http-client';
-import { apiUrl, http } from '@/shared/api/http';
+import { ContentType, RequestParams } from "@/shared/api/common/http-client";
+import { apiUrl, http } from "@/shared/api/http";
 import {
   RequestsCreateAppBannerRequestDC,
   RequestsCreateAppUpdateRequestDC,
   RequestsDeleteAppBannerRequestDC,
   RequestsDeleteAppUpdateRequestDC,
+  RequestsUpdateAppAboutRequestDC,
   RequestsUpdateAppBannerRequestDC,
   RequestsUpdateAppUpcomingRequestDC,
   RequestsUpdateAppUpdateRequestDC,
+  V1AppAboutListDataDC,
+  V1AppAboutListErrorDC,
+  V1AppAboutUpdateDataDC,
+  V1AppAboutUpdateErrorDC,
   V1AppBannerCreateDataDC,
   V1AppBannerCreateErrorDC,
   V1AppBannerDeleteDataDC,
@@ -52,8 +57,50 @@ import {
   V1AppUpdatesListDataDC,
   V1AppUpdatesListErrorDC,
   V1AppUpdatesListParamsDC,
-} from './data-contracts';
+} from "./data-contracts";
 export const appApi = new (class AppApi {
+  /**
+   * No description
+   *
+   * @tags app
+   * @summary get app about content
+   * @request GET:/api/v1/app/about
+   * @responses <br/>
+   *  **200** V1AppAboutListDataDC OK <br/>
+   *  **400** ResponsesErrorResponseDC Bad Request <br/>
+   *  **401** ResponsesErrorResponseDC Unauthorized <br/>
+   *  **403** ResponsesErrorResponseDC Forbidden <br/>
+   *  **404** ResponsesErrorResponseDC Not Found <br/>
+   *  **500** ResponsesErrorResponseDC Internal server error <br/>
+   */
+  v1AppAboutList = (params: RequestParams = {}) =>
+    http.request<V1AppAboutListDataDC, V1AppAboutListErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/about`,
+      method: "GET",
+      ...params,
+    });
+  /**
+   * No description
+   *
+   * @tags app
+   * @summary update app about content
+   * @request PUT:/api/v1/app/about
+   * @responses <br/>
+   *  **200** V1AppAboutUpdateDataDC OK <br/>
+   *  **400** ResponsesErrorResponseDC Bad Request <br/>
+   *  **401** ResponsesErrorResponseDC Unauthorized <br/>
+   *  **403** ResponsesErrorResponseDC Forbidden <br/>
+   *  **404** ResponsesErrorResponseDC Not Found <br/>
+   *  **500** ResponsesErrorResponseDC Internal server error <br/>
+   */
+  v1AppAboutUpdate = (request: RequestsUpdateAppAboutRequestDC, params: RequestParams = {}) =>
+    http.request<V1AppAboutUpdateDataDC, V1AppAboutUpdateErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/about`,
+      method: "PUT",
+      body: request,
+      type: ContentType.Json,
+      ...params,
+    });
   /**
    * No description
    *
@@ -68,15 +115,10 @@ export const appApi = new (class AppApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1AppBannerCreate = (
-    request: RequestsCreateAppBannerRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1AppBannerCreate = (request: RequestsCreateAppBannerRequestDC, params: RequestParams = {}) =>
     http.request<V1AppBannerCreateDataDC, V1AppBannerCreateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/app/banner`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/banner`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -95,15 +137,10 @@ export const appApi = new (class AppApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1AppBannerDelete = (
-    request: RequestsDeleteAppBannerRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1AppBannerDelete = (request: RequestsDeleteAppBannerRequestDC, params: RequestParams = {}) =>
     http.request<V1AppBannerDeleteDataDC, V1AppBannerDeleteErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/app/banner`,
-      method: 'DELETE',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/banner`,
+      method: "DELETE",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -122,15 +159,10 @@ export const appApi = new (class AppApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1AppBannerList = (
-    query: V1AppBannerListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1AppBannerList = (query: V1AppBannerListParamsDC, params: RequestParams = {}) =>
     http.request<V1AppBannerListDataDC, V1AppBannerListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/app/banner`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/banner`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -149,15 +181,11 @@ export const appApi = new (class AppApi {
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
   v1AppBannersCurrentList = (params: RequestParams = {}) =>
-    http.request<V1AppBannersCurrentListDataDC, V1AppBannersCurrentListErrorDC>(
-      {
-        path: `${
-          buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-        }/api/v1/app/banners/current`,
-        method: 'GET',
-        ...params,
-      },
-    );
+    http.request<V1AppBannersCurrentListDataDC, V1AppBannersCurrentListErrorDC>({
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/banners/current`,
+      method: "GET",
+      ...params,
+    });
   /**
    * No description
    *
@@ -174,10 +202,8 @@ export const appApi = new (class AppApi {
    */
   v1AppBannersList = (params: RequestParams = {}) =>
     http.request<V1AppBannersListDataDC, V1AppBannersListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/app/banners`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/banners`,
+      method: "GET",
       ...params,
     });
   /**
@@ -196,10 +222,8 @@ export const appApi = new (class AppApi {
    */
   v1AppBannerTypesList = (params: RequestParams = {}) =>
     http.request<V1AppBannerTypesListDataDC, V1AppBannerTypesListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/app/banner/types`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/banner/types`,
+      method: "GET",
       ...params,
     });
   /**
@@ -216,15 +240,10 @@ export const appApi = new (class AppApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1AppBannerUpdate = (
-    request: RequestsUpdateAppBannerRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1AppBannerUpdate = (request: RequestsUpdateAppBannerRequestDC, params: RequestParams = {}) =>
     http.request<V1AppBannerUpdateDataDC, V1AppBannerUpdateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/app/banner`,
-      method: 'PUT',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/banner`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -243,10 +262,8 @@ export const appApi = new (class AppApi {
    */
   v1AppIsAdminList = (params: RequestParams = {}) =>
     http.request<V1AppIsAdminListDataDC, V1AppIsAdminListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/app/is-admin`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/is-admin`,
+      method: "GET",
       ...params,
     });
   /**
@@ -265,10 +282,8 @@ export const appApi = new (class AppApi {
    */
   v1AppUpcomingList = (params: RequestParams = {}) =>
     http.request<V1AppUpcomingListDataDC, V1AppUpcomingListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/app/upcoming`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/upcoming`,
+      method: "GET",
       ...params,
     });
   /**
@@ -285,15 +300,10 @@ export const appApi = new (class AppApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1AppUpcomingUpdate = (
-    request: RequestsUpdateAppUpcomingRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1AppUpcomingUpdate = (request: RequestsUpdateAppUpcomingRequestDC, params: RequestParams = {}) =>
     http.request<V1AppUpcomingUpdateDataDC, V1AppUpcomingUpdateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/app/upcoming`,
-      method: 'PUT',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/upcoming`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -312,15 +322,10 @@ export const appApi = new (class AppApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1AppUpdateCreate = (
-    request: RequestsCreateAppUpdateRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1AppUpdateCreate = (request: RequestsCreateAppUpdateRequestDC, params: RequestParams = {}) =>
     http.request<V1AppUpdateCreateDataDC, V1AppUpdateCreateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/app/update`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/update`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -339,15 +344,10 @@ export const appApi = new (class AppApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1AppUpdateDelete = (
-    request: RequestsDeleteAppUpdateRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1AppUpdateDelete = (request: RequestsDeleteAppUpdateRequestDC, params: RequestParams = {}) =>
     http.request<V1AppUpdateDeleteDataDC, V1AppUpdateDeleteErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/app/update`,
-      method: 'DELETE',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/update`,
+      method: "DELETE",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -366,15 +366,10 @@ export const appApi = new (class AppApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1AppUpdateList = (
-    query: V1AppUpdateListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1AppUpdateList = (query: V1AppUpdateListParamsDC, params: RequestParams = {}) =>
     http.request<V1AppUpdateListDataDC, V1AppUpdateListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/app/update`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/update`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -392,15 +387,10 @@ export const appApi = new (class AppApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1AppUpdatesList = (
-    query: V1AppUpdatesListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1AppUpdatesList = (query: V1AppUpdatesListParamsDC, params: RequestParams = {}) =>
     http.request<V1AppUpdatesListDataDC, V1AppUpdatesListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/app/updates`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/updates`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -418,15 +408,10 @@ export const appApi = new (class AppApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1AppUpdateUpdate = (
-    request: RequestsUpdateAppUpdateRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1AppUpdateUpdate = (request: RequestsUpdateAppUpdateRequestDC, params: RequestParams = {}) =>
     http.request<V1AppUpdateUpdateDataDC, V1AppUpdateUpdateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/app/update`,
-      method: 'PUT',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/app/update`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,

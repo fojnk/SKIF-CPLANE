@@ -128,13 +128,13 @@ func (s *StreamflowTestSuite) TestExperimentBasic() {
 	s.Require().NotNil(getRes.Payload)
 	s.Require().Equal("updated-experiment", getRes.Payload.Name)
 
-	orchestratorConfigRes1, err := s.c.Experiment.GetAPIV1ExperimentOrchestrator(&experiment2.GetAPIV1ExperimentOrchestratorParams{
+	supervisorConfigRes1, err := s.c.Experiment.GetAPIV1ExperimentSupervisor(&experiment2.GetAPIV1ExperimentSupervisorParams{
 		ExperimentID: getRes.Payload.ID,
 		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
-	s.Require().NotNil(orchestratorConfigRes1)
-	s.Require().NotNil(orchestratorConfigRes1.Payload)
+	s.Require().NotNil(supervisorConfigRes1)
+	s.Require().NotNil(supervisorConfigRes1.Payload)
 
 	expectedUrls := []string{
 		fmt.Sprintf("https://github.com/jamirhan/%d", res.Payload.ID),
@@ -187,7 +187,7 @@ func (s *StreamflowTestSuite) TestExperimentBasic() {
 	s.Require().NotNil(updates.Payload)
 	s.Require().Equal(updates.Payload.HasNotAppliedChanges, true)
 	s.Require().Equal(updates.Payload.AppliedConfig, "")
-	s.Require().Equal(updates.Payload.SavedConfig, orchestratorConfigRes1.Payload.Config)
+	s.Require().Equal(updates.Payload.SavedConfig, supervisorConfigRes1.Payload.Config)
 
 	resDelete, err := s.c.Experiment.DeleteAPIV1Experiment(&experiment2.DeleteAPIV1ExperimentParams{
 		Request: &models2.RequestsDeleteCompleteExperimentRequest{
@@ -372,13 +372,13 @@ func (s *StreamflowTestSuite) TestExperimentApply() {
 	s.Require().NotNil(getRes.Payload)
 	s.Require().Equal("updated-experiment", getRes.Payload.Name)
 
-	orchestratorConfigRes1, err := s.c.Experiment.GetAPIV1ExperimentOrchestrator(&experiment2.GetAPIV1ExperimentOrchestratorParams{
+	supervisorConfigRes1, err := s.c.Experiment.GetAPIV1ExperimentSupervisor(&experiment2.GetAPIV1ExperimentSupervisorParams{
 		ExperimentID: getRes.Payload.ID,
 		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
-	s.Require().NotNil(orchestratorConfigRes1)
-	s.Require().NotNil(orchestratorConfigRes1.Payload)
+	s.Require().NotNil(supervisorConfigRes1)
+	s.Require().NotNil(supervisorConfigRes1.Payload)
 
 	applyRes, err := s.c.Experiment.PutAPIV1ExperimentConfigApply(&experiment2.PutAPIV1ExperimentConfigApplyParams{
 		Request: &models2.RequestsApplyExperimentConfigRequest{
@@ -415,13 +415,13 @@ func (s *StreamflowTestSuite) TestExperimentApply() {
 	s.Require().NotNil(updateRes2)
 	s.Require().Equal("updated-experiment2", updateRes2.Payload.Name)
 
-	orchestratorConfigRes2, err := s.c.Experiment.GetAPIV1ExperimentOrchestrator(&experiment2.GetAPIV1ExperimentOrchestratorParams{
+	supervisorConfigRes2, err := s.c.Experiment.GetAPIV1ExperimentSupervisor(&experiment2.GetAPIV1ExperimentSupervisorParams{
 		ExperimentID: getRes.Payload.ID,
 		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
-	s.Require().NotNil(orchestratorConfigRes2)
-	s.Require().NotNil(orchestratorConfigRes2.Payload)
+	s.Require().NotNil(supervisorConfigRes2)
+	s.Require().NotNil(supervisorConfigRes2.Payload)
 
 	updateLogs, err := s.c.Experiment.GetAPIV1ExperimentLogs(&experiment2.GetAPIV1ExperimentLogsParams{
 		ExperimentID: &res.Payload.ID,
@@ -445,8 +445,8 @@ func (s *StreamflowTestSuite) TestExperimentApply() {
 	s.Require().NotNil(updates.Payload)
 
 	s.Require().Equal(updates.Payload.HasNotAppliedChanges, true)
-	s.Require().Equal(updates.Payload.AppliedConfig, orchestratorConfigRes1.Payload.Config)
-	s.Require().Equal(updates.Payload.SavedConfig, orchestratorConfigRes2.Payload.Config)
+	s.Require().Equal(updates.Payload.AppliedConfig, supervisorConfigRes1.Payload.Config)
+	s.Require().Equal(updates.Payload.SavedConfig, supervisorConfigRes2.Payload.Config)
 }
 
 func (s *StreamflowTestSuite) TestEmptyUpdates() {
@@ -629,13 +629,13 @@ func (s *StreamflowTestSuite) TestEmptyUpdates() {
 	s.Require().NotNil(updateLogs)
 	s.Require().NotNil(updateLogs.Payload)
 
-	orchestratorConfigRes1, err := s.c.Experiment.GetAPIV1ExperimentOrchestrator(&experiment2.GetAPIV1ExperimentOrchestratorParams{
+	supervisorConfigRes1, err := s.c.Experiment.GetAPIV1ExperimentSupervisor(&experiment2.GetAPIV1ExperimentSupervisorParams{
 		ExperimentID: updateRes3.Payload.ID,
 		Context:      s.ctx,
 	})
 	s.Require().NoError(err)
-	s.Require().NotNil(orchestratorConfigRes1)
-	s.Require().NotNil(orchestratorConfigRes1.Payload)
+	s.Require().NotNil(supervisorConfigRes1)
+	s.Require().NotNil(supervisorConfigRes1.Payload)
 
 	updates, err := s.c.Experiment.GetAPIV1ExperimentUpdates(&experiment2.GetAPIV1ExperimentUpdatesParams{
 		Context:      s.ctx,
@@ -648,7 +648,7 @@ func (s *StreamflowTestSuite) TestEmptyUpdates() {
 
 	s.Require().Equal(updates.Payload.HasNotAppliedChanges, true)
 	s.Require().Equal(updates.Payload.AppliedConfig, "")
-	s.Require().Equal(updates.Payload.SavedConfig, orchestratorConfigRes1.Payload.Config)
+	s.Require().Equal(updates.Payload.SavedConfig, supervisorConfigRes1.Payload.Config)
 
 	versions, err := s.c.Experiment.GetAPIV1ExperimentVersions(&experiment2.GetAPIV1ExperimentVersionsParams{
 		ExperimentID: updateRes3.Payload.ID,

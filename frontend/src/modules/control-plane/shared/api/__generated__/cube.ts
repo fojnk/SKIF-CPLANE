@@ -9,8 +9,8 @@
  * ---------------------------------------------------------------
  */
 
-import { ContentType, RequestParams } from '@/shared/api/common/http-client';
-import { apiUrl, http } from '@/shared/api/http';
+import { ContentType, RequestParams } from "@/shared/api/common/http-client";
+import { apiUrl, http } from "@/shared/api/http";
 import {
   RequestsCreateCubeRequestDC,
   RequestsUpdateCubeRequestDC,
@@ -24,7 +24,7 @@ import {
   V1CubesByIdsListDataDC,
   V1CubesByIdsListParamsDC,
   V1CubesListDataDC,
-} from './data-contracts';
+} from "./data-contracts";
 export const cubeApi = new (class CubeApi {
   /**
    * No description
@@ -37,8 +37,8 @@ export const cubeApi = new (class CubeApi {
    */
   v1CubeList = (query: V1CubeListParamsDC, params: RequestParams = {}) =>
     http.request<V1CubeListDataDC, any>({
-      path: `${buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl}/api/v1/cube`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/cube`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -51,15 +51,10 @@ export const cubeApi = new (class CubeApi {
    * @responses <br/>
    *  **200** V1CubeNameListDataDC OK <br/>
    */
-  v1CubeNameList = (
-    query: V1CubeNameListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1CubeNameList = (query: V1CubeNameListParamsDC, params: RequestParams = {}) =>
     http.request<V1CubeNameListDataDC, any>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/cube/name`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/cube/name`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -72,15 +67,10 @@ export const cubeApi = new (class CubeApi {
    * @responses <br/>
    *  **200** V1CubesByIdsListDataDC OK <br/>
    */
-  v1CubesByIdsList = (
-    query: V1CubesByIdsListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v1CubesByIdsList = (query: V1CubesByIdsListParamsDC, params: RequestParams = {}) =>
     http.request<V1CubesByIdsListDataDC, any>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/cubes/by_ids`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/cubes/by_ids`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -95,10 +85,8 @@ export const cubeApi = new (class CubeApi {
    */
   v1CubesList = (params: RequestParams = {}) =>
     http.request<V1CubesListDataDC, any>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/cubes`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/cubes`,
+      method: "GET",
       ...params,
     });
   /**
@@ -116,15 +104,10 @@ export const cubeApi = new (class CubeApi {
    *  **409** ResponsesErrorResponseDC Conflict - resource already exists <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1CubeSystemCreate = (
-    request: RequestsCreateCubeRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1CubeSystemCreate = (request: RequestsCreateCubeRequestDC, params: RequestParams = {}) =>
     http.request<V1CubeSystemCreateDataDC, V1CubeSystemCreateErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/cube/system`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/cube/system`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -138,13 +121,10 @@ export const cubeApi = new (class CubeApi {
    * @responses <br/>
    *  **200** V1CubeUpdateDataDC OK <br/>
    */
-  v1CubeUpdate = (
-    request: RequestsUpdateCubeRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1CubeUpdate = (request: RequestsUpdateCubeRequestDC, params: RequestParams = {}) =>
     http.request<V1CubeUpdateDataDC, any>({
-      path: `${buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl}/api/v1/cube`,
-      method: 'PUT',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/cube`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,

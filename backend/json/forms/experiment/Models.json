@@ -1,0 +1,64 @@
+[
+    {
+        "name": "modelId",
+        "description": "Уникальный id модели в пайплайне",
+        "required": true,
+        "type": {
+            "type": "string"
+        }
+    },
+    {
+        "name": "name",
+        "description": "Отображаемое имя",
+        "type": {
+            "type": "string"
+        }
+    },
+    {
+        "name": "order",
+        "description": "Порядок выполнения (> 0)",
+        "required": true,
+        "type": {
+            "type": "integer",
+            "type_constraint": {
+                "gt": 0
+            }
+        }
+    },
+    {
+        "name": "version",
+        "description": "Версия модели",
+        "type": {
+            "type": "string"
+        }
+    },
+    {
+        "name": "language",
+        "description": "Язык / рантайм модели",
+        "required": true,
+        "type": {
+            "type": "string",
+            "type_constraint": {
+                "enum": ["JAVA", "PYTHON", "CSHARP", "CPP", "C"]
+            }
+        }
+    },
+    {
+        "name": "modelPath",
+        "description": "Путь к артефакту модели",
+        "required": true,
+        "type": {
+            "type": "string"
+        }
+    },
+    {
+        "name": "parameters",
+        "description": "Параметры модели (произвольный JSON-объект)",
+        "type": {
+            "type": "custom",
+            "type_constraint": {
+                "string_type": "json"
+            }
+        }
+    }
+]

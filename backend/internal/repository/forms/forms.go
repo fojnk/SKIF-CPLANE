@@ -13,12 +13,8 @@ import (
 type Repo interface {
 	GetDatasetFormParams(ctx context.Context, dsType string) ([]params.Param, error)
 	GetProjectFormParams(ctx context.Context) ([]params.Param, error)
-	GetExperimentFileStoragesFormParams(ctx context.Context) ([]params.Param, error)
-	GetExperimentPlacementFormParams(ctx context.Context) ([]params.Param, error)
-	GetExperimentResourcesFormParams(ctx context.Context) ([]params.Param, error)
-	GetExperimentResharderFormParams(ctx context.Context) ([]params.Param, error)
-	GetExperimentStatesFormParams(ctx context.Context) ([]params.Param, error)
-	GetExperimentWorkerFormParams(ctx context.Context) ([]params.Param, error)
+	GetExperimentMetaFormParams(ctx context.Context) ([]params.Param, error)
+	GetExperimentModelsFormParams(ctx context.Context) ([]params.Param, error)
 }
 
 type FormsRepo struct {
@@ -47,38 +43,14 @@ func (fr *FormsRepo) GetProjectFormParams(ctx context.Context) ([]params.Param, 
 	return getFormParamsFromFile(formsPath)
 }
 
-func (fr *FormsRepo) GetExperimentFileStoragesFormParams(ctx context.Context) ([]params.Param, error) {
-	const formsPath = "/json/forms/experiment/FileStorages.json"
+func (fr *FormsRepo) GetExperimentMetaFormParams(ctx context.Context) ([]params.Param, error) {
+	const formsPath = "/json/forms/experiment/Meta.json"
 
 	return getFormParamsFromFile(formsPath)
 }
 
-func (fr *FormsRepo) GetExperimentPlacementFormParams(ctx context.Context) ([]params.Param, error) {
-	const formsPath = "/json/forms/experiment/Placement.json"
-
-	return getFormParamsFromFile(formsPath)
-}
-
-func (fr *FormsRepo) GetExperimentResourcesFormParams(ctx context.Context) ([]params.Param, error) {
-	const formsPath = "/json/forms/experiment/Resources.json"
-
-	return getFormParamsFromFile(formsPath)
-}
-
-func (fr *FormsRepo) GetExperimentResharderFormParams(ctx context.Context) ([]params.Param, error) {
-	const formsPath = "/json/forms/experiment/Resharder.json"
-
-	return getFormParamsFromFile(formsPath)
-}
-
-func (fr *FormsRepo) GetExperimentStatesFormParams(ctx context.Context) ([]params.Param, error) {
-	const formsPath = "/json/forms/experiment/States.json"
-
-	return getFormParamsFromFile(formsPath)
-}
-
-func (fr *FormsRepo) GetExperimentWorkerFormParams(ctx context.Context) ([]params.Param, error) {
-	const formsPath = "/json/forms/experiment/Worker.json"
+func (fr *FormsRepo) GetExperimentModelsFormParams(ctx context.Context) ([]params.Param, error) {
+	const formsPath = "/json/forms/experiment/Models.json"
 
 	return getFormParamsFromFile(formsPath)
 }

@@ -24,8 +24,6 @@ clients:
   auth:
     url: https://auth.vk.team
     timeout: 2s
-  orchestrator:
-    base_url: http://testenv:4000
   oauth:
     oauth-proxy: ""
     OAuthUrl: "https://auth.vk.team/oauth2"
@@ -38,6 +36,17 @@ clients:
     jwt-secret: "jwt-secret"
     access_expiration: 172800
     refresh_expiration: 2592000
+  rabbitmq:
+    enabled: true
+    host: localhost
+    port: 5672
+    user: cplane
+    password: cplane
+    vhost: /
+    exchange: cplane.events
+    routing_key: experiment.start
+    routing_key_stop: experiment.stop
+    routing_key_apply: experiment.apply
 
 session_cache:
   expiration_time: 5m

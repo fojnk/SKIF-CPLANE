@@ -14,6 +14,22 @@ services:
     volumes:
       - pgdata:/var/lib/psql_data/pgdata
 
+  # Локальная очередь для CPLANE и Java-супервизора. С хоста: localhost:5672, UI: http://localhost:15672 (cplane/cplane; не guest — иначе отказ подключений с других контейнеров)
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: cplane
+      RABBITMQ_DEFAULT_PASS: cplane
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   backend:
     build:
       context: ./backend
@@ -23,6 +39,33 @@ services:
       DisableSSL: "true"
     depends_on:
       postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+
+  # Java-супервизор (skif_platform_supervisor). Репозиторий должен лежать рядом: ../skif_platform_supervisor
+  java-supervisor:
+    build:
+      context: ../skif_platform_supervisor/development/supervisor
+      dockerfile: Dockerfile
+    image: skif-supervisor:local
+    # Иначе Compose пытается pull skif-supervisor с Docker Hub (образа там нет).
+    pull_policy: build
+    user: root
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: rabbit,docker
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: "5672"
+      RABBITMQ_USER: cplane
+      RABBITMQ_PASSWORD: cplane
+    volumes:
+      - ../skif_platform_supervisor/development/supervisor/models:/app/models:ro
+      - java_supervisor_work:/app/work
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      rabbitmq:
         condition: service_healthy
 
   nginx:
@@ -36,3 +79,4 @@ services:
 
 volumes:
   pgdata:
+  java_supervisor_work:

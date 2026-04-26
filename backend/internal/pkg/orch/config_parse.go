@@ -9,6 +9,7 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/db/core"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/models"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/logger"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/supervisor"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/libs/models/experiment"
 )
 
@@ -26,20 +27,25 @@ func GetYTWorkDir(ctx context.Context, d db.DB, l *logger.Logger, experimentID i
 		return "", errors.Wrap(err, "failed to get complete experiment info from db")
 	}
 
-	orchConfig, err := ExperimentInfoToOrchestratorConfig(l, &experimentData)
-	if err != nil {
-		return "", errors.Wrap(err, "failed to convert experiment info to orchestrator config")
+	if experimentData.ExperimentConfig.Valid &&
+		supervisor.IsSupervisorExperimentLayout([]byte(experimentData.ExperimentConfig.String)) {
+		return "", nil
 	}
 
-	orchConfigJSON, err := json.Marshal(orchConfig)
+	pipelineCfg, err := ExperimentInfoToSupervisorPipelineConfig(l, &experimentData)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to marshal orchestrator config")
+		return "", errors.Wrap(err, "failed to convert experiment info to supervisor pipeline config")
+	}
+
+	pipelineJSON, err := json.Marshal(pipelineCfg)
+	if err != nil {
+		return "", errors.Wrap(err, "failed to marshal supervisor pipeline config")
 	}
 
 	var configWithAnyAttrs experimentConfigWithAnyAttributes
-	err = json.Unmarshal(orchConfigJSON, &configWithAnyAttrs)
+	err = json.Unmarshal(pipelineJSON, &configWithAnyAttrs)
 	if err != nil {
-		return "", errors.Wrap(err, "failed to unmarshal orchestrator config")
+		return "", errors.Wrap(err, "failed to unmarshal supervisor pipeline config")
 	}
 
 	return configWithAnyAttrs.Meta.YT.WorkDir, nil

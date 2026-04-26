@@ -1,5 +1,5 @@
 package responses
 
-type GetOrchestratorConfigResponse struct {
+type GetSupervisorConfigResponse struct {
 	Config string `json:"config"`
 }

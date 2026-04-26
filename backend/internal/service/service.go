@@ -27,11 +27,11 @@ import (
 	updateLogService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/history/update_log"
 	versionService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/history/versions"
 	namespaceService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/namespace"
+	permissionRequestService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/permissionrequest"
 	projectService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/project"
 	schemaService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/schema"
 	userService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/user"
 	validationService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/validation"
-	permissionRequestService "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/permissionrequest"
 )
 
 type IAuthService interface {
@@ -74,10 +74,10 @@ type IExperimentService interface {
 	// Experiment Actions
 	StartExperiment(ctx context.Context, experimentID int32, username ...string) error
 	StopExperiment(ctx context.Context, experimentID int32, username ...string) error
-	GetExperimentStatus(ctx context.Context, orchID string) responses.ExperimentStatusResponse
+	GetExperimentStatus(ctx context.Context, supervisorExperimentID string) responses.ExperimentStatusResponse
 	CheckExperimentConfigUpdates(ctx context.Context, experimentID int32) (bool, string, string, error)
 	ApplyExperimentConfig(ctx context.Context, experimentID int32) (string, error)
-	GetOrchestratorConfig(ctx context.Context, experimentID int32) (string, error)
+	GetSupervisorConfig(ctx context.Context, experimentID int32) (string, error)
 	FindUnknownExperimentVariables(ctx context.Context, experimentID int32, config string) ([]string, error)
 
 	// Experiment Datasets
@@ -116,7 +116,7 @@ type IExperimentService interface {
 	UpdateExperimentDatasetLinkID(ctx context.Context, linkID, newDatasetID, experimentID int32) error
 	UpdateExperimentDatasetAlias(ctx context.Context, linkID, experimentID int32, newAlias string) error
 	GetExperimentDatasetByLink(ctx context.Context, experimentID int32, alias string) (*dto.ExperimentDataset, error)
-	GetExperimentOrchID(ctx context.Context, experimentID int32) (string, error)
+	GetSupervisorExperimentID(ctx context.Context, experimentID int32) (string, error)
 }
 
 type IDatasetService interface {
@@ -336,23 +336,23 @@ func NewService(repo *repository.Repository) *Service {
 	graphSvc := graphService.NewGraphService(repo, experimentSvc)
 
 	return &Service{
-		Repo:               repo,
-		IAuthService:       authService.NewAuthService(repo),
-		INamespaceService:  namespaceService.NewNamespaceService(repo),
-		IExperimentService: experimentSvc,
-		IDatasetService:    datasetService.NewDatasetService(repo),
-		IProjectService:    projectService.NewProjectService(repo),
-		IVersionService:    versionService.NewVersionService(repo),
-		IUpdateLogService:  updateLogService.NewUpdateLogService(repo),
-		IAppService:        appService.NewAppService(repo),
-		IUserService:       userService.NewUserService(repo),
-		IACLService:        aclService.NewACLService(repo),
-		ISchemaService:     schemaService.NewSchemaService(repo),
-		IGraphService:      graphSvc,
-		IFormService:       formService.NewFormService(repo),
-		IValidationService:          validationService.NewValidationService(repo),
-		ICubeService:                cubeService.NewCubeService(repo),
-		IPermissionRequestService:   permissionRequestService.NewService(repo),
+		Repo:                      repo,
+		IAuthService:              authService.NewAuthService(repo),
+		INamespaceService:         namespaceService.NewNamespaceService(repo),
+		IExperimentService:        experimentSvc,
+		IDatasetService:           datasetService.NewDatasetService(repo),
+		IProjectService:           projectService.NewProjectService(repo),
+		IVersionService:           versionService.NewVersionService(repo),
+		IUpdateLogService:         updateLogService.NewUpdateLogService(repo),
+		IAppService:               appService.NewAppService(repo),
+		IUserService:              userService.NewUserService(repo),
+		IACLService:               aclService.NewACLService(repo),
+		ISchemaService:            schemaService.NewSchemaService(repo),
+		IGraphService:             graphSvc,
+		IFormService:              formService.NewFormService(repo),
+		IValidationService:        validationService.NewValidationService(repo),
+		ICubeService:              cubeService.NewCubeService(repo),
+		IPermissionRequestService: permissionRequestService.NewService(repo),
 	}
 }
 
@@ -381,11 +381,6 @@ func (s *Service) IsTestEnvironment() bool {
 	return s.Repo.Config.IsTestEnv
 }
 
-// GetOrchestratorClient returns orchestrator client
-func (s *Service) GetOrchestratorClient() interface{} {
-	return s.Repo.Clients.Orchestrator.Client
-}
-
 // CheckExperimentQuota проверяет квоту пайплайна
 func (s *Service) CheckExperimentQuota(ctx context.Context, experimentID int32) (bool, error) {
 	unlimited, err := s.Repo.DB.CheckExperimentLimit(ctx, experimentID)
@@ -395,7 +390,7 @@ func (s *Service) CheckExperimentQuota(ctx context.Context, experimentID int32) 
 	return unlimited > 0, nil
 }
 
-// GetCompleteExperimentInfo возвращает полную информацию о пайплайне для генерации конфига оркестратора
+// GetCompleteExperimentInfo возвращает полную информацию о пайплайне для сборки конфига супервизора
 func (s *Service) GetCompleteExperimentInfo(ctx context.Context, experimentID int32) (interface{}, error) {
 	return s.Repo.DB.CompleteExperimentInfo(ctx, experimentID)
 }

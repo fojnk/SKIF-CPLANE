@@ -17,6 +17,7 @@ import {
   extractGraphLayout,
   layoutGraph,
   parseCubeConfig,
+  parseGraphConfig,
   type EditCubeInputMapping,
   type EditExperimentCube,
   type PortInfo,
@@ -43,6 +44,8 @@ interface WorkerEditGraphProps {
   experiment_name?: string;
   variables?: ExperimentVariableItem[] | null;
   cubesList?: CubeListDC[];
+  /** Граф из Meta + models[] (супервизор), без редактирования связей */
+  supervisorGraphMode?: boolean;
 }
 
 export const WorkerEditGraph = ({
@@ -55,6 +58,7 @@ export const WorkerEditGraph = ({
   experiment_name,
   variables,
   cubesList = [],
+  supervisorGraphMode = false,
 }: WorkerEditGraphProps) => {
   const form = useForm();
   const { values } = useFormState({
@@ -121,14 +125,32 @@ export const WorkerEditGraph = ({
     );
   }, [values?.Resources?.Resharder]);
 
-  // Строим граф из кубов формы
   const graphData = useMemo(() => {
+    if (supervisorGraphMode) {
+      const cfg = JSON.stringify({
+        experimentName: values.experimentName,
+        models: values.models ?? [],
+      });
+      const parsed = parseGraphConfig(cfg, '', cubesList);
+      if (!parsed) {
+        return { nodes: [], edges: [] };
+      }
+      return { nodes: parsed.nodes, edges: parsed.edges };
+    }
     return buildGraphFromCubes(cubes, {
       resharderInputSources,
       hasResharderResources,
       cubesList,
     });
-  }, [cubes, hasResharderResources, resharderInputSources, cubesList]);
+  }, [
+    supervisorGraphMode,
+    values.experimentName,
+    values.models,
+    cubes,
+    hasResharderResources,
+    resharderInputSources,
+    cubesList,
+  ]);
 
   // Создаём "структурный ключ" графа для определения необходимости пересчёта layout
   // Layout пересчитывается только при изменении структуры (количество нод, edges, портов)
@@ -289,6 +311,9 @@ export const WorkerEditGraph = ({
   // Обработчик создания соединения на графе
   const handleConnectionCreate = useCallback(
     (connection: ConnectionData) => {
+      if (supervisorGraphMode) {
+        return;
+      }
       const { sourcePortHash, targetPortHash } = connection;
 
       // nodeId имеет формат "cube_{hash}", убираем префикс для поиска
@@ -351,12 +376,15 @@ export const WorkerEditGraph = ({
       // Layout пересчитается автоматически при изменении графа
       // Центрирование не нужно - пользователь уже видит нужную область
     },
-    [cubes, updateCubeInForm, isValidMapping],
+    [supervisorGraphMode, cubes, updateCubeInForm, isValidMapping],
   );
 
   // Обработчик удаления соединения на графе
   const handleConnectionDelete = useCallback(
     (connection: ConnectionData) => {
+      if (supervisorGraphMode) {
+        return;
+      }
       const { targetPortHash } = connection;
 
       // Находим целевой куб (nodeId имеет формат "cube_{hash}", убираем префикс)
@@ -375,7 +403,7 @@ export const WorkerEditGraph = ({
       // Layout пересчитается автоматически при изменении графа
       // Центрирование не нужно - пользователь уже видит нужную область
     },
-    [cubes, updateCubeInForm],
+    [supervisorGraphMode, cubes, updateCubeInForm],
   );
 
   return (
@@ -397,7 +425,7 @@ export const WorkerEditGraph = ({
         onResharderClick={onResharderClick}
         onConnectionCreate={handleConnectionCreate}
         onConnectionDelete={handleConnectionDelete}
-        isEditable
+        isEditable={!supervisorGraphMode}
         experiment_id={experiment_id}
         experiment_name={experiment_name}
         variables={variables}

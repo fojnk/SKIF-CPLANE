@@ -7,166 +7,209 @@ import (
 	"net/http"
 	"regexp"
 	"slices"
+	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgtype"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/clients/orchestrator/client"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/clients/rabbitmq"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/db/core"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/dto"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/responses"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/orch"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/supervisor"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/supervisorstatus"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/supervisorenrich"
 	serviceerrors "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/errors"
 )
 
-// StartExperiment запускает experiment через orchestrator
+// StartExperiment отправляет полный конфиг в RabbitMQ; запуск выполняет супервизор.
 func (p *ExperimentService) StartExperiment(ctx context.Context, experimentID int32, username ...string) error {
+	if p.repo.Clients.RabbitMQ == nil {
+		return serviceerrors.NewServiceUnavailableError("RabbitMQ не настроен: запуск пайплайна выполняет супервизор", fmt.Errorf("rabbitmq disabled"))
+	}
+
 	experiment, err := p.repo.DB.SelectCompleteExperiment(ctx, experimentID)
 	if err != nil {
 		p.repo.Logger.Error("failed to select complete experiment", err)
 		return serviceerrors.NewNotFoundError("Пайплайн не найден", err)
 	}
 
-	orchID := experiment.OrchID.String
+	_ = experiment.OrchID.String
 
-	resp, err := p.repo.Clients.Orchestrator.Client.PostV1ExperimentsStartWithResponse(ctx, &client.PostV1ExperimentsStartParams{
-		ExperimentId: orchID,
-	}, client.PostV1ExperimentsStartJSONRequestBody(make(map[string]interface{})))
-	if err != nil || resp == nil || resp.HTTPResponse == nil {
-		p.repo.Logger.Error("failed to start experiment", err)
-		return serviceerrors.NewServiceUnavailableError("Оркестратор недоступен", err)
+	experimentData, err := p.repo.DB.CompleteExperimentInfo(ctx, experimentID)
+	if err != nil {
+		p.repo.Logger.Error("failed to complete experiment info", err)
+		return serviceerrors.NewNotFoundError("Не удалось получить информацию о пайплайне", err)
 	}
 
-	if resp.HTTPResponse.StatusCode != http.StatusOK {
-		return serviceerrors.NewInternalError(fmt.Sprintf("Оркестратор вернул статус %d", resp.HTTPResponse.StatusCode), fmt.Errorf("%s", string(resp.Body)))
+	req, err := supervisor.RequestFromCompleteInfo(p.repo.Logger, &experimentData)
+	if err != nil {
+		p.repo.Logger.Error("failed to build skif supervisor experiment request", err)
+		return serviceerrors.NewBadRequestError(fmt.Sprintf("Не удалось собрать конфиг для супервизора: %s", err.Error()), err)
+	}
+	if err := supervisorenrich.ApplyExperimentVariables(req, experimentData.Variables); err != nil {
+		p.repo.Logger.Error("failed to enrich supervisor request with variables", err)
+		return serviceerrors.NewBadRequestError(fmt.Sprintf("Ошибка подстановки переменных: %s", err.Error()), err)
+	}
+
+	cfgJSON, err := json.Marshal(req)
+	if err != nil {
+		p.repo.Logger.Error("failed to marshal supervisor experiment request", err)
+		return serviceerrors.NewInternalError("Не удалось сериализовать конфиг", err)
+	}
+
+	if pubErr := p.repo.Clients.RabbitMQ.PublishExperimentStart(ctx, cfgJSON); pubErr != nil {
+		return serviceerrors.NewServiceUnavailableError("Не удалось отправить задание супервизору (RabbitMQ)", pubErr)
 	}
 
 	return nil
 }
 
-// StopExperiment останавливает experiment через orchestrator
+// StopExperiment отправляет команду остановки супервизору через RabbitMQ.
 func (p *ExperimentService) StopExperiment(ctx context.Context, experimentID int32, username ...string) error {
+	if p.repo.Clients.RabbitMQ == nil {
+		return serviceerrors.NewServiceUnavailableError("RabbitMQ не настроен: остановка пайплайна выполняет супервизор", fmt.Errorf("rabbitmq disabled"))
+	}
+
 	experiment, err := p.repo.DB.SelectCompleteExperiment(ctx, experimentID)
 	if err != nil {
 		p.repo.Logger.Error("failed to select complete experiment", err)
 		return serviceerrors.NewNotFoundError("Пайплайн не найден", err)
 	}
 
-	orchID := experiment.OrchID.String
-
-	resp, err := p.repo.Clients.Orchestrator.Client.PostV1ExperimentsStopWithResponse(ctx, &client.PostV1ExperimentsStopParams{
-		ExperimentId: orchID,
-	}, client.PostV1ExperimentsStopJSONRequestBody(make(map[string]interface{})))
-	if err != nil || resp == nil || resp.HTTPResponse == nil {
-		p.repo.Logger.Error("failed to stop experiment", err)
-		return serviceerrors.NewServiceUnavailableError("Оркестратор недоступен", err)
+	supervisorExperimentID := experiment.OrchID.String
+	msg := rabbitmq.MessageExperimentStop{
+		ExperimentID:           experimentID,
+		SupervisorExperimentID: supervisorExperimentID,
 	}
-
-	if resp.HTTPResponse.StatusCode != http.StatusOK &&
-		resp.HTTPResponse.StatusCode != http.StatusNotFound {
-		return serviceerrors.NewInternalError(
-			fmt.Sprintf("Оркестратор вернул статус %d", resp.HTTPResponse.StatusCode),
-			fmt.Errorf("%s", string(resp.Body)),
-		)
+	if pubErr := p.repo.Clients.RabbitMQ.PublishExperimentStop(ctx, msg); pubErr != nil {
+		return serviceerrors.NewServiceUnavailableError("Не удалось отправить остановку супервизору (RabbitMQ)", pubErr)
 	}
 
 	return nil
 }
 
-const (
-	ExperimentStatusUnknown dto.ExperimentStatus = "UNKNOWN"
-	ExperimentStatusOK      dto.ExperimentStatus = "OK"
-	ExperimentStatusWarning dto.ExperimentStatus = "WARNING"
-	ExperimentStatusError   dto.ExperimentStatus = "ERROR"
-	ExperimentStatusPending dto.ExperimentStatus = "PENDING"
-)
-
-var orchToExperimentStatus = map[string]dto.ExperimentStatus{
-	"unknown":   ExperimentStatusUnknown,
-	"deploying": ExperimentStatusPending,
-	"running":   ExperimentStatusOK,
-	"stopping":  ExperimentStatusPending,
-	"stopped":   ExperimentStatusWarning,
-	"failed":    ExperimentStatusError,
-	"pending":   ExperimentStatusPending,
-	"starting":  ExperimentStatusPending,
-}
-
-// GetExperimentStatus возвращает статус experiment
-func (p *ExperimentService) GetExperimentStatus(ctx context.Context, orchID string) responses.ExperimentStatusResponse {
-	statusInfo, err := p.repo.Clients.Orchestrator.Client.GetV1ExperimentsStatusWithResponse(ctx, &client.GetV1ExperimentsStatusParams{
-		ExperimentId: orchID,
-	})
-
-	if statusInfo == nil || statusInfo.HTTPResponse == nil {
+// GetExperimentStatus при наличии clients.supervisor.base_url опрашивает Java-супервизор, иначе — заглушка.
+func (p *ExperimentService) GetExperimentStatus(ctx context.Context, supervisorExperimentID string) responses.ExperimentStatusResponse {
+	base := strings.TrimSpace(p.repo.Config.Clients.Supervisor.BaseURL)
+	if base == "" {
 		return responses.ExperimentStatusResponse{
-			Status:  ExperimentStatusUnknown,
-			Summary: "failed to fetch status from orchestrator",
-			Message: "",
+			Status:  dto.ExperimentStatus("UNKNOWN"),
+			Summary: "supervisor",
+			Message: "Состояние пайплайна доступно у супервизора. Укажите clients.supervisor.base_url для отображения статуса в UI.",
+			Debug:   "",
+		}
+	}
+	id, err := strconv.ParseInt(strings.TrimSpace(supervisorExperimentID), 10, 64)
+	if err != nil || id <= 0 {
+		return responses.ExperimentStatusResponse{
+			Status:  dto.ExperimentStatus("UNKNOWN"),
+			Summary: "supervisor",
+			Message: "Идентификатор пайплайна в супервизоре (orch_id) должен быть положительным числом",
+			Debug:   "",
+		}
+	}
+	timeout := time.Duration(p.repo.Config.Clients.Supervisor.TimeoutMs) * time.Millisecond
+	if timeout <= 0 {
+		timeout = 5 * time.Second
+	}
+	cctx, cancel := context.WithTimeout(ctx, timeout)
+	defer cancel()
+	st, code, err := supervisorstatus.Fetch(cctx, base, id)
+	if err != nil {
+		if code == http.StatusNotFound {
+			return responses.ExperimentStatusResponse{
+				Status:  dto.ExperimentStatus("UNKNOWN"),
+				Summary: "supervisor",
+				Message: "В супервизоре нет активного запуска с этим experimentId (пайплайн не запускался или orch_id не совпадает).",
+				Debug:   err.Error(),
+			}
+		}
+		p.repo.Logger.Error("supervisor status HTTP error", err)
+		return responses.ExperimentStatusResponse{
+			Status:  dto.ExperimentStatus("UNKNOWN"),
+			Summary: "supervisor",
+			Message: "Не удалось получить статус у супервизора",
 			Debug:   err.Error(),
 		}
 	}
-
-	if statusInfo.HTTPResponse.StatusCode == http.StatusNotFound {
-		return responses.ExperimentStatusResponse{
-			Status:  ExperimentStatusUnknown,
-			Summary: "not applied",
-			Message: "",
-			Debug:   string(statusInfo.Body),
-		}
+	run := mapWireStatusToRun(st)
+	msg := run.Detail
+	if msg == "" {
+		msg = fmt.Sprintf("Модель: %s; этап %d из %d", run.CurrentModel, run.CurrentOrder, run.TotalModels)
 	}
-
-	if err != nil {
-		p.repo.Logger.Error("failed to fetch status from orchestrator", err)
-		return responses.ExperimentStatusResponse{
-			Status:  ExperimentStatusUnknown,
-			Summary: "failed to fetch status from orchestrator",
-			Message: "",
-			Debug:   string(statusInfo.Body),
-		}
-	}
-
-	status := ExperimentStatusUnknown
-	summary := "unknown"
-	message := ""
-
-	if statusInfo.JSON200 != nil {
-		if statusInfo.JSON200.OverallStatus == nil || statusInfo.JSON200.Messages == nil {
-			return responses.ExperimentStatusResponse{
-				Status:  ExperimentStatusUnknown,
-				Summary: "failed to fetch status from orchestrator",
-				Message: "",
-				Debug:   string(statusInfo.Body),
-			}
-		}
-		overallStatus, ok := orchToExperimentStatus[string(*statusInfo.JSON200.OverallStatus)]
-		if !ok {
-			status = ExperimentStatusUnknown
-		}
-		if ok {
-			status = overallStatus
-		}
-
-		if len(*statusInfo.JSON200.Messages) > 0 {
-			message = *(*statusInfo.JSON200.Messages)[0].MessageBody
-			summary = *(*statusInfo.JSON200.Messages)[0].MessageName
-		}
-		if len(*statusInfo.JSON200.Messages) == 0 {
-			summary = string(*statusInfo.JSON200.OverallStatus)
-		}
-	}
-
-	debugInfo, err := json.Marshal(statusInfo.JSON200)
-	if err != nil {
-		p.repo.Logger.Error("failed to marshal status info", err)
-	}
-
 	return responses.ExperimentStatusResponse{
-		Status:  status,
-		Summary: summary,
-		Message: message,
-		Debug:   string(debugInfo),
+		Status:     mapJavaSupervisorStatusToDTO(st.Status),
+		Summary:    fmt.Sprintf("supervisor: %s", strings.ToUpper(strings.TrimSpace(st.Status))),
+		Message:    msg,
+		Debug:      "",
+		Supervisor: &run,
 	}
+}
+
+func mapJavaSupervisorStatusToDTO(java string) dto.ExperimentStatus {
+	switch strings.ToUpper(strings.TrimSpace(java)) {
+	case "QUEUED", "RUNNING":
+		return dto.ExperimentStatus("PENDING")
+	case "COMPLETED":
+		return dto.ExperimentStatus("OK")
+	case "FAILED":
+		return dto.ExperimentStatus("ERROR")
+	case "CANCELLED":
+		return dto.ExperimentStatus("WARNING")
+	default:
+		return dto.ExperimentStatus("UNKNOWN")
+	}
+}
+
+func mapWireStatusToRun(st *supervisorstatus.WireExperimentStatus) responses.SupervisorExperimentRun {
+	jobs := make([]responses.SupervisorModelJob, 0, len(st.ModelStatuses))
+	orders := make([]int, 0, len(st.ModelStatuses))
+	for k := range st.ModelStatuses {
+		i, err := strconv.Atoi(k)
+		if err != nil {
+			continue
+		}
+		orders = append(orders, i)
+	}
+	sort.Ints(orders)
+	for _, ord := range orders {
+		ms := st.ModelStatuses[strconv.Itoa(ord)]
+		jobs = append(jobs, responses.SupervisorModelJob{
+			Index:        ord,
+			ModelName:    ms.ModelName,
+			Status:       ms.Status,
+			ErrorMessage: ms.ErrorMessage,
+		})
+	}
+	progress := ""
+	if st.TotalModels > 0 {
+		progress = fmt.Sprintf("%d / %d", st.CurrentOrder, st.TotalModels)
+	}
+	return responses.SupervisorExperimentRun{
+		ExperimentID:          st.ExperimentID,
+		Status:                st.Status,
+		CurrentModel:          st.CurrentModel,
+		CurrentOrder:          st.CurrentOrder,
+		TotalModels:           st.TotalModels,
+		Progress:              progress,
+		Detail:                st.Detail,
+		CancellationRequested: st.CancellationRequested,
+		Jobs:                  jobs,
+	}
+}
+
+// MaxExperimentApplyLogConfigBytes максимальный размер JSON в логе применения конфига.
+const MaxExperimentApplyLogConfigBytes = 20000
+
+// TruncateForExperimentLog обрезает строку для поля лога (размер в байтах UTF-8).
+func TruncateForExperimentLog(s string, maxBytes int) string {
+	if maxBytes <= 0 || len(s) <= maxBytes {
+		return s
+	}
+	return s[:maxBytes] + "\n…(truncated)"
 }
 
 // CheckExperimentConfigUpdates проверяет есть ли неприменённые изменения конфига
@@ -177,19 +220,11 @@ func (p *ExperimentService) CheckExperimentConfigUpdates(ctx context.Context, ex
 		return true, "", "Не удалось получить информацию по пайплайну: " + err.Error(), serviceerrors.NewNotFoundError("Не удалось получить информацию по пайплайну", err)
 	}
 
-	cfg, err := orch.ExperimentInfoToOrchestratorConfig(p.repo.Logger, &experimentData)
+	currOrchConfig, err := p.currentSupervisorConfigJSONFromRow(&experimentData)
 	if err != nil {
-		p.repo.Logger.Error("failed to convert to orchestrator config", err)
-		return true, "", "Не удалось преобразовать в конфиг оркестратора: " + err.Error(), serviceerrors.NewBadRequestError(fmt.Sprintf("Не удалось преобразовать в конфиг оркестратора: %s", err.Error()), err)
+		p.repo.Logger.Error("failed to build current supervisor config", err)
+		return true, "", "Не удалось собрать текущий конфиг: " + err.Error(), serviceerrors.NewBadRequestError(fmt.Sprintf("Не удалось собрать текущий конфиг: %s", err.Error()), err)
 	}
-
-	cfgJSON, err := json.Marshal(cfg)
-	if err != nil {
-		p.repo.Logger.Error("failed to marshal config", err)
-		return true, "", "Failed to get orch config: " + err.Error(), serviceerrors.NewInternalError("Не удалось сериализовать конфиг оркестратора", err)
-	}
-
-	currOrchConfig := string(cfgJSON)
 
 	appliedVersion, err := p.repo.DB.SelectExperimentAppliedVersion(ctx, experimentID)
 	if err != nil {
@@ -200,6 +235,38 @@ func (p *ExperimentService) CheckExperimentConfigUpdates(ctx context.Context, ex
 	changed := appliedVersion.OrchConfig != currOrchConfig
 
 	return changed, appliedVersion.OrchConfig, currOrchConfig, nil
+}
+
+func (p *ExperimentService) currentSupervisorConfigJSONFromRow(experimentData *core.CompleteExperimentInfoRow) (string, error) {
+	if experimentData == nil {
+		return "", fmt.Errorf("complete experiment info is nil")
+	}
+	if !experimentData.ExperimentConfig.Valid {
+		return "", serviceerrors.NewBadRequestError("конфиг пайплайна пуст", nil)
+	}
+	if supervisor.IsSupervisorExperimentLayout([]byte(experimentData.ExperimentConfig.String)) {
+		req, err := supervisor.RequestFromCompleteInfo(p.repo.Logger, experimentData)
+		if err != nil {
+			return "", serviceerrors.NewBadRequestError(fmt.Sprintf("Не удалось собрать конфиг супервизора: %s", err.Error()), err)
+		}
+		if err := supervisorenrich.ApplyExperimentVariables(req, experimentData.Variables); err != nil {
+			return "", serviceerrors.NewBadRequestError(fmt.Sprintf("Ошибка подстановки переменных: %s", err.Error()), err)
+		}
+		b, err := json.Marshal(req)
+		if err != nil {
+			return "", serviceerrors.NewInternalError("Не удалось сериализовать конфиг супервизора", err)
+		}
+		return string(b), nil
+	}
+	cfg, err := orch.ExperimentInfoToSupervisorPipelineConfig(p.repo.Logger, experimentData)
+	if err != nil {
+		return "", serviceerrors.NewBadRequestError(fmt.Sprintf("Не удалось преобразовать в конфиг супервизора: %s", err.Error()), err)
+	}
+	b, err := json.Marshal(cfg)
+	if err != nil {
+		return "", serviceerrors.NewInternalError("Не удалось сериализовать конфиг супервизора", err)
+	}
+	return string(b), nil
 }
 
 var variablePlaceholderPattern = regexp.MustCompile(`\$\{([^}]+)\}`)
@@ -239,7 +306,7 @@ func variableExists(known []orch.ExperimentVariable, variable string) bool {
 }
 
 // FindUnknownExperimentVariables detects variable placeholders in the provided config
-// that are missing in the orchestrator configuration for the experiment.
+// that are missing in the supervisor pipeline configuration for the experiment.
 func (p *ExperimentService) FindUnknownExperimentVariables(ctx context.Context, experimentID int32, config string) ([]string, error) {
 	experimentData, err := p.repo.DB.CompleteExperimentInfo(ctx, experimentID)
 	if err != nil {
@@ -247,17 +314,19 @@ func (p *ExperimentService) FindUnknownExperimentVariables(ctx context.Context, 
 		return nil, serviceerrors.NewNotFoundError("Не удалось получить информацию о пайплайне", err)
 	}
 
-	orchConfig, err := orch.ExperimentInfoToOrchestratorConfig(p.repo.Logger, &experimentData)
-	if err != nil {
-		p.repo.Logger.Error("failed to convert experiment info to orchestrator config", err)
-		return nil, serviceerrors.NewBadRequestError(fmt.Sprintf("Не удалось преобразовать пайплайн в конфиг оркестратора: %s", err.Error()), err)
+	var known []orch.ExperimentVariable
+	if len(experimentData.Variables) > 0 {
+		if err := json.Unmarshal(experimentData.Variables, &known); err != nil {
+			p.repo.Logger.Error("failed to unmarshal experiment variables", err)
+			return nil, serviceerrors.NewInternalError("Не удалось разобрать переменные пайплайна", err)
+		}
 	}
 
 	requestedVariables := extractVariableNames(config)
 
 	unknown := make([]string, 0)
 	for _, variable := range requestedVariables {
-		if !variableExists(orchConfig.Variables, variable) {
+		if !variableExists(known, variable) {
 			unknown = append(unknown, variable)
 		}
 	}
@@ -265,7 +334,7 @@ func (p *ExperimentService) FindUnknownExperimentVariables(ctx context.Context, 
 	return unknown, nil
 }
 
-// ApplyExperimentConfig применяет конфигурацию experiment в orchestrator
+// ApplyExperimentConfig отправляет конфигурацию супервизору (RabbitMQ) и сохраняет применённую версию в БД.
 func (p *ExperimentService) ApplyExperimentConfig(ctx context.Context, experimentID int32) (string, error) {
 	experimentData, err := p.repo.DB.CompleteExperimentInfo(ctx, experimentID)
 	if err != nil {
@@ -273,38 +342,28 @@ func (p *ExperimentService) ApplyExperimentConfig(ctx context.Context, experimen
 		return "", serviceerrors.NewNotFoundError("Не удалось получить информацию о пайплайне", err)
 	}
 
-	cfg, err := orch.ExperimentInfoToOrchestratorConfig(p.repo.Logger, &experimentData)
+	req, err := supervisor.RequestFromCompleteInfo(p.repo.Logger, &experimentData)
 	if err != nil {
-		p.repo.Logger.Error("failed to convert experiment info to orchestrator config", err)
-		return "", serviceerrors.NewBadRequestError(fmt.Sprintf("Не удалось конвертировать в конфиг оркестратора: %s", err.Error()), err)
+		p.repo.Logger.Error("failed to build skif supervisor experiment request", err)
+		return "", serviceerrors.NewBadRequestError(fmt.Sprintf("Не удалось собрать конфиг супервизора: %s", err.Error()), err)
+	}
+	if err := supervisorenrich.ApplyExperimentVariables(req, experimentData.Variables); err != nil {
+		p.repo.Logger.Error("failed to enrich supervisor request with variables", err)
+		return "", serviceerrors.NewBadRequestError(fmt.Sprintf("Ошибка подстановки переменных: %s", err.Error()), err)
 	}
 
-	cfgJSON, err := json.Marshal(cfg)
+	cfgJSON, err := json.Marshal(req)
 	if err != nil {
-		p.repo.Logger.Error("failed to marshal orchestrator config to JSON", err)
-		return "", serviceerrors.NewInternalError("Не удалось сериализовать конфиг оркестратора", err)
+		p.repo.Logger.Error("failed to marshal supervisor experiment request", err)
+		return "", serviceerrors.NewInternalError("Не удалось сериализовать конфиг супервизора", err)
 	}
 
-	var cfgMap map[string]interface{}
-	err = json.Unmarshal(cfgJSON, &cfgMap)
-	if err != nil {
-		p.repo.Logger.Error("failed to unmarshal orchestrator config to JSON", err)
-		return "", serviceerrors.NewInternalError("Не удалось десериализовать конфиг оркестратора", err)
+	if p.repo.Clients.RabbitMQ == nil {
+		return "", serviceerrors.NewServiceUnavailableError("RabbitMQ не настроен: применение конфигурации делает супервизор", fmt.Errorf("rabbitmq disabled"))
 	}
 
-	dryRun := false
-	resp, err := p.repo.Clients.Orchestrator.Client.PostV1ExperimentsApplyWithResponse(ctx, client.PostV1ExperimentsApplyJSONRequestBody{
-		DryRun:         &dryRun,
-		ExperimentConfig: cfgMap,
-	})
-	if err != nil || resp == nil || resp.HTTPResponse == nil {
-		p.repo.Logger.Error("failed to apply experiment config", err)
-		return "", serviceerrors.NewServiceUnavailableError("Оркестратор недоступен при применении конфигурации", err)
-	}
-
-	if resp.HTTPResponse.StatusCode != http.StatusOK {
-		p.repo.Logger.Error("orchestrator returned non-OK status", err)
-		return "", serviceerrors.NewInternalError(fmt.Sprintf("Ошибка оркестратора (статус %d)", resp.HTTPResponse.StatusCode), fmt.Errorf("%s", string(resp.Body)))
+	if pubErr := p.repo.Clients.RabbitMQ.PublishExperimentApply(ctx, cfgJSON); pubErr != nil {
+		return "", serviceerrors.NewServiceUnavailableError("Не удалось отправить применение конфигурации супервизору (RabbitMQ)", pubErr)
 	}
 
 	templateID, err := p.repo.DB.BaseTemplateIDByExperimentID(ctx, experimentID)
@@ -314,7 +373,7 @@ func (p *ExperimentService) ApplyExperimentConfig(ctx context.Context, experimen
 	}
 
 	err = p.repo.DB.InsertExperimentAppliedVersion(ctx, core.InsertExperimentAppliedVersionParams{
-		ExperimentID:     experimentData.ExperimentID,
+		ExperimentID:   experimentData.ExperimentID,
 		CurrentVersion: templateID,
 		OrchConfig:     string(cfgJSON),
 	})
@@ -326,27 +385,19 @@ func (p *ExperimentService) ApplyExperimentConfig(ctx context.Context, experimen
 	return string(cfgJSON), nil
 }
 
-// GetOrchestratorConfig возвращает конфигурацию orchestrator для experiment
-func (p *ExperimentService) GetOrchestratorConfig(ctx context.Context, experimentID int32) (string, error) {
+// GetSupervisorConfig возвращает JSON-конфиг пайплайна для супервизора.
+func (p *ExperimentService) GetSupervisorConfig(ctx context.Context, experimentID int32) (string, error) {
 	experimentData, err := p.repo.DB.CompleteExperimentInfo(ctx, experimentID)
 	if err != nil {
 		p.repo.Logger.Error("failed to get experiment info", err)
 		return "", serviceerrors.NewNotFoundError("Не удалось получить информацию о пайплайне", err)
 	}
-
-	cfg, err := orch.ExperimentInfoToOrchestratorConfig(p.repo.Logger, &experimentData)
+	s, err := p.currentSupervisorConfigJSONFromRow(&experimentData)
 	if err != nil {
-		p.repo.Logger.Error("failed to convert experiment info to orchestrator config", err)
-		return "", serviceerrors.NewBadRequestError(fmt.Sprintf("Не удалось преобразовать в конфиг оркестратора: %s", err.Error()), err)
+		p.repo.Logger.Error("failed to marshal supervisor config", err)
+		return "", err
 	}
-
-	cfgJSON, err := json.Marshal(cfg)
-	if err != nil {
-		p.repo.Logger.Error("failed to marshal orchestrator config", err)
-		return "", serviceerrors.NewInternalError("Не удалось сериализовать конфиг оркестратора", err)
-	}
-
-	return string(cfgJSON), nil
+	return s, nil
 }
 
 // Experiment Datasets
@@ -375,8 +426,8 @@ func (p *ExperimentService) AddDatasetToExperiment(ctx context.Context, experime
 	}
 
 	linkID, err := p.repo.DB.InsertExperimentDataset(ctx, core.InsertExperimentDatasetParams{
-		ExperimentID:   experimentID,
-		DatasetID: datasetID,
+		ExperimentID: experimentID,
+		DatasetID:    datasetID,
 		Alias:        alias,
 	})
 	if err != nil {
@@ -420,7 +471,7 @@ func (p *ExperimentService) RemoveDatasetFromExperiment(ctx context.Context, exp
 	}
 
 	err = p.repo.DB.DeleteExperimentDataset(ctx, core.DeleteExperimentDatasetParams{
-		ID:         linkID,
+		ID:           linkID,
 		ExperimentID: experimentID,
 	})
 	if err != nil {
@@ -454,9 +505,9 @@ func (p *ExperimentService) UpdateExperimentDataset(ctx context.Context, experim
 	}
 
 	err = p.repo.DB.UpdateExperimentDataset(ctx, core.UpdateExperimentDatasetParams{
-		ID:         linkID,
+		ID:           linkID,
 		ExperimentID: experimentID,
-		Alias:      newAlias,
+		Alias:        newAlias,
 	})
 	if err != nil {
 		p.repo.Logger.Error("failed to update experiment dataset link", err)
@@ -499,12 +550,12 @@ func (p *ExperimentService) GetExperimentDatasets(ctx context.Context, experimen
 	result := make([]dto.ExperimentDataset, len(datasets))
 	for i, dataset := range datasets {
 		result[i] = dto.ExperimentDataset{
-			LinkID:       dataset.LinkID,
-			DatasetID: dataset.DatasetID,
-			Name:         dataset.Name,
-			Alias:        dataset.Alias,
-			ProjectID:    dataset.ProjectID,
-			ProjectName:  dataset.ProjectName,
+			LinkID:      dataset.LinkID,
+			DatasetID:   dataset.DatasetID,
+			Name:        dataset.Name,
+			Alias:       dataset.Alias,
+			ProjectID:   dataset.ProjectID,
+			ProjectName: dataset.ProjectName,
 		}
 	}
 
@@ -555,7 +606,7 @@ func (p *ExperimentService) GetExperimentAvailableDatasets(ctx context.Context, 
 func (p *ExperimentService) CreateExperimentVariable(ctx context.Context, experimentID int32, name, value, varType, comment, creator string) (*dto.ExperimentVariable, int32, error) {
 	variable, err := p.repo.DB.InsertExperimentVariable(ctx, core.InsertExperimentVariableParams{
 		ExperimentID: experimentID,
-		Name:       name,
+		Name:         name,
 	})
 	if err != nil {
 		p.repo.Logger.Error("failed to insert variable", err)
@@ -750,7 +801,7 @@ func (p *ExperimentService) GetExperimentVariable(ctx context.Context, variableI
 		Type:          variable.Type,
 		VersionID:     variable.VersionID,
 		VersionIDName: variable.VersionIDName,
-		ExperimentID:    variable.ExperimentID,
+		ExperimentID:  variable.ExperimentID,
 	}, nil
 }
 
@@ -758,7 +809,7 @@ func (p *ExperimentService) GetExperimentVariable(ctx context.Context, variableI
 func (p *ExperimentService) GetExperimentVariableByName(ctx context.Context, experimentID int32, name string) (*dto.ExperimentVariable, error) {
 	variable, err := p.repo.DB.SelectExperimentVariableV2(ctx, core.SelectExperimentVariableV2Params{
 		ExperimentID: experimentID,
-		Name:       name,
+		Name:         name,
 	})
 	if err != nil {
 		p.repo.Logger.Error("failed to select variable by name", err)
@@ -766,11 +817,11 @@ func (p *ExperimentService) GetExperimentVariableByName(ctx context.Context, exp
 	}
 
 	return &dto.ExperimentVariable{
-		ID:         variable.ID,
-		Name:       variable.Name,
-		Value:      variable.Value,
-		Type:       variable.Type,
-		VersionID:  variable.VersionID,
+		ID:           variable.ID,
+		Name:         variable.Name,
+		Value:        variable.Value,
+		Type:         variable.Type,
+		VersionID:    variable.VersionID,
 		ExperimentID: variable.ExperimentID,
 	}, nil
 }
@@ -779,7 +830,7 @@ func (p *ExperimentService) GetExperimentVariableByName(ctx context.Context, exp
 func (p *ExperimentService) UpdateExperimentVariableByName(ctx context.Context, experimentID int32, name, value, varType, comment, creator string) (*dto.ExperimentVariable, *dto.ExperimentVariable, int32, bool, error) {
 	variable, err := p.repo.DB.SelectExperimentVariableV2(ctx, core.SelectExperimentVariableV2Params{
 		ExperimentID: experimentID,
-		Name:       name,
+		Name:         name,
 	})
 
 	isNew := false
@@ -805,7 +856,7 @@ func (p *ExperimentService) UpdateExperimentVariableByName(ctx context.Context, 
 func (p *ExperimentService) DeleteExperimentVariableByName(ctx context.Context, experimentID int32, name string) (*dto.ExperimentVariable, int32, error) {
 	variable, err := p.repo.DB.SelectExperimentVariableV2(ctx, core.SelectExperimentVariableV2Params{
 		ExperimentID: experimentID,
-		Name:       name,
+		Name:         name,
 	})
 	if err != nil {
 		p.repo.Logger.Error("failed to select variable by name", err)
@@ -831,33 +882,6 @@ func (p *ExperimentService) GetExperimentURLs(ctx context.Context, experimentID 
 	}
 	projectID := strconv.Itoa(int(projectIDInt))
 
-	// Получаем URLs из orchestrator
-	var urlFromOrch []dto.ExperimentURL
-	orchestratorInfo, err := p.repo.Clients.Orchestrator.Client.GetV1ExperimentsInfoWithResponse(ctx, &client.GetV1ExperimentsInfoParams{
-		ExperimentId: experimentIDStr,
-	})
-
-	if err == nil && orchestratorInfo != nil && orchestratorInfo.JSON200 != nil && orchestratorInfo.JSON200.CloudWebLinks != nil {
-		counter := 0
-		urlFromOrch = make([]dto.ExperimentURL, len(*orchestratorInfo.JSON200.CloudWebLinks))
-
-		for _, url := range *orchestratorInfo.JSON200.CloudWebLinks {
-			if url.Name == nil || url.Link == nil {
-				continue
-			}
-
-			newURL := strings.ReplaceAll(*url.Link, "EXPERIMENT_ID", experimentIDStr)
-			newURL = strings.ReplaceAll(newURL, "YT_WORK_DIR", ytWorkDir)
-			newURL = strings.ReplaceAll(newURL, "PROJECT_ID", projectID)
-
-			urlFromOrch[counter] = dto.ExperimentURL{
-				URL:  newURL,
-				Name: *url.Name,
-			}
-			counter++
-		}
-	}
-
 	// Создаем URLs из конфига
 	responseURLs := make([]dto.ExperimentURL, len(p.repo.Config.ExperimentURLs))
 	i := 0
@@ -871,10 +895,6 @@ func (p *ExperimentService) GetExperimentURLs(ctx context.Context, experimentID 
 			Name: url.Name,
 		}
 		i++
-	}
-
-	if len(urlFromOrch) > 0 {
-		responseURLs = append(responseURLs, urlFromOrch...)
 	}
 
 	slices.SortFunc(responseURLs, func(a, b dto.ExperimentURL) int {
@@ -913,7 +933,7 @@ func (p *ExperimentService) GetExperimentGrafanaURL(ctx context.Context, experim
 // GetDatasetFromLinkByAlias получает ID и alias dataset по alias в experiment
 func (p *ExperimentService) GetDatasetFromLinkByAlias(ctx context.Context, experimentID int32, alias string) (int32, string, error) {
 	dataset, err := p.repo.DB.DatasetFromLinkByAlias(ctx, core.DatasetFromLinkByAliasParams{
-		Alias:      alias,
+		Alias:        alias,
 		ExperimentID: experimentID,
 	})
 	if err != nil {
@@ -925,7 +945,7 @@ func (p *ExperimentService) GetDatasetFromLinkByAlias(ctx context.Context, exper
 // DeleteExperimentDatasetByID удаляет связь dataset с experiment по ID связи
 func (p *ExperimentService) DeleteExperimentDatasetByID(ctx context.Context, linkID, experimentID int32) error {
 	return p.repo.DB.DeleteExperimentDataset(ctx, core.DeleteExperimentDatasetParams{
-		ID:         linkID,
+		ID:           linkID,
 		ExperimentID: experimentID,
 	})
 }
@@ -933,8 +953,8 @@ func (p *ExperimentService) DeleteExperimentDatasetByID(ctx context.Context, lin
 // InsertExperimentDatasetLink создает новую связь dataset с experiment
 func (p *ExperimentService) InsertExperimentDatasetLink(ctx context.Context, experimentID, datasetID int32, alias string) (int32, error) {
 	return p.repo.DB.InsertExperimentDataset(ctx, core.InsertExperimentDatasetParams{
-		ExperimentID:   experimentID,
-		DatasetID: datasetID,
+		ExperimentID: experimentID,
+		DatasetID:    datasetID,
 		Alias:        alias,
 	})
 }
@@ -943,8 +963,8 @@ func (p *ExperimentService) InsertExperimentDatasetLink(ctx context.Context, exp
 func (p *ExperimentService) UpdateExperimentDatasetLinkID(ctx context.Context, linkID, newDatasetID, experimentID int32) error {
 	return p.repo.DB.UpdateExperimentDatasetIDInLink(ctx, core.UpdateExperimentDatasetIDInLinkParams{
 		ID:           linkID,
-		DatasetID: newDatasetID,
-		ExperimentID:   experimentID,
+		DatasetID:    newDatasetID,
+		ExperimentID: experimentID,
 	})
 }
 
@@ -952,19 +972,19 @@ func (p *ExperimentService) UpdateExperimentDatasetLinkID(ctx context.Context, l
 func (p *ExperimentService) GetExperimentDatasetByLink(ctx context.Context, experimentID int32, alias string) (*dto.ExperimentDataset, error) {
 	ds, err := p.repo.DB.GetExperimentDataset(ctx, core.GetExperimentDatasetParams{
 		ExperimentID: experimentID,
-		Alias:      alias,
+		Alias:        alias,
 	})
 	if err != nil {
 		return nil, serviceerrors.NewNotFoundError("Dataset не найден", err)
 	}
 
 	return &dto.ExperimentDataset{
-		LinkID:       ds.LinkID,
-		DatasetID: ds.DatasetID,
-		Name:         ds.Name,
-		Alias:        ds.Alias,
-		ProjectID:    ds.ProjectID,
-		ProjectName:  ds.ProjectName,
+		LinkID:      ds.LinkID,
+		DatasetID:   ds.DatasetID,
+		Name:        ds.Name,
+		Alias:       ds.Alias,
+		ProjectID:   ds.ProjectID,
+		ProjectName: ds.ProjectName,
 	}, nil
 }
 
@@ -980,8 +1000,8 @@ func (p *ExperimentService) RemoveDatasetFromExperimentByAlias(ctx context.Conte
 	return ds, nil
 }
 
-// GetExperimentOrchID возвращает Orchestrator ID пайплайна
-func (p *ExperimentService) GetExperimentOrchID(ctx context.Context, experimentID int32) (string, error) {
+// GetSupervisorExperimentID возвращает идентификатор пайплайна в рантайме супервизора (поле orch_id в БД).
+func (p *ExperimentService) GetSupervisorExperimentID(ctx context.Context, experimentID int32) (string, error) {
 	experiment, err := p.repo.DB.SelectCompleteExperiment(ctx, experimentID)
 	if err != nil {
 		return "", serviceerrors.NewNotFoundError("Пайплайн не найден", err)
@@ -1001,9 +1021,9 @@ func (p *ExperimentService) GetDatasetFromLink(ctx context.Context, linkID int32
 // UpdateExperimentDatasetAlias обновляет alias dataset в существующей связи
 func (p *ExperimentService) UpdateExperimentDatasetAlias(ctx context.Context, linkID, experimentID int32, newAlias string) error {
 	return p.repo.DB.UpdateExperimentDataset(ctx, core.UpdateExperimentDatasetParams{
-		ID:         linkID,
+		ID:           linkID,
 		ExperimentID: experimentID,
-		Alias:      newAlias,
+		Alias:        newAlias,
 	})
 }
 

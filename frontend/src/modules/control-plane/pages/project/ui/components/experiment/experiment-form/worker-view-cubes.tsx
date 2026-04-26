@@ -11,6 +11,7 @@ import React, {
 import {
   type ParseDebugInfo,
   type CubesGraphParamsWithDebug,
+  isSupervisorExperimentLayout,
 } from '@/modules/control-plane/entities/cubes';
 import { CubesDebuggerModel } from '@/modules/control-plane/features/cubes/debugger';
 import { projectPageModel } from '@/modules/control-plane/pages/project';
@@ -89,6 +90,17 @@ export const WorkerViewCubes = ({
   const cubesConfigJson = useMemo(() => {
     try {
       const parsed = JSON.parse(config);
+      if (isSupervisorExperimentLayout(config)) {
+        return JSON.stringify(
+          {
+            experimentName: parsed.experimentName,
+            experimentId: parsed.experimentId,
+            models: parsed.models,
+          },
+          null,
+          2,
+        );
+      }
       const cubes = parsed?.Worker?.GraphConfig?.Cubes;
       if (cubes) {
         return JSON.stringify({ Cubes: cubes }, null, 2);

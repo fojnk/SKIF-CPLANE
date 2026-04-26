@@ -23,8 +23,6 @@ clients:
   auth:
     url: https://auth.vk.team
     timeout: 2s
-  orchestrator:
-    base_url: http://localhost:8081
   oauth:
     oauth-proxy: ""
     OAuthUrl: "http://localhost:9100/oauth"
@@ -37,6 +35,21 @@ clients:
     jwt-secret: "jwt-secret"
     access_expiration: 172800
     refresh_expiration: 2592000
+  rabbitmq:
+    enabled: true
+    host: rabbitmq
+    port: 5672
+    user: cplane
+    password: cplane
+    vhost: /
+    exchange: cplane.events
+    routing_key: experiment.start
+    routing_key_stop: experiment.stop
+    routing_key_apply: experiment.apply
+  # HTTP Java-супервизора для GET /api/v1/experiment/status (этапы пайплайна в UI)
+  supervisor:
+    base_url: http://java-supervisor:8080
+    timeout_ms: 5000
 
 session_cache:
   expiration_time: 5m

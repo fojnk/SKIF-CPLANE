@@ -87,12 +87,35 @@ type CopyCompleteExperimentResponse struct {
 	dto.CompleteExperiment
 }
 
+// SupervisorModelJob этап пайплайна в рантайме супервизора (аналог «job»).
+type SupervisorModelJob struct {
+	Index        int    `json:"index"`
+	ModelName    string `json:"model_name"`
+	Status       string `json:"status"`
+	ErrorMessage string `json:"error_message,omitempty"`
+}
+
+// SupervisorExperimentRun нормализованный снимок GET /api/experiments/{id}/status.
+type SupervisorExperimentRun struct {
+	ExperimentID          int64                `json:"experiment_id"`
+	Status                string               `json:"status"`
+	CurrentModel          string               `json:"current_model"`
+	CurrentOrder          int                  `json:"current_order"`
+	TotalModels           int                  `json:"total_models"`
+	Progress              string               `json:"progress"`
+	Detail                string               `json:"detail,omitempty"`
+	CancellationRequested bool                 `json:"cancellation_requested"`
+	Jobs                  []SupervisorModelJob `json:"jobs"`
+}
+
 type ExperimentStatusResponse struct {
 	Status  dto.ExperimentStatus `json:"status"`
 	Summary string             `json:"summary"`
 	Message string             `json:"message"`
 
 	Debug string `json:"debug"`
+
+	Supervisor *SupervisorExperimentRun `json:"supervisor,omitempty"`
 }
 
 type ExperimentValidationResponse struct {

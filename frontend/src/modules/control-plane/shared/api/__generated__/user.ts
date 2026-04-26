@@ -9,8 +9,8 @@
  * ---------------------------------------------------------------
  */
 
-import { ContentType, RequestParams } from '@/shared/api/common/http-client';
-import { apiUrl, http } from '@/shared/api/http';
+import { ContentType, RequestParams } from "@/shared/api/common/http-client";
+import { apiUrl, http } from "@/shared/api/http";
 import {
   RequestsCreateUserRequestDC,
   V1UserCreateDataDC,
@@ -26,7 +26,7 @@ import {
   V2UserRolesListDataDC,
   V2UserRolesListErrorDC,
   V2UserRolesListParamsDC,
-} from './data-contracts';
+} from "./data-contracts";
 export const userApi = new (class UserApi {
   /**
    * No description
@@ -43,13 +43,10 @@ export const userApi = new (class UserApi {
    *  **409** ResponsesErrorResponseDC Conflict - resource already exists <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1UserCreate = (
-    request: RequestsCreateUserRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1UserCreate = (request: RequestsCreateUserRequestDC, params: RequestParams = {}) =>
     http.request<V1UserCreateDataDC, V1UserCreateErrorDC>({
-      path: `${buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl}/api/v1/user`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/user`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -70,8 +67,8 @@ export const userApi = new (class UserApi {
    */
   v1UserList = (query: V1UserListParamsDC, params: RequestParams = {}) =>
     http.request<V1UserListDataDC, V1UserListErrorDC>({
-      path: `${buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl}/api/v1/user`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/user`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -91,10 +88,8 @@ export const userApi = new (class UserApi {
    */
   v1UsersList = (query: V1UsersListParamsDC, params: RequestParams = {}) =>
     http.request<V1UsersListDataDC, V1UsersListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/users`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/users`,
+      method: "GET",
       query: query,
       ...params,
     });
@@ -111,10 +106,8 @@ export const userApi = new (class UserApi {
    */
   v1WhoAmIList = (params: RequestParams = {}) =>
     http.request<V1WhoAmIListDataDC, V1WhoAmIListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/who_am_i`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/who_am_i`,
+      method: "GET",
       type: ContentType.Json,
       ...params,
     });
@@ -132,15 +125,10 @@ export const userApi = new (class UserApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v2UserRolesList = (
-    query: V2UserRolesListParamsDC,
-    params: RequestParams = {},
-  ) =>
+  v2UserRolesList = (query: V2UserRolesListParamsDC, params: RequestParams = {}) =>
     http.request<V2UserRolesListDataDC, V2UserRolesListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v2/user/roles`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/user/roles`,
+      method: "GET",
       query: query,
       ...params,
     });

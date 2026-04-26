@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-func SetGetOrchestratorConfigRequestParams(r *requests.GetOrchestratorConfigRequest, _, value string) *responses.ErrorResponse {
+func SetGetSupervisorConfigRequestParams(r *requests.GetSupervisorConfigRequest, _, value string) *responses.ErrorResponse {
 	id, err := strconv.ParseInt(value, 10, 32)
 	if err != nil {
 		return &responses.ErrorResponse{

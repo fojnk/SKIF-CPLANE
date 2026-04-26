@@ -9,8 +9,8 @@
  * ---------------------------------------------------------------
  */
 
-import { ContentType, RequestParams } from '@/shared/api/common/http-client';
-import { apiUrl, http } from '@/shared/api/http';
+import { ContentType, RequestParams } from "@/shared/api/common/http-client";
+import { apiUrl, http } from "@/shared/api/http";
 import {
   AuthorizeListParamsDC,
   LogoutListDataDC,
@@ -22,7 +22,7 @@ import {
   TokenListParamsDC,
   WhoAmIListDataDC,
   WhoAmIListErrorDC,
-} from './data-contracts';
+} from "./data-contracts";
 export const oauthApi = new (class OauthApi {
   /**
    * @description Start authorize oauth2 for user
@@ -35,10 +35,8 @@ export const oauthApi = new (class OauthApi {
    */
   authorizeList = (query: AuthorizeListParamsDC, params: RequestParams = {}) =>
     http.request<any, void>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/auth/authorize`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/auth/authorize`,
+      method: "GET",
       query: query,
       type: ContentType.Json,
       ...params,
@@ -55,8 +53,8 @@ export const oauthApi = new (class OauthApi {
    */
   logoutList = (params: RequestParams = {}) =>
     http.request<LogoutListDataDC, LogoutListErrorDC>({
-      path: `${buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl}/auth/logout`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/auth/logout`,
+      method: "GET",
       ...params,
     });
   /**
@@ -75,10 +73,8 @@ export const oauthApi = new (class OauthApi {
    */
   refreshList = (params: RequestParams = {}) =>
     http.request<RefreshListDataDC, RefreshListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/auth/refresh`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/auth/refresh`,
+      method: "GET",
       type: ContentType.Json,
       ...params,
     });
@@ -98,8 +94,8 @@ export const oauthApi = new (class OauthApi {
    */
   tokenList = (query: TokenListParamsDC, params: RequestParams = {}) =>
     http.request<TokenListDataDC, TokenListErrorDC>({
-      path: `${buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl}/auth/token`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/auth/token`,
+      method: "GET",
       query: query,
       type: ContentType.Json,
       ...params,
@@ -120,10 +116,8 @@ export const oauthApi = new (class OauthApi {
    */
   whoAmIList = (params: RequestParams = {}) =>
     http.request<WhoAmIListDataDC, WhoAmIListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/auth/who_am_i`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/auth/who_am_i`,
+      method: "GET",
       type: ContentType.Json,
       ...params,
     });

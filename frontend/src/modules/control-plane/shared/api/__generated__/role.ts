@@ -9,8 +9,8 @@
  * ---------------------------------------------------------------
  */
 
-import { ContentType, RequestParams } from '@/shared/api/common/http-client';
-import { apiUrl, http } from '@/shared/api/http';
+import { ContentType, RequestParams } from "@/shared/api/common/http-client";
+import { apiUrl, http } from "@/shared/api/http";
 import {
   RequestsCreateRoleRequestDC,
   RequestsUpdateRoleRequestDC,
@@ -20,7 +20,7 @@ import {
   V1RoleUpdateErrorDC,
   V1RolesListDataDC,
   V1RolesListErrorDC,
-} from './data-contracts';
+} from "./data-contracts";
 export const roleApi = new (class RoleApi {
   /**
    * No description
@@ -37,13 +37,10 @@ export const roleApi = new (class RoleApi {
    *  **409** ResponsesErrorResponseDC Conflict - resource already exists <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1RoleCreate = (
-    request: RequestsCreateRoleRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1RoleCreate = (request: RequestsCreateRoleRequestDC, params: RequestParams = {}) =>
     http.request<V1RoleCreateDataDC, V1RoleCreateErrorDC>({
-      path: `${buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl}/api/v1/role`,
-      method: 'POST',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/role`,
+      method: "POST",
       body: request,
       type: ContentType.Json,
       ...params,
@@ -64,10 +61,8 @@ export const roleApi = new (class RoleApi {
    */
   v1RolesList = (params: RequestParams = {}) =>
     http.request<V1RolesListDataDC, V1RolesListErrorDC>({
-      path: `${
-        buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl
-      }/api/v1/roles`,
-      method: 'GET',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/roles`,
+      method: "GET",
       ...params,
     });
   /**
@@ -84,13 +79,10 @@ export const roleApi = new (class RoleApi {
    *  **404** ResponsesErrorResponseDC Not Found <br/>
    *  **500** ResponsesErrorResponseDC Internal server error <br/>
    */
-  v1RoleUpdate = (
-    request: RequestsUpdateRoleRequestDC,
-    params: RequestParams = {},
-  ) =>
+  v1RoleUpdate = (request: RequestsUpdateRoleRequestDC, params: RequestParams = {}) =>
     http.request<V1RoleUpdateDataDC, V1RoleUpdateErrorDC>({
-      path: `${buildEnvs.MODULES['control-plane']?.apiUrl || apiUrl}/api/v1/role`,
-      method: 'PUT',
+      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v1/role`,
+      method: "PUT",
       body: request,
       type: ContentType.Json,
       ...params,
