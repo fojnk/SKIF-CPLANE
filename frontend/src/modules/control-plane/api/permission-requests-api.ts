@@ -47,6 +47,15 @@ export async function fetchPermissionRequestsList(params: {
   return r.data ?? { items: [], total: 0 };
 }
 
+export async function fetchMyPermissionRequestsList(): Promise<PermissionRequestsList> {
+  const r = await http.request<PermissionRequestsList>({
+    path: `${cpBase()}/api/v2/permission-requests/mine`,
+    method: 'GET',
+  });
+
+  return r.data ?? { items: [], total: 0 };
+}
+
 export async function approvePermissionRequest(id: number): Promise<void> {
   await http.request({
     path: `${cpBase()}/api/v2/permission-requests/approve`,

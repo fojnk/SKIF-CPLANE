@@ -2,6 +2,7 @@ export * from './actions-dropdown';
 export * from './app-icon';
 export * from './button-with-progress';
 export * from './buttons';
+export * from './admin-content-editor';
 export * from './code-toggle';
 export * from './copy-link';
 export * from './copy-link-title';
