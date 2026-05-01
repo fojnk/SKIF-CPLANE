@@ -80,27 +80,9 @@ export const catalog = createRoute({
   config: { aside: true } satisfies BaseTemplateConfig,
 });
 
-export const activity = createRoute({
-  type: 'page',
-  path: '/activity',
-  private: true,
-  view: async () => (await import('../pages/empty')).emptyPage,
-  layout: PageLayout,
-  config: { aside: true } satisfies BaseTemplateConfig,
-});
-
 export const worldMap = createRoute({
   type: 'page',
   path: '/worldmap',
-  private: true,
-  view: async () => (await import('../pages/empty')).emptyPage,
-  layout: PageLayout,
-  config: { aside: true } satisfies BaseTemplateConfig,
-});
-
-export const monitoring = createRoute({
-  type: 'page',
-  path: '/monitoring',
   private: true,
   view: async () => (await import('../pages/empty')).emptyPage,
   layout: PageLayout,
@@ -111,7 +93,7 @@ export const updates = createRoute({
   type: 'page',
   path: '/updates',
   private: true,
-  view: async () => (await import('../pages/empty')).emptyPage,
+  view: async () => (await import('../pages/updates')).SFUpdatesPage,
   layout: PageLayout,
   config: { aside: true } satisfies BaseTemplateConfig,
 });
@@ -120,7 +102,7 @@ export const study = createRoute({
   type: 'page',
   path: '/study',
   private: true,
-  view: async () => (await import('../pages/empty')).emptyPage,
+  view: async () => (await import('../pages/study')).SFStudyPage,
   layout: PageLayout,
   config: { aside: true } satisfies BaseTemplateConfig,
 });
@@ -129,7 +111,6 @@ export const access = createRoute({
   type: 'page',
   path: '/access',
   private: true,
-  requiredCapability: 'can_manage_acl',
   view: async () => (await import('../pages/access')).SFAccessPage,
   layout: PageLayout,
   config: { aside: true } satisfies BaseTemplateConfig,
@@ -139,7 +120,7 @@ export const aboutPlatform = createRoute({
   type: 'page',
   path: '/about-platform',
   private: true,
-  view: async () => (await import('../pages/empty')).emptyPage,
+  view: async () => (await import('../pages/about-platform')).SFAboutPlatformPage,
   layout: PageLayout,
   config: { aside: true } satisfies BaseTemplateConfig,
 });
