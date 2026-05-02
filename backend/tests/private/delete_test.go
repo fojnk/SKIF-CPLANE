@@ -40,7 +40,7 @@ func (s *StreamflowTestSuite) TestDeletes() {
 		Request: &models2.RequestsCreateDatasetRequestV2{
 			ProjectID: &prRes.Payload.ID,
 			Name:      ptr("del-ds"),
-			Type:      "Queue",
+			Type:      ptr("json"),
 		},
 		Context: s.ctx,
 	})

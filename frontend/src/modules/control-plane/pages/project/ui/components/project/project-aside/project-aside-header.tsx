@@ -1,6 +1,8 @@
 import { Plus } from '@gravity-ui/icons';
-import { Button, Disclosure, Flex, Text } from '@gravity-ui/uikit';
+import { Disclosure, Flex, Text } from '@gravity-ui/uikit';
 import cx from 'clsx';
+
+import { Button } from '@/shared/ui/button';
 
 import css from './project-aside.module.scss';
 
@@ -45,11 +47,11 @@ export const ProjectAsideHeader = ({
         Title
       )}
       {onCreateClick && (
-        <Button view="flat-action" size="xs" onClick={onCreateClick}>
+        <Button view="glass" size="m" onClick={onCreateClick}>
           <Button.Icon>
             <Plus />
           </Button.Icon>
-          New
+          Создать
         </Button>
       )}
     </Flex>

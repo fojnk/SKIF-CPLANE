@@ -19,7 +19,7 @@ export const CreateMessage = ({
         {message}
       </Text>
       {create && (
-        <Button view="action" size="s" onClick={create}>
+        <Button view="glass" size="m" onClick={create}>
           <Button.Icon>
             <Plus />
           </Button.Icon>

@@ -1,0 +1,135 @@
+@keyframes glass-segmented-shimmer {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 0.85;
+  }
+}
+
+// Общая «стеклянная» дорожка для SegmentedRadioGroup (каталог, фильтры доступа и т.д.)
+.bar {
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+  flex-shrink: 0;
+  padding: 4px;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 16px;
+  background: rgb(6 12 22 / 38%);
+  box-shadow:
+    0 12px 40px rgb(0 0 0 / 24%),
+    0 0 0 1px rgb(255 255 255 / 6%) inset,
+    0 1px 0 rgb(255 255 255 / 9%) inset;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 10%;
+    left: 10%;
+    height: 1px;
+    border-radius: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(120 190 255 / 55%) 35%,
+      rgb(180 220 255 / 85%) 50%,
+      rgb(120 190 255 / 55%) 65%,
+      transparent
+    );
+    animation: glass-segmented-shimmer 6s ease-in-out infinite;
+    opacity: 0.7;
+    pointer-events: none;
+  }
+}
+
+:global(.g-root_theme_light) .bar {
+  border: 1px solid rgb(20 55 110 / 14%);
+  background: rgb(255 255 255 / 46%);
+  box-shadow:
+    0 10px 36px rgb(15 45 95 / 9%),
+    0 0 0 1px rgb(255 255 255 / 72%) inset,
+    0 1px 0 rgb(255 255 255 / 95%) inset,
+    0 -1px 0 rgb(15 50 100 / 5%) inset;
+
+  &::before {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(40 120 210 / 35%) 35%,
+      rgb(90 160 230 / 55%) 50%,
+      rgb(40 120 210 / 35%) 65%,
+      transparent
+    );
+    opacity: 0.6;
+  }
+}
+
+.segments {
+  min-width: 0;
+}
+
+.segments:global(.g-segmented-radio-group) {
+  --_--border-width: 0;
+}
+
+.bar :global(.g-segmented-radio-group__option::before) {
+  display: none;
+}
+
+.bar :global(.g-segmented-radio-group__option::after) {
+  border: none;
+  background: transparent;
+  border-radius: 12px;
+  transition:
+    background-color 0.15s linear,
+    box-shadow 0.15s linear;
+}
+
+.bar :global(.g-segmented-radio-group__option:not(.g-segmented-radio-group__option_checked):hover::after) {
+  background: rgb(255 255 255 / 7%);
+}
+
+.bar :global(.g-segmented-radio-group__option_checked::after) {
+  background: rgb(255 255 255 / 14%);
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 12%) inset,
+    0 1px 0 rgb(255 255 255 / 8%) inset;
+}
+
+.bar :global(.g-segmented-radio-group__option_checked .g-segmented-radio-group__option-text) {
+  color: var(--g-color-text-primary);
+  font-weight: 500;
+}
+
+:global(.g-root_theme_light) .bar :global(.g-segmented-radio-group__option:not(.g-segmented-radio-group__option_checked):hover::after) {
+  background: rgb(20 70 150 / 8%);
+}
+
+:global(.g-root_theme_light) .bar :global(.g-segmented-radio-group__option_checked::after) {
+  background: rgb(255 255 255 / 88%);
+  box-shadow:
+    0 0 0 1px rgb(20 60 130 / 10%) inset,
+    0 1px 2px rgb(15 50 100 / 8%);
+}
+
+:global(.g-root_theme_light) .bar :global(.g-segmented-radio-group__option_checked .g-segmented-radio-group__option-text) {
+  color: var(--g-color-text-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar::before {
+    animation: none;
+    opacity: 0.5;
+  }
+
+  :global(.g-root_theme_light) .bar::before {
+    opacity: 0.42;
+  }
+}
