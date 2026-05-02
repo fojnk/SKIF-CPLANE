@@ -4,6 +4,5 @@ export interface BaseTemplateConfig {
 
 export const enum NavbarPanel {
   Settings = 'settings',
-  Services = 'services',
   AccountInfo = 'account-info',
 }

@@ -3,8 +3,8 @@
 /* strokes, dividers, borders */
 
 /* general */
-@include kit-color(line-generic, rgba(0, 0, 0, 0.10), rgba(255, 255, 255, 0.15));
-@include kit-color(line-generic-hover, rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.25));
+@include kit-color(line-generic, rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.09));
+@include kit-color(line-generic-hover, rgba(0, 0, 0, 0.12), rgba(255, 255, 255, 0.18));
 @include kit-color(line-generic-active, rgba(0, 0, 0, 0.30), rgba(255, 255, 255, 0.30));
 @include kit-color(line-generic-accent, rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.15));
 @include kit-color(line-generic-accent-hover, rgba(0, 0, 0, 0.30), rgba(255, 255, 255, 0.30));

@@ -2,11 +2,13 @@ import { Flex } from '@gravity-ui/uikit';
 import type { CSSProperties, ReactNode } from 'react';
 
 const shellStyle: CSSProperties = {
-  border: '1px solid var(--g-color-line-generic)',
+  border:
+    '1px solid color-mix(in srgb, var(--g-color-line-brand) 38%, var(--g-color-line-generic))',
   borderRadius: 16,
   padding: 24,
-  background: 'var(--g-color-base-float)',
-  boxShadow: '0 2px 12px 0 var(--g-color-sfx-shadow)',
+  background:
+    'linear-gradient(165deg, var(--g-color-base-info-light) 0%, var(--g-color-base-float) 48%, var(--g-color-base-float) 100%)',
+  boxShadow: '0 8px 32px -6px var(--g-color-sfx-shadow)',
 };
 
 type InfoPostCardProps = {

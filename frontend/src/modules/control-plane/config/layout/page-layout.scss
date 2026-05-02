@@ -7,6 +7,34 @@ $layout-padding: 24px;
   --sf-bg-dark-hover: rgba(255, 255, 255, 0.03);
   --sf-border: rgba(0, 0, 0, 0.1);
   --sf-border-dark: rgba(255, 255, 255, 0.1);
+  --sf-accent-glow: rgba(64, 140, 255, 0.12);
+  --sf-accent-glow-strong: rgba(100, 160, 255, 0.18);
+}
+
+/* Основной каркас: мягкий градиент фона, без смены разметки */
+.sf-layout.gn-aside-header {
+  background:
+    radial-gradient(ellipse 140% 90% at 100% -20%, var(--sf-accent-glow), transparent 55%),
+    radial-gradient(ellipse 100% 70% at 0% 100%, rgba(120, 90, 200, 0.06), transparent 50%),
+    var(--g-color-base-background);
+  min-height: 100vh;
+}
+
+.g-root_theme_light .sf-layout.gn-aside-header {
+  --sf-accent-glow: rgba(0, 90, 220, 0.06);
+  --sf-accent-glow-strong: rgba(0, 100, 230, 0.09);
+  background:
+    radial-gradient(ellipse 140% 90% at 100% -10%, var(--sf-accent-glow), transparent 55%),
+    radial-gradient(ellipse 100% 70% at 0% 100%, rgba(100, 80, 200, 0.04), transparent 50%),
+    var(--g-color-base-background);
+}
+
+.sf-layout .gn-aside-header__aside {
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
+}
+
+.g-root_theme_light .sf-layout .gn-aside-header__aside {
+  box-shadow: 4px 0 20px rgba(15, 23, 42, 0.06);
 }
 .page-header {
   flex-shrink: 0;
@@ -223,5 +251,6 @@ $layout-padding: 24px;
 .g-tab_active,
 .g-tab_active:hover,
 .g-tab_active:focus-visible {
-  border-color: #0077ff;
+  border-color: var(--g-color-line-brand);
+  color: var(--g-color-text-primary);
 }
