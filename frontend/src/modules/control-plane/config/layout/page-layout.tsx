@@ -14,6 +14,7 @@ import { ShowCubesMarketModel } from '@/modules/control-plane/features/cubes/mar
 import { navigationModel } from '@/modules/control-plane/features/navigation';
 import { VariableShowListModel } from '@/modules/control-plane/features/variable/show-list';
 import { editorPageModel } from '@/modules/control-plane/pages/editor';
+import { AuthRingParticles } from '@/modules/control-plane/shared/ui/auth-page';
 import { BaseLayout } from '@/routing';
 
 import { MyBreadcrumbs } from './breadcrumbs';
@@ -31,6 +32,11 @@ export const PageLayout = ({ children }: { children?: ReactNode }) => {
   const isProjectsOpened = useUnit(ControlPlaneModule.routes.root.$isOpened);
   const isDatasetsOpened = useUnit(ControlPlaneModule.routes.dataSources.$isOpened);
   const isNamespacesOpened = useUnit(ControlPlaneModule.routes.namespaces.$isOpened);
+  const isUpdatesPage = useUnit(ControlPlaneModule.routes.updates.$isOpened);
+  const isStudyPage = useUnit(ControlPlaneModule.routes.study.$isOpened);
+  const isAboutPlatformPage = useUnit(ControlPlaneModule.routes.aboutPlatform.$isOpened);
+  const showContentParticles =
+    isUpdatesPage || isStudyPage || isAboutPlatformPage;
 
   // Данные для experiment editor
   const experimentData = useUnit(editorPageModel.editor.$data);
@@ -127,10 +133,22 @@ export const PageLayout = ({ children }: { children?: ReactNode }) => {
       menuItems={menuItems}
       omitAsideLogo
     >
-      <BaseLayout.Header topAligned>
-        <MyBreadcrumbs />
-      </BaseLayout.Header>
-      {children}
+      <div className="sf-page-content-with-particles">
+        {showContentParticles && (
+          <div
+            className="sf-page-content-with-particles__backdrop"
+            aria-hidden
+          >
+            <AuthRingParticles />
+          </div>
+        )}
+        <div className="sf-page-content-with-particles__above">
+          <BaseLayout.Header topAligned>
+            <MyBreadcrumbs />
+          </BaseLayout.Header>
+          {children}
+        </div>
+      </div>
     </BaseLayout.Container>
   );
 };

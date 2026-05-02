@@ -1,0 +1,85 @@
+@keyframes info-post-card-shimmer {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 0.85;
+  }
+}
+
+// Стеклянные карточки: частицы сзади просвечивают; тёмная тема
+.shell {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 20px;
+  padding: 28px 24px 26px;
+  background: rgb(6 12 22 / 38%);
+  box-shadow:
+    0 32px 100px rgb(0 0 0 / 32%),
+    0 0 0 1px rgb(255 255 255 / 6%) inset,
+    0 1px 0 rgb(255 255 255 / 9%) inset;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 12%;
+    left: 12%;
+    height: 1px;
+    border-radius: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(120 190 255 / 55%) 35%,
+      rgb(180 220 255 / 85%) 50%,
+      rgb(120 190 255 / 55%) 65%,
+      transparent
+    );
+    animation: info-post-card-shimmer 6s ease-in-out infinite;
+    opacity: 0.75;
+    pointer-events: none;
+  }
+}
+
+// Светлая тема: светлое матовое стекло, контрастная обводка и тени
+:global(.g-root_theme_light) .shell {
+  border: 1px solid rgb(20 55 110 / 14%);
+  background: rgb(255 255 255 / 46%);
+  box-shadow:
+    0 28px 90px rgb(15 45 95 / 11%),
+    0 0 0 1px rgb(255 255 255 / 72%) inset,
+    0 1px 0 rgb(255 255 255 / 95%) inset,
+    0 -1px 0 rgb(15 50 100 / 6%) inset;
+
+  &::before {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(40 120 210 / 35%) 35%,
+      rgb(90 160 230 / 55%) 50%,
+      rgb(40 120 210 / 35%) 65%,
+      transparent
+    );
+    opacity: 0.65;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shell {
+    &::before {
+      animation: none;
+      opacity: 0.55;
+    }
+  }
+
+  :global(.g-root_theme_light) .shell {
+    &::before {
+      opacity: 0.48;
+    }
+  }
+}

@@ -11,6 +11,49 @@ $layout-padding: 24px;
   --sf-accent-glow-strong: rgba(100, 160, 255, 0.18);
 }
 
+/* Фон с кольцами частиц: обновления, обучение, о платформе */
+.sf-page-content-with-particles {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sf-page-content-with-particles__backdrop {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.78;
+  mask-image: radial-gradient(
+    ellipse 95% 90% at 50% 45%,
+    rgb(0 0 0 / 100%) 0%,
+    rgb(0 0 0 / 35%) 72%,
+    transparent 100%
+  );
+}
+
+.g-root_theme_light .sf-page-content-with-particles__backdrop {
+  opacity: 0.62;
+}
+
+.sf-page-content-with-particles__above {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sf-page-content-with-particles__backdrop {
+    opacity: 0.35;
+  }
+}
+
 /* Основной каркас: мягкий градиент фона, без смены разметки */
 .sf-layout.gn-aside-header {
   background:
