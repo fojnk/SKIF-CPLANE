@@ -20,6 +20,9 @@ const ADMIN_QUEUE_OBJECT_TYPES = new Set([
   'experiment',
 ]);
 
+const EXPERIMENT_FULL_RIGHTS_ATTRIBUTE_PATTERN =
+  '^(|meta|dataset|experiment_state)$';
+
 function formatAction(action: string): string {
   switch (action) {
     case '00R':
@@ -33,6 +36,13 @@ function formatAction(action: string): string {
     default:
       return action;
   }
+}
+
+function formatObjectAttribute(attribute: string): string {
+  if (attribute === EXPERIMENT_FULL_RIGHTS_ATTRIBUTE_PATTERN) {
+    return 'Все права эксперимента';
+  }
+  return attribute;
 }
 
 function formatObjectType(t: string): string {
@@ -193,7 +203,8 @@ export const SFAccessPage = () => {
                     </td>
                     <td>{row.object_id}</td>
                     <td>
-                      {formatAction(row.action)} / {row.object_attribute}
+                      {formatAction(row.action)} /{' '}
+                      {formatObjectAttribute(row.object_attribute)}
                     </td>
                     <td>
                       <Text variant="body-2" className={css.message}>
