@@ -45,6 +45,14 @@ export const tabsConfig = [
     disabled: false,
   },
   {
+    id: 'access',
+    title: 'Доступ',
+    path: ControlPlaneModule.routes.access.path,
+    onItemClick: () => navigationModel.access.navigate(),
+    isOpened: ControlPlaneModule.routes.access.$isOpened,
+    disabled: false,
+  },
+  {
     id: 'updates',
     title: 'Обновления',
     path: ControlPlaneModule.routes.updates.path,
@@ -58,14 +66,6 @@ export const tabsConfig = [
     path: ControlPlaneModule.routes.study.path,
     onItemClick: () => navigationModel.study.navigate(),
     isOpened: ControlPlaneModule.routes.study.$isOpened,
-    disabled: false,
-  },
-  {
-    id: 'access',
-    title: 'Доступ',
-    path: ControlPlaneModule.routes.access.path,
-    onItemClick: () => navigationModel.access.navigate(),
-    isOpened: ControlPlaneModule.routes.access.$isOpened,
     disabled: false,
   },
   {
