@@ -2,7 +2,12 @@ import { Dialog, Flex, Link, Text, TextArea } from '@gravity-ui/uikit';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { controlPlaneApi } from '@/modules/control-plane/shared/api';
-import { AdminContentEditor, MarkdownContent, MarkdownEditor } from '@/modules/control-plane/shared/ui';
+import {
+  AdminContentEditor,
+  InfoPostCard,
+  MarkdownContent,
+  MarkdownEditor,
+} from '@/modules/control-plane/shared/ui';
 import { fetchAppIsAdmin } from '@/modules/control-plane/shared/utils/app-admin';
 import { notifications } from '@/shared/ui/notifications';
 
@@ -114,17 +119,7 @@ export const SFAboutPlatformPage = () => {
       onReload={() => void load()}
       onEdit={openEditModal}
     >
-      <Flex
-        direction="column"
-        gap={3}
-        style={{
-          border: '1px solid var(--g-color-line-generic)',
-          borderRadius: 16,
-          padding: 20,
-          background: 'var(--g-color-base-float)',
-          boxShadow: '0 2px 10px 0 var(--g-color-sfx-shadow)',
-        }}
-      >
+      <InfoPostCard>
         <MarkdownContent content={content} />
         {linksList.length > 0 && (
           <Flex direction="column" gap={1}>
@@ -136,7 +131,7 @@ export const SFAboutPlatformPage = () => {
             ))}
           </Flex>
         )}
-      </Flex>
+      </InfoPostCard>
 
       {isAdmin && (
         <Dialog
