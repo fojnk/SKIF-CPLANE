@@ -12,9 +12,12 @@ import {
 } from '@gravity-ui/uikit';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { ControlPlaneModule } from '@/modules/control-plane/config';
 import { controlPlaneApi } from '@/modules/control-plane/shared/api';
 import { ListPage, PageTitle } from '@/modules/control-plane/shared/layouts';
+import { InfoPostCard, MarkdownContent } from '@/modules/control-plane/shared/ui';
 import { fetchAppIsAdmin } from '@/modules/control-plane/shared/utils/app-admin';
+import { Link as RouteLink } from '@/shared/lib/routing';
 import { notifications } from '@/shared/ui/notifications';
 
 type AppUpdate = controlPlaneApi.dc.DtoAppUpdateDC;
@@ -54,6 +57,20 @@ const formatReleaseDate = (value?: string): string => {
   return parsed.toLocaleString();
 };
 
+/** Короткий анонс из markdown для карточек рядом с лентой */
+const teaserFromMarkdown = (raw: string | undefined, maxLen: number): string => {
+  if (!raw?.trim()) return '';
+  const flat = raw
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\[[^\]]+\]\([^)]+\)/g, '')
+    .replace(/[*`_]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (flat.length <= maxLen) return flat;
+  return `${flat.slice(0, maxLen - 1)}…`;
+};
+
 export const SFUpdatesPage = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -63,6 +80,8 @@ export const SFUpdatesPage = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [items, setItems] = useState<AppUpdate[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [aboutTeaser, setAboutTeaser] = useState('');
+  const [studyTeaser, setStudyTeaser] = useState('');
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -121,10 +140,15 @@ export const SFUpdatesPage = () => {
     async (keepSelectedId?: number | null) => {
       setLoading(true);
       try {
-        const [updatesResponse, admin] = await Promise.all([
+        const [updatesResponse, admin, aboutRes, upcomingRes] = await Promise.all([
           controlPlaneApi.app.v1AppUpdatesList({ offset: 0, limit: 100 }),
           fetchAppIsAdmin(),
+          controlPlaneApi.app.v1AppAboutList().catch(() => undefined),
+          controlPlaneApi.app.v1AppUpcomingList().catch(() => undefined),
         ]);
+
+        setAboutTeaser(teaserFromMarkdown(aboutRes?.data.app_about?.content, 240));
+        setStudyTeaser(teaserFromMarkdown(upcomingRes?.data.app_upcoming?.content, 240));
 
         setIsAdmin(admin);
         const loadedItems = updatesResponse.data.app_updates ?? [];
@@ -152,7 +176,7 @@ export const SFUpdatesPage = () => {
         setLoading(false);
       }
     },
-    [fillForm, selectedId],
+    [selectedId],
   );
 
   useEffect(() => {
@@ -320,6 +344,29 @@ export const SFUpdatesPage = () => {
           </Flex>
         ) : (
           <>
+            <Flex gap={3} style={{ flexWrap: 'wrap' }}>
+              <InfoPostCard style={{ flex: '1 1 260px', minWidth: 240 }}>
+                <Text variant="subheader-2">О платформе</Text>
+                <Text variant="body-2" color="secondary">
+                  {aboutTeaser ||
+                    'Краткое описание назначения системы и ссылки на документацию — в отдельном разделе.'}
+                </Text>
+                <RouteLink to={ControlPlaneModule.routes.aboutPlatform} params={{}}>
+                  Перейти к разделу
+                </RouteLink>
+              </InfoPostCard>
+              <InfoPostCard style={{ flex: '1 1 260px', minWidth: 240 }}>
+                <Text variant="subheader-2">Обучение</Text>
+                <Text variant="body-2" color="secondary">
+                  {studyTeaser ||
+                    'Сценарии работы с проектами, датасетами и пайплайнами — в материалах для новых пользователей.'}
+                </Text>
+                <RouteLink to={ControlPlaneModule.routes.study} params={{}}>
+                  Перейти к разделу
+                </RouteLink>
+              </InfoPostCard>
+            </Flex>
+
             <Flex gap={2} alignItems="center">
               <TextInput
                 value={searchQuery}
@@ -355,33 +402,22 @@ export const SFUpdatesPage = () => {
                         <Flex justifyContent="space-between" alignItems="center" gap={2}>
                           <Text ellipsis>{item.title || `Обновление #${item.id}`}</Text>
                           <Label theme={item.is_published ? 'success' : 'unknown'}>
-                            {item.is_published ? 'published' : 'draft'}
+                            {item.is_published ? 'Опубликовано' : 'Черновик'}
                           </Label>
                         </Flex>
                       </Button>
                     );
                   })}
                 </Flex>
-                <Flex
-                  direction="column"
-                  gap={2}
-                  style={{
-                    flex: 1,
-                    minWidth: 340,
-                    border: '1px solid var(--g-color-line-generic)',
-                    borderRadius: 16,
-                    padding: 20,
-                    background: 'var(--g-color-base-float)',
-                  }}
-                >
+                <InfoPostCard style={{ flex: 1, minWidth: 340 }}>
                   <Text variant="header-1">
                     {selectedItem?.title || 'Выберите обновление слева'}
                   </Text>
                   {selectedItem && (
                     <>
-                      <Flex gap={2} alignItems="center">
+                      <Flex gap={2} alignItems="center" wrap="wrap">
                         <Label theme={selectedItem.is_published ? 'success' : 'unknown'}>
-                          {selectedItem.is_published ? 'published' : 'draft'}
+                          {selectedItem.is_published ? 'Опубликовано' : 'Черновик'}
                         </Label>
                         <Text variant="body-2" color="secondary">
                           {formatReleaseDate(selectedItem.release_date)}
@@ -392,21 +428,27 @@ export const SFUpdatesPage = () => {
                           {selectedItem.description}
                         </Text>
                       )}
-                      {!!selectedItem.content && (
-                        <Text
-                          variant="body-1"
+                      {!!selectedItem.image_url && (
+                        <img
+                          src={selectedItem.image_url}
+                          alt=""
                           style={{
-                            whiteSpace: 'pre-wrap',
-                            lineHeight: 1.55,
+                            width: '100%',
+                            maxHeight: 320,
+                            objectFit: 'cover',
+                            borderRadius: 12,
+                            border: '1px solid var(--g-color-line-generic)',
                           }}
-                        >
-                          {selectedItem.content}
-                        </Text>
+                        />
                       )}
-                      <Flex gap={3} alignItems="center">
+                      <MarkdownContent
+                        content={selectedItem.content ?? ''}
+                        emptyText="Текст обновления не указан."
+                      />
+                      <Flex gap={3} alignItems="center" wrap="wrap">
                         {!!selectedItem.image_url && (
                           <Link href={selectedItem.image_url} target="_blank" view="primary">
-                            Изображение
+                            Открыть изображение
                           </Link>
                         )}
                         {!!selectedItem.video_url && (
@@ -417,33 +459,20 @@ export const SFUpdatesPage = () => {
                       </Flex>
                     </>
                   )}
-                </Flex>
+                </InfoPostCard>
               </Flex>
             ) : (
-              <Flex direction="column" gap={3}>
+              <Flex direction="column" gap={4}>
                 {visibleItems.map((item) => (
-                  <Flex
-                    key={item.id}
-                    direction="column"
-                    gap={3}
-                    style={{
-                      border: '1px solid var(--g-color-line-generic)',
-                      borderRadius: 16,
-                      padding: 20,
-                      background: 'var(--g-color-base-float)',
-                      boxShadow: '0 2px 10px 0 var(--g-color-sfx-shadow)',
-                    }}
-                  >
-                    <Flex justifyContent="space-between" alignItems="center" gap={2}>
+                  <InfoPostCard key={item.id}>
+                    <Flex justifyContent="space-between" alignItems="flex-start" gap={3}>
                       <Text variant="header-1">{item.title || 'Без заголовка'}</Text>
-                      <Label theme="success">published</Label>
+                      {!!item.release_date && (
+                        <Text variant="body-2" color="secondary" style={{ flexShrink: 0 }}>
+                          {formatReleaseDate(item.release_date)}
+                        </Text>
+                      )}
                     </Flex>
-
-                    {!!item.release_date && (
-                      <Text variant="body-2" color="secondary">
-                        {formatReleaseDate(item.release_date)}
-                      </Text>
-                    )}
 
                     {!!item.description && (
                       <Text variant="subheader-2" color="secondary">
@@ -451,31 +480,40 @@ export const SFUpdatesPage = () => {
                       </Text>
                     )}
 
-                    {!!item.content && (
-                      <Text
-                        variant="body-1"
+                    {!!item.image_url && (
+                      <img
+                        src={item.image_url}
+                        alt=""
                         style={{
-                          whiteSpace: 'pre-wrap',
-                          lineHeight: 1.55,
+                          width: '100%',
+                          maxHeight: 360,
+                          objectFit: 'cover',
+                          borderRadius: 12,
+                          border: '1px solid var(--g-color-line-generic)',
                         }}
-                      >
-                        {item.content}
-                      </Text>
+                      />
                     )}
 
-                    <Flex gap={3} alignItems="center">
-                      {!!item.image_url && (
-                        <Link href={item.image_url} target="_blank" view="primary">
-                          Изображение
-                        </Link>
-                      )}
-                      {!!item.video_url && (
-                        <Link href={item.video_url} target="_blank" view="primary">
-                          Видео
-                        </Link>
-                      )}
-                    </Flex>
-                  </Flex>
+                    <MarkdownContent
+                      content={item.content ?? ''}
+                      emptyText="Текст обновления не указан."
+                    />
+
+                    {(!!item.image_url || !!item.video_url) && (
+                      <Flex gap={3} alignItems="center" wrap="wrap">
+                        {!!item.image_url && (
+                          <Link href={item.image_url} target="_blank" view="primary">
+                            Открыть изображение
+                          </Link>
+                        )}
+                        {!!item.video_url && (
+                          <Link href={item.video_url} target="_blank" view="primary">
+                            Видео
+                          </Link>
+                        )}
+                      </Flex>
+                    )}
+                  </InfoPostCard>
                 ))}
               </Flex>
             )}
@@ -515,7 +553,7 @@ export const SFUpdatesPage = () => {
                 value={content}
                 onUpdate={setContent}
                 rows={8}
-                placeholder="Основной текст обновления"
+                placeholder="Основной текст (Markdown: заголовки, списки, жирный текст)"
                 disabled={saving || deleting}
               />
               <Flex direction="column" gap={1}>

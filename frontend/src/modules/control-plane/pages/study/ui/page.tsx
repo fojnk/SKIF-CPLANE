@@ -1,8 +1,13 @@
-import { Dialog, Flex } from '@gravity-ui/uikit';
+import { Dialog } from '@gravity-ui/uikit';
 import { useCallback, useEffect, useState } from 'react';
 
 import { controlPlaneApi } from '@/modules/control-plane/shared/api';
-import { AdminContentEditor, MarkdownContent, MarkdownEditor } from '@/modules/control-plane/shared/ui';
+import {
+  AdminContentEditor,
+  InfoPostCard,
+  MarkdownContent,
+  MarkdownEditor,
+} from '@/modules/control-plane/shared/ui';
 import { fetchAppIsAdmin } from '@/modules/control-plane/shared/utils/app-admin';
 import { notifications } from '@/shared/ui/notifications';
 
@@ -81,19 +86,9 @@ export const SFStudyPage = () => {
       onReload={() => void load()}
       onEdit={openEditModal}
     >
-      <Flex
-        direction="column"
-        gap={3}
-        style={{
-          border: '1px solid var(--g-color-line-generic)',
-          borderRadius: 16,
-          padding: 20,
-          background: 'var(--g-color-base-float)',
-          boxShadow: '0 2px 10px 0 var(--g-color-sfx-shadow)',
-        }}
-      >
+      <InfoPostCard>
         <MarkdownContent content={content} />
-      </Flex>
+      </InfoPostCard>
 
       {isAdmin && (
         <Dialog
