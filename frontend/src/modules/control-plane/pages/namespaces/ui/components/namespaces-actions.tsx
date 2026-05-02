@@ -15,7 +15,7 @@ export const NamespacesActions = () => {
     actions.push({
       action: onCreateClick,
       text: 'Новое рабочее пространство',
-      view: 'action',
+      view: 'glass',
       icon: AppIcon.ActionAdd,
     });
   }

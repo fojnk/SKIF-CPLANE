@@ -97,9 +97,9 @@ export const DatasetTabsOptions = [
 ] as const;
 
 export const dsAccessFilter = [
-  { value: 'all', content: 'All' },
-  { value: 'public', content: 'Public' },
-  { value: 'private', content: 'Private' },
+  { value: 'all', content: 'Все' },
+  { value: 'public', content: 'Публичные' },
+  { value: 'private', content: 'Приватные' },
 ];
 
 export const severity = {

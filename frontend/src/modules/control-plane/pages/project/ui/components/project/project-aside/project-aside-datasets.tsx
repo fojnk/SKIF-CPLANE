@@ -13,6 +13,7 @@ import {
   DataItemSkeleton,
   SearchInput,
 } from '@/modules/control-plane/shared/ui';
+import glassBarStyles from '@/modules/control-plane/shared/ui/segmented-glass-bar/segmented-glass-bar.module.scss';
 
 import css from './project-aside.module.scss';
 
@@ -124,19 +125,22 @@ export const ProjectAsideDatasets = () => {
   return (
     <Flex direction="column" gap={2} className={css.asideListWrapper}>
       {dataSources && dataSources.length > 0 && (
-        <SegmentedRadioGroup
-          value={dsFilter}
-          onUpdate={handleDsFilterChange}
-          size="m"
-        >
-          {dsAccessFilter.map((item) => (
-            <SegmentedRadioGroup.Option
-              key={item.value}
-              value={item.value}
-              content={item.content}
-            />
-          ))}
-        </SegmentedRadioGroup>
+        <div className={glassBarStyles.bar}>
+          <SegmentedRadioGroup
+            className={glassBarStyles.segments}
+            value={dsFilter}
+            onUpdate={handleDsFilterChange}
+            size="l"
+          >
+            {dsAccessFilter.map((item) => (
+              <SegmentedRadioGroup.Option
+                key={item.value}
+                value={item.value}
+                content={item.content}
+              />
+            ))}
+          </SegmentedRadioGroup>
+        </div>
       )}
       <SearchInput
         setSearch={setSearch}

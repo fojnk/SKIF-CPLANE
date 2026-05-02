@@ -37,7 +37,7 @@ func (s *StreamflowTestSuite) TestDatasetKafka() {
 	res, err := s.c.Dataset.PostAPIV2Dataset(&dataset2.PostAPIV2DatasetParams{
 		Request: &models2.RequestsCreateDatasetRequestV2{
 			Name:      ptr("test-kafka-dataset"),
-			Type:      "Kafka",
+			Type:      ptr("kafka"),
 			ProjectID: &projRes.Payload.ID,
 		},
 		Context: s.ctx,
@@ -47,19 +47,7 @@ func (s *StreamflowTestSuite) TestDatasetKafka() {
 	s.Require().NotNil(res)
 	s.Require().NotNil(res.Payload)
 	s.Require().Equal("test-kafka-dataset", res.Payload.Name)
-	s.Require().Equal("Kafka", res.Payload.Type)
-
-	// add dataset kafka managed error
-	_, err = s.c.Dataset.PostAPIV2Dataset(&dataset2.PostAPIV2DatasetParams{
-		Request: &models2.RequestsCreateDatasetRequestV2{
-			Name:      ptr("test-kafka-dataset"),
-			Type:      "Kafka",
-			ProjectID: &projRes.Payload.ID,
-			Managed:   true,
-		},
-		Context: s.ctx,
-	})
-	s.Require().Error(err)
+	s.Require().Equal("kafka", res.Payload.Type)
 
 	// get dataset
 	getRes, err := s.c.Dataset.GetAPIV2Dataset(&dataset2.GetAPIV2DatasetParams{
@@ -70,7 +58,7 @@ func (s *StreamflowTestSuite) TestDatasetKafka() {
 	s.Require().NotNil(getRes)
 	s.Require().NotNil(getRes.Payload)
 	s.Require().Equal("test-kafka-dataset", getRes.Payload.Name)
-	s.Require().Equal("Kafka", getRes.Payload.Type)
+	s.Require().Equal("kafka", getRes.Payload.Type)
 
 	// update dataset
 	updateRes, err := s.c.Dataset.PutAPIV2Dataset(&dataset2.PutAPIV2DatasetParams{
@@ -86,18 +74,6 @@ func (s *StreamflowTestSuite) TestDatasetKafka() {
 	s.Require().NotNil(updateRes)
 	s.Require().NotNil(updateRes.Payload)
 	s.Require().Equal("updated-kafka-dataset", updateRes.Payload.Dataset.Name)
-
-	// update dataset kafka managed error
-	_, err = s.c.Dataset.PostAPIV2Dataset(&dataset2.PostAPIV2DatasetParams{
-		Request: &models2.RequestsCreateDatasetRequestV2{
-			Name:      ptr("test-kafka-dataset"),
-			Type:      "Kafka",
-			Managed:   true,
-			ProjectID: &projRes.Payload.ID,
-		},
-		Context: s.ctx,
-	})
-	s.Require().Error(err)
 
 	// delete dataset
 	resDelete, err := s.c.Dataset.DeleteAPIV1Dataset(&dataset2.DeleteAPIV1DatasetParams{

@@ -7,7 +7,7 @@ import (
 	models2 "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/tests/private/models"
 )
 
-func (s *StreamflowTestSuite) TestDatasetPublicAndManaged() {
+func (s *StreamflowTestSuite) TestDatasetPublic() {
 
 	// add namespace 1
 	nsRes, err := s.c.Namespace.PostAPIV1Namespace(&namespace.PostAPIV1NamespaceParams{
@@ -38,11 +38,10 @@ func (s *StreamflowTestSuite) TestDatasetPublicAndManaged() {
 	res, err := s.c.Dataset.PostAPIV2Dataset(&dataset2.PostAPIV2DatasetParams{
 		Request: &models2.RequestsCreateDatasetRequestV2{
 			Name:      ptr("test-dataset"),
-			Type:      "Queue",
+			Type:      ptr("json"),
 			ProjectID: &projRes.Payload.ID,
 			Schema:    "{\"paramas\": \"hello1\", \"paramas\": \"hello2\"}",
 			Params:    "{\"par\": \"hello1\"}",
-			Managed:   true,
 			Public:    true,
 		},
 		Context: s.ctx,
@@ -56,11 +55,10 @@ func (s *StreamflowTestSuite) TestDatasetPublicAndManaged() {
 	_, err = s.c.Dataset.PostAPIV2Dataset(&dataset2.PostAPIV2DatasetParams{
 		Request: &models2.RequestsCreateDatasetRequestV2{
 			Name:      ptr("test-dataset"),
-			Type:      "Queue",
+			Type:      ptr("json"),
 			ProjectID: &projRes.Payload.ID,
 			Schema:    "{\"paramas\": \"hello1\", \"paramas\": \"hello2\"}",
 			Params:    "{\"par\": \"hello1\"}",
-			Managed:   true,
 			Public:    true,
 		},
 		Context: s.ctx,
@@ -85,8 +83,7 @@ func (s *StreamflowTestSuite) TestDatasetPublicAndManaged() {
 	s.Require().NotNil(getRes)
 	s.Require().NotNil(getRes.Payload)
 	s.Require().Equal("test-dataset", getRes.Payload.Name)
-	s.Require().Equal("Queue", getRes.Payload.Type)
-	s.Require().Equal(true, getRes.Payload.Managed)
+	s.Require().Equal("json", getRes.Payload.Type)
 	s.Require().Equal(true, getRes.Payload.Public)
 
 	s.Require().Contains(getRes.Payload.Rights, models2.ACLRightEditConfig)
@@ -108,7 +105,6 @@ func (s *StreamflowTestSuite) TestDatasetPublicAndManaged() {
 	s.Require().NotNil(updateRes)
 	s.Require().NotNil(updateRes.Payload)
 	s.Require().Equal("updated-dataset", updateRes.Payload.Dataset.Name)
-	s.Require().Equal(true, updateRes.Payload.Dataset.Managed)
 	s.Require().Equal(true, updateRes.Payload.Dataset.Public)
 }
 
@@ -168,7 +164,7 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 	res, err := s.c.Dataset.PostAPIV2Dataset(&dataset2.PostAPIV2DatasetParams{
 		Request: &models2.RequestsCreateDatasetRequestV2{
 			Name:      ptr("test-dataset"),
-			Type:      "Queue",
+			Type:      ptr("json"),
 			ProjectID: &projRes.Payload.ID,
 			Schema:    "{\"paramas\": \"hello1\", \"paramas\": \"hello2\"}",
 			Params:    "{\"par\": \"hello1\"}",
@@ -195,7 +191,7 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 	s.Require().NotNil(copyRes)
 	s.Require().NotNil(copyRes.Payload)
 	s.Require().Equal("test-dataset-copy", copyRes.Payload.Name)
-	s.Require().Equal("Queue", copyRes.Payload.Type)
+	s.Require().Equal("json", copyRes.Payload.Type)
 
 	validRes, err := s.c.Dataset.PostAPIV2DatasetConfigValidate(&dataset2.PostAPIV2DatasetConfigValidateParams{
 		Context: s.ctx,
@@ -242,7 +238,7 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 	s.Require().NotNil(copyRes2)
 	s.Require().NotNil(copyRes2.Payload)
 	s.Require().Equal("test-dataset-copy2", copyRes2.Payload.Name)
-	s.Require().Equal("Queue", copyRes2.Payload.Type)
+	s.Require().Equal("json", copyRes2.Payload.Type)
 
 	listRes2V2, err := s.c.Project.PostAPIV2Projects(&project2.PostAPIV2ProjectsParams{
 		Context: s.ctx,
@@ -279,7 +275,7 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 		models2.DtoDataset{
 			ID:     res.Payload.ID,
 			Name:   "test-dataset",
-			Type:   "Queue",
+			Type:   "json",
 			Params: "{\"par\": \"hello1\"}",
 			Schema: "{\"paramas\": \"hello1\", \"paramas\": \"hello2\"}",
 		},
@@ -289,7 +285,7 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 		models2.DtoDataset{
 			ID:     copyRes2.Payload.ID,
 			Name:   "test-dataset-copy2",
-			Type:   "Queue",
+			Type:   "json",
 			Params: "{}",
 			Schema: "{\"paramas\": \"hello1\", \"paramas\": \"hello2\"}",
 		},
@@ -319,7 +315,7 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 		models2.DtoDataset{
 			ID:     copyRes.Payload.ID,
 			Name:   "test-dataset-copy",
-			Type:   "Queue",
+			Type:   "json",
 			Params: "{}",
 			Schema: "{\"paramas\": \"hello1\", \"paramas\": \"hello2\"}",
 		},
@@ -351,7 +347,7 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 	s.Require().NotNil(getRes)
 	s.Require().NotNil(getRes.Payload)
 	s.Require().Equal("test-dataset", getRes.Payload.Name)
-	s.Require().Equal("Queue", getRes.Payload.Type)
+	s.Require().Equal("json", getRes.Payload.Type)
 
 	s.Require().Contains(getRes.Payload.Rights, models2.ACLRightEditConfig)
 	s.Require().Contains(getRes.Payload.Rights, models2.ACLRightEditName)
@@ -396,7 +392,6 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 	s.Require().Equal(version.Payload.Params, updateRes.Payload.Dataset.Params)
 	s.Require().Equal(version.Payload.Type, updateRes.Payload.Dataset.Type)
 	s.Require().Equal(version.Payload.Public, updateRes.Payload.Dataset.Public)
-	s.Require().Equal(version.Payload.Managed, updateRes.Payload.Dataset.Managed)
 
 	// delete dataset 1
 	resDelete, err := s.c.Dataset.DeleteAPIV1Dataset(&dataset2.DeleteAPIV1DatasetParams{
@@ -453,7 +448,7 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 	s.Require().NotNil(details1)
 	s.Require().NotNil(details1.Payload)
 	s.Require().Equal("test-dataset", details1.Payload.Details.New.Name)
-	s.Require().Equal("Queue", details1.Payload.Details.New.Type)
+	s.Require().Equal("json", details1.Payload.Details.New.Type)
 
 	s.Require().Equal("{\"par\": \"hello1\"}", details1.Payload.Details.New.Params)
 	s.Require().Equal("{\"paramas\": \"hello1\", \"paramas\": \"hello2\"}", details1.Payload.Details.New.Schema)
@@ -479,7 +474,7 @@ func (s *StreamflowTestSuite) TestDatasetV2() {
 	res3, err := s.c.Dataset.PostAPIV2Dataset(&dataset2.PostAPIV2DatasetParams{
 		Request: &models2.RequestsCreateDatasetRequestV2{
 			Name:      ptr("check"),
-			Type:      "Queue",
+			Type:      ptr("json"),
 			ProjectID: &projRes.Payload.ID,
 		},
 		Context: s.ctx,
@@ -531,7 +526,7 @@ func (s *StreamflowTestSuite) TestDatasetSearch2() {
 	res, err := s.c.Dataset.PostAPIV2Dataset(&dataset2.PostAPIV2DatasetParams{
 		Request: &models2.RequestsCreateDatasetRequestV2{
 			Name:      ptr("test-dataset"),
-			Type:      "Queue",
+			Type:      ptr("json"),
 			ProjectID: &projRes.Payload.ID,
 			Schema: `{
 						"columns": [
@@ -578,7 +573,7 @@ func (s *StreamflowTestSuite) TestDatasetSearch2() {
 	s.Require().NotNil(copyRes2)
 	s.Require().NotNil(copyRes2.Payload)
 	s.Require().Equal("test-dataset-copy2", copyRes2.Payload.Name)
-	s.Require().Equal("Queue", copyRes2.Payload.Type)
+	s.Require().Equal("json", copyRes2.Payload.Type)
 
 	check, err := s.c.Dataset.GetAPIV2Dataset(&dataset2.GetAPIV2DatasetParams{
 		Context:   s.ctx,
@@ -588,7 +583,7 @@ func (s *StreamflowTestSuite) TestDatasetSearch2() {
 	s.Require().NotNil(check)
 	s.Require().NotNil(check.Payload)
 	s.Require().Equal("test-dataset-copy2", check.Payload.Name)
-	s.Require().Equal("Queue", check.Payload.Type)
+	s.Require().Equal("json", check.Payload.Type)
 
 	// get datasets from project 1
 	listRes, err := s.c.Dataset.GetAPIV2Datasets(&dataset2.GetAPIV2DatasetsParams{
@@ -605,7 +600,7 @@ func (s *StreamflowTestSuite) TestDatasetSearch2() {
 		models2.DtoDataset{
 			ID:   res.Payload.ID,
 			Name: "test-dataset",
-			Type: "Queue",
+			Type: "json",
 			Params: `{	
 						"YT": {
     						"Cluster": "miranda.yt.idzn.ru",
@@ -636,7 +631,7 @@ func (s *StreamflowTestSuite) TestDatasetSearch2() {
 		models2.DtoDataset{
 			ID:     copyRes2.Payload.ID,
 			Name:   "test-dataset-copy2",
-			Type:   "Queue",
+			Type:   "json",
 			Params: `{}`,
 			Schema: `{
 						"columns": [

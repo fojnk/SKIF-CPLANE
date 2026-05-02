@@ -31,8 +31,8 @@ export const SFNamespacesPage = () => {
     return (
       <ListPage>
         <NamespacesActions />
-        <Flex gap={4} alignItems="center">
-          <PageTitle>Catalog</PageTitle>
+        <Flex gap={5} alignItems="center" style={{ flexWrap: 'wrap' }}>
+          <PageTitle>Каталог</PageTitle>
           <CatalogRadioGroup active={catalogRadioGroupList.namespaces} />
         </Flex>
         <GlobalLoader absolute />
@@ -43,8 +43,8 @@ export const SFNamespacesPage = () => {
   return (
     <ListPage>
       <NamespacesActions />
-      <Flex gap={4} alignItems="center">
-        <PageTitle>Catalog</PageTitle>
+      <Flex gap={5} alignItems="center" style={{ flexWrap: 'wrap' }}>
+        <PageTitle>Каталог</PageTitle>
         <CatalogRadioGroup active={catalogRadioGroupList.namespaces} />
       </Flex>
       <NamespacesFilters />

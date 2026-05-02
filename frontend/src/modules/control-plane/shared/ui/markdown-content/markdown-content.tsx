@@ -30,7 +30,11 @@ const MarkdownRoot = ({ content, emptyText = 'Контент пока не за�
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          a: ({ node: _node, ...props }) => <Link {...props} target="_blank" view="primary" />,
+          a: ({ node: _node, href, children, ...props }) => (
+            <Link {...props} href={href ?? '#'} target="_blank" view="primary" rel="noopener noreferrer">
+              {children}
+            </Link>
+          ),
         }}
       >
         {normalizedContent}
