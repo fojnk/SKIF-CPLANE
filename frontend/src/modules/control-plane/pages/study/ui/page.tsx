@@ -1,8 +1,8 @@
-import { Dialog, Flex, Text, TextArea } from '@gravity-ui/uikit';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Dialog, Flex } from '@gravity-ui/uikit';
+import { useCallback, useEffect, useState } from 'react';
 
 import { controlPlaneApi } from '@/modules/control-plane/shared/api';
-import { AdminContentEditor } from '@/modules/control-plane/shared/ui';
+import { AdminContentEditor, MarkdownContent, MarkdownEditor } from '@/modules/control-plane/shared/ui';
 import { fetchAppIsAdmin } from '@/modules/control-plane/shared/utils/app-admin';
 import { notifications } from '@/shared/ui/notifications';
 
@@ -15,15 +15,6 @@ export const SFStudyPage = () => {
   const [draftContent, setDraftContent] = useState('');
   const normalizedDraftContent = draftContent.trim();
   const hasChanges = normalizedDraftContent !== content.trim();
-
-  const contentParagraphs = useMemo(
-    () =>
-      content
-        .split('\n\n')
-        .map((item) => item.trim())
-        .filter(Boolean),
-    [content],
-  );
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -101,23 +92,7 @@ export const SFStudyPage = () => {
           boxShadow: '0 2px 10px 0 var(--g-color-sfx-shadow)',
         }}
       >
-        {contentParagraphs.length > 0 ? (
-          <Flex direction="column" gap={2}>
-            {contentParagraphs.map((paragraph, index) => (
-              <Text
-                key={`${paragraph}-${index}`}
-                variant={index === 0 ? 'subheader-2' : 'body-1'}
-                style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}
-              >
-                {paragraph}
-              </Text>
-            ))}
-          </Flex>
-        ) : (
-          <Text variant="body-2" color="secondary">
-            Контент пока не заполнен.
-          </Text>
-        )}
+        <MarkdownContent content={content} />
       </Flex>
 
       {isAdmin && (
@@ -129,17 +104,7 @@ export const SFStudyPage = () => {
         >
           <Dialog.Header caption="Редактирование: Обучение" />
           <Dialog.Body>
-            <Flex direction="column" gap={2}>
-              <Text variant="body-2" color="secondary">
-                Используйте пустую строку между абзацами для более читаемого вида.
-              </Text>
-              <TextArea
-                value={draftContent}
-                rows={14}
-                onUpdate={setDraftContent}
-                disabled={saving}
-              />
-            </Flex>
+            <MarkdownEditor value={draftContent} onChange={setDraftContent} disabled={saving} rows={14} />
           </Dialog.Body>
           <Dialog.Footer
             textButtonCancel="Отмена"

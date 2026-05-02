@@ -16,6 +16,10 @@ import { notifications } from '@/shared/ui/notifications';
 
 export type PermissionRequestableEntity = 'namespace' | 'project' | 'experiment';
 
+const EXPERIMENT_FULL_RIGHTS_OPTION_VALUE = '__experiment_full__';
+const EXPERIMENT_FULL_RIGHTS_ATTRIBUTE_PATTERN =
+  '^(|meta|dataset|experiment_state)$';
+
 const ACTION_OPTIONS = [
   { value: '00R', content: 'Чтение' },
   { value: '01E', content: 'Изменение' },
@@ -43,6 +47,10 @@ const ATTRIBUTE_BY_ENTITY: Record<
     { value: 'experiment', content: 'Эксперимент (experiment)' },
     { value: 'experiment_state', content: 'Состояние запуска (experiment_state)' },
     { value: 'dataset', content: 'Датасеты в эксперименте (dataset)' },
+    {
+      value: EXPERIMENT_FULL_RIGHTS_OPTION_VALUE,
+      content: 'Полный доступ к эксперименту (все права)',
+    },
   ],
 };
 
@@ -81,18 +89,26 @@ export const AclRequestPermissionAction = ({
   const attrOptions = ATTRIBUTE_BY_ENTITY[objectType];
 
   const canSubmit = objectId > 0 && !pending;
+  const isExperimentFullRightsSelected =
+    objectType === 'experiment' &&
+    objectAttribute === EXPERIMENT_FULL_RIGHTS_OPTION_VALUE;
 
   const handleSubmit = useCallback(async () => {
     if (!canSubmit) {
       return;
     }
+    const requestAction = isExperimentFullRightsSelected ? '03D' : action;
+    const requestObjectAttribute = isExperimentFullRightsSelected
+      ? EXPERIMENT_FULL_RIGHTS_ATTRIBUTE_PATTERN
+      : objectAttribute;
+
     setPending(true);
     try {
       await createPermissionRequest({
         object_type: objectType,
         object_id: objectId,
-        object_attribute: objectAttribute,
-        action,
+        object_attribute: requestObjectAttribute,
+        action: requestAction,
         message: message.trim(),
       });
       notifications.push({
@@ -110,7 +126,15 @@ export const AclRequestPermissionAction = ({
     } finally {
       setPending(false);
     }
-  }, [action, canSubmit, message, objectAttribute, objectId, objectType]);
+  }, [
+    action,
+    canSubmit,
+    isExperimentFullRightsSelected,
+    message,
+    objectAttribute,
+    objectId,
+    objectType,
+  ]);
 
   const actionSelectOptions = useMemo(
     () => ACTION_OPTIONS.map((o) => ({ value: o.value, content: o.content })),
@@ -142,6 +166,7 @@ export const AclRequestPermissionAction = ({
               options={actionSelectOptions}
               value={[action]}
               onUpdate={(v) => setAction(v[0] ?? '00R')}
+              disabled={isExperimentFullRightsSelected}
             />
             <Select
               label="Область права"
@@ -153,6 +178,12 @@ export const AclRequestPermissionAction = ({
                 setObjectAttribute(v[0] ?? attrOptions[0]?.value ?? 'meta')
               }
             />
+            {isExperimentFullRightsSelected ? (
+              <Text variant="body-2" color="secondary">
+                Для полного доступа будет отправлена заявка с действием
+                «Удаление», которое включает редактирование и создание.
+              </Text>
+            ) : null}
             <TextArea
               minRows={3}
               maxRows={8}

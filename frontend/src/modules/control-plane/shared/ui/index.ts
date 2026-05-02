@@ -21,3 +21,4 @@ export * from './entity-labels';
 export * from './full-date';
 export * from './vk-user';
 export * from './services-menu';
+export * from './markdown-content';

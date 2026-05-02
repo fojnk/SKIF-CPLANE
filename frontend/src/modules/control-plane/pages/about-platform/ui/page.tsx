@@ -2,7 +2,7 @@ import { Dialog, Flex, Link, Text, TextArea } from '@gravity-ui/uikit';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { controlPlaneApi } from '@/modules/control-plane/shared/api';
-import { AdminContentEditor } from '@/modules/control-plane/shared/ui';
+import { AdminContentEditor, MarkdownContent, MarkdownEditor } from '@/modules/control-plane/shared/ui';
 import { fetchAppIsAdmin } from '@/modules/control-plane/shared/utils/app-admin';
 import { notifications } from '@/shared/ui/notifications';
 
@@ -24,15 +24,6 @@ export const SFAboutPlatformPage = () => {
     .join('\n');
   const hasChanges =
     normalizedDraftContent !== content.trim() || normalizedDraftLinks !== links.trim();
-
-  const contentParagraphs = useMemo(
-    () =>
-      content
-        .split('\n\n')
-        .map((item) => item.trim())
-        .filter(Boolean),
-    [content],
-  );
 
   const linksList = useMemo(
     () =>
@@ -134,29 +125,13 @@ export const SFAboutPlatformPage = () => {
           boxShadow: '0 2px 10px 0 var(--g-color-sfx-shadow)',
         }}
       >
-        {contentParagraphs.length > 0 ? (
-          <Flex direction="column" gap={2}>
-            {contentParagraphs.map((paragraph, index) => (
-              <Text
-                key={`${paragraph}-${index}`}
-                variant={index === 0 ? 'subheader-2' : 'body-1'}
-                style={{ whiteSpace: 'pre-wrap', lineHeight: 1.55 }}
-              >
-                {paragraph}
-              </Text>
-            ))}
-          </Flex>
-        ) : (
-          <Text variant="body-2" color="secondary">
-            Контент пока не заполнен.
-          </Text>
-        )}
+        <MarkdownContent content={content} />
         {linksList.length > 0 && (
           <Flex direction="column" gap={1}>
             <Text variant="subheader-2">Полезные ссылки</Text>
             {linksList.map((item) => (
-              <Link key={item} href={item} target="_blank" view="primary">
-                {item}
+              <Link key={`${item.label}-${item.href}`} href={item.href} target="_blank" view="primary">
+                {item.label}
               </Link>
             ))}
           </Flex>
@@ -174,14 +149,11 @@ export const SFAboutPlatformPage = () => {
           <Dialog.Body>
             <Flex direction="column" gap={2}>
               <Text variant="subheader-2">Контент</Text>
-              <Text variant="body-2" color="secondary">
-                Используйте пустую строку между абзацами для удобного отображения.
-              </Text>
-              <TextArea
+              <MarkdownEditor
                 value={draftContent}
-                rows={12}
-                onUpdate={setDraftContent}
+                onChange={setDraftContent}
                 disabled={saving}
+                rows={12}
               />
               <Text variant="subheader-2">Ссылки (по одной на строку)</Text>
               <Text variant="body-2" color="secondary">
