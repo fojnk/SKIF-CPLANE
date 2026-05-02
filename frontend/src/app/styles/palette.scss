@@ -1,9 +1,20 @@
 :root {
   --color-dark-1000: #1B1819;
+  /* Согласовано с кастомным base-background (gravity-ui-kit/base.scss) */
+  --color-html-fallback-light: rgb(247, 248, 252);
+  --color-html-fallback-dark: rgb(17, 19, 26);
 }
 
 :root[color-scheme="dark"] {
   --color-dark-1000: #1B1819;
+}
+
+html {
+  background-color: var(--color-html-fallback-light);
+}
+
+html:has(body.g-root_theme_dark) {
+  background-color: var(--color-html-fallback-dark);
 }
 
 

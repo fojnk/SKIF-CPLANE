@@ -1,4 +1,4 @@
-import { Dots9, Gear, Sun, Moon } from '@gravity-ui/icons';
+import { Gear, Sun, Moon } from '@gravity-ui/icons';
 import {
   DrawerItemProps,
   FooterItem,
@@ -15,7 +15,6 @@ import {
   userLib,
   userModel,
 } from '@/modules/control-plane/entities/session/user';
-import { ServicesMenu } from '@/modules/control-plane/shared/ui';
 import { NavbarPanel } from '@/routing';
 import { themeModel, Theme } from '@/shared/lib/complex/theme';
 import { AppSettings } from '@/widgets/app-settings';
@@ -82,25 +81,9 @@ export const Aside = ({
       visible: activePanel === NavbarPanel.Settings,
       direction: 'left',
     },
-    {
-      id: 'services',
-      content: <ServicesMenu />,
-      visible: activePanel === NavbarPanel.Services,
-      direction: 'left',
-    },
   ] as DrawerItemProps[];
 
-  const subheadItems = [
-    {
-      item: {
-        id: 'all-services',
-        icon: Dots9,
-        title: 'Все сервисы',
-        onItemClick: () => setActivePanel(NavbarPanel.Services),
-      },
-    },
-    ...subheaderMenuItems,
-  ] as AsideSubheaderMenuItem[];
+  const subheadItems = subheaderMenuItems as AsideSubheaderMenuItem[];
 
   const logo: LogoProps = {
     icon: customLogo?.icon ?? baseTemplateConfig.logo.icon,
