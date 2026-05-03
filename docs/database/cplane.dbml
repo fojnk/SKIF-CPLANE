@@ -1,4 +1,5 @@
 // CPlane PostgreSQL schema (migrations 000001–000006)
+// Repository path: docs/database/cplane.dbml
 // Paste into https://dbdiagram.io or: Database > Import > DBML
 
 Project cplane {

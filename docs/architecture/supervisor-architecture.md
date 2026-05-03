@@ -2,6 +2,8 @@
 
 Супервизор (в продуктовом контуре — Java-сервис из репозитория `skif_platform_supervisor`) выполняет фактический запуск пайплайна: очередь моделей, переходы между этапами, статусы. Backend Control Plane (CPLANE) пайплайн не исполняет: он собирает конфигурацию из PostgreSQL, публикует команды в RabbitMQ и при необходимости опрашивает HTTP API супервизора для отображения статуса в UI.
 
+Сценарий запуска, остановки, применения конфига и обратной связи по HTTP см. в [контур управления (control loop)](control-loop.md).
+
 ## Границы ответственности
 
 | Компонент | Роль |
@@ -47,7 +49,7 @@ flowchart LR
 
 Тело сообщений: JSON, тип содержимого в брокере задаётся как `application/json`, режим доставки — persistent.
 
-Параметры подключения и имена exchange/routing key задаются в секции `clients.rabbitmq` конфигурации backend (см. [`config.local.yaml`](../backend/config.local.yaml) как пример локального профиля).
+Параметры подключения и имена exchange/routing key задаются в секции `clients.rabbitmq` конфигурации backend (см. [`config.local.yaml`](../../backend/config.local.yaml) как пример локального профиля).
 
 ### Поведение без RabbitMQ
 
@@ -109,7 +111,7 @@ flowchart LR
 
 ## Локальная связка
 
-В [`docker-compose.yml`](../docker-compose.yml) описаны сервисы `rabbitmq`, `backend` и опционально `java-supervisor` (образ из соседнего каталога `skif_platform_supervisor`). В `config.local.yaml` для Docker-сети задаётся HTTP-супервизор, например `http://java-supervisor:8080`.
+В [`docker-compose.yml`](../../docker-compose.yml) описаны сервисы `rabbitmq`, `backend` и опционально `java-supervisor` (образ из соседнего каталога `skif_platform_supervisor`). В `config.local.yaml` для Docker-сети задаётся HTTP-супервизор, например `http://java-supervisor:8080`.
 
 ## Идентификаторы и типичные проблемы
 
@@ -127,3 +129,8 @@ flowchart LR
 | HTTP статус | `internal/pkg/supervisorstatus/` |
 | Бизнес-логика эксперимента | `internal/service/experiment/experiment_actions_service.go` |
 | Обогащение списка задач | `internal/handlers/private/experiment_jobs.go` |
+
+## См. также
+
+- [Контур управления экспериментом](control-loop.md)
+- [Сущность «Эксперимент»](../entities/experiment.md)
