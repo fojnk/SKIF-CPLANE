@@ -4,6 +4,7 @@
 
 | Файл | Назначение |
 |------|------------|
+| [`supervisor-architecture.md`](supervisor-architecture.md) | Архитектура взаимодействия CPLANE с Java-супервизором: RabbitMQ (команды), HTTP (статус), конфигурация, идентификатор `orch_id`, связь с UI. |
 | [`first_vkr_draft.md`](first_vkr_draft.md) | Черновик ВКР: контекст ЦКП СКИФ, цифровые двойники, обоснование платформы, архитектура backend/frontend, функциональные подсистемы, модель данных (ссылка на DBML). |
 | [`cplane.dbml`](cplane.dbml) | Схема PostgreSQL в формате DBML (миграции `000001`–`000006`). Импорт в [dbdiagram.io](https://dbdiagram.io): **Database → Import → DBML**. |
 
