@@ -26,6 +26,12 @@ docker compose up --build
 
 `http://localhost:8080`
 
+## Демо-данные (полная связка в UI)
+
+После старта backend накатываются SQL-миграции. Миграция **`000008_demo_stand_seed`** создаёт неймспейс **`demo-stand-skif`**, проект **«Демо-проект оптической цепочки»**, два датасета с JSON-параметрами и эксперимент с конфигом для Java-супервизора (массив `models`). Подробности: [`docs/guides/demo-stand.md`](../docs/guides/demo-stand.md).
+
+Чтобы проверить запуск пайплайна end-to-end, поднимите также **`rabbitmq`** и **`java-supervisor`** из того же `docker-compose.yml` (репозиторий `skif_platform_supervisor` должен лежать рядом, см. комментарии в compose-файле).
+
 ## Важно
 
 Сборка backend тянет публичные модули через `proxy.golang.org` (GitHub и зеркала).  
