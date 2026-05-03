@@ -20,18 +20,10 @@ export const DsContent = ({ ds_id, project }: Props) => {
     projectPageModel.dataSource.active.load,
     projectPageModel.dataSource.active.reset,
   ]);
-  const [loadYT, linkYT, resetYT] = useUnit([
-    projectPageModel.dataSource.ytLink.load,
-    projectPageModel.dataSource.ytLink.$link,
-    projectPageModel.dataSource.ytLink.reset,
-  ]);
-
   useEffect(() => {
     load(ds_id);
-    loadYT(ds_id);
     return () => {
       reset();
-      resetYT();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ds_id]);
@@ -53,7 +45,7 @@ export const DsContent = ({ ds_id, project }: Props) => {
 
   return (
     <>
-      <DsHeader dataset={dataset} project={project} link={linkYT} />
+      <DsHeader dataset={dataset} project={project} />
       <DsTabs dataset_id={ds_id} project={project} />
     </>
   );

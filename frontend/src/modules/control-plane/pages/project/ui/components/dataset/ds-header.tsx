@@ -1,5 +1,5 @@
-import { ArrowUpRightFromSquare, Database } from '@gravity-ui/icons';
-import { Button, Flex, Icon, Label, Text } from '@gravity-ui/uikit';
+import { Database } from '@gravity-ui/icons';
+import { Flex, Icon, Label, Text } from '@gravity-ui/uikit';
 import React from 'react';
 
 import { SfEntityHeader } from '@/modules/control-plane/shared/layout';
@@ -14,10 +14,9 @@ import { DsActions } from './ds-actions';
 interface Props {
   dataset: DatasetDC;
   project: ProjectInfoDC;
-  link: string | null;
 }
 
-export const DsHeader = ({ dataset, project, link }: Props) => {
+export const DsHeader = ({ dataset, project }: Props) => {
   return (
     <SfEntityHeader>
       <Flex direction="column" gap={3}>
@@ -45,14 +44,6 @@ export const DsHeader = ({ dataset, project, link }: Props) => {
             </Label>
           )}
           <EntityLabels id={dataset.id!} />
-          {link && (
-            <Button view="outlined" size="s" target="_blank" href={link}>
-              YT link
-              <Button.Icon>
-                <ArrowUpRightFromSquare />
-              </Button.Icon>
-            </Button>
-          )}
         </Flex>
       </Flex>
     </SfEntityHeader>
