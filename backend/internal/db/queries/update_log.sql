@@ -84,6 +84,17 @@ ORDER BY t_experiment_update_log.created_at DESC
 OFFSET $2
 LIMIT $3;
 
+-- name: SelectExperimentUpdateLogsByActs :many
+SELECT t_experiment_update_log.*, COUNT(*) OVER() AS total, COALESCE(v_real_experiment_template.name, '[deleted]') AS name FROM t_experiment_update_log
+LEFT JOIN t_experiment ON t_experiment_update_log.experiment_id = t_experiment.id
+LEFT JOIN t_experiment_template_v ON t_experiment.template_v_id = t_experiment_template_v.id
+LEFT JOIN v_real_experiment_template ON t_experiment_template_v.parent_id = v_real_experiment_template.id
+WHERE t_experiment_update_log.experiment_id = $1
+  AND t_experiment_update_log.act = ANY(@acts::text[])
+ORDER BY t_experiment_update_log.created_at DESC
+OFFSET $2
+LIMIT $3;
+
 -- name: SelectAllExperimentsUpdateLogs :many
 SELECT t_experiment_update_log.*, COUNT(*) OVER() AS total, COALESCE(v_real_experiment_template.name, '[deleted]') AS name FROM t_experiment_update_log
 LEFT JOIN t_experiment ON t_experiment_update_log.experiment_id = t_experiment.id

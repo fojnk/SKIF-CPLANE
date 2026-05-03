@@ -13,7 +13,7 @@ export const ProjectsActions = () => {
     {
       action: createProject,
       text: 'Новый проект',
-      view: 'action',
+      view: 'glass',
       icon: AppIcon.ActionAdd,
     },
   ];

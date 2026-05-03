@@ -98,7 +98,7 @@ export const SfAsideList = ({
       button={
         <Flex direction="row" gapRow={1}>
           {onCreateClick && (
-            <Button onClick={onCreateClick} view="flat-action" size="s">
+            <Button onClick={onCreateClick} view="glass" size="m">
               <Button.Icon>
                 <AppIcon.ActionAdd />
               </Button.Icon>

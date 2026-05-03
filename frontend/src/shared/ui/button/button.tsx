@@ -3,7 +3,7 @@ import cx from 'clsx';
 import { forwardRef } from 'react';
 import './button.scss';
 
-const customViews = ['utility', 'danger', 'link'] as const;
+const customViews = ['utility', 'danger', 'link', 'glass'] as const;
 
 type BaseView =
   | 'normal'

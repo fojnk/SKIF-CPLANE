@@ -39,7 +39,7 @@ func (s *StreamflowTestSuite) TestExperimentCopyCrossNs() {
 		Request: &models2.RequestsCreateDatasetRequestV2{
 			Name:      ptr("test-dataset"),
 			ProjectID: &projRes.Payload.ID,
-			Type:      "Queue",
+			Type:      ptr("json"),
 		},
 		Context: s.ctx,
 	})
@@ -245,7 +245,7 @@ func (s *StreamflowTestSuite) TestExperimentCopySameNsSameProject() {
 		Request: &models2.RequestsCreateDatasetRequestV2{
 			Name:      ptr("test-dataset"),
 			ProjectID: &projRes.Payload.ID,
-			Type:      "Queue",
+			Type:      ptr("json"),
 		},
 		Context: s.ctx,
 	})

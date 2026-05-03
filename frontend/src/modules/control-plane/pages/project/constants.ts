@@ -6,7 +6,6 @@ import {
 
 export const NO_SCROLL_TABS: ProjectTabType[] = ['content', 'config'];
 export const NO_SCROLL_TABS_PIPE: ExperimentTabType[] = [
-  'grafana',
   'config',
   'monitoring',
 ];
@@ -49,8 +48,8 @@ export const ExperimentTabsOptions = [
     title: 'Переменные',
   },
   {
-    id: 'grafana',
-    title: 'Grafana',
+    id: 'jobs',
+    title: 'Запуски',
   },
   {
     id: 'links',
@@ -98,9 +97,9 @@ export const DatasetTabsOptions = [
 ] as const;
 
 export const dsAccessFilter = [
-  { value: 'all', content: 'All' },
-  { value: 'public', content: 'Public' },
-  { value: 'private', content: 'Private' },
+  { value: 'all', content: 'Все' },
+  { value: 'public', content: 'Публичные' },
+  { value: 'private', content: 'Приватные' },
 ];
 
 export const severity = {

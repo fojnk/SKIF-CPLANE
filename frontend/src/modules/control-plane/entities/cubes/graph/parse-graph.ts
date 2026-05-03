@@ -53,6 +53,16 @@ interface ParsedCube {
   hasError: boolean;
   paramsName?: string;
   paramsValues?: Record<string, unknown>;
+  /** Текст из поля Description / description куба в конфиге */
+  modelDescription?: string;
+}
+
+function readMergedCubeModelDescription(cube: MergedConfigCube): string | undefined {
+  const raw = cube.Description ?? cube.description;
+  if (typeof raw !== 'string') {
+    return undefined;
+  }
+  return raw.trim() === '' ? undefined : raw;
 }
 
 // ============================================================================
@@ -197,6 +207,7 @@ export function parseGraphConfig(
         outputPorts,
         inputsMapping: cube.InputsMapping || {},
         hasError: true,
+        modelDescription: readMergedCubeModelDescription(cube),
       });
       return;
     }
@@ -265,6 +276,7 @@ export function parseGraphConfig(
       hasError,
       paramsName,
       paramsValues,
+      modelDescription: readMergedCubeModelDescription(cube),
     });
   });
 
@@ -457,6 +469,7 @@ export function parseGraphConfig(
       cubeHash: cube.hash,
       cubeId: cube.cubeId > 0 ? cube.cubeId : undefined,
       baseCubeName,
+      modelDescription: cube.modelDescription,
       inputPorts: cube.inputPorts,
       outputPorts: cube.outputPorts,
       type: cube.cubeType,

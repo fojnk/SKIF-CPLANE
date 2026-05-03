@@ -6,10 +6,26 @@ import { UserRightsDC } from '@/modules/control-plane/shared/types';
 
 type UsersQuery = controlPlaneApi.dc.V2AclUsersListParamsDC;
 
+const isForbiddenError = (error: unknown): boolean =>
+  typeof error === 'object' &&
+  error !== null &&
+  'status' in error &&
+  Number((error as { status?: unknown }).status) === 403;
+
 const usersQuery = createQuery({
   async handler(query: UsersQuery) {
-    const result = await controlPlaneApi.acl.v2AclUsersList(query);
-    return result.data;
+    try {
+      const result = await controlPlaneApi.acl.v2AclUsersList(query);
+      return result.data;
+    } catch (error) {
+      if (isForbiddenError(error)) {
+        return {
+          users: [],
+          total: 0,
+        };
+      }
+      throw error;
+    }
   },
 });
 const load = createEvent<UsersQuery>();

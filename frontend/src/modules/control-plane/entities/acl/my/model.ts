@@ -6,10 +6,23 @@ import { AclRightDC } from '@/modules/control-plane/shared/types';
 
 type CheckQuery = controlPlaneApi.dc.V2AclCheckListParamsDC;
 
+const isForbiddenError = (error: unknown): boolean =>
+  typeof error === 'object' &&
+  error !== null &&
+  'status' in error &&
+  Number((error as { status?: unknown }).status) === 403;
+
 const usersQuery = createQuery({
   async handler(query: CheckQuery) {
-    const result = await controlPlaneApi.acl.v2AclCheckList(query);
-    return result.data;
+    try {
+      const result = await controlPlaneApi.acl.v2AclCheckList(query);
+      return result.data;
+    } catch (error) {
+      if (isForbiddenError(error)) {
+        return { rights: [] };
+      }
+      throw error;
+    }
   },
 });
 const load = createEvent<CheckQuery>();

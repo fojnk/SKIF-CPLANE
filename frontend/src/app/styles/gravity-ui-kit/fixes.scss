@@ -39,19 +39,20 @@
     --g-card-box-shadow: 1px 3px 13px 0px var(--g-color-sfx-shadow-light), 0px 1px 6px 0px var(--g-color-sfx-shadow-light);
   }
 
-  .g-button_view_action:not(.g-button_disabled),
-  .g-button_view_action:not(.g-button_disabled):link,
-  .g-button_view_action:not(.g-button_disabled):visited,
-  .g-button_view_action:not(.g-button_disabled):active,
-  .g-button_view_action:not(.g-button_disabled):focus {
+  /* «Стеклянные» кнопки (создание сущностей) — view action + класс glass; для них цвет текста задаётся в button.scss под тему */
+  .g-button_view_action:not(.g-button_disabled):not(.glass),
+  .g-button_view_action:not(.g-button_disabled):not(.glass):link,
+  .g-button_view_action:not(.g-button_disabled):not(.glass):visited,
+  .g-button_view_action:not(.g-button_disabled):not(.glass):active,
+  .g-button_view_action:not(.g-button_disabled):not(.glass):focus {
     color: var(--g-color-text-light-primary);
   }
 
-  .g-button_view_action.g-button_loading,
-  .g-button_view_action.g-button_loading:link,
-  .g-button_view_action.g-button_loading:visited,
-  .g-button_view_action.g-button_loading:active,
-  .g-button_view_action.g-button_loading:focus {
+  .g-button_view_action.g-button_loading:not(.glass),
+  .g-button_view_action.g-button_loading:not(.glass):link,
+  .g-button_view_action.g-button_loading:not(.glass):visited,
+  .g-button_view_action.g-button_loading:not(.glass):active,
+  .g-button_view_action.g-button_loading:not(.glass):focus {
     color: var(--g-color-text-light-secondary);
   }
 
@@ -72,7 +73,9 @@
   .g-dialog-footer {
     position: sticky;
     bottom: 0;
-    background: var(--g-color-base-modal);
+    background: var(--sf-modal-glass-bg, var(--g-color-base-modal));
+    backdrop-filter: var(--sf-modal-glass-footer-backdrop, none);
+    -webkit-backdrop-filter: var(--sf-modal-glass-footer-backdrop, none);
     border-bottom-left-radius: var(--g-modal-border-radius);
     border-bottom-right-radius: var(--g-modal-border-radius);
     z-index: 1;
@@ -103,6 +106,10 @@
     table {
       width: 100%;
     }
+  }
+
+  .sf-table--row-clickable tbody tr {
+    cursor: pointer;
   }
 
   .table--fixed {

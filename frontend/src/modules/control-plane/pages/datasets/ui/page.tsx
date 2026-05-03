@@ -3,7 +3,7 @@ import { useUnit } from 'effector-react';
 import React from 'react';
 
 import { dataSourcesPageModel } from '@/modules/control-plane/pages/datasets';
-import { ListPage } from '@/modules/control-plane/shared/layouts';
+import { ListPage, PageTitle } from '@/modules/control-plane/shared/layouts';
 import {
   CatalogRadioGroup,
   catalogRadioGroupList,
@@ -36,13 +36,11 @@ export const SFDatasetsPage = () => {
         <Flex direction="row" justifyContent="space-between">
           <Flex
             direction="row"
-            gap={4}
+            gap={5}
             alignItems="center"
-            style={{ width: 'calc(100% - 120px)' }}
+            style={{ width: 'calc(100% - 120px)', flexWrap: 'wrap' }}
           >
-            <Text variant="header-1" ellipsis>
-              Catalog
-            </Text>
+            <PageTitle>Каталог</PageTitle>
             <CatalogRadioGroup active={catalogRadioGroupList.dataSources} />
           </Flex>
         </Flex>
@@ -66,17 +64,15 @@ export const SFDatasetsPage = () => {
       <Flex direction="row" justifyContent="space-between">
         <Flex
           direction="row"
-          gap={4}
+          gap={5}
           alignItems="center"
-          style={{ width: 'calc(100% - 120px)' }}
+          style={{ width: 'calc(100% - 120px)', flexWrap: 'wrap' }}
         >
-          <Text variant="header-1" ellipsis>
-            Catalog
-          </Text>
+          <PageTitle>Каталог</PageTitle>
           <CatalogRadioGroup active={catalogRadioGroupList.dataSources} />
           {totalPages > 1 && (
             <Text variant="body-2" color="secondary" className="no-shrink">
-              page {currentPage} of {totalPages}
+              Страница {currentPage} из {totalPages}
             </Text>
           )}
         </Flex>

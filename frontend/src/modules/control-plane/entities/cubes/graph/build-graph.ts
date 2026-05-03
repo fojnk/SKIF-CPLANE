@@ -155,12 +155,18 @@ export function buildGraphFromCubes(
       outputPorts = [];
     }
 
+    const modelDescription =
+      typeof cube.Description === 'string' && cube.Description.trim() !== ''
+        ? cube.Description
+        : undefined;
+
     return {
       id: nodeId,
       label,
       cubeHash: cube.Hash,
       cubeId: cube.CubeID,
       baseCubeName,
+      modelDescription,
       outputPorts,
       inputPorts,
       type: cube.CubeType,

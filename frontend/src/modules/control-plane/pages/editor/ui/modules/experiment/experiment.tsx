@@ -1,6 +1,5 @@
-import { Flex, Switch } from '@gravity-ui/uikit';
 import { useUnit } from 'effector-react';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { Form } from 'react-final-form';
 
 import {
@@ -291,17 +290,6 @@ export const Experiment = () => {
   const variablesData = useUnit(editorPageModel.variables.$data);
   const currentMode = queryParams.mode || 'code';
 
-  // Загружаем начальное состояние debug mode из localStorage
-  const [debugMode, setDebugMode] = useState(() => {
-    const saved = localStorage.getItem('experiment-editor-debug-mode');
-    return saved === 'true';
-  });
-
-  // Сохраняем состояние debug mode в localStorage при изменении
-  useEffect(() => {
-    localStorage.setItem('experiment-editor-debug-mode', String(debugMode));
-  }, [debugMode]);
-
   // При hot reload данные формы могут сброситься в null — перезагружаем их
   useEffect(() => {
     if (experimentFormData === null && !experimentFormLoading) {
@@ -341,21 +329,8 @@ export const Experiment = () => {
     [experimentFormData],
   );
 
-  // Компонент для headerAfterButtons (показываем только в режиме form)
-  const debugControls =
-    currentMode === 'form' ? (
-      <Flex direction="row" alignItems="center" gap={2}>
-        <Switch
-          content="debug mode"
-          checked={debugMode}
-          onUpdate={setDebugMode}
-          size="m"
-        />
-      </Flex>
-    ) : null;
-
   return (
-    <EditorLayout onSave={handleSave} headerAfterButtons={debugControls}>
+    <EditorLayout onSave={handleSave}>
       {currentMode === 'form' && hasFormParams ? (
         <Form
           onSubmit={() => {}}
@@ -382,8 +357,6 @@ export const Experiment = () => {
                   experiment_id={data.id!}
                   experiment_name={data.name!}
                   variables={variablesData}
-                  debugMode={currentMode === 'form' && debugMode}
-                  currentConfig={currentConfig}
                 />
               )}
             </>

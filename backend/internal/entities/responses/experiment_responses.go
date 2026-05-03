@@ -93,6 +93,8 @@ type SupervisorModelJob struct {
 	ModelName    string `json:"model_name"`
 	Status       string `json:"status"`
 	ErrorMessage string `json:"error_message,omitempty"`
+	StartTime    string `json:"start_time,omitempty"`
+	EndTime      string `json:"end_time,omitempty"`
 }
 
 // SupervisorExperimentRun нормализованный снимок GET /api/experiments/{id}/status.

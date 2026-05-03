@@ -36,7 +36,7 @@ func (s *StreamflowTestSuite) TestExperimentDatasetsBasic() {
 		Request: &models2.RequestsCreateDatasetRequestV2{
 			Name:      ptr("test-dataset-experiment-datasets"),
 			ProjectID: &projRes.Payload.ID,
-			Type:      "Queue",
+			Type:      ptr("json"),
 		},
 		Context: s.ctx,
 	})
@@ -125,7 +125,7 @@ func (s *StreamflowTestSuite) TestExperimentDatasetsBasic() {
 		Request: &models2.RequestsCreateDatasetRequestV2{
 			Name:      ptr("test-dataset-experiment-datasets-2"),
 			ProjectID: &projRes.Payload.ID,
-			Type:      "Queue",
+			Type:      ptr("json"),
 		},
 		Context: s.ctx,
 	})

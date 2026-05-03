@@ -8,6 +8,7 @@
       "version": "1.0",
       "language": "PYTHON",
       "modelPath": "model_01",
+      "description": "Предобработка входных данных",
       "parameters": {}
     },
     {

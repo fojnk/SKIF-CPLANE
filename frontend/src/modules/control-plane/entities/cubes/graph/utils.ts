@@ -535,6 +535,10 @@ export const convertCubesToFormFormat = (
       result[cube.ParamsName] = cleanedParams;
     }
 
+    if (cube.Description != null && String(cube.Description).trim() !== '') {
+      result.Description = cube.Description;
+    }
+
     return result;
   });
 };

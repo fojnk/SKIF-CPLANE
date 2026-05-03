@@ -4,9 +4,9 @@ import React, { useMemo, useEffect } from 'react';
 
 import {
   ExperimentTabsOptions,
+  NO_SCROLL_TABS_PIPE,
   projectPageModel,
 } from '@/modules/control-plane/pages/project';
-import { NO_SCROLL_TABS_PIPE } from '@/modules/control-plane/pages/project/constants';
 import { controlPlaneApi } from '@/modules/control-plane/shared/api';
 import { SfTabContent } from '@/modules/control-plane/shared/layout';
 import {
@@ -19,12 +19,14 @@ import {
   ConfigTab,
   HistoryTab,
   DsTab,
-  GrafanaTab,
   LinksTab,
   VariablesTab,
   VersionsTab,
   JobsTab,
 } from './tabs';
+
+const isListedExperimentTab = (id: ExperimentTabType) =>
+  ExperimentTabsOptions.some((t) => t.id === id);
 
 interface Props {
   experiment_id: number;
@@ -68,15 +70,23 @@ const useExperimentTabs = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (!isListedExperimentTab(tab)) {
+      setTab('config');
+    }
+  }, [tab, setTab]);
+
+  const activeTab = isListedExperimentTab(tab) ? tab : 'config';
+
   // Мемоизация состояния
   const state = useMemo<ExperimentTabsState>(
     () => ({
       experimentId: experiment_id,
       project,
-      activeTab: tab,
-      scrollable: !NO_SCROLL_TABS_PIPE.includes(tab),
+      activeTab,
+      scrollable: !NO_SCROLL_TABS_PIPE.includes(activeTab),
     }),
-    [experiment_id, tab, project],
+    [experiment_id, activeTab, project],
   );
 
   const handlers = useMemo<ExperimentTabsHandlers>(
@@ -101,8 +111,6 @@ const renderTabContent = (
   switch (activeTab) {
     case 'config':
       return <ConfigTab experiment_id={experimentId} project={project} />;
-    case 'grafana':
-      return <GrafanaTab experiment_id={experimentId} />;
     case 'acl':
       return <AclTab experiment_id={experimentId} />;
     case 'ds':
