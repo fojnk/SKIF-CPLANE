@@ -1,9 +1,8 @@
-import {
-  SegmentedRadioGroup,
-  SegmentedRadioGroupOption,
-} from '@gravity-ui/uikit';
+import { SegmentedRadioGroup } from '@gravity-ui/uikit';
 
 import { navigationModel } from '@/modules/control-plane/features/navigation';
+
+import styles from '@/modules/control-plane/shared/ui/segmented-glass-bar/segmented-glass-bar.module.scss';
 
 export type catalogRadioGroupProps = {
   active: catalogRadioGroupList;
@@ -29,19 +28,26 @@ export const CatalogRadioGroup = ({
   };
 
   return (
-    <SegmentedRadioGroup defaultValue={active} onUpdate={updateHandler}>
-      <SegmentedRadioGroupOption
-        value={catalogRadioGroupList.projects}
-        content="Проекты"
-      />
-      <SegmentedRadioGroupOption
-        value={catalogRadioGroupList.dataSources}
-        content="Датасеты"
-      />
-      <SegmentedRadioGroupOption
-        value={catalogRadioGroupList.namespaces}
-        content="Рабочие пространства"
-      />
-    </SegmentedRadioGroup>
+    <div className={styles.bar}>
+      <SegmentedRadioGroup
+        className={styles.segments}
+        defaultValue={active}
+        onUpdate={updateHandler}
+        size="l"
+      >
+        <SegmentedRadioGroup.Option
+          value={catalogRadioGroupList.projects}
+          content="Проекты"
+        />
+        <SegmentedRadioGroup.Option
+          value={catalogRadioGroupList.dataSources}
+          content="Наборы данных"
+        />
+        <SegmentedRadioGroup.Option
+          value={catalogRadioGroupList.namespaces}
+          content="Пространства"
+        />
+      </SegmentedRadioGroup>
+    </div>
   );
 };

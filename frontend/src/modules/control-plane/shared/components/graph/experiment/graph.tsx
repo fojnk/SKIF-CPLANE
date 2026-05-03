@@ -54,6 +54,11 @@ interface GraphProps {
   onConnectionCreate?: (connection: ConnectionData) => void;
   onConnectionDelete?: (connection: ConnectionData) => void;
   isEditable?: boolean;
+  /**
+   * Удаление выбранной ноды по Delete/Backspace, когда граф не в режиме редактирования связей
+   * (например супервизор: models[]).
+   */
+  allowKeyboardCubeDelete?: boolean;
   experiment_id?: number;
   experiment_name?: string;
   variables?: ExperimentVariableItem[] | null;
@@ -103,6 +108,7 @@ const GraphContent = ({
   onConnectionCreate,
   onConnectionDelete,
   isEditable = false,
+  allowKeyboardCubeDelete = false,
   experiment_id,
   experiment_name,
   variables,
@@ -395,47 +401,59 @@ const GraphContent = ({
   // Обработчик нажатия клавиш для удаления (edge или cube)
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
-      if (!isEditable) return;
-      if (!selectedEdgeId && !selectedCubeId) return;
+      if (event.key !== 'Backspace' && event.key !== 'Delete') {
+        return;
+      }
+      if (!selectedEdgeId && !selectedCubeId) {
+        return;
+      }
 
-      if (event.key === 'Backspace' || event.key === 'Delete') {
-        event.preventDefault();
+      const canDeleteEdge = isEditable && selectedEdgeId;
+      const canDeleteCube =
+        selectedCubeId &&
+        onCubeDelete &&
+        (isEditable || allowKeyboardCubeDelete);
 
-        // Приоритет: сначала удаляем edge, потом cube
-        if (selectedEdgeId) {
-          const edgeToDelete = edges.find((e) => e.id === selectedEdgeId);
-          if (edgeToDelete && onConnectionDelete) {
-            if (
-              edgeToDelete.source &&
-              edgeToDelete.sourceHandle &&
-              edgeToDelete.target &&
-              edgeToDelete.targetHandle
-            ) {
-              onConnectionDelete({
-                sourceNodeId: edgeToDelete.source,
-                sourcePortHash: edgeToDelete.sourceHandle,
-                targetNodeId: edgeToDelete.target,
-                targetPortHash: edgeToDelete.targetHandle,
-              });
-            }
+      if (!canDeleteEdge && !canDeleteCube) {
+        return;
+      }
+
+      event.preventDefault();
+
+      // Приоритет: сначала удаляем edge, потом cube
+      if (canDeleteEdge) {
+        const edgeToDelete = edges.find((e) => e.id === selectedEdgeId);
+        if (edgeToDelete && onConnectionDelete) {
+          if (
+            edgeToDelete.source &&
+            edgeToDelete.sourceHandle &&
+            edgeToDelete.target &&
+            edgeToDelete.targetHandle
+          ) {
+            onConnectionDelete({
+              sourceNodeId: edgeToDelete.source,
+              sourcePortHash: edgeToDelete.sourceHandle,
+              targetNodeId: edgeToDelete.target,
+              targetPortHash: edgeToDelete.targetHandle,
+            });
           }
-          setSelectedEdgeId(null);
-        } else if (selectedCubeId && onCubeDelete) {
-          // Находим ноду чтобы получить имя куба
-          const selectedNode = nodes.find(
-            (n) => n.data?.cubeHash === selectedCubeId,
-          );
-          const cubeName =
-            typeof selectedNode?.data?.label === 'string'
-              ? selectedNode.data.label
-              : selectedCubeId;
-          // Удаляем выделенный куб
-          onCubeDelete(selectedCubeId, cubeName);
         }
+        setSelectedEdgeId(null);
+      } else if (canDeleteCube) {
+        // Находим ноду чтобы получить имя куба
+        const selectedNode = nodes.find(
+          (n) => n.data?.cubeHash === selectedCubeId,
+        );
+        const cubeName =
+          typeof selectedNode?.data?.label === 'string'
+            ? selectedNode.data.label
+            : selectedCubeId!;
+        onCubeDelete(selectedCubeId!, cubeName);
       }
     },
     [
       isEditable,
+      allowKeyboardCubeDelete,
       selectedEdgeId,
       selectedCubeId,
       edges,
@@ -540,6 +558,7 @@ export const Graph = ({
   onConnectionCreate,
   onConnectionDelete,
   isEditable = false,
+  allowKeyboardCubeDelete = false,
   experiment_id,
   experiment_name,
   variables,
@@ -558,6 +577,7 @@ export const Graph = ({
         onConnectionCreate={onConnectionCreate}
         onConnectionDelete={onConnectionDelete}
         isEditable={isEditable}
+        allowKeyboardCubeDelete={allowKeyboardCubeDelete}
         experiment_id={experiment_id}
         experiment_name={experiment_name}
         variables={variables}

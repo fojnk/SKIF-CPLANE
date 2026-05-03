@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 
 import { ControlPlaneModule } from '@/modules/control-plane/config';
 import { loginPageModel } from '@/modules/control-plane/pages/login';
+import {
+  AuthPageBranding,
+  AuthPageLayout,
+} from '@/modules/control-plane/shared/ui/auth-page';
+import authCss from '@/modules/control-plane/shared/ui/auth-page/auth-page.module.scss';
 import { Link } from '@/shared/lib/routing';
-import { ControlPlaneLogo } from '@/shared/ui/service-icon';
-
-import { BackgroundImageIcon } from '../assets';
-
-import css from './page.module.scss';
 
 export const LoginPage = () => {
   const [loading, setLoading] = useState(false);
@@ -40,43 +40,53 @@ export const LoginPage = () => {
   }, [isAuto, onAutoLogin]);
 
   return (
-    <div className={css.loginPage}>
-      <BackgroundImageIcon className={css.backgroundImage} />
-      <div className={css.content}>
-        <ControlPlaneLogo style={{ width: '96px', height: '96px' }} />
-        <Text
-          className={css.title}
-          variant="display-2"
-          whiteSpace="break-spaces"
-          color="light-primary"
-        >
-          Вход в систему
-        </Text>
-        <div className={css.form}>
-          <TextInput
-            size="xl"
-            value={username}
-            placeholder="Логин"
-            onUpdate={setUsername}
-          />
-          <TextInput
-            size="xl"
-            value={password}
-            type="password"
-            placeholder="Пароль"
-            onUpdate={setPassword}
-          />
-          {error && <Text variant="body-2">{error}</Text>}
-        </div>
-        <Button size="xl" view="action" onClick={handleClick} loading={loading}>
-          {loading ? 'Подождите...' : 'Войти'}
-        </Button>
-        <div className={css.footer}>
-          <Link to={ControlPlaneModule.routes.register} className={css.subLink}>
-            Создать аккаунт
-          </Link>
-        </div>
+    <AuthPageLayout>
+      <AuthPageBranding />
+      <Text
+        className={authCss.title}
+        variant="header-1"
+        whiteSpace="break-spaces"
+        color="light-primary"
+      >
+        Вход в систему
+      </Text>
+      <div className={authCss.form}>
+        <TextInput
+          size="xl"
+          value={username}
+          placeholder="Логин"
+          onUpdate={setUsername}
+        />
+        <TextInput
+          size="xl"
+          value={password}
+          type="password"
+          placeholder="Пароль"
+          onUpdate={setPassword}
+        />
+        {error && (
+          <Text variant="body-2" color="danger">
+            {error}
+          </Text>
+        )}
       </div>
-    </div>
+      <Button
+        className={authCss.primaryAction}
+        size="xl"
+        view="action"
+        onClick={handleClick}
+        loading={loading}
+      >
+        {loading ? 'Подождите...' : 'Войти'}
+      </Button>
+      <div className={authCss.footer}>
+        <Link
+          to={ControlPlaneModule.routes.register}
+          className={authCss.subLink}
+        >
+          Создать аккаунт
+        </Link>
+      </div>
+    </AuthPageLayout>
   );
 };

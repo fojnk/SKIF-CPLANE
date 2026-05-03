@@ -187,6 +187,7 @@ type Querier interface {
 	SelectExperimentTemplateVs(ctx context.Context, parentID int32) ([]SelectExperimentTemplateVsRow, error)
 	SelectExperimentTemplates(ctx context.Context, namespaceID int32) ([]SelectExperimentTemplatesRow, error)
 	SelectExperimentUpdateLogs(ctx context.Context, arg SelectExperimentUpdateLogsParams) ([]SelectExperimentUpdateLogsRow, error)
+	SelectExperimentUpdateLogsByActs(ctx context.Context, arg SelectExperimentUpdateLogsByActsParams) ([]SelectExperimentUpdateLogsByActsRow, error)
 	SelectExperimentVariable(ctx context.Context, id int32) (SelectExperimentVariableRow, error)
 	SelectExperimentVariableV2(ctx context.Context, arg SelectExperimentVariableV2Params) (SelectExperimentVariableV2Row, error)
 	SelectExperimentVariableVersion(ctx context.Context, id int32) (TExperimentVariableV, error)

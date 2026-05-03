@@ -2,8 +2,6 @@ import {
   Databases,
   LayoutSplitRows,
   Briefcase,
-  File,
-  Bug,
   Cubes3,
   CurlyBrackets,
 } from '@gravity-ui/icons';
@@ -16,6 +14,7 @@ import { ShowCubesMarketModel } from '@/modules/control-plane/features/cubes/mar
 import { navigationModel } from '@/modules/control-plane/features/navigation';
 import { VariableShowListModel } from '@/modules/control-plane/features/variable/show-list';
 import { editorPageModel } from '@/modules/control-plane/pages/editor';
+import { AuthRingParticles } from '@/modules/control-plane/shared/ui/auth-page';
 import { BaseLayout } from '@/routing';
 
 import { MyBreadcrumbs } from './breadcrumbs';
@@ -33,6 +32,11 @@ export const PageLayout = ({ children }: { children?: ReactNode }) => {
   const isProjectsOpened = useUnit(ControlPlaneModule.routes.root.$isOpened);
   const isDatasetsOpened = useUnit(ControlPlaneModule.routes.dataSources.$isOpened);
   const isNamespacesOpened = useUnit(ControlPlaneModule.routes.namespaces.$isOpened);
+  const isUpdatesPage = useUnit(ControlPlaneModule.routes.updates.$isOpened);
+  const isStudyPage = useUnit(ControlPlaneModule.routes.study.$isOpened);
+  const isAboutPlatformPage = useUnit(ControlPlaneModule.routes.aboutPlatform.$isOpened);
+  const showContentParticles =
+    isUpdatesPage || isStudyPage || isAboutPlatformPage;
 
   // Данные для experiment editor
   const experimentData = useUnit(editorPageModel.editor.$data);
@@ -127,33 +131,24 @@ export const PageLayout = ({ children }: { children?: ReactNode }) => {
     <BaseLayout.Container
       className="sf-layout"
       menuItems={menuItems}
-      extraFooterItems={[
-        {
-          id: 'documentation-badge',
-          title: 'Документация',
-          icon: File,
-          onItemClick: () =>
-            window.open(
-              'https://docs.vk.team/control-plane/index.html',
-              '_blank',
-            ),
-        },
-        {
-          id: 'contact_us',
-          title: 'Сообщите нам о баге',
-          icon: Bug,
-          onItemClick: () =>
-            window.open(
-              'https://jira.vk.team/secure/CreateIssue.jspa?issuetype=1&pid=72973',
-              '_blank',
-            ),
-        },
-      ]}
+      omitAsideLogo
     >
-      <BaseLayout.Header topAligned>
-        <MyBreadcrumbs />
-      </BaseLayout.Header>
-      {children}
+      <div className="sf-page-content-with-particles">
+        {showContentParticles && (
+          <div
+            className="sf-page-content-with-particles__backdrop"
+            aria-hidden
+          >
+            <AuthRingParticles />
+          </div>
+        )}
+        <div className="sf-page-content-with-particles__above">
+          <BaseLayout.Header topAligned>
+            <MyBreadcrumbs />
+          </BaseLayout.Header>
+          {children}
+        </div>
+      </div>
     </BaseLayout.Container>
   );
 };

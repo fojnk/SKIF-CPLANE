@@ -5,7 +5,7 @@ import { controlPlaneApi } from '@/modules/control-plane/shared/api';
 import { JobsDCStatus } from '@/modules/control-plane/shared/types';
 
 interface JobsStatusLabelProps {
-  status?: JobsDCStatus;
+  status?: JobsDCStatus | string;
   description?: string;
   size?: 'xs' | 's' | 'm';
 }

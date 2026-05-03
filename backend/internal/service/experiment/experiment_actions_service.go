@@ -164,6 +164,21 @@ func mapJavaSupervisorStatusToDTO(java string) dto.ExperimentStatus {
 	}
 }
 
+func wireRawToOptionalString(r json.RawMessage) string {
+	if len(r) == 0 {
+		return ""
+	}
+	var s string
+	if err := json.Unmarshal(r, &s); err == nil {
+		return strings.TrimSpace(s)
+	}
+	var n json.Number
+	if err := json.Unmarshal(r, &n); err == nil {
+		return n.String()
+	}
+	return strings.TrimSpace(strings.Trim(string(r), `"`))
+}
+
 func mapWireStatusToRun(st *supervisorstatus.WireExperimentStatus) responses.SupervisorExperimentRun {
 	jobs := make([]responses.SupervisorModelJob, 0, len(st.ModelStatuses))
 	orders := make([]int, 0, len(st.ModelStatuses))
@@ -182,6 +197,8 @@ func mapWireStatusToRun(st *supervisorstatus.WireExperimentStatus) responses.Sup
 			ModelName:    ms.ModelName,
 			Status:       ms.Status,
 			ErrorMessage: ms.ErrorMessage,
+			StartTime:    wireRawToOptionalString(ms.StartTime),
+			EndTime:      wireRawToOptionalString(ms.EndTime),
 		})
 	}
 	progress := ""

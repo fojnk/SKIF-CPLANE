@@ -30,6 +30,8 @@ export interface BaseTemplateProps {
   extraFooterItems?: MenuItem[];
   defaultCompactNavbar?: boolean;
   customLogo?: LogoProps;
+  /** Не показывать логотип в верхней части боковой панели */
+  omitAsideLogo?: boolean;
 }
 
 const Aside = loadable(
@@ -46,6 +48,7 @@ export const Container = ({
   extraFooterItems,
   defaultCompactNavbar = true,
   customLogo,
+  omitAsideLogo,
 }: BaseTemplateProps) => {
   const [compact, setCompact] = useStorageSyncState(defaultCompactNavbar, {
     key: 'navbar-compact-view',
@@ -91,6 +94,7 @@ export const Container = ({
           subheaderMenuItems={subheaderMenuItems}
           extraFooterItems={extraFooterItems}
           customLogo={customLogo}
+          omitAsideLogo={omitAsideLogo}
         />
       )}
       <PageLayout.Content>

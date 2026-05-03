@@ -70,6 +70,20 @@ func (mr *MockDBMockRecorder) AddRuleToRole(ctx, arg any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddRuleToRole", reflect.TypeOf((*MockDB)(nil).AddRuleToRole), ctx, arg)
 }
 
+// AddUserToGlobalReaderGroup mocks base method.
+func (m *MockDB) AddUserToGlobalReaderGroup(ctx context.Context, userID int32) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "AddUserToGlobalReaderGroup", ctx, userID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// AddUserToGlobalReaderGroup indicates an expected call of AddUserToGlobalReaderGroup.
+func (mr *MockDBMockRecorder) AddUserToGlobalReaderGroup(ctx, userID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "AddUserToGlobalReaderGroup", reflect.TypeOf((*MockDB)(nil).AddUserToGlobalReaderGroup), ctx, userID)
+}
+
 // AddUserToGroup mocks base method.
 func (m *MockDB) AddUserToGroup(ctx context.Context, arg core.AddUserToGroupParams) error {
 	m.ctrl.T.Helper()
@@ -187,6 +201,21 @@ func (m *MockDB) CountAppUpdatesPaginated(ctx context.Context, dollar_1 *bool) (
 func (mr *MockDBMockRecorder) CountAppUpdatesPaginated(ctx, dollar_1 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountAppUpdatesPaginated", reflect.TypeOf((*MockDB)(nil).CountAppUpdatesPaginated), ctx, dollar_1)
+}
+
+// CountPermissionRequestsForAdmin mocks base method.
+func (m *MockDB) CountPermissionRequestsForAdmin(ctx context.Context, statusFilter pgtype.Text) (int64, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "CountPermissionRequestsForAdmin", ctx, statusFilter)
+	ret0, _ := ret[0].(int64)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// CountPermissionRequestsForAdmin indicates an expected call of CountPermissionRequestsForAdmin.
+func (mr *MockDBMockRecorder) CountPermissionRequestsForAdmin(ctx, statusFilter any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CountPermissionRequestsForAdmin", reflect.TypeOf((*MockDB)(nil).CountPermissionRequestsForAdmin), ctx, statusFilter)
 }
 
 // CreateUserRoles mocks base method.
@@ -923,6 +952,21 @@ func (mr *MockDBMockRecorder) GetLinksCountByExperimentID(ctx, experimentID any)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLinksCountByExperimentID", reflect.TypeOf((*MockDB)(nil).GetLinksCountByExperimentID), ctx, experimentID)
 }
 
+// GetLocalRegisteredUserProfile mocks base method.
+func (m *MockDB) GetLocalRegisteredUserProfile(ctx context.Context, name string) (core.GetLocalRegisteredUserProfileRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetLocalRegisteredUserProfile", ctx, name)
+	ret0, _ := ret[0].(core.GetLocalRegisteredUserProfileRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetLocalRegisteredUserProfile indicates an expected call of GetLocalRegisteredUserProfile.
+func (mr *MockDBMockRecorder) GetLocalRegisteredUserProfile(ctx, name any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetLocalRegisteredUserProfile", reflect.TypeOf((*MockDB)(nil).GetLocalRegisteredUserProfile), ctx, name)
+}
+
 // GetNamespacesWithoutRole mocks base method.
 func (m *MockDB) GetNamespacesWithoutRole(ctx context.Context) ([]core.TNamespace, error) {
 	m.ctrl.T.Helper()
@@ -936,6 +980,21 @@ func (m *MockDB) GetNamespacesWithoutRole(ctx context.Context) ([]core.TNamespac
 func (mr *MockDBMockRecorder) GetNamespacesWithoutRole(ctx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNamespacesWithoutRole", reflect.TypeOf((*MockDB)(nil).GetNamespacesWithoutRole), ctx)
+}
+
+// GetPermissionRequestByID mocks base method.
+func (m *MockDB) GetPermissionRequestByID(ctx context.Context, id int32) (core.TPermissionRequest, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetPermissionRequestByID", ctx, id)
+	ret0, _ := ret[0].(core.TPermissionRequest)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetPermissionRequestByID indicates an expected call of GetPermissionRequestByID.
+func (mr *MockDBMockRecorder) GetPermissionRequestByID(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetPermissionRequestByID", reflect.TypeOf((*MockDB)(nil).GetPermissionRequestByID), ctx, id)
 }
 
 // GetProjectNamespace mocks base method.
@@ -981,6 +1040,21 @@ func (m *MockDB) GetProjectsWithoutRole(ctx context.Context) ([]core.TProject, e
 func (mr *MockDBMockRecorder) GetProjectsWithoutRole(ctx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetProjectsWithoutRole", reflect.TypeOf((*MockDB)(nil).GetProjectsWithoutRole), ctx)
+}
+
+// GetRegisteredUserByLogin mocks base method.
+func (m *MockDB) GetRegisteredUserByLogin(ctx context.Context, name string) (core.GetRegisteredUserByLoginRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetRegisteredUserByLogin", ctx, name)
+	ret0, _ := ret[0].(core.GetRegisteredUserByLoginRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetRegisteredUserByLogin indicates an expected call of GetRegisteredUserByLogin.
+func (mr *MockDBMockRecorder) GetRegisteredUserByLogin(ctx, name any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetRegisteredUserByLogin", reflect.TypeOf((*MockDB)(nil).GetRegisteredUserByLogin), ctx, name)
 }
 
 // GetRoleMatches mocks base method.
@@ -1569,6 +1643,21 @@ func (mr *MockDBMockRecorder) InsertNewUsers(ctx, name any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertNewUsers", reflect.TypeOf((*MockDB)(nil).InsertNewUsers), ctx, name)
 }
 
+// InsertPermissionRequest mocks base method.
+func (m *MockDB) InsertPermissionRequest(ctx context.Context, arg core.InsertPermissionRequestParams) (core.TPermissionRequest, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "InsertPermissionRequest", ctx, arg)
+	ret0, _ := ret[0].(core.TPermissionRequest)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// InsertPermissionRequest indicates an expected call of InsertPermissionRequest.
+func (mr *MockDBMockRecorder) InsertPermissionRequest(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertPermissionRequest", reflect.TypeOf((*MockDB)(nil).InsertPermissionRequest), ctx, arg)
+}
+
 // InsertPinnedProject mocks base method.
 func (m *MockDB) InsertPinnedProject(ctx context.Context, arg core.InsertPinnedProjectParams) (core.TUserPinnedProject, error) {
 	m.ctrl.T.Helper()
@@ -1748,6 +1837,36 @@ func (mr *MockDBMockRecorder) IsExistsActiveBlockBanners(ctx any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsExistsActiveBlockBanners", reflect.TypeOf((*MockDB)(nil).IsExistsActiveBlockBanners), ctx)
 }
 
+// ListMyPermissionRequests mocks base method.
+func (m *MockDB) ListMyPermissionRequests(ctx context.Context, requesterUserID int32) ([]core.TPermissionRequest, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListMyPermissionRequests", ctx, requesterUserID)
+	ret0, _ := ret[0].([]core.TPermissionRequest)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListMyPermissionRequests indicates an expected call of ListMyPermissionRequests.
+func (mr *MockDBMockRecorder) ListMyPermissionRequests(ctx, requesterUserID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListMyPermissionRequests", reflect.TypeOf((*MockDB)(nil).ListMyPermissionRequests), ctx, requesterUserID)
+}
+
+// ListPermissionRequestsForAdmin mocks base method.
+func (m *MockDB) ListPermissionRequestsForAdmin(ctx context.Context, arg core.ListPermissionRequestsForAdminParams) ([]core.ListPermissionRequestsForAdminRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ListPermissionRequestsForAdmin", ctx, arg)
+	ret0, _ := ret[0].([]core.ListPermissionRequestsForAdminRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListPermissionRequestsForAdmin indicates an expected call of ListPermissionRequestsForAdmin.
+func (mr *MockDBMockRecorder) ListPermissionRequestsForAdmin(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListPermissionRequestsForAdmin", reflect.TypeOf((*MockDB)(nil).ListPermissionRequestsForAdmin), ctx, arg)
+}
+
 // LockABCSyncer mocks base method.
 func (m *MockDB) LockABCSyncer(ctx context.Context) (bool, error) {
 	m.ctrl.T.Helper()
@@ -1806,6 +1925,21 @@ func (m *MockDB) ProjectAbcGroupListing(ctx context.Context) ([]core.ProjectAbcG
 func (mr *MockDBMockRecorder) ProjectAbcGroupListing(ctx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ProjectAbcGroupListing", reflect.TypeOf((*MockDB)(nil).ProjectAbcGroupListing), ctx)
+}
+
+// RegisterUserWithCredentials mocks base method.
+func (m *MockDB) RegisterUserWithCredentials(ctx context.Context, arg core.RegisterUserWithCredentialsParams) (core.TUser, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "RegisterUserWithCredentials", ctx, arg)
+	ret0, _ := ret[0].(core.TUser)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// RegisterUserWithCredentials indicates an expected call of RegisterUserWithCredentials.
+func (mr *MockDBMockRecorder) RegisterUserWithCredentials(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RegisterUserWithCredentials", reflect.TypeOf((*MockDB)(nil).RegisterUserWithCredentials), ctx, arg)
 }
 
 // RemoveRuleFromRole mocks base method.
@@ -2481,6 +2615,21 @@ func (mr *MockDBMockRecorder) SelectExperimentUpdateLogs(ctx, arg any) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectExperimentUpdateLogs", reflect.TypeOf((*MockDB)(nil).SelectExperimentUpdateLogs), ctx, arg)
 }
 
+// SelectExperimentUpdateLogsByActs mocks base method.
+func (m *MockDB) SelectExperimentUpdateLogsByActs(ctx context.Context, arg core.SelectExperimentUpdateLogsByActsParams) ([]core.SelectExperimentUpdateLogsByActsRow, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectExperimentUpdateLogsByActs", ctx, arg)
+	ret0, _ := ret[0].([]core.SelectExperimentUpdateLogsByActsRow)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectExperimentUpdateLogsByActs indicates an expected call of SelectExperimentUpdateLogsByActs.
+func (mr *MockDBMockRecorder) SelectExperimentUpdateLogsByActs(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectExperimentUpdateLogsByActs", reflect.TypeOf((*MockDB)(nil).SelectExperimentUpdateLogsByActs), ctx, arg)
+}
+
 // SelectExperimentVariable mocks base method.
 func (m *MockDB) SelectExperimentVariable(ctx context.Context, id int32) (core.SelectExperimentVariableRow, error) {
 	m.ctrl.T.Helper()
@@ -2976,6 +3125,21 @@ func (mr *MockDBMockRecorder) SelectRoles(ctx any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectRoles", reflect.TypeOf((*MockDB)(nil).SelectRoles), ctx)
 }
 
+// SelectRuleIDByExactMatch mocks base method.
+func (m *MockDB) SelectRuleIDByExactMatch(ctx context.Context, arg core.SelectRuleIDByExactMatchParams) (int32, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectRuleIDByExactMatch", ctx, arg)
+	ret0, _ := ret[0].(int32)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectRuleIDByExactMatch indicates an expected call of SelectRuleIDByExactMatch.
+func (mr *MockDBMockRecorder) SelectRuleIDByExactMatch(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectRuleIDByExactMatch", reflect.TypeOf((*MockDB)(nil).SelectRuleIDByExactMatch), ctx, arg)
+}
+
 // SelectUserGrants mocks base method.
 func (m *MockDB) SelectUserGrants(ctx context.Context, arg core.SelectUserGrantsParams) ([]core.SelectUserGrantsRow, error) {
 	m.ctrl.T.Helper()
@@ -3469,6 +3633,21 @@ func (m *MockDB) UpdateNamespaceVariable(ctx context.Context, arg core.UpdateNam
 func (mr *MockDBMockRecorder) UpdateNamespaceVariable(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNamespaceVariable", reflect.TypeOf((*MockDB)(nil).UpdateNamespaceVariable), ctx, arg)
+}
+
+// UpdatePermissionRequestReviewed mocks base method.
+func (m *MockDB) UpdatePermissionRequestReviewed(ctx context.Context, arg core.UpdatePermissionRequestReviewedParams) (int32, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdatePermissionRequestReviewed", ctx, arg)
+	ret0, _ := ret[0].(int32)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdatePermissionRequestReviewed indicates an expected call of UpdatePermissionRequestReviewed.
+func (mr *MockDBMockRecorder) UpdatePermissionRequestReviewed(ctx, arg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePermissionRequestReviewed", reflect.TypeOf((*MockDB)(nil).UpdatePermissionRequestReviewed), ctx, arg)
 }
 
 // UpdateProject mocks base method.

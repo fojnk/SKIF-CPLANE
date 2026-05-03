@@ -148,6 +148,12 @@ export const Modal = ({
     tabsEnum.logs,
   );
 
+  useEffect(() => {
+    if (payload.step_id !== undefined) {
+      setActiveTab(tabsEnum.info);
+    }
+  }, [payload.step_id]);
+
   const loadData = useCallback(() => {
     if (payload.id) {
       ShowJobModel.load(payload.id);

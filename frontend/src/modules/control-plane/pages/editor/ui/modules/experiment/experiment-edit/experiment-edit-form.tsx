@@ -13,13 +13,10 @@ import {
   CubeType,
   EditExperimentCube,
   PortInfo,
+  removeSupervisorModelByGraphCubeHash,
 } from '@/modules/control-plane/entities/cubes';
 import { ResharderEditModel } from '@/modules/control-plane/features/cubes/resharder-edit';
 import { ActionConfirmModel } from '@/modules/control-plane/features/dialogs';
-import {
-  ExperimentDebug,
-  ExperimentDebugModel,
-} from '@/modules/control-plane/features/experiment/debug';
 import { editorPageModel } from '@/modules/control-plane/pages/editor';
 import {
   ParamsDC,
@@ -35,8 +32,6 @@ interface Props {
   experiment_id: number;
   experiment_name: string;
   variables?: ExperimentVariableItem[] | null;
-  debugMode?: boolean;
-  currentConfig: string;
 }
 
 export const ExperimentEditForm = ({
@@ -44,8 +39,6 @@ export const ExperimentEditForm = ({
   experiment_id,
   experiment_name,
   variables,
-  debugMode = false,
-  currentConfig,
 }: Props) => {
   const form = useForm();
   const { values } = useFormState({
@@ -130,19 +123,39 @@ export const ExperimentEditForm = ({
     [form, values?.Worker?.GraphConfig?.Cubes, selectedCubeHash],
   );
 
-  // Подписываемся на подтверждение удаления куба (для горячих клавиш с графа)
+  const removeSupervisorModelFromForm = useCallback(
+    (cubeHash: string) => {
+      const next = removeSupervisorModelByGraphCubeHash(
+        values?.models,
+        cubeHash,
+      );
+      form.change('models', next);
+      if (selectedCubeHash === cubeHash) {
+        setSelectedCubeHash(null);
+      }
+    },
+    [form, values?.models, selectedCubeHash],
+  );
+
+  // Подписываемся на подтверждение удаления (граф: горячие клавиши / будущие действия)
   useEffect(() => {
-    if (!isStreamflowPipeline) {
-      return undefined;
-    }
     const unsubscribe = ActionConfirmModel.confirmed.watch((payload) => {
-      if (payload.mode === 'delete' && payload.meta?.cubeHash) {
-        const cubeHash = payload.meta.cubeHash as string;
+      if (payload.mode !== 'delete' || !payload.meta?.cubeHash) {
+        return;
+      }
+      const cubeHash = payload.meta.cubeHash as string;
+      if (isStreamflowPipeline) {
         removeCubeFromForm(cubeHash);
+      } else {
+        removeSupervisorModelFromForm(cubeHash);
       }
     });
     return () => unsubscribe();
-  }, [isStreamflowPipeline, removeCubeFromForm]);
+  }, [
+    isStreamflowPipeline,
+    removeCubeFromForm,
+    removeSupervisorModelFromForm,
+  ]);
 
   // Получаем текущие порты Resharder
   // Важно: порт остается в списке, даже если имя пустое (пока есть portHash)
@@ -246,20 +259,9 @@ export const ExperimentEditForm = ({
   }, []);
 
   // Обработчик клика по кубу на графе — только выделяем, без центрирования
-  const handleCubeClick = useCallback(
-    (cubeHash: string | null) => {
-      setSelectedCubeHash(cubeHash);
-      if (!isStreamflowPipeline || !cubeHash) {
-        return;
-      }
-      const cubes = values?.Worker?.GraphConfig?.Cubes;
-      const cubeName = cubes?.[cubeHash]?.Name;
-      if (cubeName) {
-        ExperimentDebugModel.handleCubeClick(cubeName);
-      }
-    },
-    [isStreamflowPipeline, values?.Worker?.GraphConfig?.Cubes],
-  );
+  const handleCubeClick = useCallback((cubeHash: string | null) => {
+    setSelectedCubeHash(cubeHash);
+  }, []);
 
   // Обработчик удаления куба по горячей клавише — показываем диалог подтверждения
   const handleCubeDelete = useCallback((cubeHash: string, cubeName: string) => {
@@ -309,14 +311,6 @@ export const ExperimentEditForm = ({
             cubesList={cubesList ?? []}
             supervisorGraphMode={!isStreamflowPipeline}
           />
-          {debugMode && (
-            <ExperimentDebug
-              debugMode={debugMode}
-              experiment_id={experiment_id}
-              experiment_name={experiment_name}
-              config={currentConfig}
-            />
-          )}
         </Flex>
       </Flex>
 

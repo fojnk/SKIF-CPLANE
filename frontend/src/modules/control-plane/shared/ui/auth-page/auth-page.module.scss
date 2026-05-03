@@ -1,0 +1,251 @@
+@keyframes auth-ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes auth-panel-shimmer {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 0.85;
+  }
+}
+
+// Общая оболочка для страниц входа и регистрации
+.shell {
+  position: relative;
+  display: flex;
+  min-height: inherit;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(ellipse 110% 90% at 100% -15%, rgb(36 92 160 / 28%) 0%, transparent 58%),
+    radial-gradient(ellipse 95% 80% at -8% 115%, rgb(24 70 120 / 26%) 0%, transparent 52%),
+    radial-gradient(ellipse 70% 55% at 50% 100%, rgb(20 55 100 / 35%) 0%, transparent 45%),
+    linear-gradient(168deg, #010203 0%, #060a11 28%, #050912 62%, #020407 100%);
+
+  // Лёгкая «сетка» в центре
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -40%;
+    pointer-events: none;
+    opacity: 0.42;
+    background-image:
+      linear-gradient(rgb(255 255 255 / 5%) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 5%) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 58% 52% at 50% 44%, black 0%, transparent 74%);
+  }
+
+  // Мягкое свечение сверху
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      ellipse 78% 48% at 50% -10%,
+      rgb(70 150 220 / 16%) 0%,
+      transparent 58%
+    );
+  }
+}
+
+.ring-backdrop {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ring-glow {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  width: min(92vmin, 760px);
+  height: min(92vmin, 760px);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 42%,
+    rgb(45 110 195 / 22%) 0%,
+    rgb(25 70 130 / 12%) 40%,
+    transparent 70%
+  );
+  filter: blur(3px);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.ring-track {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+  animation: auth-ring-spin var(--ring-duration, 96s) linear infinite;
+}
+
+.ring-track-reverse {
+  animation-direction: reverse;
+}
+
+.ring-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: calc(var(--ring-r) * 2);
+  height: calc(var(--ring-r) * 2);
+  margin-top: calc(-1 * var(--ring-r));
+  margin-left: calc(-1 * var(--ring-r));
+  border: 1px solid rgb(130 185 245 / var(--orbit-opacity, 0.12));
+  border-radius: 50%;
+  box-shadow:
+    0 0 60px rgb(70 130 210 / 10%),
+    inset 0 0 50px rgb(50 100 170 / 8%),
+    0 0 1px rgb(200 230 255 / 25%);
+}
+
+.ring-particle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--particle-size, 3px);
+  height: var(--particle-size, 3px);
+  margin-top: calc(var(--particle-size, 3px) / -2);
+  margin-left: calc(var(--particle-size, 3px) / -2);
+  border-radius: 50%;
+  background: linear-gradient(150deg, rgb(210 235 255) 0%, rgb(80 160 240) 55%, rgb(40 110 200) 100%);
+  box-shadow:
+    0 0 12px rgb(140 200 255 / 70%),
+    0 0 28px rgb(60 140 220 / 45%),
+    0 0 2px rgb(255 255 255 / 80%);
+  transform: rotate(var(--a)) translateY(calc(-1 * var(--ring-r)));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring-track {
+    animation: none;
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  width: 92%;
+  max-width: 520px;
+  flex-flow: column;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 44px 40px 40px;
+  border: 1px solid rgb(255 255 255 / 9%);
+  border-radius: 20px;
+  background: rgb(6 12 22 / 72%);
+  box-shadow:
+    0 32px 100px rgb(0 0 0 / 55%),
+    0 0 0 1px rgb(255 255 255 / 4%) inset,
+    0 1px 0 rgb(255 255 255 / 7%) inset;
+  backdrop-filter: blur(22px);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 12%;
+    left: 12%;
+    height: 1px;
+    border-radius: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(120 190 255 / 55%) 35%,
+      rgb(180 220 255 / 85%) 50%,
+      rgb(120 190 255 / 55%) 65%,
+      transparent
+    );
+    animation: auth-panel-shimmer 6s ease-in-out infinite;
+    opacity: 0.75;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &::before {
+      animation: none;
+      opacity: 0.55;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .panel {
+    padding: 32px 22px 28px;
+  }
+}
+
+.branding {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 520px;
+}
+
+.station-title {
+  text-align: center;
+  letter-spacing: 0.03em;
+  text-shadow:
+    0 0 55px rgb(110 185 255 / 28%),
+    0 4px 32px rgb(0 0 0 / 55%);
+}
+
+.station-subtitle {
+  text-align: center;
+  line-height: 1.45;
+}
+
+.title {
+  text-align: center;
+  letter-spacing: 0.06em;
+}
+
+.primary-action {
+  width: 100%;
+  max-width: 420px;
+}
+
+.form {
+  display: flex;
+  width: 100%;
+  max-width: 420px;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.sub-link {
+  color: var(--g-color-text-light-secondary);
+  font-size: 14px;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--g-color-text-light-primary);
+  }
+}

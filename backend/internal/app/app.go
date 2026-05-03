@@ -15,6 +15,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"github.com/swaggo/swag"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/bootstrap/cms"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/config"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/docs/private_docs"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/handlers/private"
@@ -49,6 +50,8 @@ func NewApp(ctx context.Context) (*App, error) {
 	}
 
 	svc := service.NewService(repo)
+
+	cms.EnsureDefaults(ctx, repo, repo.Logger)
 
 	return &App{
 		svc: svc,

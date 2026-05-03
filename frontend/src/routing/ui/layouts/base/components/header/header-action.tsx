@@ -33,7 +33,7 @@ const HeaderActionButton = ({
 
   return (
     <Button
-      size="m"
+      size={view === 'glass' ? 'l' : 'm'}
       type={submitFormName != null ? 'submit' : 'button'}
       extraProps={{
         form: submitFormName,

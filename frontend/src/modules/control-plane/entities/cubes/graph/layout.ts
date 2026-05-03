@@ -210,6 +210,7 @@ export async function layoutGraph(
         cubeHash: graphNode.cubeHash,
         cubeId: graphNode.cubeId,
         baseCubeName: graphNode.baseCubeName,
+        modelDescription: graphNode.modelDescription,
       },
       position: {
         x: node.x !== undefined && Number.isFinite(node.x) ? node.x : 0,
@@ -836,6 +837,7 @@ export function simpleLayout(
           cubeHash: cubeData.node.cubeHash,
           cubeId: cubeData.node.cubeId,
           baseCubeName: cubeData.node.baseCubeName,
+          modelDescription: cubeData.node.modelDescription,
         },
         position: { x, y },
         style: {
@@ -1021,6 +1023,7 @@ export function dagreLayout(
         cubeHash: graphNode.cubeHash,
         cubeId: graphNode.cubeId,
         baseCubeName: graphNode.baseCubeName,
+        modelDescription: graphNode.modelDescription,
       },
       position: { x, y },
       style: {

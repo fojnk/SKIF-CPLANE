@@ -25,4 +25,185 @@
       }
     }
   }
+
+  // Стекло: заливка + градиент контура в одном слое на ::before (как у Gravity UI), без второго «блока» на ::after
+  &.glass {
+    &.g-button_view_action {
+      --g-button-border-width: 0;
+      position: relative;
+      border-radius: 16px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      box-shadow: none;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      transition:
+        transform 0.18s ease,
+        background-color 0.18s ease;
+
+      &::before {
+        border-radius: 16px;
+        border: 1px solid transparent;
+        background-color: transparent !important;
+        background-image:
+          linear-gradient(
+            var(--g-button-background-color),
+            var(--g-button-background-color)
+          ),
+          conic-gradient(
+            from var(--glass-border-angle, 0deg),
+            rgb(110 170 240 / 42%),
+            rgb(185 145 235 / 38%),
+            rgb(105 210 245 / 44%),
+            rgb(165 125 230 / 36%),
+            rgb(110 170 240 / 42%)
+          );
+        background-clip: padding-box, border-box;
+        background-origin: border-box;
+        animation: glass-border-spin 5.5s linear infinite;
+        transition: none;
+      }
+
+      &:hover::before {
+        background-color: transparent !important;
+        background-image:
+          linear-gradient(
+            var(--g-button-background-color-hover),
+            var(--g-button-background-color-hover)
+          ),
+          conic-gradient(
+            from var(--glass-border-angle, 0deg),
+            rgb(110 170 240 / 42%),
+            rgb(185 145 235 / 38%),
+            rgb(105 210 245 / 44%),
+            rgb(165 125 230 / 36%),
+            rgb(110 170 240 / 42%)
+          );
+      }
+
+      &:not(.g-button_disabled) {
+        /* Fallback для тёмной темы; на светлой перекрывается блоком .g-root_theme_light* */
+        --g-button-background-color: rgb(6 12 22 / 52%);
+        --g-button-background-color-hover: rgb(10 22 38 / 72%);
+        --g-button-text-color: var(--g-color-text-primary);
+        --g-button-text-color-hover: var(--g-color-text-primary);
+        color: var(--g-color-text-primary);
+
+        &:hover {
+          transform: translateY(-1px);
+        }
+
+        &:active:not(.g-button_loading) {
+          transform: translateY(0);
+        }
+      }
+
+      &.g-button_disabled {
+        opacity: 0.5;
+
+        &::before {
+          animation: none;
+        }
+      }
+
+      // Совпадает с радиусом кнопки; ::after снова отдаётся Gravity (active press), без своей «рамки»
+      &::after {
+        border-radius: 16px;
+      }
+    }
+  }
+}
+
+@property --glass-border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes glass-border-spin {
+  to {
+    --glass-border-angle: 360deg;
+  }
+}
+
+:global(.g-root_theme_light) .button.glass.g-button_view_action:not(.g-button_disabled),
+:global(.g-root_theme_light-hc) .button.glass.g-button_view_action:not(.g-button_disabled) {
+  /* Светлая тема: не тянуть тёмные --g-button-* из общего блока — иначе UIKit красит ::before серым поверх градиента */
+  --g-button-background-color: transparent;
+  --g-button-background-color-hover: transparent;
+  --g-button-text-color: var(--g-color-text-primary);
+  --g-button-text-color-hover: var(--g-color-text-primary);
+  color: var(--g-color-text-primary);
+  box-shadow: none;
+
+  &::before {
+    background-color: transparent !important;
+    background-image:
+      linear-gradient(
+        158deg,
+        rgb(248 251 255 / 96%) 0%,
+        rgb(232 240 252 / 90%) 48%,
+        rgb(238 244 250 / 92%) 100%
+      ),
+      conic-gradient(
+        from var(--glass-border-angle, 0deg),
+        rgb(70 125 200 / 26%),
+        rgb(130 110 195 / 22%),
+        rgb(55 145 205 / 28%),
+        rgb(115 95 175 / 20%),
+        rgb(70 125 200 / 26%)
+      );
+  }
+
+  &:hover::before {
+    background-color: transparent !important;
+    background-image:
+      linear-gradient(
+        158deg,
+        rgb(252 253 255 / 98%) 0%,
+        rgb(240 246 255 / 94%) 48%,
+        rgb(244 248 252 / 96%) 100%
+      ),
+      conic-gradient(
+        from var(--glass-border-angle, 0deg),
+        rgb(70 125 200 / 26%),
+        rgb(130 110 195 / 22%),
+        rgb(55 145 205 / 28%),
+        rgb(115 95 175 / 20%),
+        rgb(70 125 200 / 26%)
+      );
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  &:active:not(.g-button_loading) {
+    transform: translateY(0);
+  }
+}
+
+.button.glass.g-button_view_action.g-button_loading {
+  color: var(--g-color-text-secondary);
+}
+
+/* Полоски loading в UIKit берут цвет из --g-button-background-* */
+:global(.g-root_theme_light) .button.glass.g-button_view_action.g-button_loading,
+:global(.g-root_theme_light-hc) .button.glass.g-button_view_action.g-button_loading {
+  --g-button-background-color: rgb(228 236 248 / 95%);
+  --g-button-background-color-hover: rgb(216 228 244 / 95%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button.glass.g-button_view_action:not(.g-button_disabled)::before,
+  :global(.g-root_theme_light) .button.glass.g-button_view_action:not(.g-button_disabled)::before,
+  :global(.g-root_theme_light-hc) .button.glass.g-button_view_action:not(.g-button_disabled)::before {
+    animation: none;
+  }
+
+  .button.glass.g-button_view_action:not(.g-button_disabled):hover,
+  :global(.g-root_theme_light) .button.glass.g-button_view_action:not(.g-button_disabled):hover,
+  :global(.g-root_theme_light-hc) .button.glass.g-button_view_action:not(.g-button_disabled):hover {
+    transform: none;
+  }
 }
