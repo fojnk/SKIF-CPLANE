@@ -73,6 +73,21 @@ flowchart LR
 - **`docs/services/`** — краткий каталог пакетов [`backend/internal/service/`](../backend/internal/service/) (auth, acl, cube, …) с границами ответственности.
 - Дополнительные **`docs/guides/`** — локальная разработка, деплой, отладка RabbitMQ/супервизора (с перекрёстными ссылками на `architecture/` и корневой [`README.md`](../README.md)).
 
+## GitHub Wiki (автосинхронизация с `docs/`)
+
+В репозитории включён workflow [`.github/workflows/sync-docs-to-wiki.yml`](../.github/workflows/sync-docs-to-wiki.yml): при push в ветку `main` или `master`, если менялись файлы под `docs/` или сам workflow, содержимое **`docs/`** зеркалируется в **GitHub Wiki** того же репозитория (`rsync --delete`, полное совпадение дерева). Файл **`docs/README.md`** на стороне Wiki переименовывается в **`Home.md`** (так устроена главная страница Wiki).
+
+**Настройка один раз**
+
+1. В настройках репозитория GitHub включите **Wiki** (Settings → General → Features → Wikis).
+2. При необходимости создайте первую страницу Wiki в UI или выполните один push в `.wiki.git`, чтобы репозиторий Wiki существовал (иначе `git clone …wiki.git` может завершиться ошибкой).
+3. Создайте [classic Personal Access Token](https://github.com/settings/tokens) с областью **`repo`** (достаточно для push в wiki того же репозитория).
+4. В репозитории: **Settings → Secrets and variables → Actions → New repository secret** — имя **`WIKI_PUSH_TOKEN`**, значение — PAT.
+
+Ручной запуск: вкладка **Actions → Sync docs to Wiki → Run workflow**.
+
+Относительные ссылки из markdown на файлы вне `docs/` (например `../backend/`) в интерфейсе Wiki вести не будут — это ограничение зеркалирования; каноничная версия остаётся в основном репозитории.
+
 ## Рекомендуемые внешние ссылки для блока «О платформе»
 
 Подставьте вместо заглушек URL вашей организации:

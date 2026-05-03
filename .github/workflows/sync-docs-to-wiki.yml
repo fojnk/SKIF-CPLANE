@@ -1,0 +1,66 @@
+# Зеркалирует каталог docs/ в GitHub Wiki репозитория (содержимое wiki = содержимое docs/).
+# Требуется секрет WIKI_PUSH_TOKEN (classic PAT с правом repo). См. docs/README.md.
+
+name: Sync docs to Wiki
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "docs/**"
+      - ".github/workflows/sync-docs-to-wiki.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: wiki-sync-${{ github.repository }}
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure git identity
+        run: |
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Clone wiki repository
+        env:
+          WIKI_TOKEN: ${{ secrets.WIKI_PUSH_TOKEN }}
+        run: |
+          if [ -z "${WIKI_TOKEN}" ]; then
+            echo "::error title=Missing secret::Add repository secret WIKI_PUSH_TOKEN (classic PAT with repo scope)."
+            exit 1
+          fi
+          git clone "https://x-access-token:${WIKI_TOKEN}@github.com/${GITHUB_REPOSITORY}.wiki.git" wiki-repo
+
+      - name: Rsync docs to wiki working tree
+        run: |
+          set -euo pipefail
+          rsync -a --delete \
+            --exclude='.git/' \
+            ./docs/ ./wiki-repo/
+          # В Wiki главная страница — Home.md; в репозитории точкой входа остаётся docs/README.md
+          if [ -f wiki-repo/README.md ]; then
+            mv -f wiki-repo/README.md wiki-repo/Home.md
+          fi
+
+      - name: Commit and push wiki
+        env:
+          WIKI_TOKEN: ${{ secrets.WIKI_PUSH_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd wiki-repo
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes to publish (wiki already matches docs)."
+            exit 0
+          fi
+          git commit -m "docs: sync from ${GITHUB_REPOSITORY}@${GITHUB_SHA:0:7}"
+          # Ветка совпадает с клонированным origin (обычно master)
+          git push origin HEAD
