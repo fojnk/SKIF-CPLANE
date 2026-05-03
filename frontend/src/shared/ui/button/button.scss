@@ -82,10 +82,12 @@
       }
 
       &:not(.g-button_disabled) {
+        /* Fallback для тёмной темы; на светлой перекрывается блоком .g-root_theme_light* */
         --g-button-background-color: rgb(6 12 22 / 52%);
         --g-button-background-color-hover: rgb(10 22 38 / 72%);
         --g-button-text-color: var(--g-color-text-primary);
         --g-button-text-color-hover: var(--g-color-text-primary);
+        color: var(--g-color-text-primary);
 
         &:hover {
           transform: translateY(-1px);
@@ -124,9 +126,14 @@
   }
 }
 
-:global(.g-root_theme_light) .button.glass.g-button_view_action:not(.g-button_disabled) {
+:global(.g-root_theme_light) .button.glass.g-button_view_action:not(.g-button_disabled),
+:global(.g-root_theme_light-hc) .button.glass.g-button_view_action:not(.g-button_disabled) {
+  /* Светлая тема: не тянуть тёмные --g-button-* из общего блока — иначе UIKit красит ::before серым поверх градиента */
+  --g-button-background-color: transparent;
+  --g-button-background-color-hover: transparent;
   --g-button-text-color: var(--g-color-text-primary);
   --g-button-text-color-hover: var(--g-color-text-primary);
+  color: var(--g-color-text-primary);
   box-shadow: none;
 
   &::before {
@@ -176,14 +183,27 @@
   }
 }
 
+.button.glass.g-button_view_action.g-button_loading {
+  color: var(--g-color-text-secondary);
+}
+
+/* Полоски loading в UIKit берут цвет из --g-button-background-* */
+:global(.g-root_theme_light) .button.glass.g-button_view_action.g-button_loading,
+:global(.g-root_theme_light-hc) .button.glass.g-button_view_action.g-button_loading {
+  --g-button-background-color: rgb(228 236 248 / 95%);
+  --g-button-background-color-hover: rgb(216 228 244 / 95%);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .button.glass.g-button_view_action:not(.g-button_disabled)::before,
-  :global(.g-root_theme_light) .button.glass.g-button_view_action:not(.g-button_disabled)::before {
+  :global(.g-root_theme_light) .button.glass.g-button_view_action:not(.g-button_disabled)::before,
+  :global(.g-root_theme_light-hc) .button.glass.g-button_view_action:not(.g-button_disabled)::before {
     animation: none;
   }
 
   .button.glass.g-button_view_action:not(.g-button_disabled):hover,
-  :global(.g-root_theme_light) .button.glass.g-button_view_action:not(.g-button_disabled):hover {
+  :global(.g-root_theme_light) .button.glass.g-button_view_action:not(.g-button_disabled):hover,
+  :global(.g-root_theme_light-hc) .button.glass.g-button_view_action:not(.g-button_disabled):hover {
     transform: none;
   }
 }
