@@ -7,7 +7,10 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
+	"strconv"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
@@ -17,20 +20,115 @@ import (
 // swagger:model clients.Job
 type ClientsJob struct {
 
+	// created at
+	CreatedAt string `json:"created_at,omitempty"`
+
+	// created by
+	CreatedBy string `json:"created_by,omitempty"`
+
 	// id
 	ID int64 `json:"id,omitempty"`
 
+	// name
+	Name string `json:"name,omitempty"`
+
+	// stages
+	Stages []*ClientsJobStage `json:"stages"`
+
 	// status
 	Status string `json:"status,omitempty"`
+
+	// status description
+	StatusDescription string `json:"status_description,omitempty"`
+
+	// type
+	Type string `json:"type,omitempty"`
 }
 
 // Validate validates this clients job
 func (m *ClientsJob) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateStages(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 
-// ContextValidate validates this clients job based on context it is used
+func (m *ClientsJob) validateStages(formats strfmt.Registry) error {
+	if swag.IsZero(m.Stages) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Stages); i++ {
+		if swag.IsZero(m.Stages[i]) { // not required
+			continue
+		}
+
+		if m.Stages[i] != nil {
+			if err := m.Stages[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("stages" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("stages" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this clients job based on the context it is used
 func (m *ClientsJob) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateStages(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ClientsJob) contextValidateStages(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Stages); i++ {
+
+		if m.Stages[i] != nil {
+
+			if swag.IsZero(m.Stages[i]) { // not required
+				return nil
+			}
+
+			if err := m.Stages[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("stages" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("stages" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

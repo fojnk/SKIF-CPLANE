@@ -693,16 +693,6 @@ var Definitions = []shared.Definition{
 		Method:  http.MethodPut,
 	},
 	{
-		Path:    "/api/v2/datasets/clusters",
-		Handler: shared.CreateHandler(getAvailableClustersHandler, setters.EmptySetParam[requests.GetAvailableDatasetClustersRequest], validation.DefaultValidate[requests.GetAvailableDatasetClustersRequest]),
-		Method:  http.MethodGet,
-	},
-	{
-		Path:    "/api/v2/dataset/yt",
-		Handler: shared.CreateHandler(getDatasetYtURLHandler, setters.SetGetDatasetYTUrlRequestParams, validation.DefaultValidate[requests.GetDatasetYTLinkRequest], "dataset_id"),
-		Method:  http.MethodGet,
-	},
-	{
 		Path:    "/api/v2/dataset/versions",
 		Handler: shared.CreateHandler(listDatasetVersionsHandler, setters.SetListDatasetVersionsRequestParams, validation.ValidateListDatasetVersionsRequest, "dataset_id", "from", "limit"),
 		Method:  http.MethodGet,

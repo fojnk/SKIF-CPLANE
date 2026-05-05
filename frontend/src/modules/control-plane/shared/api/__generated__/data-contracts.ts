@@ -139,18 +139,6 @@ export interface DtoBatchRunResultDC {
   cube_runs?: Record<string, DtoCubeRunResultDC>;
 }
 
-export enum DtoClusterDC {
-  Miranda = "miranda",
-  MercuryKC = "mercury-kc",
-  MercuryRC = "mercury-rc",
-  MercuryPC = "mercury-pc",
-  MercuryHC = "mercury-hc",
-  MercuryUC = "mercury-uc",
-  Jupiter = "jupiter",
-  Moon = "moon",
-  Saturn = "saturn",
-}
-
 export interface DtoCompleteExperimentListDC {
   id?: number;
   name?: string;
@@ -1360,10 +1348,6 @@ export interface ResponsesGetAppUpdateResponseDC {
 
 export interface ResponsesGetAvailableBannerTypesResponseDC {
   types?: DtoBannerTypeDC[];
-}
-
-export interface ResponsesGetAvailableDatasetClustersResponseDC {
-  clusters?: DtoClusterDC[];
 }
 
 export interface ResponsesGetAvailableExperimentVariableTypesResponseDC {
@@ -2629,17 +2613,6 @@ export interface V2DatasetVersionsListParamsDC {
   /** limit */
   limit: number;
 }
-
-export type V2DatasetYtListErrorDC = ResponsesErrorResponseDC;
-
-export interface V2DatasetYtListParamsDC {
-  /** dataset id */
-  dataset_id: number;
-}
-
-export type V2DatasetsClustersListDataDC = ResponsesGetAvailableDatasetClustersResponseDC;
-
-export type V2DatasetsClustersListErrorDC = ResponsesErrorResponseDC;
 
 export type V2DatasetsListDataDC = ResponsesListDatasetsResponseDC;
 
