@@ -862,7 +862,7 @@ func deleteExperimentVariableHandler(ctx context.Context, svc *service.Service, 
 	variable, err := svc.GetExperimentVariable(ctx, r.VariableID)
 	if err != nil {
 		l.Error("failed to select variable variable", err)
-		return nil, shared.ConvertServiceError(err, shared.EntityProjectVariables)
+		return nil, shared.ConvertServiceError(err, shared.EntityExperimentVariables)
 	}
 
 	if err := shared.CheckPermission(ctx, l, svc, service.ACLObjectExperiment, service.ACLAttributeMeta, service.ACLActionEdit, variable.ExperimentID, u); err != nil {
@@ -879,7 +879,7 @@ func deleteExperimentVariableHandler(ctx context.Context, svc *service.Service, 
 	experiment, err := svc.GetExperimentByID(ctx, variable.ExperimentID)
 	if err != nil {
 		l.Error("failed to select variable experiment", err)
-		return nil, shared.ConvertServiceError(err, shared.EntityProjectVariables)
+		return nil, shared.ConvertServiceError(err, shared.EntityExperimentVariables)
 	}
 
 	svc.LogExperimentChange(ctx, experiment.ProjectID, variable.ExperimentID, u.Username, "", service.UpdateLogActionDeleteVariable, service.ExperimentUpdateLog{

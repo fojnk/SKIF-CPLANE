@@ -275,7 +275,7 @@ func (p *ExperimentService) currentSupervisorConfigJSONFromRow(experimentData *c
 		}
 		return string(b), nil
 	}
-	cfg, err := orch.ExperimentInfoToSupervisorPipelineConfig(p.repo.Logger, experimentData)
+	cfg, err := orch.ExperimentInfoToSupervisorPipelineConfig(experimentData)
 	if err != nil {
 		return "", serviceerrors.NewBadRequestError(fmt.Sprintf("Не удалось преобразовать в конфиг супервизора: %s", err.Error()), err)
 	}

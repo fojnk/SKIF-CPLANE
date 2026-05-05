@@ -265,34 +265,6 @@ Table t_experiment_status {
   }
 }
 
-Table t_project_variable {
-  id int [pk, increment, not null]
-  project_id int [not null, ref: > t_project.id]
-  name varchar(255) [not null]
-  value text [not null]
-  type varchar(255) [not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-
-  indexes {
-    (project_id, name) [unique]
-    project_id [name: 'idx_project_variable_project_id']
-  }
-}
-
-Table t_namespace_variable {
-  id int [pk, increment, not null]
-  namespace_id int [not null, ref: > t_namespace.id]
-  name varchar(255) [not null]
-  value text [not null]
-  type varchar(255) [not null]
-  created_at timestamp [not null, default: `CURRENT_TIMESTAMP`]
-
-  indexes {
-    (namespace_id, name) [unique]
-    namespace_id [name: 'idx_namespace_variable_namespace_id']
-  }
-}
-
 Table t_namespace_update_log {
   id int [pk, increment, not null]
   created_at timestamp [not null, default: `timezone('utc', now())`]

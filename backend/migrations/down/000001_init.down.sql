@@ -16,8 +16,6 @@ DROP TABLE IF EXISTS t_role_owner CASCADE;
 DROP TABLE IF EXISTS t_experiment_status CASCADE;
 DROP TABLE IF EXISTS t_experiment_variable_v CASCADE;
 DROP TABLE IF EXISTS t_experiment_variable CASCADE;
-DROP TABLE IF EXISTS t_project_variable CASCADE;
-DROP TABLE IF EXISTS t_namespace_variable CASCADE;
 DROP TABLE IF EXISTS t_experiment_dataset CASCADE;
 DROP TABLE IF EXISTS t_dataset_v CASCADE;
 DROP TABLE IF EXISTS t_experiment_update_log CASCADE;

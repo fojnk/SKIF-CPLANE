@@ -64,7 +64,7 @@ func (s *ValidationService) GetExperimentConfigMap(ctx context.Context, experime
 			return cfgMap, nil
 		}
 
-		cfg, err := orch.ExperimentInfoToSupervisorPipelineConfig(s.repo.Logger, &experimentData)
+		cfg, err := orch.ExperimentInfoToSupervisorPipelineConfig(&experimentData)
 		if err != nil {
 			s.repo.Logger.Error("failed to convert experiment info to supervisor pipeline config", err)
 			return nil, serviceerrors.NewBadRequestError(fmt.Sprintf("Не удалось преобразовать в конфиг супервизора: %s", err.Error()), err)
@@ -144,7 +144,7 @@ func (s *ValidationService) ValidateExperimentConfig(ctx context.Context, experi
 			return nil
 		}
 
-		cfg, err := orch.ExperimentInfoToSupervisorPipelineConfig(s.repo.Logger, &experimentData)
+		cfg, err := orch.ExperimentInfoToSupervisorPipelineConfig(&experimentData)
 		if err != nil {
 			s.repo.Logger.Error("failed to convert experiment info to supervisor pipeline config", err)
 			return serviceerrors.NewBadRequestError(fmt.Sprintf("Не удалось преобразовать в конфиг оркестратора: %s", err.Error()), err)
