@@ -17,6 +17,9 @@ import (
 // swagger:model responses.SupervisorModelJob
 type ResponsesSupervisorModelJob struct {
 
+	// end time
+	EndTime string `json:"end_time,omitempty"`
+
 	// error message
 	ErrorMessage string `json:"error_message,omitempty"`
 
@@ -25,6 +28,9 @@ type ResponsesSupervisorModelJob struct {
 
 	// model name
 	ModelName string `json:"model_name,omitempty"`
+
+	// start time
+	StartTime string `json:"start_time,omitempty"`
 
 	// status
 	Status string `json:"status,omitempty"`

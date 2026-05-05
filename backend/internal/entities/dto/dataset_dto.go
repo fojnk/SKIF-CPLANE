@@ -7,20 +7,6 @@ import (
 	"time"
 )
 
-type Cluster string
-
-const (
-	Miranda   Cluster = "miranda"
-	MercuryKC Cluster = "mercury-kc"
-	MercuryRC Cluster = "mercury-rc"
-	MercuryPC Cluster = "mercury-pc"
-	MercuryHC Cluster = "mercury-hc"
-	MercuryUC Cluster = "mercury-uc"
-	Jupiter   Cluster = "jupiter"
-	Moon      Cluster = "moon"
-	Saturn    Cluster = "saturn"
-)
-
 type Dataset struct {
 	ID        int32       `json:"id"`
 	Name      string      `json:"name"`

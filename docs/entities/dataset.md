@@ -48,8 +48,6 @@ flowchart LR
 | GET | `/api/v1/dataset/logs` | logs by namespace context |
 | GET | `/api/v2/dataset/logs` | logs by project context |
 | GET/PUT | `/api/v1/dataset/log` | одна запись / комментарий |
-| GET | `/api/v2/datasets/clusters` | доступные кластеры |
-| GET | `/api/v2/dataset/yt` | YT URL |
 | GET/PUT | `/api/v2/dataset/versions`, `/api/v2/dataset/version`, `/api/v2/dataset/version/current` | версии |
 | GET | `/api/v2/forms/dataset` | форма по типу | [`handlers.go`](../../backend/internal/handlers/private/handlers.go) |
 
@@ -59,7 +57,7 @@ flowchart LR
 
 - **`CreateDataset`**, **`UpdateDataset`** (новая строка в `t_dataset_v`), **`DeleteDataset`**, **`CopyDataset`**
 - **`ListDatasetByProject`**, **`SearchDatasets`**, **`GetDataset`**, **`GetDatasetWithProjectInfo`**
-- **`GetDatasetLinkedExperiments`**, **`GetDatasetYTURL`**, **`GetAvailableClusters`**
+- **`GetDatasetLinkedExperiments`**
 
 ## DTO / requests / responses
 

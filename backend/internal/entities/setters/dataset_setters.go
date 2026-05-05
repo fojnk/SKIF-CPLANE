@@ -150,16 +150,3 @@ func SetGetDatasetRequestParams(r *requests.GetDatasetRequest, _, value string) 
 	r.DatasetID = int32(id)
 	return nil
 }
-
-func SetGetDatasetYTUrlRequestParams(r *requests.GetDatasetYTLinkRequest, _, value string) *responses.ErrorResponse {
-	id, err := strconv.ParseInt(value, 10, 32)
-	if err != nil {
-		return &responses.ErrorResponse{
-			InternalError:   err,
-			ExternalMessage: "failed to parse dataset_id",
-			HTTPStatusCode:  http.StatusBadRequest,
-		}
-	}
-	r.DatasetID = int32(id)
-	return nil
-}

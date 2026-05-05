@@ -800,14 +800,6 @@ func (s *StreamflowTestSuite) TestDatasetSearch2() {
 	s.Require().Equal(int64(1), allDs3.Payload.Total)
 	s.Require().Equal(int64(1), allDs3.Payload.Pages)
 
-	clusters, err := s.c.Dataset.GetAPIV2DatasetsClusters(&dataset2.GetAPIV2DatasetsClustersParams{
-		Context: s.ctx,
-	})
-
-	s.Require().NoError(err)
-	s.Require().NotNil(clusters)
-	s.Require().Len(clusters.Payload.Clusters, 9)
-
 	res2Delete, err := s.c.Dataset.DeleteAPIV1Dataset(&dataset2.DeleteAPIV1DatasetParams{
 		Request: &models2.RequestsDeleteDatasetRequest{
 			ID: ptr(copyRes2.Payload.ID),

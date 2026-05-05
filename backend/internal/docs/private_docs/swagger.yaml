@@ -49,9 +49,34 @@ definitions:
     type: object
   clients.Job:
     properties:
+      created_at:
+        type: string
+      created_by:
+        type: string
       id:
         type: integer
+      name:
+        type: string
+      stages:
+        items:
+          $ref: '#/definitions/clients.JobStage'
+        type: array
       status:
+        type: string
+      status_description:
+        type: string
+      type:
+        type: string
+    type: object
+  clients.JobStage:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      step_id:
+        type: integer
+      step_status:
         type: string
     type: object
   clients.ListAllEventsResponse:
@@ -162,28 +187,6 @@ definitions:
           $ref: '#/definitions/dto.CubeRunResult'
         type: object
     type: object
-  dto.Cluster:
-    enum:
-    - miranda
-    - mercury-kc
-    - mercury-rc
-    - mercury-pc
-    - mercury-hc
-    - mercury-uc
-    - jupiter
-    - moon
-    - saturn
-    type: string
-    x-enum-varnames:
-    - Miranda
-    - MercuryKC
-    - MercuryRC
-    - MercuryPC
-    - MercuryHC
-    - MercuryUC
-    - Jupiter
-    - Moon
-    - Saturn
   dto.CompleteExperimentList:
     properties:
       id:
@@ -2220,13 +2223,6 @@ definitions:
       types:
         items:
           $ref: '#/definitions/dto.BannerType'
-        type: array
-    type: object
-  responses.GetAvailableDatasetClustersResponse:
-    properties:
-      clusters:
-        items:
-          $ref: '#/definitions/dto.Cluster'
         type: array
     type: object
   responses.GetAvailableExperimentVariableTypesResponse:
@@ -5528,7 +5524,8 @@ paths:
           description: Service Unavailable
           schema:
             $ref: '#/definitions/responses.ErrorResponse'
-      summary: get job by ID (job queue disabled)
+      summary: 'get job by ID (без jobd: job_id = id строки истории эксперимента из
+        списка задач)'
       tags:
       - jobs
   /api/v1/job/events:
@@ -5662,7 +5659,8 @@ paths:
           description: Service Unavailable
           schema:
             $ref: '#/definitions/responses.ErrorResponse'
-      summary: search and list jobs with filters (job queue disabled — always empty)
+      summary: 'search and list jobs with filters (без jobd: история start/stop/apply
+        + живой статус супервизора и очереди RabbitMQ для последнего start/apply)'
       tags:
       - jobs
   /api/v1/namespace:
@@ -7819,42 +7817,6 @@ paths:
       summary: list dataset versions
       tags:
       - dataset
-  /api/v2/dataset/yt:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: dataset id
-        in: query
-        name: dataset_id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: get dataset yt link
-      tags:
-      - dataset
   /api/v2/datasets:
     get:
       parameters:
@@ -7883,32 +7845,6 @@ paths:
           schema:
             $ref: '#/definitions/responses.ErrorResponse'
       summary: list datasets in project
-      tags:
-      - dataset
-  /api/v2/datasets/clusters:
-    get:
-      consumes:
-      - application/json
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.GetAvailableDatasetClustersResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: get dataset clusters
       tags:
       - dataset
   /api/v2/datasets/search:

@@ -20,24 +20,6 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service"
 )
 
-// getAvailableClustersHandler godoc
-//
-//	@Summary	get dataset clusters
-//	@Tags		dataset
-//	@Accept		json
-//	@Produce	json
-//	@Success	200	{object}	responses.GetAvailableDatasetClustersResponse
-//	@Failure	403	{object}	responses.ErrorResponse	"Forbidden"
-//	@Failure	404	{object}	responses.ErrorResponse	"Not Found"
-//	@Failure	500	{object}	responses.ErrorResponse	"Internal server error"
-//	@Router		/api/v2/datasets/clusters [get]
-func getAvailableClustersHandler(ctx context.Context, svc *service.Service, l *logger.Logger, r *requests.GetAvailableDatasetClustersRequest, u *user.UserInfo) (any, *responses.ErrorResponse) {
-	clusters := svc.GetAvailableClusters()
-	return responses.GetAvailableDatasetClustersResponse{
-		Clusters: clusters,
-	}, nil
-}
-
 // validateDatasetConfigHandler godoc
 //
 //	@Summary	validate dataset config
@@ -441,37 +423,6 @@ func getDatasetV2Handler(ctx context.Context, svc *service.Service, l *logger.Lo
 	}
 
 	return response, nil
-}
-
-// getDatasetYtURLHandler godoc
-//
-//	@Summary	get dataset yt link
-//	@Tags		dataset
-//	@Accept		json
-//	@Produce	json
-//	@Param		dataset_id	query		int						true	"dataset id"
-//	@Failure	400				{object}	responses.ErrorResponse	"Bad Request"
-//	@Failure	401				{object}	responses.ErrorResponse	"Unauthorized"
-//	@Failure	403				{object}	responses.ErrorResponse	"Forbidden"
-//	@Failure	404				{object}	responses.ErrorResponse	"Not Found"
-//	@Failure	500				{object}	responses.ErrorResponse	"Internal server error"
-//	@Router		/api/v2/dataset/yt [get]
-func getDatasetYtURLHandler(ctx context.Context, svc *service.Service, l *logger.Logger, r *requests.GetDatasetYTLinkRequest, u *user.UserInfo) (any, *responses.ErrorResponse) {
-	if err := shared.CheckPermission(ctx, l, svc, acl.Dataset, acl.MetaAttribute, acl.Read, r.DatasetID, u); err != nil {
-		return nil, err
-	}
-
-	ytURL, err := svc.GetDatasetYTURL(ctx, r.DatasetID)
-	if err != nil {
-		l.Error("failed to get dataset YT URL", err)
-		return responses.GetDatasetYTLinkResponse{
-			YTLink: "https://yt.vk.team",
-		}, nil
-	}
-
-	return responses.GetDatasetYTLinkResponse{
-		YTLink: ytURL,
-	}, nil
 }
 
 // deleteDatasetHandler godoc
