@@ -42,38 +42,23 @@ export interface ClientsGetJobResponseDC {
   job?: ClientsJobDC;
 }
 
-export interface JobdStageDC {
-  step_id?: number;
-  name?: string;
-  description?: string;
-  step_status?: string;
-  logs?: string;
-}
-
-/** Статусы jobd; в ответах API часто приходят нижним регистром (например completed). */
-export enum JobdJobStatusDC {
-  JobStatusCompleted = "JobStatusCompleted",
-  JobStatusPaused = "JobStatusPaused",
-  JobStatusQueued = "JobStatusQueued",
-  JobStatusRunning = "JobStatusRunning",
-  JobStatusPending = "JobStatusPending",
-  JobStatusTimeout = "JobStatusTimeout",
-  JobStatusFailed = "JobStatusFailed",
-  JobStatusCancelled = "JobStatusCancelled",
-}
-
 export interface ClientsJobDC {
-  id?: number;
-  status?: string;
-  type?: string;
   created_at?: string;
   created_by?: string;
-  status_description?: string;
+  id?: number;
   name?: string;
-  stages?: JobdStageDC[];
+  stages?: ClientsJobStageDC[];
+  status?: string;
+  status_description?: string;
+  type?: string;
 }
 
-export type JobdJobDC = ClientsJobDC;
+export interface ClientsJobStageDC {
+  description?: string;
+  name?: string;
+  step_id?: number;
+  step_status?: string;
+}
 
 export interface ClientsListAllEventsResponseDC {
   events?: ClientsEventWithJobDC[];
@@ -1297,27 +1282,6 @@ export interface ResponsesErrorResponseDC {
   internal_error?: any;
 }
 
-export interface ResponsesSupervisorModelJobDC {
-  end_time?: string;
-  error_message?: string;
-  index?: number;
-  model_name?: string;
-  start_time?: string;
-  status?: string;
-}
-
-export interface ResponsesSupervisorExperimentRunDC {
-  cancellation_requested?: boolean;
-  current_model?: string;
-  current_order?: number;
-  detail?: string;
-  experiment_id?: number;
-  jobs?: ResponsesSupervisorModelJobDC[];
-  progress?: string;
-  status?: string;
-  total_models?: number;
-}
-
 export interface ResponsesExperimentStatusResponseDC {
   debug?: string;
   message?: string;
@@ -1632,6 +1596,27 @@ export interface ResponsesSearchDatasetsResponseDC {
   datasets?: DtoDatasetInfoDC[];
   pages?: number;
   total?: number;
+}
+
+export interface ResponsesSupervisorExperimentRunDC {
+  cancellation_requested?: boolean;
+  current_model?: string;
+  current_order?: number;
+  detail?: string;
+  experiment_id?: number;
+  jobs?: ResponsesSupervisorModelJobDC[];
+  progress?: string;
+  status?: string;
+  total_models?: number;
+}
+
+export interface ResponsesSupervisorModelJobDC {
+  end_time?: string;
+  error_message?: string;
+  index?: number;
+  model_name?: string;
+  start_time?: string;
+  status?: string;
 }
 
 export interface ResponsesUpdateAppAboutResponseDC {
@@ -2627,10 +2612,6 @@ export type V2DatasetsSearchCreateDataDC = ResponsesSearchDatasetsResponseDC;
 
 export type V2DatasetsSearchCreateErrorDC = ResponsesErrorResponseDC;
 
-export type V2ExperimentConfigApplyUpdateDataDC = ResponsesEmptyResponseDC;
-
-export type V2ExperimentConfigApplyUpdateErrorDC = ResponsesErrorResponseDC;
-
 export type V2ExperimentConfigValidateCreateDataDC = ResponsesValidationResponseDC;
 
 export type V2ExperimentConfigValidateCreateErrorDC = ResponsesErrorResponseDC;
@@ -2762,10 +2743,6 @@ export interface V2UserRolesListParamsDC {
   /** user id */
   user_id: number;
 }
-
-export type V3ExperimentConfigApplyUpdateDataDC = ResponsesEmptyResponseDC;
-
-export type V3ExperimentConfigApplyUpdateErrorDC = ResponsesErrorResponseDC;
 
 export type WhoAmIListDataDC = DtoUserInfoDC;
 

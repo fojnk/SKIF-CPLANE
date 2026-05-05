@@ -36,7 +36,7 @@ flowchart LR
 
 ## HTTP API
 
-Регистрация: [`handlers.go`](../../backend/internal/handlers/private/handlers.go).
+Регистрация всех маршрутов: [`handlers.go`](../../backend/internal/handlers/private/handlers.go). Ниже — ручки, которые использует платформа (Control Plane UI) и контур «эксперимент ↔ супервизор». Остальные оставлены в коде для совместимости или служебных сценариев.
 
 ### Complete experiment (CRUD)
 
@@ -58,15 +58,10 @@ flowchart LR
 | PUT | `/api/v1/experiment/start` | start | [`experiment_actions.go`](../../backend/internal/handlers/private/experiment_actions.go) |
 | PUT | `/api/v1/experiment/stop` | stop | `experiment_actions.go` |
 | GET | `/api/v1/experiment/status` | status | `experiment_actions.go` |
-| GET | `/api/v1/experiment/updates` | check config updates | `experiment_actions.go` |
-| PUT | `/api/v1/experiment/config/apply` | apply | [`apply_experiment_config.go`](../../backend/internal/handlers/private/apply_experiment_config.go) |
-| PUT | `/api/v2/experiment/config/apply` | apply v2 |同上 |
-| PUT | `/api/v3/experiment/config/apply` | apply v3 |同上 |
-| POST | `/api/v1/experiment/config/apply/save` | save applied version | [`handlers.go`](../../backend/internal/handlers/private/handlers.go) |
-| POST | `/api/v2/experiment/config/validate` | validate config | [`handlers.go`](../../backend/internal/handlers/private/handlers.go) |
-| POST | `/api/v1/experiment/validations/fast` | fast validation | [`handlers.go`](../../backend/internal/handlers/private/handlers.go) |
-| POST | `/api/v1/experiment/validations/run` | run validation | [`handlers.go`](../../backend/internal/handlers/private/handlers.go) |
-| GET | `/api/v1/experiment/supervisor` | supervisor JSON | [`supervisor.go`](../../backend/internal/handlers/private/supervisor.go) |
+| GET | `/api/v1/experiment/updates` | проверка обновлений конфига (дифф / предупреждения) | `experiment_actions.go` |
+| PUT | `/api/v1/experiment/config/apply` | применить конфиг (основной путь в UI) | [`apply_experiment_config.go`](../../backend/internal/handlers/private/apply_experiment_config.go) |
+| POST | `/api/v2/experiment/config/validate` | валидация конфига перед apply | [`handlers.go`](../../backend/internal/handlers/private/handlers.go) |
+| GET | `/api/v1/experiment/supervisor` | JSON конфига для графа редактора | [`supervisor.go`](../../backend/internal/handlers/private/supervisor.go) |
 
 ### Датасеты эксперимента
 
@@ -76,27 +71,24 @@ flowchart LR
 | DELETE | `/api/v1/experiment/dataset` | remove |
 | PUT | `/api/v1/experiment/dataset` | update |
 | GET | `/api/v1/experiment/datasets` | list |
-| POST | `/api/v2/experiment/search/datasets` | search available |
-| POST | `/api/v1/experiment/dataset/apply` | apply dataset link | [`handlers.go`](../../backend/internal/handlers/private/handlers.go) |
+| POST | `/api/v2/experiment/search/datasets` | поиск датасетов для привязки |
 
 ### Переменные и версии конфига
 
 | Метод | Путь | Назначение |
 |-------|------|------------|
-| GET/POST/PUT/DELETE | `/api/v1/experiment/variable(s)` | CRUD переменных | [`handlers.go`](../../backend/internal/handlers/private/handlers.go) |
-| GET | `/api/v1/experiment/variables/types` | типы |
-| GET/PUT | `/api/v2/experiment/variable/versions`, `.../version`, `.../version/current` | версии переменных |
+| GET/POST/PUT/DELETE | `/api/v1/experiment/variable`, `/api/v1/experiment/variables` | CRUD переменных | [`handlers.go`](../../backend/internal/handlers/private/handlers.go) |
+| GET/PUT | `/api/v2/experiment/variable/versions`, `/api/v2/experiment/variable/version`, `/api/v2/experiment/variable/version/current` | версии переменных |
 | GET | `/api/v1/experiment/logs`, `/api/v1/experiment/versions` | логи и версии конфига |
 | GET/PUT | `/api/v1/experiment/log` | одна запись лога |
 | GET/PUT | `/api/v1/experiment/version`, `/api/v1/experiment/version/current` | версия конфига |
-| PUT | `/api/v2/experiment/version` | комментарий к версии | [`versions.go`](../../backend/internal/handlers/private/versions.go) |
-| PUT | `/api/v1/experiment/queue/clean` | clean queue | [`handlers.go`](../../backend/internal/handlers/private/handlers.go) |
+| PUT | `/api/v2/experiment/version` | комментарий к версии конфига | [`versions.go`](../../backend/internal/handlers/private/versions.go) |
 
 ### Прочее
 
 | Метод | Путь | Назначение |
 |-------|------|------------|
-| GET | `/api/v1/experiment/urls` | URLs |
+| GET | `/api/v1/experiment/urls` | ссылки (Argo и др.) |
 | GET | `/api/v1/experiment/grafana_url` | Grafana |
 
 ### Jobs (связано с запусками)

@@ -44,7 +44,6 @@ flowchart LR
 | DELETE | `/api/v1/dataset` | delete |
 | PUT | `/api/v2/dataset` | update |
 | POST | `/api/v1/dataset/apply` | apply dataset (тело запроса) |
-| POST | `/api/v1/experiment/dataset/apply` | apply в контексте эксперимента | [`handlers.go`](../../backend/internal/handlers/private/handlers.go) |
 | GET | `/api/v1/dataset/logs` | logs by namespace context |
 | GET | `/api/v2/dataset/logs` | logs by project context |
 | GET/PUT | `/api/v1/dataset/log` | одна запись / комментарий |

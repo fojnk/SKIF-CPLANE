@@ -407,17 +407,7 @@ var Definitions = []shared.Definition{
 	},
 	{
 		Path:    "/api/v1/experiment/config/apply",
-		Handler: shared.CreateHandler(ApplyExperimentConfigV2Handler, setters.EmptySetParam[requests.ApplyExperimentConfigRequest], validation.DefaultValidate[requests.ApplyExperimentConfigRequest]),
-		Method:  http.MethodPut,
-	},
-	{
-		Path:    "/api/v2/experiment/config/apply",
-		Handler: shared.CreateHandler(ApplyExperimentConfigV2Handler, setters.EmptySetParam[requests.ApplyExperimentConfigRequest], validation.DefaultValidate[requests.ApplyExperimentConfigRequest]),
-		Method:  http.MethodPut,
-	},
-	{
-		Path:    "/api/v3/experiment/config/apply",
-		Handler: shared.CreateHandler(ApplyExperimentConfigV3Handler, setters.EmptySetParam[requests.ApplyExperimentConfigRequest], validation.DefaultValidate[requests.ApplyExperimentConfigRequest]),
+		Handler: shared.CreateHandler(ApplyExperimentConfigHandler, setters.EmptySetParam[requests.ApplyExperimentConfigRequest], validation.DefaultValidate[requests.ApplyExperimentConfigRequest]),
 		Method:  http.MethodPut,
 	},
 	{

@@ -7884,47 +7884,6 @@ paths:
       summary: search datasets with filters
       tags:
       - dataset
-  /api/v2/experiment/config/apply:
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: request body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.ApplyExperimentConfigRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.EmptyResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: apply experiment config (v2 — напрямую через оркестратор)
-      tags:
-      - experiment
   /api/v2/experiment/config/validate:
     post:
       consumes:
@@ -8736,48 +8695,6 @@ paths:
       summary: list user roles
       tags:
       - user
-  /api/v3/experiment/config/apply:
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: request body. single_stage устарел
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/requests.ApplyExperimentConfigRequest'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/responses.EmptyResponse'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-        "500":
-          description: Internal server error
-          schema:
-            $ref: '#/definitions/responses.ErrorResponse'
-      summary: apply experiment config (v3 — напрямую через оркестратор; single_stage
-        игнорируется)
-      tags:
-      - experiment
   /auth/authorize:
     get:
       consumes:
