@@ -66,7 +66,7 @@ func saveAppliedVersionForExperiments(ctx context.Context, svc *service.Service,
 				continue
 			}
 		} else {
-			cfg, err := orch.ExperimentInfoToSupervisorPipelineConfig(l, &experimentData)
+			cfg, err := orch.ExperimentInfoToSupervisorPipelineConfig(&experimentData)
 			if err != nil {
 				l.Error("failed to convert experiment info to orchestrator config", err)
 				continue

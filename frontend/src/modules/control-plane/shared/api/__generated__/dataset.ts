@@ -63,10 +63,6 @@ import {
   V2DatasetVersionsListDataDC,
   V2DatasetVersionsListErrorDC,
   V2DatasetVersionsListParamsDC,
-  V2DatasetYtListErrorDC,
-  V2DatasetYtListParamsDC,
-  V2DatasetsClustersListDataDC,
-  V2DatasetsClustersListErrorDC,
   V2DatasetsListDataDC,
   V2DatasetsListErrorDC,
   V2DatasetsListParamsDC,
@@ -307,25 +303,6 @@ export const datasetApi = new (class DatasetApi {
    * No description
    *
    * @tags dataset
-   * @summary get dataset clusters
-   * @request GET:/api/v2/datasets/clusters
-   * @responses <br/>
-   *  **200** V2DatasetsClustersListDataDC OK <br/>
-   *  **403** ResponsesErrorResponseDC Forbidden <br/>
-   *  **404** ResponsesErrorResponseDC Not Found <br/>
-   *  **500** ResponsesErrorResponseDC Internal server error <br/>
-   */
-  v2DatasetsClustersList = (params: RequestParams = {}) =>
-    http.request<V2DatasetsClustersListDataDC, V2DatasetsClustersListErrorDC>({
-      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/datasets/clusters`,
-      method: "GET",
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags dataset
    * @summary list datasets in project
    * @request GET:/api/v2/datasets
    * @responses <br/>
@@ -489,27 +466,6 @@ export const datasetApi = new (class DatasetApi {
       path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/dataset/version`,
       method: "PUT",
       body: request,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags dataset
-   * @summary get dataset yt link
-   * @request GET:/api/v2/dataset/yt
-   * @responses <br/>
-   *  **400** ResponsesErrorResponseDC Bad Request <br/>
-   *  **401** ResponsesErrorResponseDC Unauthorized <br/>
-   *  **403** ResponsesErrorResponseDC Forbidden <br/>
-   *  **404** ResponsesErrorResponseDC Not Found <br/>
-   *  **500** ResponsesErrorResponseDC Internal server error <br/>
-   */
-  v2DatasetYtList = (query: V2DatasetYtListParamsDC, params: RequestParams = {}) =>
-    http.request<any, V2DatasetYtListErrorDC>({
-      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/dataset/yt`,
-      method: "GET",
-      query: query,
       type: ContentType.Json,
       ...params,
     });

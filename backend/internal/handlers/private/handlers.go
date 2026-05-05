@@ -407,17 +407,7 @@ var Definitions = []shared.Definition{
 	},
 	{
 		Path:    "/api/v1/experiment/config/apply",
-		Handler: shared.CreateHandler(ApplyExperimentConfigV2Handler, setters.EmptySetParam[requests.ApplyExperimentConfigRequest], validation.DefaultValidate[requests.ApplyExperimentConfigRequest]),
-		Method:  http.MethodPut,
-	},
-	{
-		Path:    "/api/v2/experiment/config/apply",
-		Handler: shared.CreateHandler(ApplyExperimentConfigV2Handler, setters.EmptySetParam[requests.ApplyExperimentConfigRequest], validation.DefaultValidate[requests.ApplyExperimentConfigRequest]),
-		Method:  http.MethodPut,
-	},
-	{
-		Path:    "/api/v3/experiment/config/apply",
-		Handler: shared.CreateHandler(ApplyExperimentConfigV3Handler, setters.EmptySetParam[requests.ApplyExperimentConfigRequest], validation.DefaultValidate[requests.ApplyExperimentConfigRequest]),
+		Handler: shared.CreateHandler(ApplyExperimentConfigHandler, setters.EmptySetParam[requests.ApplyExperimentConfigRequest], validation.DefaultValidate[requests.ApplyExperimentConfigRequest]),
 		Method:  http.MethodPut,
 	},
 	{
@@ -691,16 +681,6 @@ var Definitions = []shared.Definition{
 		Path:    "/api/v1/dataset/log",
 		Handler: shared.CreateHandler(updateDatasetLogCommentHandler, setters.EmptySetParam[requests.UpdateDatasetLogCommentRequest], validation.DefaultValidate[requests.UpdateDatasetLogCommentRequest]),
 		Method:  http.MethodPut,
-	},
-	{
-		Path:    "/api/v2/datasets/clusters",
-		Handler: shared.CreateHandler(getAvailableClustersHandler, setters.EmptySetParam[requests.GetAvailableDatasetClustersRequest], validation.DefaultValidate[requests.GetAvailableDatasetClustersRequest]),
-		Method:  http.MethodGet,
-	},
-	{
-		Path:    "/api/v2/dataset/yt",
-		Handler: shared.CreateHandler(getDatasetYtURLHandler, setters.SetGetDatasetYTUrlRequestParams, validation.DefaultValidate[requests.GetDatasetYTLinkRequest], "dataset_id"),
-		Method:  http.MethodGet,
 	},
 	{
 		Path:    "/api/v2/dataset/versions",

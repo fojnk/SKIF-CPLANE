@@ -129,8 +129,6 @@ type IDatasetService interface {
 	CopyDataset(ctx context.Context, srcDatasetID int32, newName string, targetProjectID int32, username string) (*dto.Dataset, error)
 	SearchDatasets(ctx context.Context, params dbcore.SelectDatasetsParams) ([]dbcore.SelectDatasetsRow, error)
 	GetDatasetLinkedExperiments(ctx context.Context, datasetID int32, limit, offset int32) ([]dto.DatasetExperimentLink, int64, error)
-	GetDatasetYTURL(ctx context.Context, datasetID int32) (string, error)
-	GetAvailableClusters() []dto.Cluster
 }
 
 type IProjectService interface {

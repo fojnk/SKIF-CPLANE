@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/jackc/pgx/v5/pgtype"
 	dbcore "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/db/core"
@@ -12,7 +11,6 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/models"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/models/user"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/datasettype"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/orch"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/repository"
 	serviceerrors "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/errors"
 )
@@ -489,63 +487,4 @@ func (s *DatasetService) GetDatasetLinkedExperiments(ctx context.Context, datase
 	}
 
 	return list, total, nil
-}
-
-// GetDatasetYTURL возвращает YT URL для dataset
-func (s *DatasetService) GetDatasetYTURL(ctx context.Context, datasetID int32) (string, error) {
-	meta, err := orch.GetDSInfo(ctx, s.repo.DB, datasetID)
-	if err != nil {
-		s.repo.Logger.Error("failed to get DS info", err)
-		return "https://yt.vk.team", nil
-	}
-
-	if meta.YT == nil {
-		return "", serviceerrors.NewNotFoundError("YT секция в конфигурации источника не представлена", nil)
-	}
-
-	var clusterName string
-	parts := strings.Split(meta.YT.Cluster, ".")
-	if len(parts) > 0 {
-		clusterName = parts[0]
-	}
-
-	url, ok := s.repo.Config.DatasetURLs["yt_work_dir"]
-	if !ok {
-		return "", serviceerrors.NewNotFoundError("URL для dataset не найден в конфигурации", nil)
-	}
-
-	newURL := url.URL
-
-	if strings.Contains(newURL, "CLUSTER_NAME") {
-		if clusterName != "" {
-			newURL = strings.ReplaceAll(newURL, "CLUSTER_NAME", clusterName)
-		} else {
-			newURL = "https://yt.vk.team"
-		}
-	}
-
-	if strings.Contains(newURL, "YT_WORK_DIR") {
-		if meta.YT.Path != "" {
-			newURL = strings.ReplaceAll(newURL, "YT_WORK_DIR", meta.YT.Path)
-		} else {
-			newURL = "https://yt.vk.team"
-		}
-	}
-
-	return newURL, nil
-}
-
-// GetAvailableClusters возвращает список доступных кластеров
-func (s *DatasetService) GetAvailableClusters() []dto.Cluster {
-	return []dto.Cluster{
-		dto.Miranda,
-		dto.MercuryKC,
-		dto.MercuryPC,
-		dto.MercuryHC,
-		dto.MercuryRC,
-		dto.MercuryUC,
-		dto.Jupiter,
-		dto.Moon,
-		dto.Saturn,
-	}
 }

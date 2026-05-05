@@ -41,8 +41,8 @@ flowchart LR
 
 | Документ | Назначение | Таблицы БД (основные) | Сервис |
 |----------|------------|----------------------|--------|
-| [`entities/namespace.md`](entities/namespace.md) | Рабочая область (неймспейс), конфиг и ACL | `t_namespace`, `t_namespace_config_v`, `t_namespace_variable`, `t_namespace_update_log` | [`namespace_service.go`](../backend/internal/service/namespace/namespace_service.go) |
-| [`entities/project.md`](entities/project.md) | Проект внутри неймспейса, конфиг, закладки | `t_project`, `t_project_config_v`, `t_project_variable`, `t_project_update_log`, `t_user_pinned_projects` | [`project_service.go`](../backend/internal/service/project/project_service.go) |
+| [`entities/namespace.md`](entities/namespace.md) | Рабочая область (неймспейс), конфиг и ACL | `t_namespace`, `t_namespace_config_v`, `t_namespace_update_log` | [`namespace_service.go`](../backend/internal/service/namespace/namespace_service.go) |
+| [`entities/project.md`](entities/project.md) | Проект внутри неймспейса, конфиг, закладки | `t_project`, `t_project_config_v`, `t_project_update_log`, `t_user_pinned_projects` | [`project_service.go`](../backend/internal/service/project/project_service.go) |
 | [`entities/experiment.md`](entities/experiment.md) | Эксперимент, шаблон, переменные, связь с датасетами и супервизором | `t_experiment`, `t_experiment_template`, `t_experiment_template_v`, `t_experiment_dataset`, `t_experiment_io`, `t_experiment_variable`, `t_experiment_variable_v`, `t_experiment_status`, `t_experiment_update_log` | [`experiment_service.go`](../backend/internal/service/experiment/experiment_service.go), [`experiment_actions_service.go`](../backend/internal/service/experiment/experiment_actions_service.go) |
 | [`entities/dataset.md`](entities/dataset.md) | Датасет, версии, привязка к проекту/неймспейсу | `t_dataset`, `t_dataset_v`, `t_dataset_update_log` | [`dataset_service.go`](../backend/internal/service/dataset/dataset_service.go) |
 
@@ -50,7 +50,7 @@ flowchart LR
 
 | Файл | Назначение |
 |------|------------|
-| [`database/cplane.dbml`](database/cplane.dbml) | Схема PostgreSQL в DBML (миграции `000001`–`000006`). Импорт в [dbdiagram.io](https://dbdiagram.io): **Database → Import → DBML**. |
+| [`database/cplane.dbml`](database/cplane.dbml) | Схема PostgreSQL в DBML (в т.ч. `000001_init`). Импорт в [dbdiagram.io](https://dbdiagram.io): **Database → Import → DBML**. |
 
 ## Гайды
 

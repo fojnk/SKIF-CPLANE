@@ -35,9 +35,7 @@ const (
 	EntityDataset           EntityType = "dataset"
 	EntityProject              EntityType = "project"
 	EntityNamespace            EntityType = "namespace"
-	EntityExperimentVariables    EntityType = "experiment_variables"
-	EntityProjectVariables     EntityType = "project_variables"
-	EntityNamespaceVariables   EntityType = "namespace_variables"
+	EntityExperimentVariables EntityType = "experiment_variables"
 	EntityUser                 EntityType = "user"
 	EntityUserGroup            EntityType = "user_group"
 	EntityUserGroupRole        EntityType = "user_group_role"
@@ -93,18 +91,6 @@ var ErrorDetails = map[EntityType]map[ErrorType]ExternalMessageError{
 		ErrorExist:       {Ru: "Такое пространство уже существует", En: "Namespace already exists"},
 		PermissionDenied: {Ru: "У вас нет прав для работы с этим пространством", En: "Permission denied to namespace"},
 		InternalError:    {Ru: "На сервере произошла ошибка при работе с пространством", En: "Namespace internal error"},
-	},
-	EntityProjectVariables: map[ErrorType]ExternalMessageError{
-		ErrorNotFound:    {Ru: "Переменные проекта не найдены", En: "Project variables not found"},
-		ErrorExist:       {Ru: "Такая переменная уже существует в проекта", En: "Project variable already exists"},
-		PermissionDenied: {Ru: "У вас нет прав к переменным в этом проекте", En: "Permission denied to project variables"},
-		InternalError:    {Ru: "На сервере произошла ошибка при работе с переменными проекта", En: "Project variables internal error"},
-	},
-	EntityNamespaceVariables: map[ErrorType]ExternalMessageError{
-		ErrorNotFound:    {Ru: "Переменные пространства не найдены", En: "Namespace variables not found"},
-		ErrorExist:       {Ru: "Такая переменная уже существует в рабочем пространстве", En: "Namespace variable already exists"},
-		PermissionDenied: {Ru: "У вас нет прав к переменным этого рабочего пространства", En: "Permission denied to namespace variables"},
-		InternalError:    {Ru: "На сервере произошла ошибка при работе с переменными рабочего пространства", En: "Namespace variables internal error"},
 	},
 	EntityExperimentVariables: map[ErrorType]ExternalMessageError{
 		ErrorNotFound:    {Ru: "Переменные пайплайна не найдены", En: "Experiment variables not found"},

@@ -74,11 +74,7 @@ type ClientService interface {
 
 	GetAPIV2DatasetVersions(params *GetAPIV2DatasetVersionsParams, opts ...ClientOption) (*GetAPIV2DatasetVersionsOK, error)
 
-	GetAPIV2DatasetYt(params *GetAPIV2DatasetYtParams, opts ...ClientOption) error
-
 	GetAPIV2Datasets(params *GetAPIV2DatasetsParams, opts ...ClientOption) (*GetAPIV2DatasetsOK, error)
-
-	GetAPIV2DatasetsClusters(params *GetAPIV2DatasetsClustersParams, opts ...ClientOption) (*GetAPIV2DatasetsClustersOK, error)
 
 	PostAPIV1DatasetApply(params *PostAPIV1DatasetApplyParams, opts ...ClientOption) (*PostAPIV1DatasetApplyOK, error)
 
@@ -489,38 +485,6 @@ func (a *Client) GetAPIV2DatasetVersions(params *GetAPIV2DatasetVersionsParams, 
 }
 
 /*
-GetAPIV2DatasetYt gets dataset yt link
-*/
-func (a *Client) GetAPIV2DatasetYt(params *GetAPIV2DatasetYtParams, opts ...ClientOption) error {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewGetAPIV2DatasetYtParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "GetAPIV2DatasetYt",
-		Method:             "GET",
-		PathPattern:        "/api/v2/dataset/yt",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &GetAPIV2DatasetYtReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	_, err := a.transport.Submit(op)
-	if err != nil {
-		return err
-	}
-	// no success response is defined: return nil
-
-	return nil
-}
-
-/*
 GetAPIV2Datasets lists datasets in project
 */
 func (a *Client) GetAPIV2Datasets(params *GetAPIV2DatasetsParams, opts ...ClientOption) (*GetAPIV2DatasetsOK, error) {
@@ -560,49 +524,6 @@ func (a *Client) GetAPIV2Datasets(params *GetAPIV2DatasetsParams, opts ...Client
 	//
 	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for GetAPIV2Datasets: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-GetAPIV2DatasetsClusters gets dataset clusters
-*/
-func (a *Client) GetAPIV2DatasetsClusters(params *GetAPIV2DatasetsClustersParams, opts ...ClientOption) (*GetAPIV2DatasetsClustersOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewGetAPIV2DatasetsClustersParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "GetAPIV2DatasetsClusters",
-		Method:             "GET",
-		PathPattern:        "/api/v2/datasets/clusters",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &GetAPIV2DatasetsClustersReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*GetAPIV2DatasetsClustersOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-
-	// no default response is defined.
-	//
-	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for GetAPIV2DatasetsClusters: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

@@ -42,11 +42,9 @@ type Querier interface {
 	DeleteExperimentVariableByExperimentID(ctx context.Context, id int32) error
 	DeleteNamespace(ctx context.Context, id int32) error
 	DeleteNamespaceConfig(ctx context.Context, id int32) error
-	DeleteNamespaceVariable(ctx context.Context, id int32) error
 	DeletePinnedProject(ctx context.Context, arg DeletePinnedProjectParams) error
 	DeleteProject(ctx context.Context, id int32) error
 	DeleteProjectConfig(ctx context.Context, id int32) error
-	DeleteProjectVariable(ctx context.Context, id int32) error
 	DeleteRoleMatchById(ctx context.Context, id int32) error
 	DeleteUserRoles(ctx context.Context, arg DeleteUserRolesParams) error
 	DeleteUserRulesForDeletedRoles(ctx context.Context, arg DeleteUserRulesForDeletedRolesParams) error
@@ -118,14 +116,12 @@ type Querier interface {
 	InsertNamespace(ctx context.Context, name string) (int32, error)
 	InsertNamespaceConfig(ctx context.Context, arg InsertNamespaceConfigParams) (int32, error)
 	InsertNamespaceUpdateLog(ctx context.Context, arg InsertNamespaceUpdateLogParams) error
-	InsertNamespaceVariable(ctx context.Context, arg InsertNamespaceVariableParams) (int32, error)
 	InsertNewUsers(ctx context.Context, name []string) *InsertNewUsersBatchResults
 	InsertPermissionRequest(ctx context.Context, arg InsertPermissionRequestParams) (TPermissionRequest, error)
 	InsertPinnedProject(ctx context.Context, arg InsertPinnedProjectParams) (TUserPinnedProject, error)
 	InsertProject(ctx context.Context, arg InsertProjectParams) (TProject, error)
 	InsertProjectConfig(ctx context.Context, arg InsertProjectConfigParams) (int32, error)
 	InsertProjectUpdateLog(ctx context.Context, arg InsertProjectUpdateLogParams) error
-	InsertProjectVariable(ctx context.Context, arg InsertProjectVariableParams) (int32, error)
 	InsertRole(ctx context.Context, arg InsertRoleParams) (TRole, error)
 	InsertRoleObjectMatch(ctx context.Context, arg InsertRoleObjectMatchParams) (TRoleObjectMatch, error)
 	InsertRoleOwner(ctx context.Context, arg InsertRoleOwnerParams) (TRoleOwner, error)
@@ -199,8 +195,6 @@ type Querier interface {
 	SelectNamespaceConfigVersions(ctx context.Context, namespaceID int32) ([]SelectNamespaceConfigVersionsRow, error)
 	SelectNamespaceLog(ctx context.Context, id int32) (SelectNamespaceLogRow, error)
 	SelectNamespaceUpdateLogs(ctx context.Context, arg SelectNamespaceUpdateLogsParams) ([]SelectNamespaceUpdateLogsRow, error)
-	SelectNamespaceVariable(ctx context.Context, id int32) (SelectNamespaceVariableRow, error)
-	SelectNamespaceVariables(ctx context.Context, namespaceID int32) ([]SelectNamespaceVariablesRow, error)
 	SelectNamespaceWithDeleted(ctx context.Context, id int32) (SelectNamespaceWithDeletedRow, error)
 	SelectNamespaces(ctx context.Context) ([]SelectNamespacesRow, error)
 	SelectNamespacesWithRole(ctx context.Context) ([]TNamespace, error)
@@ -210,8 +204,6 @@ type Querier interface {
 	SelectProjectConfigVersions(ctx context.Context, projectID int32) ([]SelectProjectConfigVersionsRow, error)
 	SelectProjectLog(ctx context.Context, id int32) (SelectProjectLogRow, error)
 	SelectProjectUpdateLogs(ctx context.Context, arg SelectProjectUpdateLogsParams) ([]SelectProjectUpdateLogsRow, error)
-	SelectProjectVariable(ctx context.Context, id int32) (SelectProjectVariableRow, error)
-	SelectProjectVariables(ctx context.Context, projectID int32) ([]SelectProjectVariablesRow, error)
 	SelectProjectWithDeleted(ctx context.Context, arg SelectProjectWithDeletedParams) (SelectProjectWithDeletedRow, error)
 	SelectProjectWithoutPin(ctx context.Context, id int32) (SelectProjectWithoutPinRow, error)
 	SelectProjects(ctx context.Context, namespaceID int32) ([]SelectProjectsRow, error)
@@ -262,12 +254,10 @@ type Querier interface {
 	UpdateExperimentVariableVersionComment(ctx context.Context, arg UpdateExperimentVariableVersionCommentParams) (TExperimentVariableV, error)
 	UpdateNamespace(ctx context.Context, arg UpdateNamespaceParams) error
 	UpdateNamespaceLogComment(ctx context.Context, arg UpdateNamespaceLogCommentParams) error
-	UpdateNamespaceVariable(ctx context.Context, arg UpdateNamespaceVariableParams) error
 	UpdatePermissionRequestReviewed(ctx context.Context, arg UpdatePermissionRequestReviewedParams) (int32, error)
 	UpdateProject(ctx context.Context, arg UpdateProjectParams) (TProject, error)
 	UpdateProjectAbcGroup(ctx context.Context) error
 	UpdateProjectLogComment(ctx context.Context, arg UpdateProjectLogCommentParams) error
-	UpdateProjectVariable(ctx context.Context, arg UpdateProjectVariableParams) error
 	UpdateRole(ctx context.Context, arg UpdateRoleParams) error
 	UpdateRoleForIdm(ctx context.Context, arg UpdateRoleForIdmParams) (TRole, error)
 	UpdateRoleMatch(ctx context.Context, arg UpdateRoleMatchParams) (TRoleObjectMatch, error)

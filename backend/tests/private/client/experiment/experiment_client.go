@@ -136,15 +136,11 @@ type ClientService interface {
 
 	PutAPIV1ExperimentVersionCurrent(params *PutAPIV1ExperimentVersionCurrentParams, opts ...ClientOption) (*PutAPIV1ExperimentVersionCurrentOK, error)
 
-	PutAPIV2ExperimentConfigApply(params *PutAPIV2ExperimentConfigApplyParams, opts ...ClientOption) (*PutAPIV2ExperimentConfigApplyOK, error)
-
 	PutAPIV2ExperimentVariableVersion(params *PutAPIV2ExperimentVariableVersionParams, opts ...ClientOption) (*PutAPIV2ExperimentVariableVersionOK, error)
 
 	PutAPIV2ExperimentVariableVersionCurrent(params *PutAPIV2ExperimentVariableVersionCurrentParams, opts ...ClientOption) (*PutAPIV2ExperimentVariableVersionCurrentOK, error)
 
 	PutAPIV2ExperimentVersion(params *PutAPIV2ExperimentVersionParams, opts ...ClientOption) (*PutAPIV2ExperimentVersionOK, error)
-
-	PutAPIV3ExperimentConfigApply(params *PutAPIV3ExperimentConfigApplyParams, opts ...ClientOption) (*PutAPIV3ExperimentConfigApplyOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -1872,49 +1868,6 @@ func (a *Client) PutAPIV1ExperimentVersionCurrent(params *PutAPIV1ExperimentVers
 }
 
 /*
-PutAPIV2ExperimentConfigApply applies experiment config v2 напрямую через оркестратор
-*/
-func (a *Client) PutAPIV2ExperimentConfigApply(params *PutAPIV2ExperimentConfigApplyParams, opts ...ClientOption) (*PutAPIV2ExperimentConfigApplyOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewPutAPIV2ExperimentConfigApplyParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "PutAPIV2ExperimentConfigApply",
-		Method:             "PUT",
-		PathPattern:        "/api/v2/experiment/config/apply",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &PutAPIV2ExperimentConfigApplyReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*PutAPIV2ExperimentConfigApplyOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-
-	// no default response is defined.
-	//
-	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PutAPIV2ExperimentConfigApply: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
 PutAPIV2ExperimentVariableVersion updates experiment version comment
 */
 func (a *Client) PutAPIV2ExperimentVariableVersion(params *PutAPIV2ExperimentVariableVersionParams, opts ...ClientOption) (*PutAPIV2ExperimentVariableVersionOK, error) {
@@ -2040,49 +1993,6 @@ func (a *Client) PutAPIV2ExperimentVersion(params *PutAPIV2ExperimentVersionPara
 	//
 	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for PutAPIV2ExperimentVersion: API contract not enforced by server. Client expected to get an error, but got: %T", result)
-	panic(msg)
-}
-
-/*
-PutAPIV3ExperimentConfigApply applies experiment config v3 напрямую через оркестратор single stage игнорируется
-*/
-func (a *Client) PutAPIV3ExperimentConfigApply(params *PutAPIV3ExperimentConfigApplyParams, opts ...ClientOption) (*PutAPIV3ExperimentConfigApplyOK, error) {
-	// NOTE: parameters are not validated before sending
-	if params == nil {
-		params = NewPutAPIV3ExperimentConfigApplyParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "PutAPIV3ExperimentConfigApply",
-		Method:             "PUT",
-		PathPattern:        "/api/v3/experiment/config/apply",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/json"},
-		Schemes:            []string{"http"},
-		Params:             params,
-		Reader:             &PutAPIV3ExperimentConfigApplyReader{formats: a.formats},
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-
-	// only one success response has to be checked
-	success, ok := result.(*PutAPIV3ExperimentConfigApplyOK)
-	if ok {
-		return success, nil
-	}
-
-	// unexpected success response.
-
-	// no default response is defined.
-	//
-	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for PutAPIV3ExperimentConfigApply: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 

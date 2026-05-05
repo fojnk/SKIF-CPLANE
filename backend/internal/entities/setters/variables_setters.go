@@ -7,45 +7,6 @@ import (
 	"strconv"
 )
 
-func SetGetNamespaceVariableRequestParams(r *requests.GetNamespaceVariableRequest, _, value string) *responses.ErrorResponse {
-	id, err := strconv.ParseInt(value, 10, 32)
-	if err != nil {
-		return &responses.ErrorResponse{
-			InternalError:   err,
-			ExternalMessage: "failed to parse variable_id",
-			HTTPStatusCode:  http.StatusBadRequest,
-		}
-	}
-	r.VariableID = int32(id)
-	return nil
-}
-
-func SetGetProjectVariablesRequestParams(r *requests.GetProjectVariablesRequest, _, value string) *responses.ErrorResponse {
-	id, err := strconv.ParseInt(value, 10, 32)
-	if err != nil {
-		return &responses.ErrorResponse{
-			InternalError:   err,
-			ExternalMessage: "failed to parse project_id",
-			HTTPStatusCode:  http.StatusBadRequest,
-		}
-	}
-	r.ProjectID = int32(id)
-	return nil
-}
-
-func SetGetProjectVariableRequestParams(r *requests.GetProjectVariableRequest, _, value string) *responses.ErrorResponse {
-	id, err := strconv.ParseInt(value, 10, 32)
-	if err != nil {
-		return &responses.ErrorResponse{
-			InternalError:   err,
-			ExternalMessage: "failed to parse variable_id",
-			HTTPStatusCode:  http.StatusBadRequest,
-		}
-	}
-	r.VariableID = int32(id)
-	return nil
-}
-
 func SetGetExperimentVariablesRequestParams(r *requests.GetExperimentVariablesRequest, _, value string) *responses.ErrorResponse {
 	id, err := strconv.ParseInt(value, 10, 32)
 	if err != nil {
@@ -91,15 +52,3 @@ func SetGetExperimentVariableV2RequestParams(r *requests.GetExperimentVariableV2
 	return nil
 }
 
-func SetGetNamespaceVariablesRequestParams(r *requests.GetNamespaceVariablesRequest, _, value string) *responses.ErrorResponse {
-	id, err := strconv.ParseInt(value, 10, 32)
-	if err != nil {
-		return &responses.ErrorResponse{
-			InternalError:   err,
-			ExternalMessage: "failed to parse namespace_id",
-			HTTPStatusCode:  http.StatusBadRequest,
-		}
-	}
-	r.NamespaceID = int32(id)
-	return nil
-}

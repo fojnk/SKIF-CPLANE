@@ -113,7 +113,7 @@ func (a *Client) GetAPIV1Events(params *GetAPIV1EventsParams, opts ...ClientOpti
 }
 
 /*
-GetAPIV1Job gets job by ID job queue disabled
+GetAPIV1Job gets job by ID без jobd job id id строки истории эксперимента из списка задач
 */
 func (a *Client) GetAPIV1Job(params *GetAPIV1JobParams, opts ...ClientOption) (*GetAPIV1JobOK, error) {
 	// NOTE: parameters are not validated before sending
@@ -242,7 +242,7 @@ func (a *Client) GetAPIV1JobTasks(params *GetAPIV1JobTasksParams, opts ...Client
 }
 
 /*
-PostAPIV1JobsSearch searches and list jobs with filters job queue disabled always empty
+PostAPIV1JobsSearch searches and list jobs with filters без jobd история start stop apply живой статус супервизора и очереди rabbit m q для последнего start apply
 */
 func (a *Client) PostAPIV1JobsSearch(params *PostAPIV1JobsSearchParams, opts ...ClientOption) (*PostAPIV1JobsSearchOK, error) {
 	// NOTE: parameters are not validated before sending

@@ -9,7 +9,6 @@ import (
 	"github.com/pkg/errors"
 	dbcore "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/db/core"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/validation"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/logger"
 )
 
 type ExperimentConfig map[string]any
@@ -140,32 +139,27 @@ func (c SupervisorPipelineConfig) MarshalJSON() ([]byte, error) {
 	return json.Marshal(enriched)
 }
 
-func ExperimentInfoToSupervisorPipelineConfig(l *logger.Logger, experimentInfo *dbcore.CompleteExperimentInfoRow) (*SupervisorPipelineConfig, error) {
+func ExperimentInfoToSupervisorPipelineConfig(experimentInfo *dbcore.CompleteExperimentInfoRow) (*SupervisorPipelineConfig, error) {
 	var (
-		projectConfig   ProjectConfig
-		namespaceConfig NamespaceConfig
-		experimentConfig  ExperimentConfig = make(ExperimentConfig)
-		variables       []ExperimentVariable
+		projectConfig    ProjectConfig
+		namespaceConfig  NamespaceConfig
+		experimentConfig ExperimentConfig = make(ExperimentConfig)
+		variables        []ExperimentVariable
 	)
 
-	l.Debug(fmt.Sprintf("experimentInfo.ProjectConfig: %s", string(experimentInfo.ProjectConfig)))
 	if err := json.Unmarshal(experimentInfo.ProjectConfig, &projectConfig); err != nil {
 		return nil, errors.Wrap(err, "failed to unmarshal project config")
 	}
 
-	l.Debug(fmt.Sprintf("experimentInfo.NamespaceConfig: %s", string(experimentInfo.NamespaceConfig)))
 	if err := json.Unmarshal(experimentInfo.NamespaceConfig, &namespaceConfig); err != nil {
 		return nil, errors.Wrap(err, "failed to unmarshal namespace config")
 	}
 
-	l.Debug(fmt.Sprintf("experimentInfo.Variables: %s", string(experimentInfo.Variables)))
 	if err := json.Unmarshal(experimentInfo.Variables, &variables); err != nil {
 		return nil, errors.Wrap(err, "failed to unmarshal variables")
 	}
 
-	l.Debug(fmt.Sprintf("experimentInfo.ExperimentConfig: %s", experimentInfo.ExperimentConfig.String))
 	if experimentInfo.ExperimentConfig.Valid {
-		l.Debug(fmt.Sprintf("config: %s", experimentInfo.ExperimentConfig.String))
 		if err := json.Unmarshal([]byte(experimentInfo.ExperimentConfig.String), &experimentConfig); err != nil {
 			return nil, errors.Wrap(err, "failed to unmarshal experiment config")
 		}
@@ -178,7 +172,6 @@ func ExperimentInfoToSupervisorPipelineConfig(l *logger.Logger, experimentInfo *
 		Type    string `json:"type"`
 		Managed bool   `json:"managed"`
 	}
-	l.Debug(fmt.Sprintf("experimentInfo.Datasets: %s", string(experimentInfo.Datasets)))
 	var rawDatasets []Dataset
 	if err := json.Unmarshal(experimentInfo.Datasets, &rawDatasets); err != nil {
 		return nil, errors.Wrap(err, "failed to unmarshal datasets")
@@ -188,13 +181,11 @@ func ExperimentInfoToSupervisorPipelineConfig(l *logger.Logger, experimentInfo *
 
 	for _, ds := range rawDatasets {
 		var schema DatasetSchema
-		l.Debug(fmt.Sprintf("ds.Schema: %s", ds.Schema))
 		if err := json.Unmarshal([]byte(ds.Schema), &schema); err != nil {
 			return nil, errors.Wrap(err, fmt.Sprintf("failed to unmarshal datasets %s schema", ds.Alias))
 		}
 
 		var params DatasetParams
-		l.Debug(fmt.Sprintf("ds.Params: %s", ds.Params))
 		if err := json.Unmarshal([]byte(ds.Params), &params); err != nil {
 			return nil, errors.Wrap(err, fmt.Sprintf("failed to unmarshal datasets %s params", ds.Alias))
 		}
