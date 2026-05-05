@@ -32,7 +32,7 @@ func GetYTWorkDir(ctx context.Context, d db.DB, l *logger.Logger, experimentID i
 		return "", nil
 	}
 
-	pipelineCfg, err := ExperimentInfoToSupervisorPipelineConfig(l, &experimentData)
+	pipelineCfg, err := ExperimentInfoToSupervisorPipelineConfig(&experimentData)
 	if err != nil {
 		return "", errors.Wrap(err, "failed to convert experiment info to supervisor pipeline config")
 	}

@@ -23,7 +23,6 @@ flowchart LR
 |-------------------------|----------|------|
 | `t_namespace` | Имя, `deleted`, текущая версия конфига | [L101–L108](../database/cplane.dbml#L101-L108) |
 | `t_namespace_config_v` | История версий JSON-конфига | [L110–L120](../database/cplane.dbml#L110-L120) |
-| `t_namespace_variable` | Переменные уровня namespace | [L281–L293](../database/cplane.dbml#L281-L293) |
 | `t_namespace_update_log` | Аудит (в миграциях без FK на сущность) | [L295–L308](../database/cplane.dbml#L295-L308) |
 | `v_real_namespace` | Представление «не удалённые» | шапка [L4–L10](../database/cplane.dbml#L4-L10) |
 

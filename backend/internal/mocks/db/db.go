@@ -486,20 +486,6 @@ func (mr *MockDBMockRecorder) DeleteNamespaceConfig(ctx, id any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNamespaceConfig", reflect.TypeOf((*MockDB)(nil).DeleteNamespaceConfig), ctx, id)
 }
 
-// DeleteNamespaceVariable mocks base method.
-func (m *MockDB) DeleteNamespaceVariable(ctx context.Context, id int32) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteNamespaceVariable", ctx, id)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteNamespaceVariable indicates an expected call of DeleteNamespaceVariable.
-func (mr *MockDBMockRecorder) DeleteNamespaceVariable(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNamespaceVariable", reflect.TypeOf((*MockDB)(nil).DeleteNamespaceVariable), ctx, id)
-}
-
 // DeletePinnedProject mocks base method.
 func (m *MockDB) DeletePinnedProject(ctx context.Context, arg core.DeletePinnedProjectParams) error {
 	m.ctrl.T.Helper()
@@ -540,20 +526,6 @@ func (m *MockDB) DeleteProjectConfig(ctx context.Context, id int32) error {
 func (mr *MockDBMockRecorder) DeleteProjectConfig(ctx, id any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteProjectConfig", reflect.TypeOf((*MockDB)(nil).DeleteProjectConfig), ctx, id)
-}
-
-// DeleteProjectVariable mocks base method.
-func (m *MockDB) DeleteProjectVariable(ctx context.Context, id int32) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleteProjectVariable", ctx, id)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteProjectVariable indicates an expected call of DeleteProjectVariable.
-func (mr *MockDBMockRecorder) DeleteProjectVariable(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteProjectVariable", reflect.TypeOf((*MockDB)(nil).DeleteProjectVariable), ctx, id)
 }
 
 // DeleteRoleMatchById mocks base method.
@@ -1614,21 +1586,6 @@ func (mr *MockDBMockRecorder) InsertNamespaceUpdateLog(ctx, arg any) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertNamespaceUpdateLog", reflect.TypeOf((*MockDB)(nil).InsertNamespaceUpdateLog), ctx, arg)
 }
 
-// InsertNamespaceVariable mocks base method.
-func (m *MockDB) InsertNamespaceVariable(ctx context.Context, arg core.InsertNamespaceVariableParams) (int32, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertNamespaceVariable", ctx, arg)
-	ret0, _ := ret[0].(int32)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// InsertNamespaceVariable indicates an expected call of InsertNamespaceVariable.
-func (mr *MockDBMockRecorder) InsertNamespaceVariable(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertNamespaceVariable", reflect.TypeOf((*MockDB)(nil).InsertNamespaceVariable), ctx, arg)
-}
-
 // InsertNewUsers mocks base method.
 func (m *MockDB) InsertNewUsers(ctx context.Context, name []string) *core.InsertNewUsersBatchResults {
 	m.ctrl.T.Helper()
@@ -1715,21 +1672,6 @@ func (m *MockDB) InsertProjectUpdateLog(ctx context.Context, arg core.InsertProj
 func (mr *MockDBMockRecorder) InsertProjectUpdateLog(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertProjectUpdateLog", reflect.TypeOf((*MockDB)(nil).InsertProjectUpdateLog), ctx, arg)
-}
-
-// InsertProjectVariable mocks base method.
-func (m *MockDB) InsertProjectVariable(ctx context.Context, arg core.InsertProjectVariableParams) (int32, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "InsertProjectVariable", ctx, arg)
-	ret0, _ := ret[0].(int32)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// InsertProjectVariable indicates an expected call of InsertProjectVariable.
-func (mr *MockDBMockRecorder) InsertProjectVariable(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "InsertProjectVariable", reflect.TypeOf((*MockDB)(nil).InsertProjectVariable), ctx, arg)
 }
 
 // InsertRole mocks base method.
@@ -2795,36 +2737,6 @@ func (mr *MockDBMockRecorder) SelectNamespaceUpdateLogs(ctx, arg any) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceUpdateLogs", reflect.TypeOf((*MockDB)(nil).SelectNamespaceUpdateLogs), ctx, arg)
 }
 
-// SelectNamespaceVariable mocks base method.
-func (m *MockDB) SelectNamespaceVariable(ctx context.Context, id int32) (core.SelectNamespaceVariableRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectNamespaceVariable", ctx, id)
-	ret0, _ := ret[0].(core.SelectNamespaceVariableRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectNamespaceVariable indicates an expected call of SelectNamespaceVariable.
-func (mr *MockDBMockRecorder) SelectNamespaceVariable(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceVariable", reflect.TypeOf((*MockDB)(nil).SelectNamespaceVariable), ctx, id)
-}
-
-// SelectNamespaceVariables mocks base method.
-func (m *MockDB) SelectNamespaceVariables(ctx context.Context, namespaceID int32) ([]core.SelectNamespaceVariablesRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectNamespaceVariables", ctx, namespaceID)
-	ret0, _ := ret[0].([]core.SelectNamespaceVariablesRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectNamespaceVariables indicates an expected call of SelectNamespaceVariables.
-func (mr *MockDBMockRecorder) SelectNamespaceVariables(ctx, namespaceID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectNamespaceVariables", reflect.TypeOf((*MockDB)(nil).SelectNamespaceVariables), ctx, namespaceID)
-}
-
 // SelectNamespaceWithDeleted mocks base method.
 func (m *MockDB) SelectNamespaceWithDeleted(ctx context.Context, id int32) (core.SelectNamespaceWithDeletedRow, error) {
 	m.ctrl.T.Helper()
@@ -2958,36 +2870,6 @@ func (m *MockDB) SelectProjectUpdateLogs(ctx context.Context, arg core.SelectPro
 func (mr *MockDBMockRecorder) SelectProjectUpdateLogs(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectProjectUpdateLogs", reflect.TypeOf((*MockDB)(nil).SelectProjectUpdateLogs), ctx, arg)
-}
-
-// SelectProjectVariable mocks base method.
-func (m *MockDB) SelectProjectVariable(ctx context.Context, id int32) (core.SelectProjectVariableRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectProjectVariable", ctx, id)
-	ret0, _ := ret[0].(core.SelectProjectVariableRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectProjectVariable indicates an expected call of SelectProjectVariable.
-func (mr *MockDBMockRecorder) SelectProjectVariable(ctx, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectProjectVariable", reflect.TypeOf((*MockDB)(nil).SelectProjectVariable), ctx, id)
-}
-
-// SelectProjectVariables mocks base method.
-func (m *MockDB) SelectProjectVariables(ctx context.Context, projectID int32) ([]core.SelectProjectVariablesRow, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SelectProjectVariables", ctx, projectID)
-	ret0, _ := ret[0].([]core.SelectProjectVariablesRow)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SelectProjectVariables indicates an expected call of SelectProjectVariables.
-func (mr *MockDBMockRecorder) SelectProjectVariables(ctx, projectID any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectProjectVariables", reflect.TypeOf((*MockDB)(nil).SelectProjectVariables), ctx, projectID)
 }
 
 // SelectProjectWithDeleted mocks base method.
@@ -3621,20 +3503,6 @@ func (mr *MockDBMockRecorder) UpdateNamespaceLogComment(ctx, arg any) *gomock.Ca
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNamespaceLogComment", reflect.TypeOf((*MockDB)(nil).UpdateNamespaceLogComment), ctx, arg)
 }
 
-// UpdateNamespaceVariable mocks base method.
-func (m *MockDB) UpdateNamespaceVariable(ctx context.Context, arg core.UpdateNamespaceVariableParams) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateNamespaceVariable", ctx, arg)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UpdateNamespaceVariable indicates an expected call of UpdateNamespaceVariable.
-func (mr *MockDBMockRecorder) UpdateNamespaceVariable(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNamespaceVariable", reflect.TypeOf((*MockDB)(nil).UpdateNamespaceVariable), ctx, arg)
-}
-
 // UpdatePermissionRequestReviewed mocks base method.
 func (m *MockDB) UpdatePermissionRequestReviewed(ctx context.Context, arg core.UpdatePermissionRequestReviewedParams) (int32, error) {
 	m.ctrl.T.Helper()
@@ -3691,20 +3559,6 @@ func (m *MockDB) UpdateProjectLogComment(ctx context.Context, arg core.UpdatePro
 func (mr *MockDBMockRecorder) UpdateProjectLogComment(ctx, arg any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateProjectLogComment", reflect.TypeOf((*MockDB)(nil).UpdateProjectLogComment), ctx, arg)
-}
-
-// UpdateProjectVariable mocks base method.
-func (m *MockDB) UpdateProjectVariable(ctx context.Context, arg core.UpdateProjectVariableParams) error {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "UpdateProjectVariable", ctx, arg)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UpdateProjectVariable indicates an expected call of UpdateProjectVariable.
-func (mr *MockDBMockRecorder) UpdateProjectVariable(ctx, arg any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateProjectVariable", reflect.TypeOf((*MockDB)(nil).UpdateProjectVariable), ctx, arg)
 }
 
 // UpdateRole mocks base method.
