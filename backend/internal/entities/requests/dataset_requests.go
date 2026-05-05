@@ -76,13 +76,6 @@ type SearchDatasetsRequest struct {
 	ExactMatch *bool `json:"exact_match" extensions:"x-nullable"`
 }
 
-type GetAvailableDatasetClustersRequest struct {
-}
-
-type GetDatasetYTLinkRequest struct {
-	DatasetID int32 `validate:"required"`
-}
-
 type ApplyDatasetRequest struct {
 	DatasetID int32  `json:"dataset_id" validate:"required"`
 	Comment      string `json:"comment"`

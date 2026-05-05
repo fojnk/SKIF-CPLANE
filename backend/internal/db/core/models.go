@@ -234,15 +234,6 @@ type TNamespaceUpdateLog struct {
 	Comment     string
 }
 
-type TNamespaceVariable struct {
-	ID          int32
-	NamespaceID int32
-	Name        string
-	Value       string
-	Type        string
-	CreatedAt   pgtype.Timestamp
-}
-
 type TPermissionRequest struct {
 	ID              int32
 	RequesterUserID int32
@@ -287,15 +278,6 @@ type TProjectUpdateLog struct {
 	Act         string
 	Details     []byte
 	Comment     string
-}
-
-type TProjectVariable struct {
-	ID        int32
-	ProjectID int32
-	Name      string
-	Value     string
-	Type      string
-	CreatedAt pgtype.Timestamp
 }
 
 type TRole struct {

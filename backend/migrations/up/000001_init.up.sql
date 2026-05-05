@@ -224,26 +224,6 @@ CREATE TABLE t_experiment_variable (
     UNIQUE (experiment_id, name)
 );
 
-CREATE TABLE t_project_variable (
-    id SERIAL PRIMARY KEY,
-    project_id INT NOT NULL REFERENCES t_project(id),
-    name VARCHAR(255) NOT NULL,
-    value TEXT NOT NULL,
-    type VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (project_id, name)
-);
-
-CREATE TABLE t_namespace_variable (
-    id SERIAL PRIMARY KEY,
-    namespace_id INT NOT NULL REFERENCES t_namespace(id),
-    name VARCHAR(255) NOT NULL,
-    value TEXT NOT NULL,
-    type VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (namespace_id, name)
-);
-
 CREATE TABLE t_experiment_status (
     id SERIAL PRIMARY KEY,
     experiment_id INTEGER NOT NULL REFERENCES t_experiment(id) ON DELETE CASCADE,
@@ -381,8 +361,6 @@ CREATE INDEX idx_experiment_update_log_project_id ON t_experiment_update_log(pro
 CREATE INDEX idx_experiment_update_log_experiment_id ON t_experiment_update_log(experiment_id);
 CREATE INDEX idx_experiment_update_log_created_at ON t_experiment_update_log(created_at);
 CREATE INDEX idx_experiment_variable_experiment_id ON t_experiment_variable(experiment_id);
-CREATE INDEX idx_project_variable_project_id ON t_project_variable(project_id);
-CREATE INDEX idx_namespace_variable_namespace_id ON t_namespace_variable(namespace_id);
 CREATE INDEX idx_idm_id ON t_role(idm_id);
 CREATE INDEX idx_app_updates_release_date ON t_app_updates(release_date DESC);
 CREATE INDEX idx_app_updates_is_published ON t_app_updates(is_published);

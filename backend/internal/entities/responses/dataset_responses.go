@@ -51,10 +51,6 @@ type SearchDatasetsResponse struct {
 	Datasets []dto.DatasetInfo `json:"datasets"`
 }
 
-type GetAvailableDatasetClustersResponse struct {
-	Clusters []dto.Cluster `json:"clusters"`
-}
-
 type GetDatasetV2Response struct {
 	ID          int32       `json:"id"`
 	Name        string      `json:"name"`
@@ -71,10 +67,6 @@ type DatasetExperimentLinksResponse struct {
 	Links []dto.DatasetExperimentLink `json:"links"`
 	Pages int64                        `json:"pages"`
 	Total int64                        `json:"total"`
-}
-
-type GetDatasetYTLinkResponse struct {
-	YTLink string `json:"yt_link"`
 }
 
 func (r UpdateDatasetResponse) MarshalJSON() ([]byte, error) {

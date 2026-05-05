@@ -121,8 +121,6 @@ import {
   V1GraphListDataDC,
   V1GraphListErrorDC,
   V1GraphListParamsDC,
-  V2ExperimentConfigApplyUpdateDataDC,
-  V2ExperimentConfigApplyUpdateErrorDC,
   V2ExperimentConfigValidateCreateDataDC,
   V2ExperimentConfigValidateCreateErrorDC,
   V2ExperimentSearchDatasetsCreateDataDC,
@@ -141,8 +139,6 @@ import {
   V2ExperimentVariableVersionsListParamsDC,
   V2ExperimentVersionUpdateDataDC,
   V2ExperimentVersionUpdateErrorDC,
-  V3ExperimentConfigApplyUpdateDataDC,
-  V3ExperimentConfigApplyUpdateErrorDC,
 } from "./data-contracts";
 export const experimentApi = new (class ExperimentApi {
   /**
@@ -915,28 +911,6 @@ export const experimentApi = new (class ExperimentApi {
    * No description
    *
    * @tags experiment
-   * @summary apply experiment config (v2 — напрямую через оркестратор)
-   * @request PUT:/api/v2/experiment/config/apply
-   * @responses <br/>
-   *  **200** V2ExperimentConfigApplyUpdateDataDC OK <br/>
-   *  **400** ResponsesErrorResponseDC Bad Request <br/>
-   *  **401** ResponsesErrorResponseDC Unauthorized <br/>
-   *  **403** ResponsesErrorResponseDC Forbidden <br/>
-   *  **404** ResponsesErrorResponseDC Not Found <br/>
-   *  **500** ResponsesErrorResponseDC Internal server error <br/>
-   */
-  v2ExperimentConfigApplyUpdate = (request: RequestsApplyExperimentConfigRequestDC, params: RequestParams = {}) =>
-    http.request<V2ExperimentConfigApplyUpdateDataDC, V2ExperimentConfigApplyUpdateErrorDC>({
-      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/experiment/config/apply`,
-      method: "PUT",
-      body: request,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags experiment
    * @summary validate experiment config
    * @request POST:/api/v2/experiment/config/validate
    * @responses <br/>
@@ -1111,28 +1085,6 @@ export const experimentApi = new (class ExperimentApi {
   v2ExperimentVersionUpdate = (request: RequestsUpdateExperimentVersionCommentRequestDC, params: RequestParams = {}) =>
     http.request<V2ExperimentVersionUpdateDataDC, V2ExperimentVersionUpdateErrorDC>({
       path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v2/experiment/version`,
-      method: "PUT",
-      body: request,
-      type: ContentType.Json,
-      ...params,
-    });
-  /**
-   * No description
-   *
-   * @tags experiment
-   * @summary apply experiment config (v3 — напрямую через оркестратор; single_stage игнорируется)
-   * @request PUT:/api/v3/experiment/config/apply
-   * @responses <br/>
-   *  **200** V3ExperimentConfigApplyUpdateDataDC OK <br/>
-   *  **400** ResponsesErrorResponseDC Bad Request <br/>
-   *  **401** ResponsesErrorResponseDC Unauthorized <br/>
-   *  **403** ResponsesErrorResponseDC Forbidden <br/>
-   *  **404** ResponsesErrorResponseDC Not Found <br/>
-   *  **500** ResponsesErrorResponseDC Internal server error <br/>
-   */
-  v3ExperimentConfigApplyUpdate = (request: RequestsApplyExperimentConfigRequestDC, params: RequestParams = {}) =>
-    http.request<V3ExperimentConfigApplyUpdateDataDC, V3ExperimentConfigApplyUpdateErrorDC>({
-      path: `${buildEnvs.MODULES["control-plane"]?.apiUrl || apiUrl}/api/v3/experiment/config/apply`,
       method: "PUT",
       body: request,
       type: ContentType.Json,

@@ -3846,7 +3846,7 @@ const docTemplate = `{
                 "tags": [
                     "jobs"
                 ],
-                "summary": "get job by ID (job queue disabled)",
+                "summary": "get job by ID (без jobd: job_id = id строки истории эксперимента из списка задач)",
                 "parameters": [
                     {
                         "type": "integer",
@@ -4053,7 +4053,7 @@ const docTemplate = `{
                 "tags": [
                     "jobs"
                 ],
-                "summary": "search and list jobs with filters (job queue disabled — always empty)",
+                "summary": "search and list jobs with filters (без jobd: история start/stop/apply + живой статус супервизора и очереди RabbitMQ для последнего start/apply)",
                 "parameters": [
                     {
                         "description": "search filters (entity_type, entity_id, type, status, created_by, limit, offset, sort, order)",
@@ -7381,61 +7381,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/dataset/yt": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "dataset"
-                ],
-                "summary": "get dataset yt link",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "dataset id",
-                        "name": "dataset_id",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v2/datasets": {
             "get": {
                 "produces": [
@@ -7482,46 +7427,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v2/datasets/clusters": {
-            "get": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "dataset"
-                ],
-                "summary": "get dataset clusters",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.GetAvailableDatasetClustersResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v2/datasets/search": {
             "post": {
                 "tags": [
@@ -7544,69 +7449,6 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/responses.SearchDatasetsResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v2/experiment/config/apply": {
-            "put": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "experiment"
-                ],
-                "summary": "apply experiment config (v2 — напрямую через оркестратор)",
-                "parameters": [
-                    {
-                        "description": "request body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.ApplyExperimentConfigRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.EmptyResponse"
                         }
                     },
                     "400": {
@@ -8881,69 +8723,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v3/experiment/config/apply": {
-            "put": {
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "experiment"
-                ],
-                "summary": "apply experiment config (v3 — напрямую через оркестратор; single_stage игнорируется)",
-                "parameters": [
-                    {
-                        "description": "request body. single_stage устарел",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/requests.ApplyExperimentConfigRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/responses.EmptyResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal server error",
-                        "schema": {
-                            "$ref": "#/definitions/responses.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/auth/authorize": {
             "get": {
                 "description": "Start authorize oauth2 for user",
@@ -9237,10 +9016,48 @@ const docTemplate = `{
         "clients.Job": {
             "type": "object",
             "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "created_by": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
+                "name": {
+                    "type": "string"
+                },
+                "stages": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/clients.JobStage"
+                    }
+                },
                 "status": {
+                    "type": "string"
+                },
+                "status_description": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "clients.JobStage": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "step_id": {
+                    "type": "integer"
+                },
+                "step_status": {
                     "type": "string"
                 }
             }
@@ -9408,31 +9225,6 @@ const docTemplate = `{
                     }
                 }
             }
-        },
-        "dto.Cluster": {
-            "type": "string",
-            "enum": [
-                "miranda",
-                "mercury-kc",
-                "mercury-rc",
-                "mercury-pc",
-                "mercury-hc",
-                "mercury-uc",
-                "jupiter",
-                "moon",
-                "saturn"
-            ],
-            "x-enum-varnames": [
-                "Miranda",
-                "MercuryKC",
-                "MercuryRC",
-                "MercuryPC",
-                "MercuryHC",
-                "MercuryUC",
-                "Jupiter",
-                "Moon",
-                "Saturn"
-            ]
         },
         "dto.CompleteExperimentList": {
             "type": "object",
@@ -12469,17 +12261,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/dto.BannerType"
-                    }
-                }
-            }
-        },
-        "responses.GetAvailableDatasetClustersResponse": {
-            "type": "object",
-            "properties": {
-                "clusters": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.Cluster"
                     }
                 }
             }

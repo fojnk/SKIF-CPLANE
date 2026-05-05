@@ -50,11 +50,9 @@ sequenceDiagram
 | PUT | `/api/v1/experiment/start` | Запуск пайплайна (публикация в RabbitMQ) | [`experiment_actions.go`](../../backend/internal/handlers/private/experiment_actions.go) `ExperimentStartHandler` |
 | PUT | `/api/v1/experiment/stop` | Остановка | `ExperimentStopHandler` |
 | GET | `/api/v1/experiment/status` | Статус (HTTP к супервизору при настроенном `base_url`) | `ExperimentStatusHandler` |
-| PUT | `/api/v1/experiment/config/apply` | Применить конфиг (тот же handler, что v2) | [`apply_experiment_config.go`](../../backend/internal/handlers/private/apply_experiment_config.go) `ApplyExperimentConfigV2Handler` |
-| PUT | `/api/v2/experiment/config/apply` | Apply v2 | `ApplyExperimentConfigV2Handler` |
-| PUT | `/api/v3/experiment/config/apply` | Apply v3 (single_stage устарел) | `ApplyExperimentConfigV3Handler` |
-| POST | `/api/v1/experiment/config/apply/save` | Сохранить применённую версию | [`handlers.go`](../../backend/internal/handlers/private/handlers.go) `saveAppliedVersionForExperiments` |
-| GET | `/api/v1/experiment/supervisor` | Отладочный JSON конфига для супервизора | [`supervisor.go`](../../backend/internal/handlers/private/supervisor.go) `getSupervisorConfigHandler` |
+| PUT | `/api/v1/experiment/config/apply` | Применить конфиг (публикация `experiment.apply`, обновление `t_experiment_status`) | [`apply_experiment_config.go`](../../backend/internal/handlers/private/apply_experiment_config.go) `ApplyExperimentConfigHandler` |
+
+Подробнее о модели данных и HTTP API эксперимента — в [`entities/experiment.md`](../entities/experiment.md).
 
 ## Сервис
 

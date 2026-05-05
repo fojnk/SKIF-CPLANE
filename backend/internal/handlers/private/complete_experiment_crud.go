@@ -220,7 +220,7 @@ func updateCompleteExperimentHandler(ctx context.Context, svc *service.Service, 
 				}
 			}
 		} else {
-			cfg, err := orch.ExperimentInfoToSupervisorPipelineConfig(l, &experimentData)
+			cfg, err := orch.ExperimentInfoToSupervisorPipelineConfig(&experimentData)
 			if err != nil {
 				l.Error("failed to convert experiment info to orchestrator config", err)
 				return nil, &responses.ErrorResponse{
