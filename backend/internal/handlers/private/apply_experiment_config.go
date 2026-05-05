@@ -40,9 +40,9 @@ func handleApplyExperimentConfigFallback(
 	return responses.EmptyResponse{}, nil
 }
 
-// ApplyExperimentConfigV2Handler godoc
+// ApplyExperimentConfigHandler godoc
 //
-//	@Summary	apply experiment config (v2 — напрямую через оркестратор)
+//	@Summary	apply experiment config
 //	@Tags		experiment
 //	@Accept		json
 //	@Produce	json
@@ -53,8 +53,8 @@ func handleApplyExperimentConfigFallback(
 //	@Failure	403		{object}	responses.ErrorResponse	"Forbidden"
 //	@Failure	404		{object}	responses.ErrorResponse	"Not Found"
 //	@Failure	500		{object}	responses.ErrorResponse	"Internal server error"
-//	@Router		/api/v2/experiment/config/apply [put]
-func ApplyExperimentConfigV2Handler(ctx context.Context, svc *service.Service, l *logger.Logger, r *requests.ApplyExperimentConfigRequest, u *models.UserInfo) (any, *responses.ErrorResponse) {
+//	@Router		/api/v1/experiment/config/apply [put]
+func ApplyExperimentConfigHandler(ctx context.Context, svc *service.Service, l *logger.Logger, r *requests.ApplyExperimentConfigRequest, u *models.UserInfo) (any, *responses.ErrorResponse) {
 	if err := shared.CheckPermission(ctx, l, svc, service.ACLObjectExperiment, service.ACLAttributeExperimentStateApply, service.ACLActionEdit, r.ExperimentID, u); err != nil {
 		return nil, err
 	}
@@ -82,22 +82,4 @@ func ApplyExperimentConfigV2Handler(ctx context.Context, svc *service.Service, l
 	}
 
 	return handleApplyExperimentConfigFallback(ctx, svc, l, r.ExperimentID, experiment.ProjectID, u.Username, r.Comment)
-}
-
-// ApplyExperimentConfigV3Handler godoc
-//
-//	@Summary	apply experiment config (v3 — напрямую через оркестратор; single_stage игнорируется)
-//	@Tags		experiment
-//	@Accept		json
-//	@Produce	json
-//	@Param		request	body		requests.ApplyExperimentConfigRequest	true	"request body. single_stage устарел"
-//	@Success	200		{object}	responses.EmptyResponse
-//	@Failure	400		{object}	responses.ErrorResponse	"Bad Request"
-//	@Failure	401		{object}	responses.ErrorResponse	"Unauthorized"
-//	@Failure	403		{object}	responses.ErrorResponse	"Forbidden"
-//	@Failure	404		{object}	responses.ErrorResponse	"Not Found"
-//	@Failure	500		{object}	responses.ErrorResponse	"Internal server error"
-//	@Router		/api/v3/experiment/config/apply [put]
-func ApplyExperimentConfigV3Handler(ctx context.Context, svc *service.Service, l *logger.Logger, r *requests.ApplyExperimentConfigRequest, u *models.UserInfo) (any, *responses.ErrorResponse) {
-	return ApplyExperimentConfigV2Handler(ctx, svc, l, r, u)
 }

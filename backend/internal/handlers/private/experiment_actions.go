@@ -13,7 +13,6 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/handlers/shared"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/logger"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service"
-	experimentSvc "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/experiment"
 	serviceerrors "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/errors"
 )
 
@@ -144,63 +143,6 @@ func ExperimentStatusHandler(ctx context.Context, svc *service.Service, l *logge
 	}
 
 	return svc.GetExperimentStatus(ctx, supervisorExperimentID), nil
-}
-
-// applyExperimentConfigHandler godoc
-//
-//	@Summary	apply experiment config
-//	@Tags		experiment
-//	@Accept		json
-//	@Produce	json
-//	@Param		request	body		requests.ApplyExperimentConfigRequest	true	"request body"
-//	@Success	200		{object}	responses.EmptyResponse
-//	@Failure	400		{object}	responses.ErrorResponse	"Bad Request"
-//	@Failure	401		{object}	responses.ErrorResponse	"Unauthorized"
-//	@Failure	403		{object}	responses.ErrorResponse	"Forbidden"
-//	@Failure	404		{object}	responses.ErrorResponse	"Not Found"
-//	@Failure	500		{object}	responses.ErrorResponse	"Internal server error"
-//	@Router		/api/v1/experiment/config/apply [put]
-func applyExperimentConfigHandler(ctx context.Context, svc *service.Service, l *logger.Logger, r *requests.ApplyExperimentConfigRequest, u *models.UserInfo) (any, *responses.ErrorResponse) {
-	if err := shared.CheckPermission(ctx, l, svc, service.ACLObjectExperiment, service.ACLAttributeExperimentStateApply, service.ACLActionEdit, r.ExperimentID, u); err != nil {
-		return nil, err
-	}
-
-	isBlocked, err := svc.IsExistsActiveBlockBanners(ctx)
-	if err != nil {
-		l.Error("Блокировка деплоев: ", err)
-		return nil, shared.ConvertServiceError(err, shared.EntityCompliteExperimentInfo)
-	}
-
-	if isBlocked {
-		blockErr := serviceerrors.NewEntityForbiddenError(serviceerrors.EntityExperiment, "", errors.New(serviceerrors.ErrMsgConfigApplyBlockedByBanner))
-		return nil, shared.ConvertServiceError(blockErr, shared.EntityCompliteExperimentInfo)
-	}
-
-	experiment, err := svc.GetExperimentByID(ctx, r.ExperimentID)
-	if err != nil {
-		l.Error("failed to get experiment info", err)
-		return nil, shared.ConvertServiceError(err, shared.EntityExperiment)
-	}
-
-	errResp := shared.VariableExperimentValidation(ctx, svc, l, experiment.Config, r.ExperimentID)
-	if errResp != nil {
-		return nil, errResp
-	}
-
-	appliedJSON, err := svc.ApplyExperimentConfig(ctx, r.ExperimentID)
-	if err != nil {
-		l.Error("failed to apply experiment config", err)
-		return nil, shared.ConvertServiceError(err, shared.EntityExperiment)
-	}
-
-	svc.LogExperimentChange(ctx, experiment.ProjectID, r.ExperimentID, u.Username, r.Comment, service.UpdateLogActionApplyExperiment, service.ExperimentUpdateLog{
-		New: service.ExperimentUpdateLogEntity{
-			Description: "Применена конфигурация супервизора (experiment.apply)",
-			Config:      experimentSvc.TruncateForExperimentLog(appliedJSON, experimentSvc.MaxExperimentApplyLogConfigBytes),
-		},
-	})
-
-	return responses.EmptyResponse{}, nil
 }
 
 // validateExperimentConfigHandler godoc

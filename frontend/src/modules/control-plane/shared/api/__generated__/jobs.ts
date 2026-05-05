@@ -76,7 +76,7 @@ export const jobsApi = new (class JobsApi {
    * No description
    *
    * @tags jobs
-   * @summary get job by ID (job queue disabled)
+   * @summary get job by ID (без jobd: job_id = id строки истории эксперимента из списка задач)
    * @request GET:/api/v1/job
    * @responses <br/>
    *  **200** V1JobListDataDC OK <br/>
@@ -98,7 +98,7 @@ export const jobsApi = new (class JobsApi {
    * No description
    *
    * @tags jobs
-   * @summary search and list jobs with filters (job queue disabled — always empty)
+   * @summary search and list jobs with filters (без jobd: история start/stop/apply + живой статус супервизора и очереди RabbitMQ для последнего start/apply)
    * @request POST:/api/v1/jobs/search
    * @responses <br/>
    *  **200** V1JobsSearchCreateDataDC OK <br/>
