@@ -20,7 +20,6 @@ import {
   JobsStatusLabel,
 } from '@/modules/control-plane/pages/project/ui/components';
 import { StatusColumnInfo } from '@/modules/control-plane/pages/project/ui/components/status-column-info';
-import { controlPlaneApi } from '@/modules/control-plane/shared/api';
 import { ErrorMessage } from '@/modules/control-plane/shared/components';
 import { JobsDC, PageDataDC } from '@/modules/control-plane/shared/types';
 import {
