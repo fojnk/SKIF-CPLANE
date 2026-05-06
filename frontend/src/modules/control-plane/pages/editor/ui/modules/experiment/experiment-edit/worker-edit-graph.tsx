@@ -335,7 +335,6 @@ export const WorkerEditGraph = ({
     supervisorGraphMode,
     values.experimentName,
     values.models,
-    linkedDatasetAliases,
     selectedDatasetAliases,
     cubes,
     hasResharderResources,
