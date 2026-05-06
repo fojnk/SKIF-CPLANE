@@ -30,6 +30,10 @@ flowchart LR
 
 Регистрация: [`handlers.go`](../../backend/internal/handlers/private/handlers.go). Реализация CRUD: [`namespace_handlers.go`](../../backend/internal/handlers/private/namespace_handlers.go). Логи: [`update_logs.go`](../../backend/internal/handlers/private/update_logs.go).
 
+Примечание по версиям API:
+- `v1` содержит полный набор операций чтения/изменения namespace и логов.
+- `v2` (`/api/v2/namespaces`) используется как облегченный список namespace для сценариев выбора и каталогов.
+
 | Метод | Путь | Swagger summary | Файл / функция |
 |-------|------|-------------------|----------------|
 | POST | `/api/v1/namespace` | create namespace | `createNamespaceHandler` |

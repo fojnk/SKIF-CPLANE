@@ -19,7 +19,7 @@ import {
   isSupervisorExperimentLayout,
   parseSupervisorExperimentConfig,
 } from './merge-config';
-import { createPortsWithHash, generateHash } from './utils';
+import { generateHash } from './utils';
 
 const SUPERVISOR_LANGS = new Set<SupervisorModelLanguage | string>([
   'JAVA',
@@ -28,6 +28,59 @@ const SUPERVISOR_LANGS = new Set<SupervisorModelLanguage | string>([
   'CPP',
   'C',
 ]);
+
+function readDatasetAlias(item: unknown): string {
+  if (typeof item === 'string') {
+    return item.trim();
+  }
+  if (item && typeof item === 'object') {
+    const obj = item as Record<string, unknown>;
+    const candidate =
+      obj.alias ?? obj.dataset_alias ?? obj.name ?? obj.dataset ?? '';
+    return typeof candidate === 'string' ? candidate.trim() : '';
+  }
+  return '';
+}
+
+function getDatasetAliases(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.map(readDatasetAlias).filter(Boolean);
+}
+
+/**
+ * В сохранённом конфиге parameters обычно объект; в форме — JSON-строка (custom).
+ * Без нормализации hasInputDatasets не видит input_datasets у первой модели.
+ */
+function normalizeSupervisorParameters(
+  m: SupervisorModelRequest,
+): Record<string, unknown> {
+  const p: unknown = m.parameters;
+  if (p && typeof p === 'object' && !Array.isArray(p)) {
+    return { ...(p as Record<string, unknown>) };
+  }
+  if (typeof p === 'string' && p.trim() !== '') {
+    try {
+      const parsed = JSON.parse(p) as unknown;
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        return parsed as Record<string, unknown>;
+      }
+    } catch {
+      return {};
+    }
+  }
+  return {};
+}
+
+function hasInputDatasets(parameters: unknown): boolean {
+  if (!parameters || typeof parameters !== 'object') {
+    return false;
+  }
+  const raw = (parameters as Record<string, unknown>).input_datasets;
+  if (!Array.isArray(raw)) {
+    return false;
+  }
+  return raw.some((item) => readDatasetAlias(item) !== '');
+}
 
 function validateSupervisorModel(
   i: number,
@@ -173,9 +226,10 @@ export function buildSupervisorGraphParams(
     const cubeHash = stableModelHash(index, m.modelId || `idx${index}`);
     const name = (m.name?.trim() || m.modelId || `model_${index}`).trim();
 
-    const outputPorts = createPortsWithHash(['out']);
-    const inputPorts =
-      index === 0 ? [] : createPortsWithHash(['in']);
+    const parameters = normalizeSupervisorParameters(m);
+    const needInputPort = index > 0 || hasInputDatasets(parameters);
+    const outputPorts = [{ name: 'out', hash: 'sv_out' }];
+    const inputPorts = needInputPort ? [{ name: 'in', hash: 'sv_in' }] : [];
 
     outPortHashes.push(outputPorts[0]!.hash);
     inPortHashes.push(index === 0 ? '' : inputPorts[0]!.hash);
@@ -197,25 +251,20 @@ export function buildSupervisorGraphParams(
       errorCode: validationErrs.length > 0 ? 'error' : undefined,
     });
 
-    const parameters = m.parameters ?? {};
-
     validatedCubes.push({
       index,
       hash: cubeHash,
       name,
       cubeId: 0,
       cubeType: CubeType.CUBE,
-      inputType: index === 0 ? CubeIOType.EMPTY : CubeIOType.STATIC,
+      inputType: needInputPort ? CubeIOType.STATIC : CubeIOType.EMPTY,
       outputType: CubeIOType.STATIC,
-      inputNames: index === 0 ? [] : ['in'],
+      inputNames: needInputPort ? ['in'] : [],
       outputNames: ['out'],
       validatedMappings: [],
       hasError: validationErrs.length > 0,
       hasDuplicateName: false,
-      paramsValues:
-        parameters && typeof parameters === 'object'
-          ? (parameters as Record<string, unknown>)
-          : {},
+      paramsValues: parameters,
       supervisorModel: { ...m, parameters },
     });
   });
@@ -239,14 +288,76 @@ export function buildSupervisorGraphParams(
     });
   }
 
+  const DATASET_NODE_PREFIX = 'dataset_';
+  const makeDatasetNodeId = (alias: string): string =>
+    `${DATASET_NODE_PREFIX}${encodeURIComponent(alias)}`;
+
+  const inputByModelNodeId = new Map<string, string[]>();
+  const outputByModelNodeId = new Map<string, string[]>();
+  const aliasesFromModels = new Set<string>();
+
+  models.forEach((m, index) => {
+    const nodeId = `cube_${stableModelHash(index, m.modelId || `idx${index}`)}`;
+    const params = normalizeSupervisorParameters(m);
+    const inputAliases = getDatasetAliases(params.input_datasets);
+    const outputAliases = getDatasetAliases(params.output_datasets);
+    inputByModelNodeId.set(nodeId, inputAliases);
+    outputByModelNodeId.set(nodeId, outputAliases);
+    inputAliases.forEach((a) => aliasesFromModels.add(a));
+    outputAliases.forEach((a) => aliasesFromModels.add(a));
+  });
+
+  const allAliases = Array.from(aliasesFromModels);
+
+  const datasetNodes: GraphNode[] = allAliases.map((alias) => ({
+    id: makeDatasetNodeId(alias),
+    label: `DS: ${alias}`,
+    cubeHash: `dataset_${alias}`,
+    cubeId: undefined,
+    baseCubeName: 'Linked dataset',
+    modelDescription:
+      'Dataset linked to experiment. Connect to model input/output to pass data.',
+    isDataset: true,
+    hasError: false,
+    errorCode: undefined,
+    inputPorts: [{ name: 'in', hash: `dataset_in_${alias}` }],
+    outputPorts: [{ name: 'out', hash: `dataset_out_${alias}` }],
+    type: CubeType.CUBE,
+  }));
+
+  const datasetEdges: GraphEdge[] = allAliases.flatMap((alias) => {
+    const datasetNodeId = makeDatasetNodeId(alias);
+    const inputEdges = Array.from(inputByModelNodeId.entries())
+      .filter(([, aliases]) => aliases.includes(alias))
+      .map(([modelNodeId]) => ({
+        id: `edge_ds_in_${encodeURIComponent(alias)}_${modelNodeId}`,
+        source: datasetNodeId,
+        outputPortHash: `dataset_out_${alias}`,
+        target: modelNodeId,
+        inputPortHash: 'sv_in',
+        edgeType: 'default' as const,
+      }));
+    const outputEdges = Array.from(outputByModelNodeId.entries())
+      .filter(([, aliases]) => aliases.includes(alias))
+      .map(([modelNodeId]) => ({
+        id: `edge_ds_out_${modelNodeId}_${encodeURIComponent(alias)}`,
+        source: modelNodeId,
+        outputPortHash: 'sv_out',
+        target: datasetNodeId,
+        inputPortHash: `dataset_in_${alias}`,
+        edgeType: 'default' as const,
+      }));
+    return [...inputEdges, ...outputEdges];
+  });
+
   debug.info('build_graph', 'Supervisor graph built', {
-    nodesCount: nodes.length,
-    edgesCount: edges.length,
+    nodesCount: nodes.length + datasetNodes.length,
+    edgesCount: edges.length + datasetEdges.length,
   });
 
   return {
-    nodes,
-    edges,
+    nodes: [...nodes, ...datasetNodes],
+    edges: [...edges, ...datasetEdges],
     validatedCubes,
     debug: debug.getResult(),
   };

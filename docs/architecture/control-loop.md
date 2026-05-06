@@ -130,10 +130,33 @@ sequenceDiagram
 
 ## ACL
 
-Проверки прав на операции эксперимента выполняются в соответствующих handlers (star/stop/apply, чтение статуса). Базовый пакет: [`internal/pkg/acl`](../../backend/internal/pkg/acl).
+Проверки прав на операции эксперимента выполняются в соответствующих handlers (`start` / `stop` / `apply`, чтение статуса). Базовый пакет: [`internal/pkg/acl`](../../backend/internal/pkg/acl).
+Подробно о ролях, правилах и вычислении эффективных прав: [`entities/acl.md`](../entities/acl.md).
+
+## Интерфейс Control Plane: запуск и отображение запусков
+
+Фронтенд **не заменяет** контур RabbitMQ / HTTP супервизора: он вызывает те же HTTP API, что описаны выше.
+
+### Запуск пайплайна
+
+- Кнопка запуска приводит к **`PUT /api/v1/experiment/start`** (через сгенерированный клиент `v1ExperimentStartUpdate`).
+- Реализация на фронте: [`frontend/src/modules/control-plane/features/experiment/run/model/model.ts`](../../frontend/src/modules/control-plane/features/experiment/run/model/model.ts) (mutation + уведомление об успехе).
+- Права на действие в UI проверяются через **`RightStartExperiment`** и утилиту [`authz.ts`](../../frontend/src/modules/control-plane/shared/utils/authz.ts).
+
+### Статус и «запуски» на вкладке Jobs
+
+- Актуальное состояние пайплайна для экрана эксперимента запрашивается **`GET /api/v1/experiment/status`**.
+- Обёртка запроса: [`frontend/src/modules/control-plane/entities/experiments/model/status.ts`](../../frontend/src/modules/control-plane/entities/experiments/model/status.ts) (`createQuery` → `v1ExperimentStatusList`), используется страницей проекта (`projectPageModel.experiment.status`).
+- Вкладка **Jobs** ([`pages/project/ui/components/experiment/tabs/jobs-tab.tsx`](../../frontend/src/modules/control-plane/pages/project/ui/components/experiment/tabs/jobs-tab.tsx)) отображает агрегированный статус и блок **`supervisor`** из ответа (`SupervisorExperimentRun`): стадии моделей либо из поля `jobs`, либо синтетически по `total_models` / `current_order` / `status`, если супервизор не вернул пошаговый список (та же логика на backend в [`experiment_jobs.go`](../../backend/internal/handlers/private/experiment_jobs.go) `mapSupervisorRunToStages`).
+- Расширенный поиск задач оркестратора (**`POST /api/v1/jobs/search`**, отмена, retry и т.д.) описан в [`entities/experiment.md`](../entities/experiment.md) и используется там, где UI вызывает jobs API; вкладка Jobs в первую очередь опирается на **статус эксперимента** и журнал, а не на отдельный список jobs.
+
+Кратко про сессию и cookie при вызовах API: [`frontend-auth-session.md`](frontend-auth-session.md).
 
 ## См. также
 
 - [supervisor-architecture.md](supervisor-architecture.md)
 - [entities/experiment.md](../entities/experiment.md)
+- [entities/cube.md](../entities/cube.md)
+- [frontend-auth-session.md](frontend-auth-session.md)
+- [frontend-experiment-graph.md](frontend-experiment-graph.md)
 - [docs/README.md](../README.md)
