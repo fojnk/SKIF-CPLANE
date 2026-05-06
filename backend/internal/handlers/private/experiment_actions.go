@@ -2,7 +2,10 @@ package private
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/pkg/errors"
 	dbcore "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/db/core"
@@ -15,6 +18,66 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service"
 	serviceerrors "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/errors"
 )
+
+type supervisorConfigForLog struct {
+	Models []supervisorModelForLog `json:"models"`
+}
+
+type supervisorModelForLog struct {
+	Order     int    `json:"order"`
+	Name      string `json:"name"`
+	Language  string `json:"language"`
+	ModelPath string `json:"modelPath"`
+}
+
+func buildExperimentStartStagesLog(configJSON string) string {
+	if strings.TrimSpace(configJSON) == "" {
+		return ""
+	}
+
+	var cfg supervisorConfigForLog
+	if err := json.Unmarshal([]byte(configJSON), &cfg); err != nil {
+		return ""
+	}
+	if len(cfg.Models) == 0 {
+		return ""
+	}
+
+	stages := make([]string, 0, len(cfg.Models))
+	for i, m := range cfg.Models {
+		order := m.Order
+		if order <= 0 {
+			order = i + 1
+		}
+		name := strings.TrimSpace(m.Name)
+		if name == "" {
+			name = fmt.Sprintf("stage-%d", order)
+		}
+		lang := strings.TrimSpace(m.Language)
+		path := strings.TrimSpace(m.ModelPath)
+		if path != "" {
+			stages = append(stages, fmt.Sprintf("%d) %s [%s] path=%s", order, name, lang, path))
+		} else {
+			stages = append(stages, fmt.Sprintf("%d) %s [%s]", order, name, lang))
+		}
+	}
+
+	return "Этапы запуска: " + strings.Join(stages, " -> ")
+}
+
+func mergeStartLogComment(comment, stages string) string {
+	base := strings.TrimSpace(comment)
+	plan := strings.TrimSpace(stages)
+
+	switch {
+	case base == "":
+		return plan
+	case plan == "":
+		return base
+	default:
+		return base + "\n" + plan
+	}
+}
 
 // ExperimentStartHandler godoc
 //
@@ -44,11 +107,19 @@ func ExperimentStartHandler(ctx context.Context, svc *service.Service, l *logger
 		return nil, res
 	}
 
+	startStagesLog := ""
+	supervisorCfgJSON, cfgErr := svc.GetSupervisorConfig(ctx, r.ExperimentID)
+	if cfgErr != nil {
+		l.Warn(fmt.Sprintf("failed to build start stages log for experiment=%d: %v", r.ExperimentID, cfgErr))
+	} else {
+		startStagesLog = buildExperimentStartStagesLog(supervisorCfgJSON)
+	}
+
 	if err := svc.StartExperiment(ctx, r.ExperimentID, u.Username); err != nil {
 		return nil, shared.ConvertServiceError(err, shared.EntityExperiment)
 	}
 
-	svc.LogExperimentChange(ctx, experiment.ProjectID, r.ExperimentID, u.Username, r.Comment, service.UpdateLogActionStartExperiment, service.ExperimentUpdateLog{})
+	svc.LogExperimentChange(ctx, experiment.ProjectID, r.ExperimentID, u.Username, mergeStartLogComment(r.Comment, startStagesLog), service.UpdateLogActionStartExperiment, service.ExperimentUpdateLog{})
 
 	return responses.EmptyResponse{}, nil
 }
@@ -256,16 +327,16 @@ func validateExperimentRunHandler(ctx context.Context, svc *service.Service, l *
 		if resp := serviceerrors.ToErrorResponse(err); resp != nil {
 			return &dto.ValidationResponseWithRun{
 				ExperimentIsValid: false,
-				Errors:          []string{resp.ExternalMessage},
-				Logs:            []string{},
-				RunResult:       dto.RunResults{},
+				Errors:            []string{resp.ExternalMessage},
+				Logs:              []string{},
+				RunResult:         dto.RunResults{},
 			}, nil
 		}
 		return &dto.ValidationResponseWithRun{
 			ExperimentIsValid: false,
-			Errors:          []string{"Не удалось получить конфигурацию пайплайна"},
-			Logs:            []string{},
-			RunResult:       dto.RunResults{},
+			Errors:            []string{"Не удалось получить конфигурацию пайплайна"},
+			Logs:              []string{},
+			RunResult:         dto.RunResults{},
 		}, nil
 	}
 
@@ -282,9 +353,9 @@ func validateExperimentRunHandler(ctx context.Context, svc *service.Service, l *
 
 		return &dto.ValidationResponseWithRun{
 			ExperimentIsValid: false,
-			Errors:          []string{errorMsg},
-			Logs:            []string{},
-			RunResult:       dto.RunResults{},
+			Errors:            []string{errorMsg},
+			Logs:              []string{},
+			RunResult:         dto.RunResults{},
 		}, nil
 	}
 
@@ -375,12 +446,12 @@ func addDatasetToExperimentHandler(ctx context.Context, svc *service.Service, l 
 	})
 
 	return responses.AddDatasetToExperimentResponse{
-		LinkID:       linkID,
-		Alias:        r.Alias,
-		DatasetID: r.DatasetID,
-		Name:         dataset.Name,
-		ProjectID:    dsProjectID,
-		ProjectName:  dsProjectName,
+		LinkID:      linkID,
+		Alias:       r.Alias,
+		DatasetID:   r.DatasetID,
+		Name:        dataset.Name,
+		ProjectID:   dsProjectID,
+		ProjectName: dsProjectName,
 	}, nil
 }
 
@@ -491,7 +562,7 @@ func getExperimentAvailableDatasetsToLinkHandler(ctx context.Context, svc *servi
 		Cluster:         r.Filters.Cluster,
 		Path:            r.Filters.Path,
 		Public:          r.Filters.Public,
-		Experiment:        r.ExperimentID,
+		Experiment:      r.ExperimentID,
 		AvailableToLink: &availableToLink,
 	})
 	if err != nil {

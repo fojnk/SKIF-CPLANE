@@ -21,10 +21,6 @@ export const ProjectTabsOptions = [
     title: 'Конфигурация',
   },
   {
-    id: 'links',
-    title: 'Ссылки',
-  },
-  {
     id: 'acl',
     title: 'Доступ',
   },
@@ -50,10 +46,6 @@ export const ExperimentTabsOptions = [
   {
     id: 'jobs',
     title: 'Запуски',
-  },
-  {
-    id: 'links',
-    title: 'Ссылки',
   },
   {
     id: 'acl',

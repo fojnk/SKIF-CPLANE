@@ -119,7 +119,7 @@ export const JobsTab = ({ dataset_id }: JobsTabProps) => {
     loadFx(pageData.page, pageData.limit);
   };
 
-  const onRowClick = (row: controlPlaneApi.dc.JobdJobDC) => {
+  const onRowClick = (row: JobsDC) => {
     ShowJobModel.start(row);
   };
 
@@ -177,9 +177,20 @@ export const JobsTab = ({ dataset_id }: JobsTabProps) => {
       meta: { selectedAlways: true },
       template: (item: JobsDC) => {
         return (
-          <Flex alignItems="center" gap={1}>
-            {item.stages?.map((stage) => (
-              <JobsStagesLabel stage={stage} key={stage.step_id} />
+          <Flex
+            alignItems="center"
+            gap={1}
+            style={{
+              flexWrap: 'wrap',
+              rowGap: 6,
+              maxWidth: '100%',
+            }}
+          >
+            {item.stages?.map((stage, stageIndex) => (
+              <JobsStagesLabel
+                stage={stage}
+                key={stage.step_id ?? `${item.id ?? 'job'}-${stageIndex}`}
+              />
             ))}
           </Flex>
         );

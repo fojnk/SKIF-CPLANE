@@ -67,6 +67,7 @@ interface GraphProps {
 // Регистрируем кастомные типы нод вне компонента для стабильности
 const nodeTypes = {
   cubeGroup: CubeGroupNode,
+  datasetGroup: CubeGroupNode,
   resharder: ResharderNode,
   retrier: RetrierNode,
   retry: RetryNode,
