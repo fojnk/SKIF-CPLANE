@@ -14,6 +14,7 @@ interface CubeGroupNodeProps {
   data: {
     label: string;
     isExternal?: boolean;
+    isDataset?: boolean;
     inputPorts?: PortInfo[];
     outputPorts?: PortInfo[];
     hasError?: boolean;
@@ -28,6 +29,7 @@ interface CubeGroupNodeProps {
 export const CubeGroupNode = ({ data }: CubeGroupNodeProps) => {
   const [descriptionOpen, setDescriptionOpen] = useState(false);
   const isExternal = data.isExternal || false;
+  const isDataset = data.isDataset || false;
   const inputPorts = data.inputPorts || [];
   const outputPorts = data.outputPorts || [];
   const isSelected = data.selected || false;
@@ -48,7 +50,13 @@ export const CubeGroupNode = ({ data }: CubeGroupNodeProps) => {
 
   return (
     <div
-      className={`${styles.cubeGroup} ${isSelected ? styles.cubeGroupSelected : ''}`}
+      className={`${isDataset ? styles.datasetGroup : styles.cubeGroup} ${
+        isSelected
+          ? isDataset
+            ? styles.datasetGroupSelected
+            : styles.cubeGroupSelected
+          : ''
+      }`}
     >
       {/* Заголовок куба — drag handle для перетаскивания */}
       <div className={styles.cubeGroupHeader}>

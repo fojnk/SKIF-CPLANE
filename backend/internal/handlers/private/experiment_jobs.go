@@ -2,6 +2,7 @@ package private
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -39,6 +40,9 @@ func isExperimentRunLogAct(act string) bool {
 func experimentRunLogToJob(log *dto.ExperimentUpdateLog) *clients.Job {
 	id := int64(log.ID)
 	st := "completed"
+	if log.Act == string(update_log.ActionStartExperiment) || log.Act == string(update_log.ActionApplyExperiment) {
+		st = "pending"
+	}
 	created := log.CreatedAt.UTC().Format(time.RFC3339)
 	typ := log.Act
 	desc := log.Comment
@@ -59,17 +63,88 @@ func experimentRunLogToJob(log *dto.ExperimentUpdateLog) *clients.Job {
 }
 
 func mapSupervisorRunToStages(run *responses.SupervisorExperimentRun) *[]clients.JobStage {
-	if run == nil || len(run.Jobs) == 0 {
+	if run == nil {
 		return nil
 	}
+
+	// Fallback for runtimes where supervisor may return status/progress without per-model jobs.
+	if len(run.Jobs) == 0 {
+		if run.TotalModels <= 0 {
+			return nil
+		}
+		out := make([]clients.JobStage, 0, run.TotalModels)
+		runtimeStatus := strings.ToUpper(strings.TrimSpace(run.Status))
+		for i := 1; i <= run.TotalModels; i++ {
+			stepID := int64(i)
+			name := fmt.Sprintf("stage-%d", i)
+
+			stepStatus := "pending"
+			switch runtimeStatus {
+			case "COMPLETED":
+				stepStatus = "completed"
+			case "FAILED":
+				if i < run.CurrentOrder {
+					stepStatus = "completed"
+				} else if i == run.CurrentOrder {
+					stepStatus = "failed"
+				}
+			case "RUNNING":
+				if i < run.CurrentOrder {
+					stepStatus = "completed"
+				} else if i == run.CurrentOrder {
+					stepStatus = "running"
+				}
+			case "QUEUED":
+				if i < run.CurrentOrder {
+					stepStatus = "completed"
+				} else if i == run.CurrentOrder {
+					stepStatus = "queued"
+				}
+			case "CANCELLED":
+				if i < run.CurrentOrder {
+					stepStatus = "completed"
+				} else if i == run.CurrentOrder {
+					stepStatus = "cancelled"
+				}
+			}
+
+			var desc *string
+			if i == run.CurrentOrder && strings.TrimSpace(run.Detail) != "" {
+				s := strings.TrimSpace(run.Detail)
+				desc = &s
+			}
+
+			out = append(out, clients.JobStage{
+				StepID:      &stepID,
+				Name:        &name,
+				StepStatus:  &stepStatus,
+				Description: desc,
+			})
+		}
+		return &out
+	}
+
 	out := make([]clients.JobStage, 0, len(run.Jobs))
 	for _, mj := range run.Jobs {
 		idx := int64(mj.Index)
 		n := mj.ModelName
 		ss := strings.ToLower(strings.TrimSpace(mj.Status))
-		var desc *string
+		logParts := make([]string, 0, 4)
 		if mj.ErrorMessage != "" {
-			s := mj.ErrorMessage
+			logParts = append(logParts, mj.ErrorMessage)
+		}
+		if mj.StartTime != "" {
+			logParts = append(logParts, "start_time: "+mj.StartTime)
+		}
+		if mj.EndTime != "" {
+			logParts = append(logParts, "end_time: "+mj.EndTime)
+		}
+		if run.CurrentOrder == mj.Index && strings.TrimSpace(run.Detail) != "" {
+			logParts = append(logParts, run.Detail)
+		}
+		var desc *string
+		if len(logParts) > 0 {
+			s := strings.Join(logParts, "\n")
 			desc = &s
 		}
 		out = append(out, clients.JobStage{
@@ -82,13 +157,75 @@ func mapSupervisorRunToStages(run *responses.SupervisorExperimentRun) *[]clients
 	return &out
 }
 
+type supervisorConfigForJobStages struct {
+	Models []supervisorConfigModelForJobStage `json:"models"`
+}
+
+type supervisorConfigModelForJobStage struct {
+	Order    int    `json:"order"`
+	Name     string `json:"name"`
+	Language string `json:"language"`
+}
+
+func mapSupervisorConfigToPlannedStages(configJSON string) *[]clients.JobStage {
+	if strings.TrimSpace(configJSON) == "" {
+		return nil
+	}
+
+	var cfg supervisorConfigForJobStages
+	if err := json.Unmarshal([]byte(configJSON), &cfg); err != nil {
+		return nil
+	}
+	if len(cfg.Models) == 0 {
+		return nil
+	}
+
+	out := make([]clients.JobStage, 0, len(cfg.Models))
+	for i, m := range cfg.Models {
+		order := m.Order
+		if order <= 0 {
+			order = i + 1
+		}
+		stepID := int64(order)
+		name := strings.TrimSpace(m.Name)
+		if name == "" {
+			name = fmt.Sprintf("stage-%d", order)
+		}
+		if lang := strings.TrimSpace(m.Language); lang != "" {
+			name = fmt.Sprintf("%s [%s]", name, lang)
+		}
+		stepStatus := "pending"
+
+		out = append(out, clients.JobStage{
+			StepID:     &stepID,
+			Name:       &name,
+			StepStatus: &stepStatus,
+		})
+	}
+
+	return &out
+}
+
 // applyLiveSupervisorAndQueue подмешивает в строку задачи актуальный статус супервизора и при необходимости — глубину очереди RabbitMQ.
 func applyLiveSupervisorAndQueue(ctx context.Context, svc *service.Service, l *logger.Logger, experimentID int32, job *clients.Job) {
 	if svc == nil || job == nil {
 		return
 	}
+	if cfgJSON, cfgErr := svc.GetSupervisorConfig(ctx, experimentID); cfgErr == nil {
+		if stages := mapSupervisorConfigToPlannedStages(cfgJSON); stages != nil {
+			job.Stages = stages
+		}
+	}
+
 	orchID, err := svc.GetSupervisorExperimentID(ctx, experimentID)
 	if err != nil {
+		status := "pending"
+		desc := strings.TrimSpace("Запуск отправлен. Ожидается присвоение orch_id от супервизора.")
+		if job.StatusDescription != nil && strings.TrimSpace(*job.StatusDescription) != "" {
+			desc = strings.TrimSpace(*job.StatusDescription) + " · " + desc
+		}
+		job.Status = &status
+		job.StatusDescription = &desc
 		return
 	}
 	st := svc.GetExperimentStatus(ctx, orchID)
@@ -112,6 +249,10 @@ func applyLiveSupervisorAndQueue(ctx context.Context, svc *service.Service, l *l
 		}
 	}
 
+	baseDesc := ""
+	if job.StatusDescription != nil {
+		baseDesc = strings.TrimSpace(*job.StatusDescription)
+	}
 	desc := strings.TrimSpace(st.Message)
 	if st.Supervisor != nil {
 		if d := strings.TrimSpace(st.Supervisor.Detail); d != "" {
@@ -120,6 +261,11 @@ func applyLiveSupervisorAndQueue(ctx context.Context, svc *service.Service, l *l
 		if stages := mapSupervisorRunToStages(st.Supervisor); stages != nil {
 			job.Stages = stages
 		}
+	}
+	if desc == "" {
+		desc = baseDesc
+	} else if baseDesc != "" && desc != baseDesc {
+		desc = baseDesc + " · " + desc
 	}
 
 	if svc.Repo != nil && svc.Repo.Clients != nil && svc.Repo.Clients.RabbitMQ != nil {
@@ -137,6 +283,9 @@ func applyLiveSupervisorAndQueue(ctx context.Context, svc *service.Service, l *l
 				statusStr = "queued"
 			}
 		}
+	}
+	if (statusStr == "unknown" || statusStr == "") && job.Stages != nil && len(*job.Stages) > 0 {
+		statusStr = "pending"
 	}
 
 	job.Status = &statusStr
@@ -236,21 +385,16 @@ func listJobsHandler(ctx context.Context, svc *service.Service, l *logger.Logger
 			l.Error("list jobs from experiment logs", err)
 			return nil, shared.ConvertServiceError(err, shared.EntityExperiment)
 		}
-		var newestStartApplyID int32
-		for _, row := range logs {
-			if row.Act == string(update_log.ActionStartExperiment) || row.Act == string(update_log.ActionApplyExperiment) {
-				newestStartApplyID = row.ID
-				break
-			}
-		}
 		jobs := make([]clients.Job, 0, len(logs))
+		liveApplied := false
 		for i := range logs {
 			if r.CreatedBy != nil && *r.CreatedBy != "" && logs[i].User != *r.CreatedBy {
 				continue
 			}
 			j := experimentRunLogToJob(&logs[i])
-			if newestStartApplyID != 0 && logs[i].ID == newestStartApplyID {
+			if !liveApplied && (logs[i].Act == string(update_log.ActionStartExperiment) || logs[i].Act == string(update_log.ActionApplyExperiment)) {
 				applyLiveSupervisorAndQueue(ctx, svc, l, *r.EntityID, j)
+				liveApplied = true
 			}
 			jobs = append(jobs, *j)
 		}

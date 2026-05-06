@@ -95,6 +95,8 @@ flowchart LR
 
 [`experiment_jobs.go`](../../backend/internal/handlers/private/experiment_jobs.go): `POST /api/v1/jobs/search`, `GET /api/v1/job`, `GET /api/v1/job/events`, `GET /api/v1/events`, `POST /api/v1/job/cancel`, `POST /api/v1/job/retry`, `GET /api/v1/job/tasks`.
 
+**Вкладка Jobs в UI** в основном использует ответ **`GET /api/v1/experiment/status`** (поле `supervisor` / `SupervisorExperimentRun`) для таблицы стадий; подробнее см. раздел про интерфейс в [control-loop.md](../architecture/control-loop.md).
+
 ## Сервис
 
 | Файл | Роль |
@@ -141,10 +143,11 @@ flowchart LR
 ## ACL
 
 Проверки в соответствующих handlers (CRUD, start/stop/apply, датасеты, переменные). Базовый пакет: [`internal/pkg/acl`](../../backend/internal/pkg/acl).
+Отдельное описание модели ролей/правил и API ACL: [`acl.md`](acl.md).
 
 ## См. также
 
 - [control-loop.md](../architecture/control-loop.md)
 - [supervisor-architecture.md](../architecture/supervisor-architecture.md)
-- [project.md](project.md), [dataset.md](dataset.md)
+- [project.md](project.md), [dataset.md](dataset.md), [cube.md](cube.md), [acl.md](acl.md)
 - [README.md](../README.md)

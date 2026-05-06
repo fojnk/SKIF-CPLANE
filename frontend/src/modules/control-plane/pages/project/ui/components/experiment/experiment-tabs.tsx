@@ -19,7 +19,6 @@ import {
   ConfigTab,
   HistoryTab,
   DsTab,
-  LinksTab,
   VariablesTab,
   VersionsTab,
   JobsTab,
@@ -126,8 +125,6 @@ const renderTabContent = (
           experiment_name={experimentName}
         />
       );
-    case 'links':
-      return <LinksTab experiment_id={experimentId} />;
     case 'var':
       return (
         <VariablesTab experiment_id={experimentId} rights={rights ?? []} />

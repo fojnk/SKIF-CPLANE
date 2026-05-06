@@ -316,6 +316,7 @@ export const ExperimentEditForm = ({
 
       <ExperimentEditTabs
         formData={formData}
+        experiment_id={experiment_id}
         selectedCubeHash={selectedCubeHash}
         activeTab={activeTab}
         onTabChange={setActiveTab}
