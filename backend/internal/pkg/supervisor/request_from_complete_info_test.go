@@ -68,7 +68,7 @@ func TestRequestFromCompleteInfo_enrichesInputDatasetsWhenParametersEmpty(t *tes
 	}
 }
 
-func TestRequestFromCompleteInfo_doesNotReplacePresetInputDatasetsStrings(t *testing.T) {
+func TestRequestFromCompleteInfo_enrichesStringInputDatasetAliases(t *testing.T) {
 	tmpl := `{
   "experimentName": "demo-two-step-pipeline",
   "models": [
@@ -94,7 +94,15 @@ func TestRequestFromCompleteInfo_doesNotReplacePresetInputDatasetsStrings(t *tes
 	}
 	raw := req.Models[0].Parameters["input_datasets"]
 	b, _ := json.Marshal(raw)
-	if string(b) != `["beam_input"]` {
-		t.Fatalf("expected string slice preserved, got %s", string(b))
+	var arr []map[string]interface{}
+	if err := json.Unmarshal(b, &arr); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if len(arr) != 1 || arr[0]["alias"] != "beam_input" {
+		t.Fatalf("unexpected input_datasets after enrich: %s", string(b))
+	}
+	params, _ := arr[0]["params"].(map[string]interface{})
+	if params == nil || params["energy_keV"].(float64) != 99 {
+		t.Fatalf("expected params.energy_keV 99, got %v", params)
 	}
 }

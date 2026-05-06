@@ -8,8 +8,10 @@
       "version": "1.0",
       "language": "PYTHON",
       "modelPath": "model_01",
-      "description": "Предобработка входных данных (читает energy_keV из input_datasets после обогащения CPLANE)",
-      "parameters": {}
+      "description": "Шаг 1: вход из датасета beam_input (алиасы строками — CPLANE дополняет params из БД перед супервизором)",
+      "parameters": {
+        "input_datasets": ["beam_input"]
+      }
     },
     {
       "modelId": "m2",
@@ -18,8 +20,11 @@
       "version": "1.0",
       "language": "C",
       "modelPath": "model_02",
-      "description": "Симуляция (C), второй шаг цепочки",
-      "parameters": {}
+      "description": "Шаг 2: выход detector_output и тот же beam_input как вход данных",
+      "parameters": {
+        "input_datasets": ["beam_input"],
+        "output_datasets": ["detector_output"]
+      }
     }
   ]
 }

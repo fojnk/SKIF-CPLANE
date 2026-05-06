@@ -1,5 +1,5 @@
--- Патч шаблона демо: визуальный граф (строковые алиасы input/output)+ обогащение params CPLANE перед супервизором.
--- t_experiment_template_v.config имеет тип TEXT (см. 000001_init).
+-- Идемпотентно: шаблон демо с алиасами для графа UI (рёбра dataset↔model).
+-- Нужен для стендов, где уже применена старая 000009 с пустыми parameters.
 UPDATE t_experiment_template_v ptv
 SET config = $cfg$
 {
