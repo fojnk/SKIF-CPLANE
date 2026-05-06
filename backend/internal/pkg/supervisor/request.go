@@ -180,24 +180,90 @@ func attachDatasetsToModelParameters(req *ExperimentRequest, datasetsJSON []byte
 		return
 	}
 
+	byAlias := make(map[string]datasetAliasBinding, len(all))
+	for _, ds := range all {
+		byAlias[ds.Alias] = ds
+	}
+
 	for i := range req.Models {
 		if req.Models[i].Parameters == nil {
 			req.Models[i].Parameters = map[string]interface{}{}
 		}
-		if _, exists := req.Models[i].Parameters["datasets"]; !exists {
-			req.Models[i].Parameters["datasets"] = all
+		p := req.Models[i].Parameters
+		if _, exists := p["datasets"]; !exists {
+			p["datasets"] = all
 		}
-		if len(inputs) > 0 {
-			if _, exists := req.Models[i].Parameters["input_datasets"]; !exists {
-				req.Models[i].Parameters["input_datasets"] = inputs
-			}
+		if _, exists := p["input_datasets"]; !exists && len(inputs) > 0 {
+			p["input_datasets"] = bindingSliceToIfaceSlice(inputs)
 		}
-		if len(outputs) > 0 {
-			if _, exists := req.Models[i].Parameters["output_datasets"]; !exists {
-				req.Models[i].Parameters["output_datasets"] = outputs
+		if _, exists := p["output_datasets"]; !exists && len(outputs) > 0 {
+			p["output_datasets"] = bindingSliceToIfaceSlice(outputs)
+		}
+		enrichStringDatasetAliases(p, "input_datasets", byAlias)
+		enrichStringDatasetAliases(p, "output_datasets", byAlias)
+	}
+}
+
+func bindingToParamMap(ds datasetAliasBinding) map[string]interface{} {
+	m := map[string]interface{}{
+		"alias": ds.Alias,
+	}
+	if ds.ID != 0 {
+		m["id"] = ds.ID
+	}
+	if ds.Name != "" {
+		m["name"] = ds.Name
+	}
+	if ds.Type != "" {
+		m["type"] = ds.Type
+	}
+	if ds.Managed {
+		m["managed"] = true
+	}
+	if len(ds.Params) > 0 {
+		m["params"] = ds.Params
+	}
+	if len(ds.Schema) > 0 {
+		m["schema"] = ds.Schema
+	}
+	return m
+}
+
+func bindingSliceToIfaceSlice(list []datasetAliasBinding) []interface{} {
+	out := make([]interface{}, len(list))
+	for i := range list {
+		out[i] = bindingToParamMap(list[i])
+	}
+	return out
+}
+
+func enrichStringDatasetAliases(params map[string]interface{}, field string, byAlias map[string]datasetAliasBinding) {
+	raw, ok := params[field]
+	if !ok || raw == nil {
+		return
+	}
+	slice, ok := raw.([]interface{})
+	if !ok || len(slice) == 0 {
+		return
+	}
+	out := make([]interface{}, 0, len(slice))
+	for _, item := range slice {
+		switch v := item.(type) {
+		case string:
+			alias := strings.TrimSpace(v)
+			if alias == "" {
+				continue
 			}
+			if b, found := byAlias[alias]; found {
+				out = append(out, bindingToParamMap(b))
+			} else {
+				out = append(out, v)
+			}
+		default:
+			out = append(out, item)
 		}
 	}
+	params[field] = out
 }
 
 func toString(v interface{}) string {
