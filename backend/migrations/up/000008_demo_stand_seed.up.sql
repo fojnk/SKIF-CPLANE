@@ -77,9 +77,7 @@ BEGIN
       "version": "1.0",
       "language": "PYTHON",
       "modelPath": "model_01",
-      "parameters": {
-        "input_datasets": ["beam_input"]
-      }
+      "parameters": {}
     },
     {
       "modelId": "m2",
@@ -88,10 +86,7 @@ BEGIN
       "version": "1.0",
       "language": "C",
       "modelPath": "model_02",
-      "parameters": {
-        "input_datasets": ["beam_input"],
-        "output_datasets": ["detector_output"]
-      }
+      "parameters": {}
     }
   ]
 }
