@@ -77,7 +77,12 @@ export {
 // ============================================================================
 // Layout графа
 // ============================================================================
-export { layoutGraph, dagreLayout, simpleLayout } from './layout';
+export {
+  layoutGraph,
+  dagreLayout,
+  simpleLayout,
+  graphEdgesToReactFlowEdges,
+} from './layout';
 
 // ============================================================================
 // Построение cubeConfig из формы

@@ -31,6 +31,10 @@ flowchart LR
 
 Регистрация: [`handlers.go`](../../backend/internal/handlers/private/handlers.go). Реализация: [`project_crud.go`](../../backend/internal/handlers/private/project_crud.go). Логи: [`update_logs.go`](../../backend/internal/handlers/private/update_logs.go).
 
+Практически:
+- `v1` - базовые CRUD-операции и логи.
+- `v2` - каталог/поиск, pinned-проекты, URL и дополнительные ответы для UI.
+
 | Метод | Путь | Назначение | Handler |
 |-------|------|------------|---------|
 | POST | `/api/v1/project` | create project | `createProjectHandler` |

@@ -1,7 +1,6 @@
 import { Label, Text, Tooltip } from '@gravity-ui/uikit';
 import React from 'react';
 
-import { controlPlaneApi } from '@/modules/control-plane/shared/api';
 import { JobsDCStatus } from '@/modules/control-plane/shared/types';
 
 interface JobsStatusLabelProps {
@@ -23,6 +22,10 @@ export const JobsStatusLabel = ({
   description,
   size = 'xs',
 }: JobsStatusLabelProps) => {
+  const normalizedStatus = String(status || '')
+    .trim()
+    .toLowerCase();
+
   let theme:
     | 'info'
     | 'utility'
@@ -31,23 +34,23 @@ export const JobsStatusLabel = ({
     | 'success'
     | 'normal'
     | 'unknown';
-  switch (status) {
-    case controlPlaneApi.dc.JobdJobStatusDC.JobStatusCompleted:
+  switch (normalizedStatus) {
+    case 'completed':
       theme = 'success';
       break;
-    case controlPlaneApi.dc.JobdJobStatusDC.JobStatusPaused:
+    case 'paused':
       theme = 'warning';
       break;
-    case controlPlaneApi.dc.JobdJobStatusDC.JobStatusQueued:
-    case controlPlaneApi.dc.JobdJobStatusDC.JobStatusRunning:
+    case 'queued':
+    case 'running':
       theme = 'info';
       break;
-    case controlPlaneApi.dc.JobdJobStatusDC.JobStatusPending:
+    case 'pending':
       theme = 'normal';
       break;
-    case controlPlaneApi.dc.JobdJobStatusDC.JobStatusTimeout:
-    case controlPlaneApi.dc.JobdJobStatusDC.JobStatusFailed:
-    case controlPlaneApi.dc.JobdJobStatusDC.JobStatusCancelled:
+    case 'timeout':
+    case 'failed':
+    case 'cancelled':
       theme = 'danger';
       break;
     default:

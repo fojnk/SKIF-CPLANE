@@ -198,6 +198,8 @@ export interface GraphNode {
   cubeHash?: string; // Уникальный хеш куба для идентификации
   cubeId?: number; // ID базового куба
   baseCubeName?: string; // Имя базового куба (опционально)
+  /** Флаг dataset-ноды (для отдельного визуального стиля в графе) */
+  isDataset?: boolean;
   /** Текст из конфига (Description у куба / description у модели супервизора) */
   modelDescription?: string;
   outputPorts: PortInfo[]; // Список выходов с hash

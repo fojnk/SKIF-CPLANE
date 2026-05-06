@@ -156,6 +156,43 @@ export interface ExperimentFormValues {
 }
 
 /**
+ * В схеме models[].parameters — type custom (в форме это JSON-строка).
+ * Граф и merge конфига должны работать с объектом и сериализовать обратно как в FormParamEdit.
+ */
+export const parseExperimentModelParameters = (
+  parameters: unknown,
+): Record<string, unknown> => {
+  if (
+    parameters &&
+    typeof parameters === 'object' &&
+    !Array.isArray(parameters)
+  ) {
+    return { ...(parameters as Record<string, unknown>) };
+  }
+  if (typeof parameters === 'string' && parameters.trim() !== '') {
+    try {
+      const parsed = JSON.parse(parameters) as unknown;
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        return parsed as Record<string, unknown>;
+      }
+    } catch {
+      return {};
+    }
+  }
+  return {};
+};
+
+export const serializeExperimentModelParameters = (
+  next: Record<string, unknown>,
+): string => {
+  try {
+    return JSON.stringify(next, null, 2);
+  } catch {
+    return '{}';
+  }
+};
+
+/**
  * Инициализирует форму редактирования experiment
  * Форма является единственным источником истины (single source of truth)
  *

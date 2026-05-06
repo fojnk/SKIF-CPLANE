@@ -19,10 +19,34 @@ import (
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/entities/responses"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/orch"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/supervisor"
-	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/supervisorstatus"
 	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/supervisorenrich"
+	"gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/pkg/supervisorstatus"
 	serviceerrors "gitlab.corp.mail.ru/ai/streamflow/backend/cplane/internal/service/errors"
 )
+
+func (p *ExperimentService) ensureExperimentOrchID(ctx context.Context, experimentID int32) (string, error) {
+	experiment, err := p.repo.DB.SelectCompleteExperiment(ctx, experimentID)
+	if err != nil {
+		p.repo.Logger.Error("failed to select complete experiment", err)
+		return "", serviceerrors.NewNotFoundError("Пайплайн не найден", err)
+	}
+
+	orchID := strings.TrimSpace(experiment.OrchID.String)
+	if orchID != "" {
+		return orchID, nil
+	}
+
+	orchID = strconv.FormatInt(int64(experimentID), 10)
+	if err := p.repo.DB.UpdateExperimentOrchID(ctx, core.UpdateExperimentOrchIDParams{
+		ID:     experimentID,
+		OrchID: pgtype.Text{String: orchID, Valid: true},
+	}); err != nil {
+		p.repo.Logger.Error("failed to set default orch_id", err)
+		return "", serviceerrors.NewInternalError("Не удалось подготовить идентификатор пайплайна (orch_id)", err)
+	}
+
+	return orchID, nil
+}
 
 // StartExperiment отправляет полный конфиг в RabbitMQ; запуск выполняет супервизор.
 func (p *ExperimentService) StartExperiment(ctx context.Context, experimentID int32, username ...string) error {
@@ -30,13 +54,9 @@ func (p *ExperimentService) StartExperiment(ctx context.Context, experimentID in
 		return serviceerrors.NewServiceUnavailableError("RabbitMQ не настроен: запуск пайплайна выполняет супервизор", fmt.Errorf("rabbitmq disabled"))
 	}
 
-	experiment, err := p.repo.DB.SelectCompleteExperiment(ctx, experimentID)
-	if err != nil {
-		p.repo.Logger.Error("failed to select complete experiment", err)
-		return serviceerrors.NewNotFoundError("Пайплайн не найден", err)
+	if _, err := p.ensureExperimentOrchID(ctx, experimentID); err != nil {
+		return err
 	}
-
-	_ = experiment.OrchID.String
 
 	experimentData, err := p.repo.DB.CompleteExperimentInfo(ctx, experimentID)
 	if err != nil {
@@ -353,6 +373,10 @@ func (p *ExperimentService) FindUnknownExperimentVariables(ctx context.Context, 
 
 // ApplyExperimentConfig отправляет конфигурацию супервизору (RabbitMQ) и сохраняет применённую версию в БД.
 func (p *ExperimentService) ApplyExperimentConfig(ctx context.Context, experimentID int32) (string, error) {
+	if _, err := p.ensureExperimentOrchID(ctx, experimentID); err != nil {
+		return "", err
+	}
+
 	experimentData, err := p.repo.DB.CompleteExperimentInfo(ctx, experimentID)
 	if err != nil {
 		p.repo.Logger.Error("failed to complete experiment info", err)

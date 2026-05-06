@@ -213,7 +213,9 @@ func RemoveRuleFromRoleHandler(ctx context.Context, svc *service.Service, l *log
 //	@Summary	list user's permitted actions on the given resource
 //	@Tags		acl
 //	@Param		user_id	query	int		true	"user id"
-//	@Param		scope	query	string	true	"scope"
+//	@Param		object_type	query	string	true	"object type (experiment, dataset, project, namespace)"
+//	@Param		object_id	query	int		true	"object id"
+//	@Param		object_attribute	query	string	true	"object attribute"
 //	@Produce	json
 //	@Param		x-superuser-token	header		string	false	"superuser token"
 //	@Success	200					{object}	responses.CheckPermissionsResponse

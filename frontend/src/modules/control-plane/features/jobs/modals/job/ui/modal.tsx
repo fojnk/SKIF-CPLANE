@@ -102,7 +102,7 @@ const tabListItems = [{ name: tabsEnum.info }, { name: tabsEnum.logs }];
 
 interface StageViewProps {
   content?: string;
-  stage?: controlPlaneApi.dc.JobdJobDC;
+  stage?: controlPlaneApi.dc.ClientsJobDC;
   activeTab?: tabsEnum;
   setActiveTab: Dispatch<SetStateAction<tabsEnum | undefined>>;
 }
@@ -142,7 +142,7 @@ export const Modal = ({
 
   const [active, setActive] = useState<string | undefined>();
   const [activeElement, setActiveElement] = useState<
-    controlPlaneApi.dc.JobdStageDC | undefined
+    controlPlaneApi.dc.ClientsJobStageDC | undefined
   >();
   const [activeTab, setActiveTab] = useState<tabsEnum | undefined>(
     tabsEnum.logs,
@@ -277,7 +277,13 @@ export const Modal = ({
   const renderBody = () => {
     if ((!data && loading) || failed) return;
     if (activeTab === tabsEnum.logs) {
-      return <LogViewer content={activeElement?.logs || ''} />;
+      const fallbackLogs = [
+        activeElement?.description ? `description: ${activeElement.description}` : '',
+        activeElement?.step_status ? `status: ${activeElement.step_status}` : '',
+      ]
+        .filter(Boolean)
+        .join('\n');
+      return <LogViewer content={fallbackLogs} />;
     }
     if (activeTab === tabsEnum.info) {
       return (

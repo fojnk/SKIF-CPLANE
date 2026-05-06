@@ -32,6 +32,10 @@ flowchart LR
 
 Регистрация: [`handlers.go`](../../backend/internal/handlers/private/handlers.go). Реализация: [`dataset_crud.go`](../../backend/internal/handlers/private/dataset_crud.go). Логи: [`update_logs.go`](../../backend/internal/handlers/private/update_logs.go).
 
+Принцип версионирования API:
+- `v2` - основные операции над датасетом (create/update/get/search/versions).
+- `v1` - совместимые и исторические endpoint'ы (`delete`, `apply`, часть логов).
+
 | Метод | Путь | Назначение |
 |-------|------|------------|
 | POST | `/api/v2/dataset/config/validate` | validate config |
