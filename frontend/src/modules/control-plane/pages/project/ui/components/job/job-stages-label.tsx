@@ -11,10 +11,10 @@ import React from 'react';
 import { controlPlaneApi } from '@/modules/control-plane/shared/api';
 
 interface JobsStageLabelProps {
-  stage: controlPlaneApi.dc.JobdStageDC;
+  stage: controlPlaneApi.dc.ClientsJobStageDC;
 }
 
-const stagePopoverContent = (stage: controlPlaneApi.dc.JobdStageDC) => (
+const stagePopoverContent = (stage: controlPlaneApi.dc.ClientsJobStageDC) => (
   <Flex direction="column" gap={2} style={{ maxWidth: 380, padding: 4 }}>
     <Text variant="subheader-2">
       {stage.name?.trim() || `Этап ${stage.step_id ?? '—'}`}
@@ -30,7 +30,7 @@ const stagePopoverContent = (stage: controlPlaneApi.dc.JobdStageDC) => (
   </Flex>
 );
 
-const wrapWithStagePopover = (stage: controlPlaneApi.dc.JobdStageDC, icon: React.ReactNode) => (
+const wrapWithStagePopover = (stage: controlPlaneApi.dc.ClientsJobStageDC, icon: React.ReactNode) => (
   <Popover
     content={stagePopoverContent(stage)}
     placement="top"
