@@ -13,14 +13,14 @@ import (
 
 // Client публикует события в RabbitMQ (одно соединение и канал на процесс).
 type Client struct {
-	log              *logger.Logger
-	conn             *amqp.Connection
-	ch               *amqp.Channel
-	exchange         string
-	keyStart         string
-	keyStop          string
-	keyApply         string
-	supervisorQueue  string
+	log             *logger.Logger
+	conn            *amqp.Connection
+	ch              *amqp.Channel
+	exchange        string
+	keyStart        string
+	keyStop         string
+	keyApply        string
+	supervisorQueue string
 }
 
 func New(cfg *Config, log *logger.Logger) (*Client, error) {
@@ -62,6 +62,41 @@ func New(cfg *Config, log *logger.Logger) (*Client, error) {
 		return nil, fmt.Errorf("rabbitmq declare exchange %q: %w", exchange, err)
 	}
 
+	supervisorQueue := strings.TrimSpace(cfg.SupervisorQueue)
+	if supervisorQueue != "" {
+		if _, err := ch.QueueDeclare(
+			supervisorQueue,
+			true,
+			false,
+			false,
+			false,
+			nil,
+		); err != nil {
+			_ = ch.Close()
+			_ = conn.Close()
+			return nil, fmt.Errorf("rabbitmq declare supervisor queue %q: %w", supervisorQueue, err)
+		}
+
+		bindKeys := []string{keyStart, keyApply, keyStop}
+		for _, key := range bindKeys {
+			rk := strings.TrimSpace(key)
+			if rk == "" {
+				continue
+			}
+			if err := ch.QueueBind(
+				supervisorQueue,
+				rk,
+				exchange,
+				false,
+				nil,
+			); err != nil {
+				_ = ch.Close()
+				_ = conn.Close()
+				return nil, fmt.Errorf("rabbitmq bind queue %q to %q/%q: %w", supervisorQueue, exchange, rk, err)
+			}
+		}
+	}
+
 	return &Client{
 		log:             log,
 		conn:            conn,
@@ -70,7 +105,7 @@ func New(cfg *Config, log *logger.Logger) (*Client, error) {
 		keyStart:        keyStart,
 		keyStop:         keyStop,
 		keyApply:        keyApply,
-		supervisorQueue: strings.TrimSpace(cfg.SupervisorQueue),
+		supervisorQueue: supervisorQueue,
 	}, nil
 }
 

@@ -46,8 +46,8 @@ clients:
     routing_key: experiment.start
     routing_key_stop: experiment.stop
     routing_key_apply: experiment.apply
-    # Имя очереди, куда биндится супервизор (как env SUPERVISOR_QUEUE у consumer). Нужно для passive declare и счётчика «сообщений в очереди» в списке задач.
-    supervisor_queue: ""
+    # Имя очереди, куда биндится супервизор (как env SUPERVISOR_QUEUE у consumer). Нужно для пассивной проверки очереди в UI и автопривязки routing_key -> queue при старте backend.
+    supervisor_queue: "supervisor.experiments"
   # HTTP Java-супервизора для GET /api/v1/experiment/status (этапы пайплайна в UI)
   supervisor:
     base_url: http://java-supervisor:8080

@@ -64,6 +64,11 @@ interface FormParamEditContextValue {
    * у массива структур скрыта кнопка «Add Item» — элементы только программно / из маркетплейса.
    */
   arrayStructAddDisabledPaths?: ReadonlySet<string>;
+  /**
+   * Опции для string-элементов массива по нормализованному пути поля.
+   * Пример ключа: models[].parameters.input_datasets
+   */
+  arrayStringOptionsByPath?: ReadonlyMap<string, readonly string[]>;
 }
 
 const FormParamEditContext = createContext<FormParamEditContextValue>({
@@ -73,6 +78,7 @@ const FormParamEditContext = createContext<FormParamEditContextValue>({
   maxExpandedLevel: 2,
   focusedParam: null,
   variableNames: undefined,
+  arrayStringOptionsByPath: undefined,
 });
 
 const useFormParamEditContext = () => useContext(FormParamEditContext);
@@ -171,7 +177,15 @@ interface FormParamEditProps {
    * Имена полей-массивов структур без ручного «Add Item» (полный путь как в final-form: models, A.B.items).
    */
   arrayStructAddDisabledPaths?: readonly string[];
+  /**
+   * Опции для string-элементов массива по нормализованному пути поля.
+   * Ключи должны быть без конкретных индексов: models[].foo
+   */
+  arrayStringOptionsByPath?: Record<string, readonly string[]>;
 }
+
+const normalizeArrayPath = (fieldName: string): string =>
+  fieldName.replace(/\[\d+\]/g, '[]');
 
 // ============================================================================
 // Вспомогательные компоненты
@@ -741,7 +755,8 @@ const ParamFieldArray: React.FC<ParamFieldArrayProps> = ({
   nestedType = 'string',
   constraint,
 }) => {
-  const { addButtonVariant, size } = useFormParamEditContext();
+  const { addButtonVariant, size, arrayStringOptionsByPath } =
+    useFormParamEditContext();
   const field = useField(fieldName, {
     validate: validators.build({ required }),
   });
@@ -765,6 +780,14 @@ const ParamFieldArray: React.FC<ParamFieldArrayProps> = ({
     const newValues = values.filter((_: any, i: number) => i !== index);
     field.input.onChange(newValues);
   };
+
+  const selectOptions = useMemo(() => {
+    if (nestedType !== 'string' || !arrayStringOptionsByPath) {
+      return undefined;
+    }
+    const normalized = normalizeArrayPath(fieldName);
+    return arrayStringOptionsByPath.get(normalized);
+  }, [nestedType, arrayStringOptionsByPath, fieldName]);
 
   const renderItemEditor = (index: number) => {
     const itemFieldName = `${fieldName}[${index}]`;
@@ -800,6 +823,28 @@ const ParamFieldArray: React.FC<ParamFieldArrayProps> = ({
         );
       case 'string':
       default:
+        if (selectOptions && selectOptions.length > 0) {
+          return (
+            <Field name={itemFieldName}>
+              {({ input }) => (
+                <Select
+                  value={input.value ? [input.value] : []}
+                  onUpdate={(values) => input.onChange(values[0] || '')}
+                  placeholder={`Item ${index + 1}`}
+                  size={size}
+                  width="max"
+                  filterable
+                >
+                  {selectOptions.map((option) => (
+                    <Select.Option key={option} value={option}>
+                      {option}
+                    </Select.Option>
+                  ))}
+                </Select>
+              )}
+            </Field>
+          );
+        }
         return (
           <PrimitiveString
             fieldName={itemFieldName}
@@ -2406,6 +2451,7 @@ export const FormParamEdit: React.FC<FormParamEditProps> = ({
   focusedParam = null,
   variableNames,
   arrayStructAddDisabledPaths,
+  arrayStringOptionsByPath,
 }) => {
   const addDisabledSet = useMemo(() => {
     if (!arrayStructAddDisabledPaths?.length) {
@@ -2413,6 +2459,15 @@ export const FormParamEdit: React.FC<FormParamEditProps> = ({
     }
     return new Set(arrayStructAddDisabledPaths);
   }, [arrayStructAddDisabledPaths]);
+
+  const arrayStringOptionsMap = useMemo(() => {
+    if (!arrayStringOptionsByPath) {
+      return undefined;
+    }
+    return new Map<string, readonly string[]>(
+      Object.entries(arrayStringOptionsByPath).map(([k, v]) => [k, v]),
+    );
+  }, [arrayStringOptionsByPath]);
 
   const contextValue = useMemo(
     () => ({
@@ -2423,6 +2478,7 @@ export const FormParamEdit: React.FC<FormParamEditProps> = ({
       focusedParam,
       variableNames,
       arrayStructAddDisabledPaths: addDisabledSet,
+      arrayStringOptionsByPath: arrayStringOptionsMap,
     }),
     [
       addButtonVariant,
@@ -2432,6 +2488,7 @@ export const FormParamEdit: React.FC<FormParamEditProps> = ({
       focusedParam,
       variableNames,
       addDisabledSet,
+      arrayStringOptionsMap,
     ],
   );
 

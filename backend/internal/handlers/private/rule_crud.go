@@ -134,7 +134,7 @@ func updateRoleHandler(ctx context.Context, svc *service.Service, l *logger.Logg
 //	@Tags		role
 //	@Param		x-superuser-token	header	string	false	"superuser token"
 //	@Produce	json
-//	@Success	200	{object}	responses.ListRulesResponse
+//	@Success	200	{object}	responses.ListRolesResponse
 //	@Failure	400	{object}	responses.ErrorResponse	"Bad Request"
 //	@Failure	401	{object}	responses.ErrorResponse	"Unauthorized"
 //	@Failure	403	{object}	responses.ErrorResponse	"Forbidden"

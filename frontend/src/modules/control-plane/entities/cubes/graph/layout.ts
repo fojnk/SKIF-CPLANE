@@ -13,8 +13,13 @@ const elk = new ELK();
 /**
  * Определяет тип React Flow ноды на основе типа куба
  */
-function getReactFlowNodeType(cubeType: CubeType): string {
-  switch (cubeType) {
+function getReactFlowNodeType(
+  graphNode: Pick<GraphNode, 'type' | 'isDataset'>,
+): string {
+  if (graphNode.isDataset) {
+    return 'datasetGroup';
+  }
+  switch (graphNode.type) {
     case CubeType.RESHARDER:
       return 'resharder';
     case CubeType.RETRIER:
@@ -105,6 +110,21 @@ const elkOptions = {
   'elk.spacing.portsSurrounding': '20',
   'elk.layered.spacing.baseValue': '50',
 };
+
+/**
+ * Синхронное преобразование рёбер доменной модели в Edge для React Flow
+ * (то же сопоставление полей, что и после ELK в layoutGraph).
+ */
+export function graphEdgesToReactFlowEdges(graphEdges: GraphEdge[]): Edge[] {
+  return graphEdges.map((edge) => ({
+    id: edge.id,
+    source: edge.source,
+    target: edge.target,
+    sourceHandle: edge.outputPortHash,
+    targetHandle: edge.inputPortHash,
+    type: edge.edgeType || 'smart',
+  }));
+}
 
 /**
  * Преобразует граф в формат React Flow с автоматическим layout через ELK
@@ -199,10 +219,11 @@ export async function layoutGraph(
 
     const reactFlowNode: Node = {
       id: node.id,
-      type: getReactFlowNodeType(graphNode.type),
+      type: getReactFlowNodeType(graphNode),
       data: {
         label: graphNode.label,
         isExternal: isResharder || isRetrier,
+        isDataset: graphNode.isDataset === true,
         inputPorts,
         outputPorts,
         hasError: graphNode.hasError,
@@ -449,15 +470,7 @@ export async function layoutGraph(
     }
   }
 
-  // Создаём edges
-  const edges: Edge[] = graphEdges.map((edge) => ({
-    id: edge.id,
-    source: edge.source,
-    target: edge.target,
-    sourceHandle: edge.outputPortHash,
-    targetHandle: edge.inputPortHash,
-    type: edge.edgeType || 'smart',
-  }));
+  const edges: Edge[] = graphEdgesToReactFlowEdges(graphEdges);
 
   return { nodes, edges };
 }
@@ -826,10 +839,11 @@ export function simpleLayout(
       // Создаем ноду куба
       cubeNodes.push({
         id: cubeData.node.id,
-        type: getReactFlowNodeType(cubeData.node.type),
+        type: getReactFlowNodeType(cubeData.node),
         data: {
           label: cubeData.node.label,
           isExternal: false,
+          isDataset: cubeData.node.isDataset === true,
           inputPorts,
           outputPorts,
           hasError: cubeData.node.hasError,
@@ -912,15 +926,7 @@ export function simpleLayout(
     });
   }
 
-  // Обновляем edges: source/target - это ID кубов, sourceHandle/targetHandle - это hash портов
-  const edges: Edge[] = graphEdges.map((edge) => ({
-    id: edge.id,
-    source: edge.source,
-    target: edge.target,
-    sourceHandle: edge.outputPortHash,
-    targetHandle: edge.inputPortHash,
-    type: edge.edgeType || 'smart',
-  }));
+  const edges: Edge[] = graphEdgesToReactFlowEdges(graphEdges);
 
   return { nodes, edges };
 }
@@ -1012,10 +1018,11 @@ export function dagreLayout(
 
     const nodeResult: Node = {
       id: graphNode.id,
-      type: getReactFlowNodeType(graphNode.type),
+      type: getReactFlowNodeType(graphNode),
       data: {
         label: graphNode.label,
         isExternal: isResharder || isRetrier,
+        isDataset: graphNode.isDataset === true,
         inputPorts,
         outputPorts,
         hasError: graphNode.hasError,
@@ -1112,15 +1119,7 @@ export function dagreLayout(
     });
   }
 
-  // Создаём edges
-  const edges: Edge[] = graphEdges.map((edge) => ({
-    id: edge.id,
-    source: edge.source,
-    target: edge.target,
-    sourceHandle: edge.outputPortHash,
-    targetHandle: edge.inputPortHash,
-    type: edge.edgeType || 'smart',
-  }));
+  const edges: Edge[] = graphEdgesToReactFlowEdges(graphEdges);
 
   return { nodes, edges };
 }
