@@ -1,45 +1,22 @@
 import { ArrowRotateRight } from '@gravity-ui/icons';
 import {
-  Dialog,
   Flex,
   Table,
   Text,
-  withTableActions,
-  withTableSettings,
-  WithTableSettingsProps,
-  TableSettingsData,
+  Dialog,
   configure,
   Lang,
-  Pagination,
 } from '@gravity-ui/uikit';
 import { useUnit } from 'effector-react';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
-import { ShowJobModel } from '@/modules/control-plane/features/jobs/modals/job';
 import { projectPageModel } from '@/modules/control-plane/pages/project';
-import {
-  JobsStagesLabel,
-  JobsStatusLabel,
-  StatusColumnInfo,
-} from '@/modules/control-plane/pages/project/ui/components';
 import { controlPlaneApi } from '@/modules/control-plane/shared/api';
 import { ErrorMessage } from '@/modules/control-plane/shared/components';
-import { JobsDC, PageDataDC } from '@/modules/control-plane/shared/types';
 import {
   ButtonWithProgress,
-  FullDate,
-  VkUser,
 } from '@/modules/control-plane/shared/ui';
 import { getPipeStatusColor } from '@/modules/control-plane/shared/utils/getStatusColor';
-import {
-  getProjectExperimentJobsPageSize,
-  pageSizeOptions,
-  saveProjectExperimentJobsPageSize,
-} from '@/modules/control-plane/shared/utils/pageDataHelpers';
-import {
-  loadTableSettings,
-  saveTableSettings,
-} from '@/modules/control-plane/shared/utils/tableSettingsStorage';
 import { GlobalLoader } from '@/shared/ui/loaders';
 
 interface JobsTabProps {
@@ -65,24 +42,47 @@ function buildSupervisorModelDescription(
   return blocks.join('\n\n');
 }
 
-const TableWithSettings = withTableSettings<JobsDC>({
-  sortable: true,
-  filterable: false,
-})(Table);
-const TableRender = withTableActions<JobsDC, WithTableSettingsProps>(
-  TableWithSettings,
-);
+function buildSupervisorJobsFallback(
+  run?: controlPlaneApi.dc.ResponsesSupervisorExperimentRunDC,
+): controlPlaneApi.dc.ResponsesSupervisorModelJobDC[] {
+  if (!run) return [];
+  if ((run.jobs?.length ?? 0) > 0) return run.jobs ?? [];
+
+  const total = run.total_models ?? 0;
+  const currentOrder = run.current_order ?? 0;
+  if (total <= 0) return [];
+
+  const runtimeStatus = String(run.status || '').toUpperCase();
+  const rows: controlPlaneApi.dc.ResponsesSupervisorModelJobDC[] = [];
+  for (let i = 1; i <= total; i++) {
+    let status = 'PENDING';
+    if (runtimeStatus === 'COMPLETED') {
+      status = 'COMPLETED';
+    } else if (runtimeStatus === 'FAILED') {
+      status =
+        i < currentOrder ? 'COMPLETED' : i === currentOrder ? 'FAILED' : 'PENDING';
+    } else if (runtimeStatus === 'RUNNING' || runtimeStatus === 'QUEUED') {
+      status =
+        i < currentOrder
+          ? 'COMPLETED'
+          : i === currentOrder
+            ? runtimeStatus
+            : 'PENDING';
+    }
+
+    rows.push({
+      index: i,
+      model_name:
+        i === currentOrder ? run.current_model || `stage-${i}` : `stage-${i}`,
+      status,
+      error_message:
+        i === currentOrder && runtimeStatus === 'FAILED' ? run.detail : undefined,
+    });
+  }
+  return rows;
+}
 
 export const JobsTab = ({ experiment_id }: JobsTabProps) => {
-  const [load, loading, failed, data, reset, total] = useUnit([
-    projectPageModel.project.jobs.load,
-    projectPageModel.project.jobs.$loading,
-    projectPageModel.project.jobs.$failed,
-    projectPageModel.project.jobs.$data,
-    projectPageModel.project.jobs.reset,
-    projectPageModel.project.jobs.$total,
-  ]);
-
   const [pipeStatusLoad, pipeStatusLoading, pipeStatusData, pipeStatusReset] =
     useUnit([
       projectPageModel.experiment.status.load,
@@ -94,178 +94,40 @@ export const JobsTab = ({ experiment_id }: JobsTabProps) => {
     configure({ lang: Lang.En });
   }, []);
 
-  const settingsStorageKey = 'project_experiment_jobs_table_settings_v1';
-  const defaultSettings: TableSettingsData = [
-    { id: 'id', isSelected: true },
-    { id: 'status', isSelected: true },
-    { id: 'type', isSelected: true },
-    { id: 'tags', isSelected: true },
-    { id: 'created_at', isSelected: true },
-    { id: 'created_by', isSelected: true },
-  ];
-
-  const [settings, setSettings] = useState<TableSettingsData>(() =>
-    loadTableSettings(settingsStorageKey, defaultSettings),
-  );
-
-  const updateSettings = (next: TableSettingsData) => {
-    setSettings(next);
-    saveTableSettings(settingsStorageKey, next);
-  };
-
-  const [pageData, setPageData] = React.useState<PageDataDC>(() => ({
-    page: 1,
-    limit: getProjectExperimentJobsPageSize(),
-  }));
-
   const [supervisorModelDetail, setSupervisorModelDetail] =
     React.useState<controlPlaneApi.dc.ResponsesSupervisorModelJobDC | null>(
       null,
     );
 
-  const loadFx = (page: number, limit: number) => {
-    load({
-      entity_id: experiment_id,
-      entity_type: 'experiment',
-      offset: (page - 1) * limit,
-      limit,
-    });
-  };
-
   useEffect(() => {
-    loadFx(1, getProjectExperimentJobsPageSize());
     pipeStatusLoad(experiment_id);
     return () => {
-      reset();
       pipeStatusReset();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [experiment_id]);
 
-  const onUpdatePage = (page: number, limit: number) => {
-    if (limit !== pageData.limit) {
-      saveProjectExperimentJobsPageSize(limit);
-    }
-    loadFx(page, limit);
-    setPageData({ page, limit });
-  };
-
   const onRefresh = () => {
-    if (loading) return;
-
-    loadFx(pageData.page, pageData.limit);
+    if (pipeStatusLoading) return;
     pipeStatusLoad(experiment_id);
   };
 
-  const onRowClick = (row: controlPlaneApi.dc.JobdJobDC) => {
-    ShowJobModel.start({
-      id: row.id,
-    });
-  };
-
-  const onStageClick = (id?: number, step_id?: number) => {
-    ShowJobModel.start({
-      id,
-      step_id,
-    });
-  };
-
-  if (loading && !data)
+  if (pipeStatusLoading && !pipeStatusData)
     return (
       <Flex style={{ height: '100%', width: '100%', position: 'relative' }}>
         <GlobalLoader absolute size="m" />
       </Flex>
     );
-  if (failed)
+  if (!pipeStatusData)
     return (
-      <ErrorMessage
-        reload={() =>
-          load({ entity_id: experiment_id, entity_type: 'experiment' })
-        }
-      />
+      <ErrorMessage reload={() => pipeStatusLoad(experiment_id)} />
     );
 
-  const columns = [
-    {
-      id: 'id',
-      name: 'ID',
-      width: 60,
-      align: 'center' as const,
-      meta: { selectedAlways: true },
-      template: (item: JobsDC) => (
-        <Flex alignItems="center" justifyContent="center">
-          {item.id}
-        </Flex>
-      ),
-    },
-    {
-      id: 'status',
-      name: () => <StatusColumnInfo />,
-      width: 130,
-      meta: { selectedAlways: true },
-      template: (item: JobsDC) => (
-        <JobsStatusLabel
-          status={item.status}
-          description={item.status_description}
-        />
-      ),
-    },
-    {
-      id: 'type',
-      name: 'Тип задачи',
-      width: 230,
-      meta: { selectedAlways: true },
-      template: (item: JobsDC) => <Flex alignItems="center">{item.type}</Flex>,
-    },
-    {
-      id: 'tags',
-      name: 'Этапы',
-      width: 230,
-      meta: { selectedAlways: true },
-      template: (item: JobsDC) => {
-        return (
-          <Flex alignItems="center" gap={1}>
-            {item.stages?.map((stage) => (
-              <Flex
-                key={stage.step_id}
-                onClick={(e) => {
-                  onStageClick(item.id, stage.step_id);
-                  e.stopPropagation();
-                }}
-              >
-                <JobsStagesLabel stage={stage} />
-              </Flex>
-            ))}
-          </Flex>
-        );
-      },
-    },
-    {
-      id: 'created_at',
-      name: 'Создано',
-      width: 230,
-      minWidth: 230,
-      meta: { selectedAlways: true },
-      template: (item: JobsDC) => <FullDate date={item.created_at} />,
-    },
-    {
-      id: 'created_by',
-      name: 'Автор',
-      width: 180,
-      meta: { selectedAlways: true },
-      template: (item: JobsDC) => (
-        <span
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        >
-          <VkUser user={item.created_by} />
-        </span>
-      ),
-    },
-  ];
-
   const supervisorRun = pipeStatusData?.supervisor;
+  const supervisorJobs = buildSupervisorJobsFallback(supervisorRun);
+  const dockerShareError =
+    (supervisorRun?.detail || '').includes('Mounts denied') ||
+    supervisorJobs.some((j) => (j.error_message || '').includes('Mounts denied'));
   const supervisorJobColumns = [
     {
       id: 'idx',
@@ -331,7 +193,7 @@ export const JobsTab = ({ experiment_id }: JobsTabProps) => {
         <ButtonWithProgress
           view="normal"
           size="m"
-          loading={loading || pipeStatusLoading}
+          loading={pipeStatusLoading}
           onClick={onRefresh}
           intervalMs={10000}
           style={{
@@ -370,10 +232,17 @@ export const JobsTab = ({ experiment_id }: JobsTabProps) => {
               </Text>
             ) : null}
           </Flex>
-          {(supervisorRun.jobs?.length ?? 0) > 0 ? (
+          {dockerShareError ? (
+            <Text variant="body-2" color="warning">
+              Ошибка Docker File Sharing: добавьте путь проекта в Docker Desktop
+              (Settings - Resources - File Sharing), затем перезапустите
+              java-supervisor и повторите запуск.
+            </Text>
+          ) : null}
+          {supervisorJobs.length > 0 ? (
             <Table
               columns={supervisorJobColumns}
-              data={supervisorRun.jobs ?? []}
+              data={supervisorJobs}
               emptyMessage="Нет этапов"
               className="table--full-width sf-table--row-clickable"
               onRowClick={(item) => setSupervisorModelDetail(item)}
@@ -386,26 +255,6 @@ export const JobsTab = ({ experiment_id }: JobsTabProps) => {
           )}
         </Flex>
       ) : null}
-      <TableRender
-        columns={columns}
-        settings={settings}
-        updateSettings={updateSettings}
-        defaultSettings={defaultSettings}
-        showResetButton
-        data={data?.jobs ?? []}
-        emptyMessage="Задачи не найдены"
-        className="table--full-width"
-        onRowClick={onRowClick}
-      />
-      <Flex direction="row" justifyContent="center">
-        <Pagination
-          total={total}
-          page={pageData.page}
-          pageSize={pageData.limit}
-          pageSizeOptions={[...pageSizeOptions]}
-          onUpdate={onUpdatePage}
-        />
-      </Flex>
       <Dialog
         open={supervisorModelDetail !== null}
         onClose={() => setSupervisorModelDetail(null)}

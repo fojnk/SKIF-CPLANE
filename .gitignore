@@ -2,3 +2,5 @@
 frontend/.DS_Store
 frontend/dist/
 .venv-docs/
+.env
+.supervisor-work/

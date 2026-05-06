@@ -24,6 +24,64 @@ import {
   hasWorkerParam,
   type ExperimentFormValues,
 } from './experiment-edit';
+import { parseExperimentModelParameters } from './experiment-edit/utils';
+
+const mergeSupervisorDatasetParams = (
+  typedModels: unknown,
+  rawModels: unknown,
+): unknown => {
+  if (!Array.isArray(typedModels) || !Array.isArray(rawModels)) {
+    return typedModels;
+  }
+
+  const rawList = rawModels as unknown[];
+
+  return typedModels.map((typedModel, index) => {
+    const typed =
+      typedModel && typeof typedModel === 'object' && !Array.isArray(typedModel)
+        ? (typedModel as Record<string, unknown>)
+        : {};
+    const id = String(typed.modelId ?? '').trim();
+    let raw: unknown;
+    if (id) {
+      const found = rawList.find(
+        (m) =>
+          m &&
+          typeof m === 'object' &&
+          !Array.isArray(m) &&
+          String((m as Record<string, unknown>).modelId ?? '').trim() === id,
+      );
+      raw = found ?? rawList[index];
+    } else {
+      raw = rawList[index];
+    }
+
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+      return typed;
+    }
+
+    const rawParameters = parseExperimentModelParameters(
+      (raw as Record<string, unknown>).parameters,
+    );
+
+    const typedParameters = parseExperimentModelParameters(typed.parameters);
+
+    const preservedDatasetParams: Record<string, unknown> = {};
+    ['datasets', 'input_datasets', 'output_datasets'].forEach((key) => {
+      if (key in rawParameters) {
+        preservedDatasetParams[key] = rawParameters[key];
+      }
+    });
+
+    return {
+      ...typed,
+      parameters: {
+        ...typedParameters,
+        ...preservedDatasetParams,
+      },
+    };
+  });
+};
 
 /**
  * Observer для синхронизации формы → JSON конфиг
@@ -61,6 +119,10 @@ const FormValuesObserver = ({
           originalConfig,
         ) as Record<string, unknown>;
 
+        typedValues.models = mergeSupervisorDatasetParams(
+          typedValues.models,
+          (values as Record<string, unknown>).models,
+        );
         if (!Array.isArray(typedValues.models)) {
           typedValues.models = [];
         }

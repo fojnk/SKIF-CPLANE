@@ -12,10 +12,16 @@
   // CubeGroup - светлая тема
   --cube-border-light: rgb(144 196 255);
   --cube-bg-light: rgb(233 243 255);
+  // DatasetGroup - светлая тема
+  --dataset-border-light: rgb(186 193 201);
+  --dataset-bg-light: rgb(243 245 248);
 
   // CubeGroup - темная тема
   --cube-border-dark: rgb(8 51 99);
   --cube-bg-dark: rgb(7 23 42);
+  // DatasetGroup - темная тема
+  --dataset-border-dark: rgb(82 89 97);
+  --dataset-bg-dark: rgb(35 39 45);
 
   // ResharderGroup - светлая тема
   --resharder-border-light: rgb(254 191 96);
@@ -163,6 +169,55 @@
 
 // Состояние выделения для куба
 .cubeGroupSelected {
+  border: 1px solid var(--g-color-base-brand) !important;
+  box-shadow: 0 0 8px 2px rgba(59, 130, 246, 0.5);
+}
+
+.datasetGroup {
+  @extend %groupBase;
+  border: 1px solid var(--dataset-border-light);
+  background-color: var(--dataset-bg-light);
+  cursor: pointer;
+
+  &Header {
+    @extend %groupHeader;
+    height: var(--cube-header-height);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    padding-top: 6px;
+  }
+
+  &TitleRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 4px;
+  }
+
+  &Title {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden;
+    min-width: 0;
+    flex: 1;
+  }
+
+  &Base {
+    text-align: left;
+    padding-left: 18px;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  &Content {
+    @extend %groupContent;
+  }
+}
+
+.datasetGroupSelected {
   border: 1px solid var(--g-color-base-brand) !important;
   box-shadow: 0 0 8px 2px rgba(59, 130, 246, 0.5);
 }
@@ -574,6 +629,11 @@
   .cubeGroup {
     border: 1px solid var(--cube-border-dark);
     background-color: var(--cube-bg-dark);
+  }
+
+  .datasetGroup {
+    border: 1px solid var(--dataset-border-dark);
+    background-color: var(--dataset-bg-dark);
   }
 
   .resharderGroup {

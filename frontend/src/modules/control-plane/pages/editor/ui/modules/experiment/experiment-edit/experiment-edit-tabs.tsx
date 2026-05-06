@@ -13,6 +13,7 @@ import { useForm, useFormState } from 'react-final-form';
 
 import { supervisorModelFromBaseCube } from '@/modules/control-plane/entities/cubes';
 import { ShowCubesMarketModel } from '@/modules/control-plane/features/cubes/market';
+import { controlPlaneApi } from '@/modules/control-plane/shared/api';
 import { FormParamEdit } from '@/modules/control-plane/shared/components/forms';
 import { ParamsDC } from '@/modules/control-plane/shared/types';
 import { ResizablePanel } from '@/modules/control-plane/shared/ui/resizer';
@@ -33,6 +34,7 @@ export type TabId = 'experiment' | 'worker' | 'cubes';
 
 interface Props {
   formData: ParamsDC[];
+  experiment_id: number;
   selectedCubeHash?: string | null;
   activeTab?: TabId;
   onTabChange?: (tab: TabId) => void;
@@ -45,6 +47,7 @@ interface Props {
 
 export const ExperimentEditTabs = ({
   formData,
+  experiment_id,
   selectedCubeHash,
   activeTab: externalActiveTab,
   onTabChange,
@@ -58,6 +61,7 @@ export const ExperimentEditTabs = ({
     externalActiveTab || 'experiment',
   );
   const [showPanel, setShowPanel] = useState(true);
+  const [linkedDatasetAliases, setLinkedDatasetAliases] = useState<string[]>([]);
 
   const togglePanel = () => setShowPanel((prev) => !prev);
 
@@ -71,6 +75,33 @@ export const ExperimentEditTabs = ({
 
   const experimentParams = getExperimentParams(formData);
   const hasModelsParam = experimentParams.some((p) => p.name === 'models');
+
+  useEffect(() => {
+    if (!hasModelsParam || hasWorker || !experiment_id) {
+      setLinkedDatasetAliases([]);
+      return;
+    }
+
+    let isCancelled = false;
+    controlPlaneApi.experiment
+      .v1ExperimentDatasetsList({ experiment_id })
+      .then((response) => {
+        if (isCancelled) return;
+        const aliases = (response.data.datasets || [])
+          .map((item) => (item.alias || '').trim())
+          .filter(Boolean);
+        setLinkedDatasetAliases(Array.from(new Set(aliases)));
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setLinkedDatasetAliases([]);
+        }
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [hasModelsParam, hasWorker, experiment_id]);
 
   useEffect(() => {
     if (!hasModelsParam) {
@@ -272,6 +303,14 @@ export const ExperimentEditTabs = ({
               variableNames={variableNames}
               arrayStructAddDisabledPaths={
                 hasModelsParam ? EXPERIMENT_MODELS_ARRAY_NO_MANUAL_ADD : undefined
+              }
+              arrayStringOptionsByPath={
+                linkedDatasetAliases.length > 0
+                  ? {
+                      'models[].parameters.input_datasets': linkedDatasetAliases,
+                      'models[].parameters.output_datasets': linkedDatasetAliases,
+                    }
+                  : undefined
               }
             />
           )}

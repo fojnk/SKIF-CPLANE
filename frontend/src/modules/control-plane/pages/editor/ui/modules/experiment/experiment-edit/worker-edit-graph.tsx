@@ -1,4 +1,5 @@
-import { Flex } from '@gravity-ui/uikit';
+import { Plus } from '@gravity-ui/icons';
+import { Button, Dialog, Flex, Select, Text } from '@gravity-ui/uikit';
 import { Edge, Node } from '@xyflow/react';
 import { useUnit } from 'effector-react';
 import React, {
@@ -15,6 +16,7 @@ import {
   CubeType,
   createNodePositionsMap,
   extractGraphLayout,
+  graphEdgesToReactFlowEdges,
   layoutGraph,
   parseCubeConfig,
   parseGraphConfig,
@@ -23,6 +25,7 @@ import {
   type PortInfo,
 } from '@/modules/control-plane/entities/cubes';
 import { editorPageModel } from '@/modules/control-plane/pages/editor';
+import { controlPlaneApi } from '@/modules/control-plane/shared/api';
 import {
   Graph,
   type ConnectionData,
@@ -33,6 +36,77 @@ import {
 } from '@/modules/control-plane/shared/types';
 
 import type { ExperimentFormValues } from './utils';
+import {
+  parseExperimentModelParameters,
+  serializeExperimentModelParameters,
+} from './utils';
+
+interface SupervisorModelLike {
+  order?: number;
+  modelId?: string;
+  parameters?: Record<string, unknown>;
+}
+
+const DATASET_NODE_PREFIX = 'dataset_';
+
+const stableSupervisorModelHash = (index: number, modelId: string): string => {
+  const safe = (modelId || 'm').replace(/[^a-zA-Z0-9_-]/g, '_');
+  return `sv_${index}_${safe}`;
+};
+
+const makeDatasetNodeId = (alias: string): string =>
+  `${DATASET_NODE_PREFIX}${encodeURIComponent(alias)}`;
+
+const getAliasFromDatasetNodeId = (nodeId: string): string | null => {
+  if (!nodeId.startsWith(DATASET_NODE_PREFIX)) {
+    return null;
+  }
+  try {
+    return decodeURIComponent(nodeId.slice(DATASET_NODE_PREFIX.length));
+  } catch {
+    return null;
+  }
+};
+
+const readDatasetAlias = (item: unknown): string => {
+  if (typeof item === 'string') {
+    return item.trim();
+  }
+  if (item && typeof item === 'object') {
+    const obj = item as Record<string, unknown>;
+    const candidate =
+      obj.alias ?? obj.dataset_alias ?? obj.name ?? obj.dataset ?? '';
+    return typeof candidate === 'string' ? candidate.trim() : '';
+  }
+  return '';
+};
+
+const getDatasetAliases = (raw: unknown): string[] => {
+  if (!Array.isArray(raw)) return [];
+  return raw.map(readDatasetAlias).filter(Boolean);
+};
+
+const appendDatasetAlias = (raw: unknown, alias: string): unknown[] => {
+  const normalized = alias.trim();
+  if (!normalized) return Array.isArray(raw) ? raw : [];
+  if (!Array.isArray(raw) || raw.length === 0) {
+    return [normalized];
+  }
+  const existingAliases = new Set(getDatasetAliases(raw));
+  if (existingAliases.has(normalized)) {
+    return raw;
+  }
+  if (raw.some((item) => item && typeof item === 'object')) {
+    return [...raw, { alias: normalized }];
+  }
+  return [...raw, normalized];
+};
+
+const removeDatasetAlias = (raw: unknown, alias: string): unknown[] => {
+  if (!Array.isArray(raw)) return [];
+  const normalized = alias.trim();
+  return raw.filter((item) => readDatasetAlias(item) !== normalized);
+};
 
 interface WorkerEditGraphProps {
   selectedCubeHash?: string | null;
@@ -72,9 +146,18 @@ export const WorkerEditGraph = ({
 
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
+  const [linkedDatasetAliases, setLinkedDatasetAliases] = useState<string[]>([]);
+  const [selectedDatasetAliases, setSelectedDatasetAliases] = useState<string[]>(
+    [],
+  );
+  const [datasetModalOpen, setDatasetModalOpen] = useState(false);
+  const [datasetModalSelection, setDatasetModalSelection] = useState<string[]>([]);
 
   // Флаг: использовать ли сохранённые позиции (только при первом рендере)
   const useSavedPositionsRef = useRef(true);
+
+  /** Защита от гонки: при быстром изменении формы применяется только последний layout */
+  const layoutGenerationRef = useRef(0);
 
   // Получаем кубы из формы (Record → массив)
   const cubes = useMemo(() => {
@@ -125,6 +208,37 @@ export const WorkerEditGraph = ({
     );
   }, [values?.Resources?.Resharder]);
 
+  useEffect(() => {
+    if (!supervisorGraphMode || !experiment_id) {
+      setLinkedDatasetAliases([]);
+      setSelectedDatasetAliases([]);
+      return;
+    }
+    let isCancelled = false;
+    controlPlaneApi.experiment
+      .v1ExperimentDatasetsList({ experiment_id })
+      .then((response) => {
+        if (isCancelled) return;
+        const aliases = (response.data.datasets || [])
+          .map((item) => (item.alias || '').trim())
+          .filter(Boolean);
+        const uniqueAliases = Array.from(new Set(aliases));
+        setLinkedDatasetAliases(uniqueAliases);
+        // Для демо-сценария сразу показываем датасорсы на графе
+        setSelectedDatasetAliases((prev) =>
+          prev.length > 0 ? prev : uniqueAliases,
+        );
+      })
+      .catch(() => {
+        if (!isCancelled) {
+          setLinkedDatasetAliases([]);
+        }
+      });
+    return () => {
+      isCancelled = true;
+    };
+  }, [supervisorGraphMode, experiment_id]);
+
   const graphData = useMemo(() => {
     if (supervisorGraphMode) {
       const cfg = JSON.stringify({
@@ -135,7 +249,82 @@ export const WorkerEditGraph = ({
       if (!parsed) {
         return { nodes: [], edges: [] };
       }
-      return { nodes: parsed.nodes, edges: parsed.edges };
+      const sortedModels = (Array.isArray(values.models)
+        ? values.models
+        : []
+      ).filter(
+        (m): m is SupervisorModelLike =>
+          m !== null && typeof m === 'object' && !Array.isArray(m),
+      )
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+      const inputByModelNodeId = new Map<string, string[]>();
+      const outputByModelNodeId = new Map<string, string[]>();
+      const aliasesFromModels = new Set<string>();
+
+      sortedModels.forEach((model, index) => {
+        const nodeId = `cube_${stableSupervisorModelHash(index, model.modelId || `idx${index}`)}`;
+        const params = parseExperimentModelParameters(model.parameters);
+        const inputAliases = getDatasetAliases(params.input_datasets);
+        const outputAliases = getDatasetAliases(params.output_datasets);
+        inputByModelNodeId.set(nodeId, inputAliases);
+        outputByModelNodeId.set(nodeId, outputAliases);
+        inputAliases.forEach((alias) => aliasesFromModels.add(alias));
+        outputAliases.forEach((alias) => aliasesFromModels.add(alias));
+      });
+
+      const allAliases = Array.from(
+        new Set([
+          ...selectedDatasetAliases,
+          ...Array.from(aliasesFromModels),
+        ]),
+      );
+
+      const datasetNodes = allAliases.map((alias) => ({
+        id: makeDatasetNodeId(alias),
+        label: `DS: ${alias}`,
+        cubeHash: `dataset_${alias}`,
+        cubeId: undefined,
+        baseCubeName: 'Linked dataset',
+        modelDescription:
+          'Dataset linked to experiment. Connect to model input/output to pass data.',
+        isDataset: true,
+        hasError: false,
+        errorCode: undefined,
+        inputPorts: [{ name: 'in', hash: `dataset_in_${alias}` }],
+        outputPorts: [{ name: 'out', hash: `dataset_out_${alias}` }],
+        type: CubeType.CUBE,
+      }));
+
+      const datasetEdges = allAliases.flatMap((alias) => {
+        const datasetNodeId = makeDatasetNodeId(alias);
+        const inputEdges = Array.from(inputByModelNodeId.entries())
+          .filter(([, aliases]) => aliases.includes(alias))
+          .map(([modelNodeId]) => ({
+            id: `edge_ds_in_${encodeURIComponent(alias)}_${modelNodeId}`,
+            source: datasetNodeId,
+            outputPortHash: `dataset_out_${alias}`,
+            target: modelNodeId,
+            inputPortHash: 'sv_in',
+            edgeType: 'default' as const,
+          }));
+        const outputEdges = Array.from(outputByModelNodeId.entries())
+          .filter(([, aliases]) => aliases.includes(alias))
+          .map(([modelNodeId]) => ({
+            id: `edge_ds_out_${modelNodeId}_${encodeURIComponent(alias)}`,
+            source: modelNodeId,
+            outputPortHash: 'sv_out',
+            target: datasetNodeId,
+            inputPortHash: `dataset_in_${alias}`,
+            edgeType: 'default' as const,
+          }));
+        return [...inputEdges, ...outputEdges];
+      });
+
+      return {
+        nodes: [...parsed.nodes, ...datasetNodes],
+        edges: [...parsed.edges, ...datasetEdges],
+      };
     }
     return buildGraphFromCubes(cubes, {
       resharderInputSources,
@@ -146,11 +335,28 @@ export const WorkerEditGraph = ({
     supervisorGraphMode,
     values.experimentName,
     values.models,
+    linkedDatasetAliases,
+    selectedDatasetAliases,
     cubes,
     hasResharderResources,
     resharderInputSources,
     cubesList,
   ]);
+
+  useEffect(() => {
+    if (!datasetModalOpen) return;
+    setDatasetModalSelection(selectedDatasetAliases);
+  }, [datasetModalOpen, selectedDatasetAliases]);
+
+  const openDatasetModal = useCallback(() => {
+    setDatasetModalSelection(selectedDatasetAliases);
+    setDatasetModalOpen(true);
+  }, [selectedDatasetAliases]);
+
+  const applyDatasetModalSelection = useCallback(() => {
+    setSelectedDatasetAliases(datasetModalSelection);
+    setDatasetModalOpen(false);
+  }, [datasetModalSelection]);
 
   // Создаём "структурный ключ" графа для определения необходимости пересчёта layout
   // Layout пересчитывается только при изменении структуры (количество нод, edges, портов)
@@ -165,9 +371,12 @@ export const WorkerEditGraph = ({
       .sort()
       .join('|');
     const edgesKey = graphData.edges
-      .map((e) => `${e.source}->${e.target}`)
+      .map(
+        (e) =>
+          `${e.source}|${e.outputPortHash ?? ''}|${e.target}|${e.inputPortHash ?? ''}`,
+      )
       .sort()
-      .join('|');
+      .join('||');
     return `${nodesKey}::${edgesKey}`;
   }, [graphData]);
 
@@ -181,13 +390,26 @@ export const WorkerEditGraph = ({
       return;
     }
 
+    const layoutGen = ++layoutGenerationRef.current;
+
     const structureChanged =
       prevGraphStructureKeyRef.current !== graphStructureKey;
 
+    // Сразу поднимаем список рёбер до данных формы, не дожидаясь ELK — иначе после
+    // удаления связи старый edge ещё долго висит в React Flow.
+    const syncEdgesFromGraphData = () => {
+      const nodeIds = new Set(nodes.map((n) => n.id));
+      const next = graphEdgesToReactFlowEdges(graphData.edges).filter(
+        (e) => nodeIds.has(e.source) && nodeIds.has(e.target),
+      );
+      setEdges(next);
+    };
+
     // Если структура не изменилась — обновляем только данные нод (имена портов)
-    // без пересчёта layout
+    // без полного пересчёта позиций; рёбра всё равно пересобираем из graphData,
+    // иначе после удаления связи остаются «висячие» линии из прошлого layout.
     if (!structureChanged && nodes.length > 0) {
-      // Обновляем данные нод, сохраняя текущие позиции
+      syncEdgesFromGraphData();
       const updatedNodes = nodes.map((existingNode) => {
         const newNodeData = graphData.nodes.find(
           (n) => n.id === existingNode.id,
@@ -205,21 +427,35 @@ export const WorkerEditGraph = ({
               cubeId: newNodeData.cubeId,
               baseCubeName: newNodeData.baseCubeName,
               modelDescription: newNodeData.modelDescription,
+              isDataset: newNodeData.isDataset === true,
             },
           };
         }
         return existingNode;
       });
       setNodes(updatedNodes);
+
+      layoutGraph(graphData.nodes, graphData.edges)
+        .then(({ edges: layoutedEdges }) => {
+          if (layoutGen !== layoutGenerationRef.current) return;
+          setEdges(layoutedEdges);
+        })
+        .catch((err) => {
+          console.error('ELK layout failed (edge sync):', err);
+        });
       return;
     }
 
     // Структура изменилась — пересчитываем layout
     prevGraphStructureKeyRef.current = graphStructureKey;
 
+    syncEdgesFromGraphData();
+
     // Используем ELK layout (асинхронный)
     layoutGraph(graphData.nodes, graphData.edges)
       .then(({ nodes: layoutedNodes, edges: layoutedEdges }) => {
+        if (layoutGen !== layoutGenerationRef.current) return;
+
         let finalNodes = layoutedNodes;
 
         // При первом рендере пытаемся использовать сохранённые позиции
@@ -315,6 +551,76 @@ export const WorkerEditGraph = ({
   const handleConnectionCreate = useCallback(
     (connection: ConnectionData) => {
       if (supervisorGraphMode) {
+        const sourceAlias = getAliasFromDatasetNodeId(connection.sourceNodeId);
+        const targetAlias = getAliasFromDatasetNodeId(connection.targetNodeId);
+        const models = Array.isArray(values.models) ? [...values.models] : [];
+        const sortedEntries = models
+          .map((model, formIndex) => ({ model, formIndex }))
+          .filter(
+            (entry): entry is { model: SupervisorModelLike; formIndex: number } =>
+              entry.model !== null &&
+              typeof entry.model === 'object' &&
+              !Array.isArray(entry.model),
+          )
+          .sort((a, b) => (a.model.order ?? 0) - (b.model.order ?? 0));
+
+        const datasetAllowed = (alias: string | null): boolean => {
+          if (!alias) return false;
+          return (
+            linkedDatasetAliases.includes(alias) ||
+            selectedDatasetAliases.includes(alias)
+          );
+        };
+
+        if (sourceAlias && datasetAllowed(sourceAlias)) {
+          const modelEntry = sortedEntries.find(
+            (entry, idx) =>
+              `cube_${stableSupervisorModelHash(idx, entry.model.modelId || `idx${idx}`)}` ===
+              connection.targetNodeId,
+          );
+          if (!modelEntry) return;
+          const parsedParams = parseExperimentModelParameters(
+            modelEntry.model.parameters,
+          );
+          const currentRaw = parsedParams.input_datasets;
+          const current = getDatasetAliases(currentRaw);
+          if (current.includes(sourceAlias)) return;
+          const nextParams = {
+            ...parsedParams,
+            input_datasets: appendDatasetAlias(currentRaw, sourceAlias),
+          };
+          const nextModel = {
+            ...modelEntry.model,
+            parameters: serializeExperimentModelParameters(nextParams),
+          };
+          const nextModels = [...models];
+          nextModels[modelEntry.formIndex] = nextModel;
+          form.change('models', nextModels);
+        } else if (targetAlias && datasetAllowed(targetAlias)) {
+          const modelEntry = sortedEntries.find(
+            (entry, idx) =>
+              `cube_${stableSupervisorModelHash(idx, entry.model.modelId || `idx${idx}`)}` ===
+              connection.sourceNodeId,
+          );
+          if (!modelEntry) return;
+          const parsedParams = parseExperimentModelParameters(
+            modelEntry.model.parameters,
+          );
+          const currentRaw = parsedParams.output_datasets;
+          const current = getDatasetAliases(currentRaw);
+          if (current.includes(targetAlias)) return;
+          const nextParams = {
+            ...parsedParams,
+            output_datasets: appendDatasetAlias(currentRaw, targetAlias),
+          };
+          const nextModel = {
+            ...modelEntry.model,
+            parameters: serializeExperimentModelParameters(nextParams),
+          };
+          const nextModels = [...models];
+          nextModels[modelEntry.formIndex] = nextModel;
+          form.change('models', nextModels);
+        }
         return;
       }
       const { sourcePortHash, targetPortHash } = connection;
@@ -379,13 +685,86 @@ export const WorkerEditGraph = ({
       // Layout пересчитается автоматически при изменении графа
       // Центрирование не нужно - пользователь уже видит нужную область
     },
-    [supervisorGraphMode, cubes, updateCubeInForm, isValidMapping],
+    [
+      supervisorGraphMode,
+      values.models,
+      linkedDatasetAliases,
+      selectedDatasetAliases,
+      form,
+      cubes,
+      updateCubeInForm,
+      isValidMapping,
+    ],
   );
 
   // Обработчик удаления соединения на графе
   const handleConnectionDelete = useCallback(
     (connection: ConnectionData) => {
       if (supervisorGraphMode) {
+        const sourceAlias = getAliasFromDatasetNodeId(connection.sourceNodeId);
+        const targetAlias = getAliasFromDatasetNodeId(connection.targetNodeId);
+        const models = Array.isArray(values.models) ? [...values.models] : [];
+        const sortedEntries = models
+          .map((model, formIndex) => ({ model, formIndex }))
+          .filter(
+            (entry): entry is { model: SupervisorModelLike; formIndex: number } =>
+              entry.model !== null &&
+              typeof entry.model === 'object' &&
+              !Array.isArray(entry.model),
+          )
+          .sort((a, b) => (a.model.order ?? 0) - (b.model.order ?? 0));
+
+        if (sourceAlias) {
+          const modelEntry = sortedEntries.find(
+            (entry, idx) =>
+              `cube_${stableSupervisorModelHash(idx, entry.model.modelId || `idx${idx}`)}` ===
+              connection.targetNodeId,
+          );
+          if (!modelEntry) return;
+          const parsedParams = parseExperimentModelParameters(
+            modelEntry.model.parameters,
+          );
+          const currentRaw = parsedParams.input_datasets;
+          const current = getDatasetAliases(currentRaw);
+          const next = current.filter((alias) => alias !== sourceAlias);
+          if (next.length === current.length) return;
+          const nextParams = {
+            ...parsedParams,
+            input_datasets: removeDatasetAlias(currentRaw, sourceAlias),
+          };
+          const nextModel = {
+            ...modelEntry.model,
+            parameters: serializeExperimentModelParameters(nextParams),
+          };
+          const nextModels = [...models];
+          nextModels[modelEntry.formIndex] = nextModel;
+          form.change('models', nextModels);
+        } else if (targetAlias) {
+          const modelEntry = sortedEntries.find(
+            (entry, idx) =>
+              `cube_${stableSupervisorModelHash(idx, entry.model.modelId || `idx${idx}`)}` ===
+              connection.sourceNodeId,
+          );
+          if (!modelEntry) return;
+          const parsedParams = parseExperimentModelParameters(
+            modelEntry.model.parameters,
+          );
+          const currentRaw = parsedParams.output_datasets;
+          const current = getDatasetAliases(currentRaw);
+          const next = current.filter((alias) => alias !== targetAlias);
+          if (next.length === current.length) return;
+          const nextParams = {
+            ...parsedParams,
+            output_datasets: removeDatasetAlias(currentRaw, targetAlias),
+          };
+          const nextModel = {
+            ...modelEntry.model,
+            parameters: serializeExperimentModelParameters(nextParams),
+          };
+          const nextModels = [...models];
+          nextModels[modelEntry.formIndex] = nextModel;
+          form.change('models', nextModels);
+        }
         return;
       }
       const { targetPortHash } = connection;
@@ -406,7 +785,7 @@ export const WorkerEditGraph = ({
       // Layout пересчитается автоматически при изменении графа
       // Центрирование не нужно - пользователь уже видит нужную область
     },
-    [supervisorGraphMode, cubes, updateCubeInForm],
+    [supervisorGraphMode, values.models, form, cubes, updateCubeInForm],
   );
 
   return (
@@ -418,6 +797,23 @@ export const WorkerEditGraph = ({
         overflow: 'hidden',
       }}
     >
+      {supervisorGraphMode ? (
+        <div
+          style={{
+            position: 'absolute',
+            top: 12,
+            left: 12,
+            zIndex: 3,
+          }}
+        >
+          <Button view="outlined-action" size="m" onClick={openDatasetModal}>
+            <Button.Icon>
+              <Plus />
+            </Button.Icon>
+            Добавить датасорсы
+          </Button>
+        </div>
+      ) : null}
       <Graph
         nodes={nodes}
         edges={edges}
@@ -428,12 +824,53 @@ export const WorkerEditGraph = ({
         onResharderClick={onResharderClick}
         onConnectionCreate={handleConnectionCreate}
         onConnectionDelete={handleConnectionDelete}
-        isEditable={!supervisorGraphMode}
+        isEditable
         allowKeyboardCubeDelete={supervisorGraphMode}
         experiment_id={experiment_id}
         experiment_name={experiment_name}
         variables={variables}
       />
+      <Dialog
+        open={datasetModalOpen}
+        onClose={() => setDatasetModalOpen(false)}
+        size="m"
+        className="sf-dialog"
+      >
+        <Dialog.Header caption="Датасорсы на графе" />
+        <Dialog.Body>
+          <Flex direction="column" gap={2}>
+            <Text variant="body-2" color="secondary">
+              Показывать на графе можно только датасеты, привязанные к
+              эксперименту.
+            </Text>
+            <Select
+              value={datasetModalSelection}
+              onUpdate={(values) => setDatasetModalSelection(values)}
+              filterable
+              width="max"
+              size="m"
+              placeholder="Выберите датасорсы"
+              hasClear
+            >
+              {linkedDatasetAliases.map((alias) => (
+                <Select.Option key={alias} value={alias}>
+                  {alias}
+                </Select.Option>
+              ))}
+            </Select>
+          </Flex>
+        </Dialog.Body>
+        <Dialog.Footer>
+          <Flex justifyContent="flex-end" gap={2} style={{ width: '100%' }}>
+            <Button view="normal" size="l" onClick={() => setDatasetModalOpen(false)}>
+              Отмена
+            </Button>
+            <Button view="action" size="l" onClick={applyDatasetModalSelection}>
+              Применить
+            </Button>
+          </Flex>
+        </Dialog.Footer>
+      </Dialog>
     </Flex>
   );
 };
